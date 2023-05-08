@@ -1,24 +1,34 @@
-import { Logger } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestApplication } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AUTH } from '@ukef/constants';
 import basicAuth from 'express-basic-auth';
-import { SwaggerTheme } from 'swagger-themes';
 
-export const SwaggerDocs = (app: NestApplication) => {
+export const SwaggerDocs = (app: INestApplication) => {
   const configService = app.get(ConfigService);
   const logger = new Logger();
-  const theme = new SwaggerTheme('v3');
 
   const docName: string = configService.get<string>('doc.name');
   const docDesc: string = configService.get<string>('doc.description');
   const docVersion: string = configService.get<string>('doc.version');
   const docPrefix: string = configService.get<string>('doc.prefix');
 
-  const documentBuild = new DocumentBuilder().setTitle(docName).setDescription(docDesc).setVersion(docVersion).build();
+  const securityName = 'ApiKeyHeader';
+
+  const documentBuild = new DocumentBuilder()
+    .setTitle(docName)
+    .setDescription(docDesc)
+    .setVersion(docVersion)
+    .addSecurity(securityName, {
+      type: 'apiKey',
+      in: 'header',
+      name: AUTH.STRATEGY,
+    })
+    .addSecurityRequirements(securityName)
+    .build();
 
   app.use(
-    ['/docs', '/docs-json', '/docs-yaml'],
+    ['/docs'],
     basicAuth({
       challenge: true,
       users: {
@@ -28,8 +38,9 @@ export const SwaggerDocs = (app: NestApplication) => {
   );
 
   const options = {
+    jsonDocumentUrl: 'openapi/json',
+    yamlDocumentUrl: 'openapi/yaml',
     explorer: true,
-    customCss: theme.getBuffer('dark'),
     customSiteTitle: docName,
   };
 

@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from '@ukef/config';
-import { MsSqlDatabaseModule } from '@ukef/database';
-import { MdmModule } from '@ukef/module/mdm.module';
+import { EstoreModule } from '@ukef/modules/estore.module';
 import { LoggerModule } from 'nestjs-pino';
 
 @Module({
@@ -12,25 +10,25 @@ import { LoggerModule } from 'nestjs-pino';
       isGlobal: true,
       load: [...config],
     }),
-    ThrottlerModule.forRoot({
-      limit: 10, // requests
-      ttl: 30, // per second
-    }),
-    LoggerModule.forRoot({
-      pinoHttp: {
-        customProps: (req, res) => ({
-          context: 'HTTP',
-        }),
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        pinoHttp: {
+          customProps: () => ({
+            context: 'HTTP',
+          }),
+          level: config.get<string>('app.logLevel'),
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              singleLine: true,
+            },
           },
         },
-      },
+      }),
     }),
-    MsSqlDatabaseModule,
-    MdmModule,
+    EstoreModule,
   ],
   controllers: [],
   providers: [],

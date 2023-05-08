@@ -1,14 +1,11 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
@@ -21,19 +18,29 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "lib": ["ES2015"],
+    "rootDirs": ["src"],
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "types": ["jest", "node", "@types/jest"],
+    "sourceMap": true,
     "paths": {
       "@ukef/*": ["src/*"],
-      "@ukef/config/*": ["src/config/index"],
-      "@ukef/database/*": ["src/database/index"],
+      "@ukef/constants/*": ["src/constants/*"],
+      "@ukef/config/*": ["src/config/*"],
       "@ukef/helpers/*": ["src/helpers/*"],
-      "@ukef/module/*": ["src/modules/*"],
-      "@ukef/swagger/*": ["src/swagger/*"]
+      "@ukef/modules/*": ["src/modules/*"],
+      "@ukef/auth/*": ["src/modules/auth/*"],
+      "@ukef/swagger/*": ["src/swagger"],
+      "@ukef-test/*": ["test/*"],
     }
   },
   "include": [
     "src",
     "test",
+    "jest.config.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET /openapi/json matches the snapshot 1`] = `"{"openapi":"3.0.0","paths":{},"info":{"title":"ESTORE API Specification","description":"ESTORE API documentation","version":"1.0","contact":{}},"tags":[],"servers":[],"components":{"securitySchemes":{"ApiKeyHeader":{"type":"apiKey","in":"header","name":"x-api-key"}},"schemas":{}},"security":[{"ApiKeyHeader":[]}]}"`;
+
+exports[`GET /openapi/yaml matches the snapshot 1`] = `
+"openapi: 3.0.0
+paths: {}
+info:
+  title: ESTORE API Specification
+  description: ESTORE API documentation
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas: {}
+security:
+  - ApiKeyHeader: []
+"
+`;

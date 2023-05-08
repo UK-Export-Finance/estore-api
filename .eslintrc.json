@@ -6,7 +6,8 @@
     "simple-import-sort",
     "deprecation",
     "import",
-    "prettier"
+    "prettier",
+    "unused-imports"
   ],
   "extends": [
     "plugin:@typescript-eslint/recommended",
@@ -21,7 +22,7 @@
   ],
   "parserOptions": {
     "project": "tsconfig.json",
-    "ecmaVersion": 2020,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "env": {
@@ -30,6 +31,9 @@
   },
   "settings": {
     "node": {
+      "allowModules": [
+        "express"
+      ],
       "tryExtensions": [
         ".js",
         ".json",
@@ -42,6 +46,9 @@
       ]
     },
     "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
       "typescript": {
         "alwaysTryTypes": true
       }
@@ -101,12 +108,17 @@
     "import/newline-after-import": "off",
     "import/prefer-default-export": "off",
     "consistent-return": "off",
+    "no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "error",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ],
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-empty-function": "off",
     "no-empty-function": "off",
-    "no-unused-vars": "off",
     "require-await": "error",
     "no-useless-constructor": "off",
     "class-methods-use-this": "off",
@@ -121,7 +133,8 @@
   "overrides": [
     {
       "files": [
-        "**/*.spec.ts"
+        "**/*.test.ts",
+        "**/*.api-test.ts"
       ],
       "extends": [
         "plugin:jest/recommended",
