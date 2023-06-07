@@ -1,3 +1,5 @@
+import './load-dotenv';
+
 import { registerAs } from '@nestjs/config';
 
 import { InvalidConfigException } from './invalid-config.exception';

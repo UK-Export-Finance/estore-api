@@ -35,6 +35,7 @@
     "JSESSIONID",
     "lintstagedrc",
     "MRUI",
+    "MSAL",
     "MSZI",
     "nestjs",
     "pino",
