@@ -5,18 +5,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import GraphConfig from '@ukef/config/graph.config';
 
-type RequiredConfigKeys = 'clientId' | 'clientSecret' | 'tenantId' | 'scope';
-
 @Injectable()
 export class GraphService {
   client: Client;
   constructor(
     @Inject(GraphConfig.KEY)
-    private readonly config: Pick<ConfigType<typeof GraphConfig>, RequiredConfigKeys>,
+    {tenantId, clientId, clientSecret, scope} : ConfigType<typeof GraphConfig>,
   ) {
-    const credential = new ClientSecretCredential(this.config.tenantId, this.config.clientId, this.config.clientSecret);
+    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
     const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-      scopes: [this.config.scope],
+      scopes: [scope],
     });
 
     this.client = Client.initWithMiddleware({
