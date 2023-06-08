@@ -10,7 +10,7 @@ export class GraphService {
   client: Client;
   constructor(
     @Inject(GraphConfig.KEY)
-    {tenantId, clientId, clientSecret, scope} : ConfigType<typeof GraphConfig>,
+    { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
   ) {
     const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
     const authProvider = new TokenCredentialAuthenticationProvider(credential, {
