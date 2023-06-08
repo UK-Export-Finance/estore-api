@@ -1,5 +1,5 @@
 import AppConfig from './app.config';
 import DocConfig from './doc.config';
-import GraphAuthenticationConfig from './graph-authentication.config';
+import GraphConfig from './graph.config';
 
-export default [AppConfig, DocConfig, GraphAuthenticationConfig];
+export default [AppConfig, DocConfig, GraphConfig];

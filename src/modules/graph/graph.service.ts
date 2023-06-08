@@ -3,7 +3,7 @@ import { Client } from '@microsoft/microsoft-graph-client';
 import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import GraphAuthenticationConfig from '@ukef/config/graph-authentication.config';
+import GraphConfig from '@ukef/config/graph.config';
 
 type RequiredConfigKeys = 'clientId' | 'clientSecret' | 'tenantId' | 'scope';
 
@@ -11,8 +11,8 @@ type RequiredConfigKeys = 'clientId' | 'clientSecret' | 'tenantId' | 'scope';
 export class GraphService {
   client: Client;
   constructor(
-    @Inject(GraphAuthenticationConfig.KEY)
-    private readonly config: Pick<ConfigType<typeof GraphAuthenticationConfig>, RequiredConfigKeys>,
+    @Inject(GraphConfig.KEY)
+    private readonly config: Pick<ConfigType<typeof GraphConfig>, RequiredConfigKeys>,
   ) {
     const credential = new ClientSecretCredential(this.config.tenantId, this.config.clientId, this.config.clientSecret);
     const authProvider = new TokenCredentialAuthenticationProvider(credential, {

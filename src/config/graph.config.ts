@@ -1,13 +1,13 @@
 import { registerAs } from '@nestjs/config';
 
-export interface GraphAuthenticationConfig {
+export interface GraphConfig {
   clientId: string;
   clientSecret: string;
   tenantId: string;
   scope: string;
 }
 
-export default registerAs('graphAuthentication', (): GraphAuthenticationConfig => {
+export default registerAs('graph', (): GraphConfig => {
   return {
     clientId: process.env.GRAPH_AUTHENTICATION_CLIENT_ID,
     clientSecret: process.env.GRAPH_AUTHENTICATION_CLIENT_SECRET,
