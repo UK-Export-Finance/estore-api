@@ -7,7 +7,8 @@ import GraphConfig from '@ukef/config/graph.config';
 
 @Injectable()
 export class GraphService {
-  client: Client;
+  private readonly client: Client;
+
   constructor(
     @Inject(GraphConfig.KEY)
     { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
@@ -22,4 +23,25 @@ export class GraphService {
       authProvider,
     });
   }
+  async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+    const request = this.client.api(path);
+
+    if (filter) {
+      request.filter(filter);
+    }
+
+    if (expand) {
+      request.expand(expand);
+    }
+
+    return await request.get();
+  }
 }
+
+export interface GraphGetParams {
+  path: string;
+  filter?: string;
+  expand?: string;
+}
+
+export default GraphService;
