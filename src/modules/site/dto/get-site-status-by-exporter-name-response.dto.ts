@@ -1,8 +1,9 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { SiteStatusCodeEnum } from '@ukef/constants/enums/site-status-code';
+import { EXAMPLES } from '@ukef/constants/examples.constant';
 
 export class GetSiteStatusByExporterNameResponse {
-  @ApiResponseProperty()
+  @ApiResponseProperty({example: EXAMPLES.SITE_ID})
   siteId: string;
-  status: SiteStatusCodeEnum;
+  @ApiResponseProperty({example: EXAMPLES.SITE_STATUS_CODE})
+  status: string;
 }

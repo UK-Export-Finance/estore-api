@@ -3,8 +3,8 @@
  * Following constants are served:
  *
  * 1. Auth
- * 2. ENUMS
+ * 2. EXAMPLES
  */
 
 export * from './auth.constant';
-export * from './enum.constant';
+export * from './examples.constant';
