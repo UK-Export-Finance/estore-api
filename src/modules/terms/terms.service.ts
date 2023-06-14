@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { RESPONSE } from '@ukef/constants';
@@ -29,8 +29,12 @@ export class TermsService {
         listItem,
       });
       return { message: RESPONSE.FACILITY_TERM_CREATED };
-    } catch (error) {
-      return { message: RESPONSE.FACILITY_TERM_NOT_CREATED };
+    } catch (error: any) {
+      if (error.statusCode === 400) {
+        return { message: RESPONSE.FACILITY_TERM_EXISTS };
+      } else {
+        throw new InternalServerErrorException(error?.message);
+      }
     }
   }
 }
