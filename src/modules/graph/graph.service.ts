@@ -23,6 +23,7 @@ export class GraphService {
       authProvider,
     });
   }
+
   async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
     const request = this.client.api(path);
 
@@ -35,6 +36,11 @@ export class GraphService {
     }
 
     return await request.get();
+  }
+
+  post<T>({ path, listItem }: any): Promise<T> {
+    const request = this.client.api(path);
+    return request.post(listItem);
   }
 }
 
