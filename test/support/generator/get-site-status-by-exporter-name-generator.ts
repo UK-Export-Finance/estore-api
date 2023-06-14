@@ -113,7 +113,7 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  status?: SiteStatusCodeEnum;
+  status?: string;
   ukefSharepointName?: string;
   tfisSiteName?: string;
   tfisListId?: string;
