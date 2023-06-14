@@ -28,8 +28,8 @@ export class SiteService {
       throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
     }
 
-    const { URL: siteName, Sitestatus: status } = data.value[0].fields;
+    const { URL: siteId, Sitestatus: status } = data.value[0].fields;
 
-    return { siteName, status };
+    return { siteId, status };
   }
 }
