@@ -1,5 +1,6 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { ENUMS } from '@ukef/constants';
+import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
@@ -15,17 +16,17 @@ export class SiteController {
     try {
       const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
       if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUS_CODES.FAILED) {
-        res.status(424).json(getSiteStatusByExporterNameResponse);
+        res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
       }
       if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUS_CODES.CREATED) {
-        res.status(200).json(getSiteStatusByExporterNameResponse);
+        res.status(HttpStatusCode.Ok ).json(getSiteStatusByExporterNameResponse);
       }
       if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUS_CODES.PROVISIONING) {
-        res.status(202).json(getSiteStatusByExporterNameResponse);
+        res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
       }
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
-        res.status(404).json({});
+        res.status(HttpStatusCode.NotFound).json({});
       }
     }
   }

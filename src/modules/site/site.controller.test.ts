@@ -1,5 +1,6 @@
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+import { HttpStatusCode } from 'axios';
 import { when } from 'jest-when';
 
 import { SiteNotFoundException } from './exception/site-not-found.exception';
@@ -27,15 +28,15 @@ describe('SiteController', () => {
     it.each([
       {
         status: 'Failed',
-        expectedStatusCode: 424,
+        expectedStatusCode: HttpStatusCode.FailedDependency,
       },
       {
         status: 'Provisioning',
-        expectedStatusCode: 202,
+        expectedStatusCode: HttpStatusCode.Accepted,
       },
       {
         status: 'Created',
-        expectedStatusCode: 200,
+        expectedStatusCode: HttpStatusCode.Ok,
       },
     ])('returns a status code of $expectedStatusCode and the expected response if site status is "$status"', async ({ status, expectedStatusCode }) => {
       const modifiedSiteStatusByExporterNameResponse = { ...siteStatusByExporterNameResponse, status };
