@@ -5,6 +5,7 @@ import { GraphService } from '@ukef/modules/graph/graph.service';
 
 import { GraphGetSiteStatusByExporterNameResponseDto } from '../graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
+import { SiteNotFoundException } from './exception/site-not-found.exception';
 
 type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId';
 
@@ -22,7 +23,13 @@ export class SiteService {
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=Title,Url,SiteStatus)',
     });
-    const { URL, Sitestatus } = data.value[0].fields;
-    return { siteName: URL, status: Sitestatus };
+
+    if (!data.value.length) {
+      throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
+    }
+
+    const { URL: siteName, Sitestatus: status } = data.value[0].fields;
+
+    return { siteName, status };
   }
 }

@@ -1,9 +1,11 @@
 import { ClientSecretCredential } from '@azure/identity';
-import { Client } from '@microsoft/microsoft-graph-client';
+import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
 import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import GraphConfig from '@ukef/config/graph.config';
+
+import { commonGraphExceptionHandling } from './common/common-graph-exception-handling';
 
 @Injectable()
 export class GraphService {
@@ -23,7 +25,13 @@ export class GraphService {
       authProvider,
     });
   }
+
   async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+    const request = this.createGetRequest({ path, filter, expand });
+    return await this.makeGetRequest({ request });
+  }
+
+  private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
     const request = this.client.api(path);
 
     if (filter) {
@@ -34,7 +42,15 @@ export class GraphService {
       request.expand(expand);
     }
 
-    return await request.get();
+    return request;
+  }
+
+  private async makeGetRequest({ request }: { request: GraphRequest }) {
+    try {
+      return await request.get();
+    } catch (error: unknown) {
+      commonGraphExceptionHandling(error);
+    }
   }
 }
 
