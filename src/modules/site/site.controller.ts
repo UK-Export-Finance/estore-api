@@ -19,7 +19,7 @@ export class SiteController {
         res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
       }
       if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUS_CODES.CREATED) {
-        res.status(HttpStatusCode.Ok ).json(getSiteStatusByExporterNameResponse);
+        res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
       }
       if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUS_CODES.PROVISIONING) {
         res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
