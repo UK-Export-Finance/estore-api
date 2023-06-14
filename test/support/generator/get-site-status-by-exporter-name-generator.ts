@@ -114,7 +114,7 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  status?: string;
+  status?: SiteStatusCodeEnum;
   tfisSharepointUrl?: string;
   tfisCaseSitesListId?: string;
 }
