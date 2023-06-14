@@ -1,3 +1,5 @@
+import { ENUMS } from '@ukef/constants';
+import { SiteStatusCodeEnum } from '@ukef/constants/enums/site-status-code';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
@@ -30,7 +32,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
     const { ukefSharepointName, tfisSiteName, tfisListId } = options;
-    const status = options.status ?? 'Provisioning';
+    const status = options.status ?? ENUMS.SITE_STATUS_CODES.PROVISIONING;
 
     const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
@@ -106,7 +108,7 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  status?: string;
+  status?: SiteStatusCodeEnum;
   ukefSharepointName?: string;
   tfisSiteName?: string;
   tfisListId?: string;

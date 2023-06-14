@@ -55,7 +55,7 @@ describe('SiteController', () => {
       expect(responseMock.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    it('returns a status code of 400 and the expected response if the site status is "Not Found"', async () => {
+    it('returns a status code of 404 and the expected response if site service throws a SiteNotFoundException', async () => {
       const siteNotFoundError = new SiteNotFoundException(`Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`);
       const responseMock: any = {
         status: jest.fn().mockReturnThis(),

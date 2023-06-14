@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SiteStatusCodeEnum } from '@ukef/constants/enums/site-status-code';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 
 import { GraphGetSiteStatusByExporterNameResponseDto } from '../graph/dto/graph-get-site-status-by-exporter-name-response.dto';
@@ -30,6 +31,6 @@ export class SiteService {
 
     const { URL: siteId, Sitestatus: status } = data.value[0].fields;
 
-    return { siteId, status };
+    return { siteId, status: SiteStatusCodeEnum[status as keyof typeof SiteStatusCodeEnum] };
   }
 }
