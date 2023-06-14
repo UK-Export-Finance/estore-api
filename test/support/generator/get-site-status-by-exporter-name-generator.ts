@@ -30,7 +30,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
     const { ukefSharepointName, tfisSiteName, tfisListId } = options;
-    const status = options.status ?? "Provisioning";
+    const status = options.status ?? 'Provisioning';
 
     const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });

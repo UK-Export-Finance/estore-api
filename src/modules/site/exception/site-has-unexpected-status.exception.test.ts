@@ -1,7 +1,7 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { SiteHasUnexpectedStatusException } from './site-has-unexpected-status.exception';
 
 import { SiteException } from './site.exception';
+import { SiteHasUnexpectedStatusException } from './site-has-unexpected-status.exception';
 
 describe('SiteHasUnexpectedStatusException', () => {
   const valueGenerator = new RandomValueGenerator();

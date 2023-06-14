@@ -1,13 +1,11 @@
-import { Controller, Get, InternalServerErrorException, NotFoundException, Query, Res } from '@nestjs/common';
+import { Controller, Get, InternalServerErrorException, Query, Res } from '@nestjs/common';
 import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
-  ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -25,7 +23,7 @@ export class SiteController {
 
   @Get()
   @ApiOperation({ summary: 'Get the site status by exporter name' })
-  @ApiOkResponse({ description: 'Site has been created', type: GetSiteStatusByExporterNameResponse, isArray: false ,})
+  @ApiOkResponse({ description: 'Site has been created', type: GetSiteStatusByExporterNameResponse, isArray: false })
   @ApiAcceptedResponse({ description: 'Site is provisioning', type: GetSiteStatusByExporterNameResponse, isArray: false })
   @ApiResponse({
     status: HttpStatusCode.FailedDependency,
