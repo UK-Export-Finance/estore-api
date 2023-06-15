@@ -40,17 +40,21 @@ export class SiteController {
       const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
       if (getSiteStatusByExporterNameResponse.status === 'Failed') {
         res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
+        return;
       }
       if (getSiteStatusByExporterNameResponse.status === 'Created') {
         res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
+        return;
       }
       if (getSiteStatusByExporterNameResponse.status === 'Provisioning') {
         res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
+        return;
       }
       throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
         res.status(HttpStatusCode.NotFound).json({});
+        return;
       }
       throw error;
     }
