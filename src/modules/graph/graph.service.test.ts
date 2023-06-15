@@ -14,8 +14,7 @@ describe('GraphService', () => {
   const expandStr = valueGenerator.string();
   const expectedResponse = valueGenerator.string();
 
-  const mockGraphClientServiceHelper = getMockGraphClientService();
-  const { mockGraphClientService, mockClient, mockRequest } = mockGraphClientServiceHelper;
+  const { mockGraphClientService, mockClient, mockRequest } = getMockGraphClientService();
 
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService);
