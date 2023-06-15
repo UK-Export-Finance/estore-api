@@ -5,14 +5,18 @@ import { GraphInvalidRequestException } from '../exception/graph-invalid-request
 import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
 
 export const commonGraphExceptionHandling = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    throw new GraphUnexpectedException('An unexpected error occurred.');
+  }
+
   if (error instanceof GraphError) {
     if (error.code === 'CredentialUnavailableError' || error.code === 'AuthenticationRequiredError') {
       throw new GraphAuthenticationFailedException(error.message, error);
     }
-    if ((error.code = 'invalidRequest')) {
+    if (error.code === 'invalidRequest') {
       throw new GraphInvalidRequestException(error.message, error);
     }
-    throw new GraphUnexpectedException(error.message, error);
   }
-  throw new Error();
+
+  throw new GraphUnexpectedException(error.message, error);
 };
