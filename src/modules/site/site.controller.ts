@@ -22,17 +22,17 @@ export class SiteController {
   constructor(private readonly service: SiteService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get the site status by exporter name' })
-  @ApiOkResponse({ description: 'Site has been created', type: GetSiteStatusByExporterNameResponse, isArray: false })
-  @ApiAcceptedResponse({ description: 'Site is provisioning', type: GetSiteStatusByExporterNameResponse, isArray: false })
+  @ApiOperation({ summary: 'Get the site status by exporter name.' })
+  @ApiOkResponse({ description: 'Site has been created.', type: GetSiteStatusByExporterNameResponse, isArray: false })
+  @ApiAcceptedResponse({ description: 'Site is provisioning.', type: GetSiteStatusByExporterNameResponse, isArray: false })
   @ApiResponse({
     status: HttpStatusCode.FailedDependency,
-    description: 'Site has failed to be created',
+    description: 'Site has failed to be created.',
     type: GetSiteStatusByExporterNameResponse,
     isArray: false,
   })
-  @ApiNotFoundResponse({ description: 'Site not found' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: 'Site not found.' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
