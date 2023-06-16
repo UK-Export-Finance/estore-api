@@ -1,25 +1,49 @@
-import { ClientSecretCredential } from '@azure/identity';
-import { Client } from '@microsoft/microsoft-graph-client';
-import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import GraphConfig from '@ukef/config/graph.config';
+import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
+import { Injectable } from '@nestjs/common';
+
+import GraphClientService from '../graph-client/graph-client.service';
+import { commonGraphExceptionHandling } from './common/common-graph-exception-handling';
 
 @Injectable()
 export class GraphService {
-  client: Client;
-  constructor(
-    @Inject(GraphConfig.KEY)
-    { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
-  ) {
-    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-    const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-      scopes: [scope],
-    });
+  private readonly client: Client;
 
-    this.client = Client.initWithMiddleware({
-      debugLogging: true,
-      authProvider,
-    });
+  constructor(graphClientService: GraphClientService) {
+    this.client = graphClientService.getClient();
+  }
+
+  async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+    const request = this.createGetRequest({ path, filter, expand });
+    return await this.makeGetRequest({ request });
+  }
+
+  private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
+    const request = this.client.api(path);
+
+    if (filter) {
+      request.filter(filter);
+    }
+
+    if (expand) {
+      request.expand(expand);
+    }
+
+    return request;
+  }
+
+  private async makeGetRequest({ request }: { request: GraphRequest }) {
+    try {
+      return await request.get();
+    } catch (error) {
+      commonGraphExceptionHandling(error);
+    }
   }
 }
+
+export interface GraphGetParams {
+  path: string;
+  filter?: string;
+  expand?: string;
+}
+
+export default GraphService;
