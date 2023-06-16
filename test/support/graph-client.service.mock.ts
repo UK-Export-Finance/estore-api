@@ -1,23 +1,22 @@
-import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+import { Client } from '@microsoft/microsoft-graph-client';
 
-export const getMockGraphClientService = (): {
-  mockGraphClientService: GraphClientService;
-  mockClient: { api: jest.Mock };
+export const getMockGraph2ClientService = (): {
+  mockGraphClientService;
   mockRequest: { filter: jest.Mock; get: jest.Mock; expand: jest.Mock };
 } => {
   const mockClient = {
-    api: jest.fn(),
-  };
+    api: jest.fn().mockImplementation(() => mockRequest),
+  } as unknown as Client;
 
+  // As we add additional methods that use GraphRequest, add them here to allow for mocking.
   const mockRequest = { filter: jest.fn(), get: jest.fn(), expand: jest.fn() };
 
   const mockGraphClientService = {
-    getClient: () => mockClient,
-  } as unknown as GraphClientService;
+    client: mockClient,
+  };
 
   return {
     mockGraphClientService,
-    mockClient,
     mockRequest,
   };
 };

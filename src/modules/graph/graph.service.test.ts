@@ -1,7 +1,9 @@
+import { Test, TestingModule } from '@nestjs/testing';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { getMockGraphClientService } from '@ukef-test/support/graph-client.service.mock';
+import { getMockGraph2ClientService } from '@ukef-test/support/graph-client.service.mock';
 import { when } from 'jest-when';
 
+import GraphClientService from '../graph-client/graph-client.service';
 import GraphService from './graph.service';
 import { withCommonGraphExceptionHandlingTests } from './graph.test-parts/with-common-graph-exception-handling-tests';
 
@@ -13,11 +15,15 @@ describe('GraphService', () => {
   const filterStr = valueGenerator.string();
   const expandStr = valueGenerator.string();
   const expectedResponse = valueGenerator.string();
+  const { mockGraphClientService, mockRequest } = getMockGraph2ClientService();
 
-  const { mockGraphClientService, mockClient, mockRequest } = getMockGraphClientService();
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      providers: [GraphService, { provide: GraphClientService, useValue: mockGraphClientService }],
+    }).compile();
 
-  beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService);
+    graphService = moduleFixture.get(GraphService);
+
     jest.resetAllMocks();
   });
 
@@ -34,10 +40,10 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path });
 
-      expect(mockClient.api).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1);
       expect(mockRequest.get).toHaveBeenCalledTimes(1);
 
-      expect(mockClient.api).toHaveBeenCalledWith(path);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path);
       expect(mockRequest.get).toHaveBeenCalledWith();
 
       expect(result).toEqual(expectedResponse);
@@ -59,11 +65,11 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path, filter: filterStr });
 
-      expect(mockClient.api).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1);
       expect(mockRequest.filter).toHaveBeenCalledTimes(1);
       expect(mockRequest.get).toHaveBeenCalledTimes(1);
 
-      expect(mockClient.api).toHaveBeenCalledWith(path);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path);
       expect(mockRequest.filter).toHaveBeenCalledWith(filterStr);
       expect(mockRequest.get).toHaveBeenCalledWith();
 
@@ -88,12 +94,12 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path, filter: filterStr, expand: expandStr });
 
-      expect(mockClient.api).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1);
       expect(mockRequest.filter).toHaveBeenCalledTimes(1);
       expect(mockRequest.expand).toHaveBeenCalledTimes(1);
       expect(mockRequest.get).toHaveBeenCalledTimes(1);
 
-      expect(mockClient.api).toHaveBeenCalledWith(path);
+      expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path);
       expect(mockRequest.filter).toHaveBeenCalledWith(filterStr);
       expect(mockRequest.expand).toHaveBeenCalledWith(expandStr);
       expect(mockRequest.get).toHaveBeenCalledWith();
@@ -102,6 +108,6 @@ describe('GraphService', () => {
     });
   });
 
-  const mockSuccessfulGraphApiCall = () => when(mockClient.api).calledWith(path).mockReturnValueOnce(mockRequest);
+  const mockSuccessfulGraphApiCall = () => when(mockGraphClientService.client.api).calledWith(path).mockReturnValueOnce(mockRequest);
   const mockSuccessfulGraphGetCall = () => when(mockRequest.get).calledWith().mockResolvedValue(expectedResponse);
 });
