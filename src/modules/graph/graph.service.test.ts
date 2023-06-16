@@ -3,7 +3,7 @@ import { getMockGraphClientService } from '@ukef-test/support/graph-client.servi
 import { when } from 'jest-when';
 
 import GraphService from './graph.service';
-import { withCommonGraphExceptionHandlingTests } from './test-parts/with-common-graph-exception-handling-tests';
+import { withCommonGraphExceptionHandlingTests } from './graph.test-parts/with-common-graph-exception-handling-tests';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
