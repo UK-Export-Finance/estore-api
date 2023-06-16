@@ -1,22 +1,47 @@
-import { Client } from '@microsoft/microsoft-graph-client';
+import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
+import { when } from 'jest-when';
 
-export const getMockGraph2ClientService = (): {
-  mockGraphClientService;
-  mockRequest: { filter: jest.Mock; get: jest.Mock; expand: jest.Mock };
-} => {
-  const mockClient = {
-    api: jest.fn().mockImplementation(() => mockRequest),
-  } as unknown as Client;
+class MockClient {
+  api: jest.Mock;
+  constructor() {
+    this.api = jest.fn();
+  }
+}
 
-  // As we add additional methods that use GraphRequest, add them here to allow for mocking.
-  const mockRequest = { filter: jest.fn(), get: jest.fn(), expand: jest.fn() };
+class MockRequest {
+  get: jest.Mock<any, any, any>;
+  filter: jest.Mock<any, any, any>;
+  expand: jest.Mock<any, any, any>;
+  constructor() {
+    this.get = jest.fn().mockReturnThis();
 
-  const mockGraphClientService = {
-    client: mockClient,
-  };
+    this.filter = jest.fn().mockReturnThis();
+    this.expand = jest.fn().mockReturnThis();
+  }
+}
 
-  return {
-    mockGraphClientService,
-    mockRequest,
-  };
-};
+export class MockGraphClientService {
+  client: Client;
+  request: GraphRequest;
+  constructor() {
+    this.client = new MockClient() as unknown as Client;
+    this.request = new MockRequest() as unknown as GraphRequest;
+  }
+
+  getApiRequestObject() {
+    return this.request;
+  }
+
+  mockSuccessfulGraphApiCallWithPath(path: string) {
+    when(this.client.api).calledWith(path).mockReturnValueOnce(this.request);
+    return this;
+  }
+
+  mockSuccessfulGraphGetCall(response) {
+    when(this.request.get).calledWith().mockReturnValueOnce(response);
+  }
+
+  mockUnsuccessfulGraphGetCall(error: unknown) {
+    when(this.request.get).calledWith().mockRejectedValueOnce(error);
+  }
+}

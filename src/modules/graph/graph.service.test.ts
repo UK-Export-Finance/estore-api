@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { getMockGraph2ClientService } from '@ukef-test/support/graph-client.service.mock';
-import { when } from 'jest-when';
+import { MockGraphClientService } from '@ukef-test/support/graph-client.service.mock';
 
 import GraphClientService from '../graph-client/graph-client.service';
 import GraphService from './graph.service';
@@ -15,7 +14,10 @@ describe('GraphService', () => {
   const filterStr = valueGenerator.string();
   const expandStr = valueGenerator.string();
   const expectedResponse = valueGenerator.string();
-  const { mockGraphClientService, mockRequest } = getMockGraph2ClientService();
+
+  const mockGraphClientService = new MockGraphClientService();
+
+  const mockRequest = mockGraphClientService.getApiRequestObject();
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,14 +25,13 @@ describe('GraphService', () => {
     }).compile();
 
     graphService = moduleFixture.get(GraphService);
-
     jest.resetAllMocks();
   });
 
   describe('get', () => {
     withCommonGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
-      mockGraphEndpointToErrorWith: (error: unknown) => when(mockRequest.get).calledWith().mockRejectedValue(error),
+      mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphGetCall(error),
       makeRequest: () => graphService.get({ path }),
     });
 
@@ -61,7 +62,6 @@ describe('GraphService', () => {
     it('calls the correct graph client methods on a graph service get request with one additional parameter and returns the response', async () => {
       mockSuccessfulGraphApiCall();
       mockSuccessfulGraphGetCall();
-      when(mockRequest.filter).calledWith(filterStr).mockReturnValueOnce(mockRequest);
 
       const result = await graphService.get<string>({ path, filter: filterStr });
 
@@ -79,7 +79,6 @@ describe('GraphService', () => {
     it('does not call graph client methods not included on a graph service get request one additional parameter', async () => {
       mockSuccessfulGraphApiCall();
       mockSuccessfulGraphGetCall();
-      when(mockRequest.filter).calledWith(filterStr).mockReturnValueOnce(mockRequest);
 
       await graphService.get<string>({ path, filter: filterStr });
 
@@ -89,8 +88,6 @@ describe('GraphService', () => {
     it('chains input parameters as api methods and returns the response', async () => {
       mockSuccessfulGraphApiCall();
       mockSuccessfulGraphGetCall();
-      when(mockRequest.filter).calledWith(filterStr).mockReturnValueOnce(mockRequest);
-      when(mockRequest.expand).calledWith(expandStr).mockReturnValueOnce(mockRequest);
 
       const result = await graphService.get<string>({ path, filter: filterStr, expand: expandStr });
 
@@ -108,6 +105,6 @@ describe('GraphService', () => {
     });
   });
 
-  const mockSuccessfulGraphApiCall = () => when(mockGraphClientService.client.api).calledWith(path).mockReturnValueOnce(mockRequest);
-  const mockSuccessfulGraphGetCall = () => when(mockRequest.get).calledWith().mockResolvedValue(expectedResponse);
+  const mockSuccessfulGraphApiCall = () => mockGraphClientService.mockSuccessfulGraphApiCallWithPath(path);
+  const mockSuccessfulGraphGetCall = () => mockGraphClientService.mockSuccessfulGraphGetCall(expectedResponse);
 });

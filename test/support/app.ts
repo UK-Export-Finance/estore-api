@@ -1,12 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { App as AppUnderTest } from '@ukef/app';
 import { MainModule } from '@ukef/main.module';
+import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+
+import { MockGraphClientService } from './graph-client.service.mock';
 
 export class App extends AppUnderTest {
-  static async create(): Promise<App> {
+  mockGraphClientService: MockGraphClientService;
+  static async create(): Promise<MockApp> {
+    const mockGraphClientService = new MockGraphClientService();
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [MainModule],
-    }).compile();
+    })
+      .overrideProvider(GraphClientService)
+      .useValue(mockGraphClientService)
+      .compile();
 
     const nestApp = moduleFixture.createNestApplication();
 
@@ -14,7 +23,11 @@ export class App extends AppUnderTest {
 
     await nestApp.init();
 
-    return app;
+    return { app, mockGraphClientService };
+  }
+
+  getGraphClientServiceMock(): MockGraphClientService {
+    return this.mockGraphClientService;
   }
 
   getHttpServer(): any {
@@ -24,4 +37,9 @@ export class App extends AppUnderTest {
   destroy(): Promise<void> {
     return this.app.close();
   }
+}
+
+export interface MockApp {
+  app: App;
+  mockGraphClientService: MockGraphClientService;
 }
