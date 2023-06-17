@@ -1,4 +1,6 @@
 export const EXAMPLES = {
+  SITE_ID: '12345678',
+  SITE_STATUS_CODE: 'Created',
   DEAL_ID: '0030000321',
   FACILITY_ID: '0030000322',
 };
