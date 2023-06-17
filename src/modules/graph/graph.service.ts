@@ -1,30 +1,28 @@
-import { ClientSecretCredential } from '@azure/identity';
-import { Client } from '@microsoft/microsoft-graph-client';
-import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import GraphConfig from '@ukef/config/graph.config';
+import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
+import { Injectable } from '@nestjs/common';
+
+import GraphClientService from '../graph-client/graph-client.service';
+import { commonGraphExceptionHandling } from './common/common-graph-exception-handling';
 
 @Injectable()
 export class GraphService {
   private readonly client: Client;
 
-  constructor(
-    @Inject(GraphConfig.KEY)
-    { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
-  ) {
-    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-    const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-      scopes: [scope],
-    });
-
-    this.client = Client.initWithMiddleware({
-      debugLogging: true,
-      authProvider,
-    });
+  constructor(graphClientService: GraphClientService) {
+    this.client = graphClientService.getClient();
   }
 
-  async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+  get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+    const request = this.createGetRequest({ path, filter, expand });
+    return this.makeGetRequest({ request });
+  }
+
+  post<T>({ path, listItem }: GraphPostParams): Promise<T> {
+    const request = this.client.api(path);
+    return this.makePostRequest({ request }, listItem);
+  }
+
+  private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
     const request = this.client.api(path);
 
     if (filter) {
@@ -35,12 +33,23 @@ export class GraphService {
       request.expand(expand);
     }
 
-    return await request.get();
+    return request;
   }
 
-  post<T>({ path, listItem }: any): Promise<T> {
-    const request = this.client.api(path);
-    return request.post(listItem);
+  private makeGetRequest({ request }: { request: GraphRequest }) {
+    try {
+      return request.get();
+    } catch (error) {
+      commonGraphExceptionHandling(error);
+    }
+  }
+
+  private makePostRequest({ request }: { request: GraphRequest }, listItem: any) {
+    try {
+      return request.post(listItem);
+    } catch (error) {
+      commonGraphExceptionHandling(error);
+    }
   }
 }
 
@@ -48,6 +57,11 @@ export interface GraphGetParams {
   path: string;
   filter?: string;
   expand?: string;
+}
+
+export interface GraphPostParams {
+  path: string;
+  listItem: object;
 }
 
 export default GraphService;

@@ -18,7 +18,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
   protected generateValues(): GenerateValues {
     return {
       exporterName: this.valueGenerator.string(),
-      siteName: this.valueGenerator.string(),
+      siteId: this.valueGenerator.string(),
       graphCreatedDateTime: this.valueGenerator.date(),
       graphETag: this.valueGenerator.string(),
       graphId: this.valueGenerator.string(),
@@ -39,7 +39,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const graphSiteFields = new graphSiteFieldsGenerator(this.valueGenerator).generate({
       numberToGenerate: 1,
       title: siteValues.exporterName,
-      url: siteValues.siteName,
+      url: siteValues.siteId,
       siteStatus: status,
     });
 
@@ -73,7 +73,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     };
 
     const getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
-      siteName: siteValues.siteName,
+      siteId: siteValues.siteId,
       status,
     };
 
@@ -89,7 +89,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
 interface GenerateValues {
   exporterName: string;
-  siteName: string;
+  siteId: string;
   graphCreatedDateTime: Date;
   graphETag: string;
   graphId: string;

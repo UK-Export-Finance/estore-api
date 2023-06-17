@@ -3,6 +3,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { when } from 'jest-when';
 
 import { GraphService } from '../graph/graph.service';
+import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
 jest.mock('../graph/graph.service');
@@ -37,6 +38,14 @@ describe('SiteService', () => {
       const response = await siteService.getSiteStatusByExporterName(siteStatusByExporterNameServiceRequest);
 
       expect(response).toEqual(siteStatusByExporterNameResponse);
+    });
+
+    it('throws a SiteNotFoundException if the site does not exist', async () => {
+      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce({ value: [] });
+
+      await expect(siteService.getSiteStatusByExporterName(siteStatusByExporterNameServiceRequest)).rejects.toThrow(
+        new SiteNotFoundException(`Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`),
+      );
     });
   });
 });
