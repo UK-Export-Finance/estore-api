@@ -12,14 +12,16 @@ export class GraphService {
     this.client = graphClientService.getClient();
   }
 
-  get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+  async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
     const request = this.createGetRequest({ path, filter, expand });
-    return this.makeGetRequest({ request });
+    const response = await this.makeGetRequest({ request });
+    return response;
   }
 
-  post<T>({ path, listItem }: GraphPostParams): Promise<T> {
+  async post<T>({ path, listItem }: GraphPostParams): Promise<T> {
     const request = this.client.api(path);
-    return this.makePostRequest({ request }, listItem);
+    const response = await this.makePostRequest({ request }, listItem);
+    return response;
   }
 
   private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
@@ -36,9 +38,9 @@ export class GraphService {
     return request;
   }
 
-  private makeGetRequest({ request }: { request: GraphRequest }) {
+  private async makeGetRequest({ request }: { request: GraphRequest }) {
     try {
-      return request.get();
+      return await request.get();
     } catch (error) {
       commonGraphExceptionHandling(error);
     }
