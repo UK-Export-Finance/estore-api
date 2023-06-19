@@ -25,7 +25,7 @@
     "@azure/identity": "^3.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.5",
     "@nestjs/axios": "^2.0.0",
-    "@nestjs/cache-manager": "^1.0.0",
+    "@nestjs/cache-manager": "^2.0.0",
     "@nestjs/common": "^9.4.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.4.0",
