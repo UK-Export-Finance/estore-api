@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { DtfsAuthenticationModule } from '@ukef/modules/dtfs-authentication/dtfs-authentication.module';
 
-import { DtfsAuthenticationModule } from '../dtfs-authentication/dtfs-authentication.module';
 import { DtfsFileService } from './dtfs-file.service';
 
 @Module({
