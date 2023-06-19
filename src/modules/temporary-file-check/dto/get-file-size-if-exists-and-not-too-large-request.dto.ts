@@ -1,9 +1,9 @@
 import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
-export type ReturnFileSizeIfExistsAndNotTooLargeRequest = ReturnFileSizeIfExistsAndNotTooLargeRequestItem[];
+export type GetFileSizeIfExistsAndNotTooLargeRequest = GetFileSizeIfExistsAndNotTooLargeRequestItem[];
 
-export class ReturnFileSizeIfExistsAndNotTooLargeRequestItem {
+export class GetFileSizeIfExistsAndNotTooLargeRequestItem {
   @ValidatedStringApiProperty({
     description: 'The file name with the file extension.',
     minLength: 1,
