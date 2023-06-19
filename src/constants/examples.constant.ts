@@ -9,5 +9,5 @@ export const EXAMPLES = {
   FACILITY_ID: '0030000322',
   FILE_SIZE: MAX_FILE_SIZE / 2,
   FILE_NAME: 'document.txt',
-  FILE_LOCATION_PATH: '', // TODO (APIM-450): check if this includes file name and extension.
+  FILE_LOCATION_PATH: 'folderName',
 };
