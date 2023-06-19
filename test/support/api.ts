@@ -3,7 +3,7 @@ import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables'
 import request from 'supertest';
 
 import { App } from './app';
-import { MockGraphClientService } from './graph-client.service.mock';
+import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class Api {
   static async create(): Promise<CreateApiResponse> {

@@ -1,3 +1,4 @@
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
@@ -11,9 +12,9 @@ jest.mock('../graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.string();
-  const tfisSiteName = valueGenerator.string();
-  const tfisListId = valueGenerator.string();
+  const ukefSharepointName = ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME;
+  const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+  const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
 
   let graphService: GraphService;
 
@@ -30,7 +31,7 @@ describe('SiteService', () => {
 
   describe('getSiteStatusByExporterName', () => {
     const { siteStatusByExporterNameServiceRequest, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
-      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, ukefSharepointName, tfisSiteName, tfisListId });
+      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
     it('returns the site name and status from the service', async () => {
       when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphGetSiteStatusResponseDto);

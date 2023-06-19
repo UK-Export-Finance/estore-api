@@ -2,6 +2,7 @@ import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
+import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 
 import { AbstractGenerator } from './abstract-generator';
 import { graphContentTypeGenerator } from './common/graph-content-type-generator';
@@ -29,7 +30,10 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
-    const { ukefSharepointName, tfisSiteName, tfisListId } = options;
+    const ukefSharepointName =  ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
+    const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
+
     const status = options.status ?? 'Provisioning';
 
     const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
@@ -107,7 +111,4 @@ interface GenerateResult {
 
 interface GenerateOptions {
   status?: string;
-  ukefSharepointName?: string;
-  tfisSiteName?: string;
-  tfisListId?: string;
 }

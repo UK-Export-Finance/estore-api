@@ -13,10 +13,10 @@ class MockRequest {
   filter: jest.Mock<any, any, any>;
   expand: jest.Mock<any, any, any>;
   constructor() {
-    this.get = jest.fn().mockReturnThis();
+    this.get = jest.fn();
 
-    this.filter = jest.fn().mockReturnThis();
-    this.expand = jest.fn().mockReturnThis();
+    this.filter = jest.fn();
+    this.expand = jest.fn();
   }
 }
 
@@ -34,6 +34,16 @@ export class MockGraphClientService {
 
   mockSuccessfulGraphApiCallWithPath(path: string) {
     when(this.client.api).calledWith(path).mockReturnValueOnce(this.request);
+    return this;
+  }
+
+  mockSuccessfulFilterCallWithFilterString(filterString: string) {
+    when(this.request.filter).calledWith(filterString).mockReturnValueOnce(this.request);
+    return this;
+  }
+
+  mockSuccessfulExpandCallWithExpandString(expandString: string) {
+    when(this.request.expand).calledWith(expandString).mockReturnValueOnce(this.request);
     return this;
   }
 

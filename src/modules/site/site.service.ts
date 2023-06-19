@@ -24,10 +24,13 @@ export class SiteService {
       expand: 'fields($select=Title,Url,SiteStatus)',
     });
 
+    // console.log(data)
+
     if (!data.value.length) {
       throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
     }
 
+    // console.log(data.value[0].fields)
     const { URL: siteId, Sitestatus: status } = data.value[0].fields;
     return { siteId, status };
   }
