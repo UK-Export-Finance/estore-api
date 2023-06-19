@@ -71,9 +71,9 @@ This workflow is triggered on push events to the `dev`, `staging`, and `producti
   - Environment 🧪: Displays the environment set to the `ENVIRONMENT` value.
   - Timezone 🌐: Displays the timezone set to the `TIMEZONE` value.
 
-##### 2. MDM 📦️
+##### 2. ESTORE 📦️
 
-- This job represents the deployment of the MDM (Master Data Management) micro-service.
+- This job represents the deployment of the ESTORE micro-service.
 - Depends on the successful completion of the **Setup** job.
 - Environment: Uses the `environment` output from the **Setup** job.
 - Environment Variables:
@@ -89,6 +89,12 @@ This workflow is triggered on push events to the `dev`, `staging`, and `producti
   6. Artifacts 🗃️: Builds and pushes Docker images to the ACR.
   7. Revisions 🔀: Uses the Azure CLI to update a container application with the new image and set environment variables.
   8. Import ⬇️: Imports an API specification to an Azure API Management (APIM) service.
+
+## SCA
+This is a GitHub Action YAML file that sets up environment variables and performs various source code analysis (SCA) tasks on the MDM-API project when a pull request is made to the main branch. The code quality SCA is performed by Codacy and the licensing SCA is performed by Fossa. 
+The first job, "setup," sets the environment variables and outputs them for use in later jobs. The next two jobs, "codacy" and "license," run on the "ubuntu-latest" operating system and are triggered by the "setup" job's completion. 
+The "codacy" job uses the Codacy analysis CLI action to perform SCA for code quality. Similarly, the "license" job uses the Fossa action to perform SCA for licensing. 
+Secrets, such as the Fossa API key, are assumed to be set up beforehand in the repository's secrets.
 
 ## Test
 The provided code is a GitHub Actions workflow file (test.yml) responsible for running various test suites upon the creation of a pull request. The workflow consists of the following jobs:
