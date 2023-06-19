@@ -13,9 +13,9 @@ on:
     - 'test/**'
 
 env:
-  environment: dev
+  environment: 'qa'
   timezone: 'Europe/London'
-  node: '18'
+  node: ${{ vars.NODE_VERSION }}
 
 jobs:
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Dependencies
         working-directory: ./
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Linting
         working-directory: ./

@@ -11,7 +11,7 @@ run-name: Executing test QA on ${{ github.repository }} 🚀
 
 on:
   pull_request:
-    branches: [ TODO ]
+    branches: [ main ]
     paths:
       - '.github/workflows/test.yml'
       - 'src/**'
@@ -24,9 +24,9 @@ on:
       - 'nest.cli.json'
 
 env:
-  environment: dev
+  environment: 'qa'
   timezone: 'Europe/London'
-  node: '18'
+  node: ${{ vars.NODE_VERSION }}
 
 jobs:
 

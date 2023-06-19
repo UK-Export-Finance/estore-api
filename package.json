@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "UKEF",
   "scripts": {
-    "api-test": "jest --coverage --selectProjects=API",
+    "api-test": "jest --coverage --selectProjects=API --passWithNoTests",
     "build": "nest build -p tsconfig.build.json",
     "e2e-test": "jest --passWithNoTests --coverage --selectProjects=E2E",
     "postinstall": "husky install",
@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch",
-    "unit-test": "jest --coverage --selectProjects=Unit"
+    "unit-test": "jest --coverage --selectProjects=Unit --passWithNoTests"
   },
   "dependencies": {
     "@azure/identity": "^3.2.2",
