@@ -1,11 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { DtfsAuthenticationService } from '@ukef/modules/dtfs-authentication/dtfs-authentication.service';
 
+import { DtfsAuthenticationModule } from '../dtfs-authentication/dtfs-authentication.module';
 import { DtfsFileService } from './dtfs-file.service';
 
 @Module({
-  imports: [DtfsAuthenticationService],
+  imports: [DtfsAuthenticationModule, HttpModule],
   providers: [DtfsFileService],
-  exports: [DtfsFileService],
+  exports: [DtfsAuthenticationModule, DtfsFileService],
 })
 export class DtfsModule {}
