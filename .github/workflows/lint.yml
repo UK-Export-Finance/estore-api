@@ -1,4 +1,4 @@
-# ESTORE-API Git Hub Actions
+# ESTORE Git Hub Actions
 #####################################
 # This GHA is responsible for initiating linting checks
 
@@ -7,10 +7,10 @@ run-name: Executing lint QA on ${{ github.repository }} 🚀
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
-    - 'src/**'
-    - 'test/**'
+      - 'src/**'
+      - 'test/**'
 
 env:
   environment: 'qa'
@@ -18,8 +18,7 @@ env:
   node: ${{ vars.NODE_VERSION }}
 
 jobs:
-
-# 1. Setup test infrastructure
+  # 1. Setup test infrastructure
   setup:
     name: Infrastructure setup 🔧
     runs-on: ubuntu-latest
@@ -27,13 +26,13 @@ jobs:
       environment: ${{ env.environment }}
       timezone: ${{ env.timezone }}
     steps:
-    - name: Environment 🧪
-      run: echo "Environment set to ${{ env.environment }}"
+      - name: Environment 🧪
+        run: echo "Environment set to ${{ env.environment }}"
 
-    - name: Timezone 🌐
-      run: echo "Timezone set to ${{ env.timezone }}"
+      - name: Timezone 🌐
+        run: echo "Timezone set to ${{ env.timezone }}"
 
-# 2. Lint
+  # 2. Lint
   lint:
     name: Scanning 🎨
     environment:

@@ -2,52 +2,123 @@
 GitHub Actions has been widely used to define custom workflows (using YAML syntax) to build, test, lint and deploy out code directly from our public GitHub repositories.
 
 ## Infrastructure
+This GitHub Actions workflow is responsible for creating and configuring the supporting infrastructure for the APIM (API Management) ESTORE project using Azure CLI bash scripting.
 
-This is a GitHub Action that creates the infrastructure for an APIM (Azure API Management) system. It sets up a base infrastructure in Azure, creates a container registry, virtual network, container app environment, and defines IP restrictions. After the setup is complete, it configures the APIM system by creating a product and importing an API.
-The action runs on Azure with the self-hosted, APIM, and infrastructure tags. It triggers when a push is made to the infrastructure branch and runs only when the infrastructure.yml file within the .github/workflows directory is modified.
-The action defines several environment variables for the product, environment, target, and timezone. It configures the Azure CLI defaults, logs in to Azure, and creates a resource group, container registry, virtual network, and container app environment.
-It then sets IP restrictions and configures the APIM system by creating a product and importing an API. The product is named apim-{product}-estore, and the imported API has the display name ESTORE with the path /estore. The API is imported from a container app environment that was created earlier.
-The action has three steps: setup, base, ca, and apim. The setup step sets up infrastructure variables, and each of the next three steps executes a set of specific commands that create the infrastructure, configure the container app, and configure the APIM system.
+The workflow consists of two jobs:
+
+setup: Sets up environment variables, including the product, environment, timezone, and target variables. It defines output variables for the environment and timezone, which are used by the base job.
+
+base: Creates the base infrastructure required for an APIM deployment. It configures Azure CLI extensions and uses Azure CLI commands to create various Azure resources, including a resource group, log analytics workspace, container registry, container app environment, container app, and API management instance. It also sets environment tags and prints out the state of the VNET peering connection.
+
+The workflow follows the standard Azure naming convention and consumes several Azure services, including Azure resource group, Azure container registry, Azure container app environment, Azure container app, Azure API management, and Azure log analytics workspace.
+
+The workflow is triggered when a push event occurs on the infrastructure branch, and the file path matches .github/workflows/infrastructure.yml.
+
+The workflow also includes additional jobs for container app configuration (ca) and APIM configuration (apim), which are dependent on the base job.
+
+Note that the workflow utilizes Azure CLI commands and makes use of Azure credentials stored as secrets.
+
+Please note that this is a template for a GitHub Actions workflow, and its functionality may vary depending on the specific configurations and requirements of the APIM (ESTORE) project.
 
 ## Deployment
+### Script
+#### CICD 📝
+
+This Bash script represents a Continuous Integration and Continuous Deployment (CICD) process.
+
+#### Color Variables
+
+- `RED` 🟥: Represents the color code for red.
+- `GREEN` 🟩: Represents the color code for green.
+- `BLUE` 🔵: Represents the color code for blue.
+- `YELLOW` 🟨: Represents the color code for yellow.
+- `NC` ⬛: Represents the color code for no color (default).
+
+#### User Input
+
+The script prompts the user to select an option from the following:
+
+- `${YELLOW}0. Infrastructure 🔧${NC}`
+- `${BLUE}1. Deployment 🧪${NC}`
+- `${RED}2. ACR Purge 🗑️${NC}`
+
+#### Option Handling
+
+Based on the user's selection, the script performs the following actions:
+
 
 ### GHA
-This is a YAML file for a GitHub Action that deploys an APIM system for the ESTORE micro-service. It defines two jobs: "setup" that sets environment variables, and "estore" that deploys the ESTORE micro-service to a container app environment.
-The action triggers when a push is made to the "dev" branch and runs only when files in specific directories are modified. It defines several environment variables, including "product," "environment," and "timezone."
-The "estore" job has several steps, including checking out the repository, logging in to Azure, and configuring the Azure CLI defaults. The action also sets up a container registry, builds and pushes Docker images, and updates the container app with environment variables.
-It is assumed that the secrets referenced in the action definition (e.g. ACR_USERNAME and ACR_PASSWORD) are set up beforehand in the repository's secrets.
+This workflow is triggered on push events to the `dev`, `staging`, and `production` branches, and specific file modifications.
 
-### Bash
-This is a Bash script for a deployment strategy for a project. It prompts the user with a list of deployment destinations and asks for input to select the destination. The script sets the destination and the branch for the deployment based on the user's input. If the user selects ACR Purge, the script runs the az acr run command to purge the ACR repository based on specified filter and ago duration. After setting the destination and branch, the script displays the latest push commit for the selected branch, creates a new branch based on the destination, and pushes the changes to that branch. Then the script cleans up the local branches and notifies the user that the deployment has been initiated. The script version and author information are also provided at the end of the script.
+#### Environment Variables
 
-## SCA
-This is a GitHub Action YAML file that sets up environment variables and performs various source code analysis (SCA) tasks on the ESTORE-API project when a pull request is made to the main branch. The code quality SCA is performed by Codacy and the licensing SCA is performed by Fossa.
-The first job, "setup," sets the environment variables and outputs them for use in later jobs. The next two jobs, "codacy" and "license," run on the "ubuntu-latest" operating system and are triggered by the "setup" job's completion.
-The "codacy" job uses the Codacy analysis CLI action to perform SCA for code quality. Similarly, the "license" job uses the Fossa action to perform SCA for licensing.
-Secrets, such as the Fossa API key, are assumed to be set up beforehand in the repository's secrets.
+- `PRODUCT` 📦: Represents the name of the product ("apim").
+- `ENVIRONMENT` 🌍: Represents the name of the environment, which is retrieved from the GitHub ref name.
+- `TIMEZONE` 🕒: Specifies the timezone as "Europe/London."
+- `FROM` 📁: Represents a base artifact, with the value "latest."
 
-## TEST
-This is a GitHub Actions workflow that performs QA and then runs three different types of tests on a pull request on the `main` branch:
+#### Jobs
 
-* Unit tests
-* API tests
-* End to end (E2E) tests.
+##### 1. Setup 🔧
 
-The workflow consists of four jobs:
+- This job sets up deployment variables.
+- It runs on a self-hosted runner with the "APIM" and "deployment" labels.
+- Outputs:
+  - `product`: Contains the value of the `PRODUCT` environment variable.
+  - `environment`: Contains the value of the `ENVIRONMENT` environment variable.
+  - `timezone`: Contains the value of the `TIMEZONE` environment variable.
+- Steps:
+  - Environment 🧪: Displays the environment set to the `ENVIRONMENT` value.
+  - Timezone 🌐: Displays the timezone set to the `TIMEZONE` value.
 
-* ⚙️ The `setup` job sets up the environment for the subsequent tests by outputting the `environment` and `timezone` variables.
-* 🧪 The `unit-tests` job runs unit tests using npm, which is a package manager for Node.js.
-* 🔬 The `api-tests` job runs API tests using npm.
-* 👨‍💻 The `e2e-tests` job runs E2E tests using npm and Docker.
+##### 2. MDM 📦️
 
-The workflow is triggered whenever a pull request is made to the `main` branch, and the changes made (defined in the `paths`) in the pull request are tested using the three types of tests mentioned above. The tests are run on an Ubuntu machine with Node.js version 18 installed.
+- This job represents the deployment of the MDM (Master Data Management) micro-service.
+- Depends on the successful completion of the **Setup** job.
+- Environment: Uses the `environment` output from the **Setup** job.
+- Environment Variables:
+  - `NAME` 📁: Represents the name of the micro-service ("mdm").
+  - `ENVIRONMENT` 🌍: Represents the environment name.
+- Runs on a self-hosted runner with the "APIM" and "deployment" labels.
+- Steps:
+  1. Repository 🗃️: Checks out the repository using the `actions/checkout` action.
+  2. Azure 🔐: Authenticates with Azure using the `azure/login` action.
+  3. CLI 📝: Sets up CLI commands to retrieve various Azure resources and store them as environment variables.
+  4. Defaults ✨: Uses the Azure CLI to configure default settings.
+  5. ACR 🔐: Logs in to an Azure Container Registry (ACR) using the `azure/docker-login` action.
+  6. Artifacts 🗃️: Builds and pushes Docker images to the ACR.
+  7. Revisions 🔀: Uses the Azure CLI to update a container application with the new image and set environment variables.
+  8. Import ⬇️: Imports an API specification to an Azure API Management (APIM) service.
 
-Overall, this workflow provides a comprehensive test suite to ensure the quality of code changes made in the main branch of the repository.
+## Test
+The provided code is a GitHub Actions workflow file (test.yml) responsible for running various test suites upon the creation of a pull request. The workflow consists of the following jobs:
+
+* setup: This job sets up the test infrastructure and defines environment variables. It runs on an Ubuntu environment and outputs the environment and timezone values.
+* unit-tests: This job performs unit tests using Jest. It depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, and executes the unit tests using the command "npm run unit-test."
+* api-tests: This job performs API tests using Jest. It also depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, and executes the API tests using the command "npm run api-test."
+* e2e-tests: This job performs end-to-end (E2E) tests using Jest. It depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, starts Docker containers using docker-compose, and executes the E2E tests using the command "npm run e2e-test."
+
+Each job runs in parallel, and the subsequent jobs depend on the completion of the setup job.
 
 ## Lint
-This code is a GitHub Actions YAML file that is responsible for initiating linting checks upon a pull request (PR) creation on the main branch for a Node.js project. The on event is set to pull_request with specified branches and paths. The file has two jobs; "setup" and "lint". The "setup" job sets environment variables for the dev environment, a London timezone, and Node.js version 18, then output these variables for later jobs to use. The "lint" job runs on the ubuntu-latest operating system, sets up the environment name and timezone using the output from the "setup" job, checks out the repository, sets up Node.js, installs dependencies, and executes the linting using npm run lint.
+The provided code appears to be a GitHub Actions workflow file for running lint quality assurance (QA) checks on a repository when a pull request is made to the main branch. Let's break down the different sections and steps:
+
+name and run-name: These are labels for the workflow.
+
+* on: This section specifies when the workflow should be triggered, in this case, when a pull request is made to the main branch and specific paths (src/** and test/**) are modified.
+* env: This section defines environment variables used within the workflow. It sets the environment to "qa," the timezone to "Europe/London," and the Node.js version to ${{ vars.NODE_VERSION }}, which seems to be a variable that should be defined elsewhere.
+* jobs: This section defines the different jobs that will run as part of the workflow.
+    * a. setup: This job sets up the test infrastructure. It runs on an Ubuntu latest runner and has steps for setting the environment and timezone.
+    * b. lint: This job performs the linting. It runs on an Ubuntu latest runner and depends on the setup job. It includes steps for setting the timezone, checking out the repository, setting up Node.js, installing dependencies with npm ci, and running the linting command with npm run lint.
+
+Overall, this workflow sets up a QA process for linting the code in the repository when a pull request is made. It ensures that the code adheres to defined linting rules.
 
 ## Publish
-This is a GitHub Actions YAML file that automates the process of releasing an updated package for a Node.js project. The event that triggers this script is when the main branch is pushed to. There is only one job in this file, which sets up the necessary components for a successful release. This job is called "release", runs on the ubuntu-latest operating system, and uses the "google-github-actions/release-please-action@v3" GitHub Action for automating the release.
+The workflow defines a job named release that runs on an Ubuntu environment (ubuntu-latest). The job consists of a single step, which uses the `google-github-actions/release-please-action` to handle the release process.
 
-The "release" job consists of three steps. The first step, "New release" sets up the release parameters and uses the Google GitHub Actions Release Please Action to create a new release. In the "with" block, the release type is set to "node", and the package name is set to "uk-export-finance/estore-api". There are also four changelog types defined in this step: "feat", "fix", "chore", and "docs". These define the types of changes that will be written to the CHANGELOG.md file. Finally, there is a list of extra files that will be included in the release, which include README.md and CHANGELOG.md.
+The with block provides configuration options for the release-please-action. Here's an explanation of the provided options:
+
+release-type: node: Specifies the release type as a Node.js project.
+package-name: uk-export-finance/estore-api: Specifies the name of the package or project being released.
+changelog-types: Defines the different types of changes (features, bug fixes, chores, and documentation) to be included in the generated changelog. Each type has a corresponding section in the changelog.
+
