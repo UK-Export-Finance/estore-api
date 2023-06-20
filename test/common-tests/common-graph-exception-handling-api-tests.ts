@@ -1,7 +1,7 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
 import supertest from 'supertest';
 
-import { commonGraphExceptionTestCases } from './common-graph-exception-handling-test-cases';
+import { commonGraphExceptionTestCases } from '../common-test-cases/common-graph-exception-handling-test-cases';
 
 export const withCommonGraphExceptionHandlingTests = ({
   givenRequestWouldOtherwiseSucceed,
@@ -17,8 +17,8 @@ export const withCommonGraphExceptionHandlingTests = ({
     const graphErrorMessage = 'GraphErrorMessage';
 
     it.each(commonGraphExceptionTestCases)(
-      'returns a $responseStatusCode with message $responseMessage if Microsoft Graph responds with cod $graphErrorCode ',
-      async ({ expectedResponseMessage, expectedResponseCode, graphErrorCode }) => {
+      'returns a 500 with message "Internal server error" if Microsoft Graph responds with code $graphErrorCode ',
+      async ({ graphErrorCode }) => {
         const graphError = new GraphError(graphStatusCode, graphErrorMessage);
         graphError.code = graphErrorCode;
 
@@ -27,10 +27,10 @@ export const withCommonGraphExceptionHandlingTests = ({
 
         const { status, body } = await makeRequest();
 
-        expect(status).toBe(expectedResponseCode);
+        expect(status).toBe(500);
         expect(body).toStrictEqual({
-          statusCode: expectedResponseCode,
-          message: expectedResponseMessage,
+          statusCode: 500,
+          message: 'Internal server error',
         });
       },
     );

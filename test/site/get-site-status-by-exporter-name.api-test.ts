@@ -1,4 +1,5 @@
-import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common/with-common-exception-handling-tests';
+import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common-tests/common-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -7,10 +8,10 @@ import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
   const valueGenerator = new RandomValueGenerator();
-
   const {
     siteStatusByExporterNameQueryDto,
     graphServiceGetParams: { path, expand, filter },
+    graphGetSiteStatusResponseDto,
   } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
@@ -29,6 +30,18 @@ describe('getSiteStatusByExporterName', () => {
 
   afterAll(async () => {
     await api.destroy();
+  });
+
+  withClientAuthenticationTests({
+    givenTheRequestWouldOtherwiseSucceed: () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
+    },
+    makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
+      api.getWithoutAuth(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`, incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
   withCommonGraphExceptionHandlingTests({
@@ -59,12 +72,16 @@ describe('getSiteStatusByExporterName', () => {
     },
   ];
   it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
-    const { siteStatusByExporterNameQueryDto, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
-      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
+    const {
+      siteStatusByExporterNameQueryDto,
+      siteStatusByExporterNameResponse,
+      graphServiceGetParams: { path, expand, filter },
+      graphGetSiteStatusResponseDto,
+    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
     mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
 
     const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
@@ -74,14 +91,10 @@ describe('getSiteStatusByExporterName', () => {
   });
 
   it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
-    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
-      numberToGenerate: 1,
-    });
-
     mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
     const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
@@ -91,16 +104,12 @@ describe('getSiteStatusByExporterName', () => {
   });
 
   it('returns a 400 with validation rules if request does not meet validation rules', async () => {
-    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
-      numberToGenerate: 1,
-    });
-
     const incorrectQueryName = 'IncorrectQueryName';
 
     mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
     const { status, body } = await api.get(`/api/v1/sites?${incorrectQueryName}=${siteStatusByExporterNameQueryDto.exporterName}`);

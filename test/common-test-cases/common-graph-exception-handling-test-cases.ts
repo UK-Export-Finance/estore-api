@@ -6,25 +6,17 @@ export const commonGraphExceptionTestCases = [
   {
     graphErrorCode: 'CredentialUnavailableError',
     expectedError: GraphAuthenticationFailedException,
-    expectedResponseCode: 500,
-    expectedResponseMessage: 'Internal server error',
   },
   {
     graphErrorCode: 'AuthenticationRequiredError',
     expectedError: GraphAuthenticationFailedException,
-    expectedResponseCode: 500,
-    expectedResponseMessage: 'Internal server error',
   },
   {
     graphErrorCode: 'invalidRequest',
     expectedError: GraphInvalidRequestException,
-    expectedResponseCode: 500,
-    expectedResponseMessage: 'Internal server error',
   },
   {
     graphErrorCode: 'UnexpectedErrorCode',
     expectedError: GraphUnexpectedException,
-    expectedResponseCode: 500,
-    expectedResponseMessage: 'Internal server error',
   },
 ];

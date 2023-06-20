@@ -1,6 +1,6 @@
 import { GraphError } from '@microsoft/microsoft-graph-client/lib/src/GraphError';
 
-import { commonGraphExceptionTestCases } from '../../../../test/common/common-graph-exception-handling-test-cases';
+import { commonGraphExceptionTestCases } from '../../../../test/common-test-cases/common-graph-exception-handling-test-cases';
 import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
 
 export const withCommonGraphExceptionHandlingTests = ({
