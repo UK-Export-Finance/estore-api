@@ -1,4 +1,4 @@
-# This GHA is responsible for `APIM` (ESTORE) supporting infrastructure
+# This GHA is responsible for `APIM` (eStore) supporting infrastructure
 # creation and configuration using `az cli` bash scripting.
 #
 # The workflow consists of two jobs:
@@ -37,9 +37,9 @@
 #
 # Flow
 # ****
-# ESTORE (https://github.com/UK-Export-Finance/estore-api) infrastructure.yml will be executed prior to
-# ESTORE `infrastructure.yml` execution. Despite majority of the base infrastructure already being in
-# place (due to ESTORE execution) base infrastructure has been kept in place for an independent ESTORE
+# eStore (https://github.com/UK-Export-Finance/estore-api) infrastructure.yml will be executed prior to
+# eStore `infrastructure.yml` execution. Despite majority of the base infrastructure already being in
+# place (due to eStore execution) base infrastructure has been kept in place for an independent eStore
 # deployment scenarios.
 #
 # Azure CLI will merely ignore the new resource creation if already exist with same name.
@@ -167,7 +167,7 @@ jobs:
             --logs-workspace-key $(az monitor log-analytics workspace get-shared-keys --name log-${{ env.PRODUCT }}-${{ env.TARGET }}-${{ vars.VERSION }} --query primarySharedKey -o tsv) \
             --tags ${{ env.TAGS }}
 
-      - name: Container app - ESTORE 📄
+      - name: Container app - eStore 📄
         uses: Azure/cli@v1.0.7
         with:
           inlineScript: |
@@ -239,7 +239,7 @@ jobs:
           inlineScript: |
             # Add APIM public IP
 
-            # ESTORE
+            # eStore
             az containerapp ingress access-restriction set \
             --name ca-${{ env.PRODUCT }}-estore-${{ env.TARGET }}-${{ vars.VERSION }} \
             --action Allow \
@@ -312,7 +312,7 @@ jobs:
         run: |
           echo PRODUCT_ESTORE=$(az apim product list --service-name apim-${{ env.ENVIRONMENT }}-${{ env.TARGET }}-${{ vars.VERSION }} --query '[?contains(displayName, `estore`)].name' -o tsv) >> $GITHUB_ENV
 
-      - name: ESTORE - Product ➕
+      - name: eStore - Product ➕
         uses: Azure/cli@v1.0.7
         if: ${{ '' == env.PRODUCT_ESTORE }}
         with:
@@ -325,7 +325,7 @@ jobs:
             --approval-required true \
             --subscription-required true
 
-      - name: ESTORE - API import ⬇️
+      - name: eStore - API import ⬇️
         uses: Azure/cli@v1.0.7
         with:
           inlineScript: |
@@ -341,7 +341,7 @@ jobs:
             --subscription-required true \
             --specification-url https://$(az containerapp show --name ca-${{ env.PRODUCT }}-estore-${{ env.TARGET }}-${{ vars.VERSION }} --query properties.latestRevisionFqdn -o tsv)/openapi/json
 
-      - name: ESTORE - Product + API 🧱
+      - name: eStore - Product + API 🧱
         uses: Azure/cli@v1.0.7
         with:
           inlineScript: |
@@ -350,7 +350,7 @@ jobs:
             --api-id $(az apim api list --service-name apim-${{ env.ENVIRONMENT }}-${{ env.TARGET }}-${{ vars.VERSION }} --filter-display-name 'ESTORE' --top 1 --query [0].name -o tsv) \
             --product-id $(az apim product list --service-name apim-${{ env.ENVIRONMENT }}-${{ env.TARGET }}-${{ vars.VERSION }} --query '[?contains(displayName, `apim-${{ env.PRODUCT }}-estore`)].name' -o tsv)
 
-      - name: ESTORE - Policy 🚧
+      - name: eStore - Policy 🚧
         uses: Azure/cli@v1.0.7
         with:
           inlineScript: |

@@ -60,7 +60,7 @@ jobs:
       - name: Timezone 🌐
         run: echo "Timezone set to ${{ env.TIMEZONE }}"
 
-  # 2. ESTORE micro-service deployment
+  # 2. eStore micro-service deployment
   estore:
     name: eStore 📦️
     needs: setup

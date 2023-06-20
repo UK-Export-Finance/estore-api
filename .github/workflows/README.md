@@ -2,7 +2,7 @@
 GitHub Actions has been widely used to define custom workflows (using YAML syntax) to build, test, lint and deploy out code directly from our public GitHub repositories.
 
 ## Infrastructure
-This GitHub Actions workflow is responsible for creating and configuring the supporting infrastructure for the APIM (API Management) ESTORE project using Azure CLI bash scripting.
+This GitHub Actions workflow is responsible for creating and configuring the supporting infrastructure for the APIM (API Management) eStore project using Azure CLI bash scripting.
 
 The workflow consists of two jobs:
 
@@ -18,7 +18,7 @@ The workflow also includes additional jobs for container app configuration (ca) 
 
 Note that the workflow utilizes Azure CLI commands and makes use of Azure credentials stored as secrets.
 
-Please note that this is a template for a GitHub Actions workflow, and its functionality may vary depending on the specific configurations and requirements of the APIM (ESTORE) project.
+Please note that this is a template for a GitHub Actions workflow, and its functionality may vary depending on the specific configurations and requirements of the APIM (eStore) project.
 
 ## Deployment
 ### Script
@@ -71,9 +71,9 @@ This workflow is triggered on push events to the `dev`, `staging`, and `producti
   - Environment 🧪: Displays the environment set to the `ENVIRONMENT` value.
   - Timezone 🌐: Displays the timezone set to the `TIMEZONE` value.
 
-##### 2. ESTORE 📦️
+##### 2. eStore 📦️
 
-- This job represents the deployment of the ESTORE micro-service.
+- This job represents the deployment of the eStore micro-service.
 - Depends on the successful completion of the **Setup** job.
 - Environment: Uses the `environment` output from the **Setup** job.
 - Environment Variables:

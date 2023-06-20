@@ -1,4 +1,4 @@
-# ESTORE Git Hub Actions
+# eStore Git Hub Actions
 #####################################
 # This GHA is responsible for initiating various test suites
 # upon a PR creation. Following test suites are executed:
