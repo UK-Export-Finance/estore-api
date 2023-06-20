@@ -59,7 +59,7 @@ describe('GraphService', () => {
       expect(result).toEqual(expectedResponse);
     });
 
-    it('calls all graph client methods on a graph serviec get request with multiple parameters and returns the response', async () => {
+    it('calls all graph client methods on a graph service get request with multiple parameters and returns the response', async () => {
       mockSuccessfulCompleteGraphRequest();
 
       const result = await graphService.get<string>({ path, filter: filterStr, expand: expandStr });

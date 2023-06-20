@@ -41,7 +41,7 @@ describe('getSiteStatusByExporterName', () => {
         .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
-      api.getWithoutAuth(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`, incorrectAuth?.headerName, incorrectAuth?.headerValue),
+      api.getWithoutAuth(getSiteStatusByExporterNameUrl({}), incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
   withCommonGraphExceptionHandlingTests({
@@ -54,7 +54,7 @@ describe('getSiteStatusByExporterName', () => {
     givenGraphServiceCallWillThrowError: (error: Error) => {
       mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
     },
-    makeRequest: () => api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`),
+    makeRequest: () => api.get(getSiteStatusByExporterNameUrl({})),
   });
 
   const statusCodeTestInputs = [
@@ -98,7 +98,7 @@ describe('getSiteStatusByExporterName', () => {
       .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
+    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({}));
 
     expect(status).toBe(404);
     expect(body).toStrictEqual({});
@@ -113,7 +113,7 @@ describe('getSiteStatusByExporterName', () => {
       .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    const { status, body } = await api.get(`/api/v1/sites?${incorrectQueryName}=${siteStatusByExporterNameQueryDto.exporterName}`);
+    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryName: incorrectQueryName }));
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
@@ -126,4 +126,14 @@ describe('getSiteStatusByExporterName', () => {
       statusCode: 400,
     });
   });
+
+  const getSiteStatusByExporterNameUrl = ({
+    queryName = 'exporterName',
+    queryValue = siteStatusByExporterNameQueryDto.exporterName,
+  }: {
+    queryName?: string;
+    queryValue?: string;
+  }) => {
+    return `/api/v1/sites?${queryName}=${queryValue}`;
+  };
 });

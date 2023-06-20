@@ -23,7 +23,6 @@ export class SiteService {
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=Title,Url,SiteStatus)',
     });
-
     if (!data.value.length) {
       throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
     }

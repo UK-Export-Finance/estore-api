@@ -30,9 +30,9 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
-    const ukefSharepointName = ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
-    const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
-    const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
+    const ukefSharepointName = options.ukefSharepointName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
+    const tfisSiteName = options.tfisSiteName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
 
     const status = options.status ?? 'Provisioning';
 
@@ -111,4 +111,7 @@ interface GenerateResult {
 
 interface GenerateOptions {
   status?: string;
+  ukefSharepointName?: string;
+  tfisSiteName?: string;
+  tfisListId?: string;
 }

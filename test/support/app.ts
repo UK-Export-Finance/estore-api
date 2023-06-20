@@ -6,10 +6,9 @@ import GraphClientService from '@ukef/modules/graph-client/graph-client.service'
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class App extends AppUnderTest {
-  mockGraphClientService: MockGraphClientService;
+  
   static async create(): Promise<MockApp> {
     const mockGraphClientService = new MockGraphClientService();
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [MainModule],
     })
@@ -24,10 +23,6 @@ export class App extends AppUnderTest {
     await nestApp.init();
 
     return { app, mockGraphClientService };
-  }
-
-  getGraphClientServiceMock(): MockGraphClientService {
-    return this.mockGraphClientService;
   }
 
   getHttpServer(): any {

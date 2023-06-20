@@ -1,6 +1,6 @@
-import { GraphAuthenticationFailedException } from '../../src/modules/graph/exception/graph-authentication-failed.exception';
-import { GraphInvalidRequestException } from '../../src/modules/graph/exception/graph-invalid-request.exception';
-import { GraphUnexpectedException } from '../../src/modules/graph/exception/graph-unexpected.exception';
+import { GraphAuthenticationFailedException } from '@ukef/modules/graph/exception/graph-authentication-failed.exception';
+import { GraphInvalidRequestException } from '@ukef/modules/graph/exception/graph-invalid-request.exception';
+import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
 
 export const commonGraphExceptionTestCases = [
   {
