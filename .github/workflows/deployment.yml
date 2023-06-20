@@ -48,7 +48,7 @@ jobs:
   # 1. Setup deployment variables
   setup:
     name: Setup 🔧
-    runs-on: [self-hosted, APIM, deployment]
+    runs-on: [self-hosted, deployment]
     outputs:
       product: ${{ env.PRODUCT }}
       environment: ${{ env.ENVIRONMENT }}
@@ -69,7 +69,7 @@ jobs:
       NAME: estore
       NAME_UPPERCASE: ESTORE
       ENVIRONMENT: ${{ needs.setup.outputs.environment }}
-    runs-on: [self-hosted, APIM, deployment]
+    runs-on: [self-hosted, deployment]
     steps:
       - name: Repository 🗃️
         uses: actions/checkout@v3

@@ -75,7 +75,7 @@ jobs:
   # 1. Setup infrastructure variables
   setup:
     name: Setup 🔧
-    runs-on: [self-hosted, APIM, infrastructure]
+    runs-on: [self-hosted, infrastructure]
     outputs:
       environment: ${{ env.ENVIRONMENT }}
       timezone: ${{ env.TIMEZONE }}
@@ -93,7 +93,7 @@ jobs:
     environment: ${{ needs.setup.outputs.environment }}
     outputs:
       environment: ${{ env.ENVIRONMENT }}
-    runs-on: [self-hosted, APIM, infrastructure]
+    runs-on: [self-hosted, infrastructure]
     steps:
       - name: Pre-production 💫
         if: contains('["dev", "staging"]', env.TARGET)
@@ -205,7 +205,7 @@ jobs:
     name: Container app 🔧
     needs: base
     environment: ${{ needs.base.outputs.environment }}
-    runs-on: [self-hosted, APIM, infrastructure]
+    runs-on: [self-hosted, infrastructure]
     steps:
       - name: Pre-production 💫
         if: contains('["dev", "staging"]', env.TARGET)
@@ -286,7 +286,7 @@ jobs:
     name: API management 🔧
     needs: base
     environment: ${{ needs.base.outputs.environment }}
-    runs-on: [self-hosted, APIM, infrastructure]
+    runs-on: [self-hosted, infrastructure]
     steps:
       - name: Pre-production 💫
         if: contains('["dev", "staging"]', env.TARGET)
