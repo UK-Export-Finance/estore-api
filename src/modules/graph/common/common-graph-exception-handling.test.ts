@@ -1,8 +1,8 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
 
+import { commonGraphExceptionTestCases } from '../../../../test/common/common-graph-exception-handling-test-cases';
 import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
 import { commonGraphExceptionHandling } from './common-graph-exception-handling';
-import { commonGraphExceptionTestCases } from '../../../../test/common/common-graph-exception-handling-test-cases';
 
 describe('commonGraphExceptionHandling', () => {
   const errorMessage = 'ErrorMessage';

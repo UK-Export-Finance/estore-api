@@ -38,7 +38,6 @@ export class SiteController {
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
     try {
       const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
-      // console.log({constroller: getSiteStatusByExporterNameResponse})
       if (getSiteStatusByExporterNameResponse.status === 'Failed') {
         res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
         return;

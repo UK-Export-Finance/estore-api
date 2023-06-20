@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { App as AppUnderTest } from '@ukef/app';
 import { MainModule } from '@ukef/main.module';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class App extends AppUnderTest {

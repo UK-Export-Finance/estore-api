@@ -1,8 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 
-import GraphClientService from '../graph-client/graph-client.service';
 import GraphService from './graph.service';
 import { withCommonGraphExceptionHandlingTests } from './graph.test-parts/with-common-graph-exception-handling-tests';
 
@@ -46,12 +44,10 @@ describe('GraphService', () => {
       expect(result).toEqual(expectedResponse);
     });
 
-
     it('calls the correct graph client methods on a graph service get request with one additional parameter and returns the response', async () => {
       mockSuccessfulCompleteGraphRequest();
 
       const result = await graphService.get<string>({ path, filter: filterStr });
-
 
       expectGraphMethodsToHaveBeenCalled({
         apiCalled: true,
@@ -74,6 +70,7 @@ describe('GraphService', () => {
         expandCalled: true,
         getCalled: true,
       });
+
       expect(result).toEqual(expectedResponse);
     });
   });

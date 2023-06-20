@@ -1,18 +1,9 @@
-// * The endpoint is documented in our OpenApi specification
-// * If the request does not match the validation rules, then the endpoint returns a 400 with a message explaining the issue
-// * If the `exporterName` is not equal to the `Title` of any items in the sites list in Sharepoint, then the endpoint returns a 404 response
-// * If the `exporterName` is equal to the `Title` of an item in the sites list in Sharepoint
-// * and that item has `Sitestatus` equal to `Failed` then the endpoint returns a 424 response with the correct response body
-// * If the `exporterName` is equal to the `Title` of an item in the sites list in Sharepoint
-// * and that item has `Sitestatus` equal to `Provisioning` then the endpoint returns a 202 response with the correct response body
-// * If the `exporterName` is equal to the `Title` of an item in the sites list in Sharepoint
-// * and that item has `Sitestatus` equal to `Created` then the endpoint returns a 200 response with the correct response body
-
 import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common/withCommonGraphExceptionHandlingTests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -31,10 +22,9 @@ describe('getSiteStatusByExporterName', () => {
     ({ api, mockGraphClientService } = await Api.create());
   });
 
-  beforeEach(() => {});
-
-  afterEach(() => {
-    jest.clearAllMocks();
+  beforeEach(() => {
+    jest.resetAllMocks();
+    resetAllWhenMocks();
   });
 
   afterAll(async () => {
@@ -54,52 +44,51 @@ describe('getSiteStatusByExporterName', () => {
     makeRequest: () => api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`),
   });
 
-  // const statusCodeTestInputs = [
-  //   {
-  //     siteStatus: 'Created',
-  //     expectedStatusCode: 200,
-  //   },
-  // {
-  //   siteStatus: 'Provisioning',
-  //   expectedStatusCode: 202,
-  // },
-  // {
-  //   siteStatus: 'Failed',
-  //   expectedStatusCode: 424,
-  // },
-  // ];
-  // it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
-  //   const { siteStatusByExporterNameQueryDto, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
-  //     new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
-  //   mockGraphClientService
-  //     .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-  //     .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-  //     .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
-  //     .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
+  const statusCodeTestInputs = [
+    {
+      siteStatus: 'Created',
+      expectedStatusCode: 200,
+    },
+    {
+      siteStatus: 'Provisioning',
+      expectedStatusCode: 202,
+    },
+    {
+      siteStatus: 'Failed',
+      expectedStatusCode: 424,
+    },
+  ];
+  it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
+    const { siteStatusByExporterNameQueryDto, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
+      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
 
-  //   const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
-  //   console.log({ test: expectedStatusCode + ' ' + siteStatus, mock: graphGetSiteStatusResponseDto.value[0].fields, body });
+    const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
 
-  // expect(status).toBe(expectedStatusCode);
-  //   expect(body).toStrictEqual(siteStatusByExporterNameResponse);
-  // });
+    expect(status).toBe(expectedStatusCode);
+    expect(body).toStrictEqual(siteStatusByExporterNameResponse);
+  });
 
-  // it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
-  //   const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
-  //     numberToGenerate: 1,
-  //   });
+  it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
+    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      numberToGenerate: 1,
+    });
 
-  //   mockGraphClientService
-  //     .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-  //     .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-  //     .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
-  //     .mockSuccessfulGraphGetCall({ value: [] });
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphGetCall({ value: [] });
 
-  //   const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
+    const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
 
-  //   expect(status).toBe(404);
-  //   expect(body).toStrictEqual({});
-  // });
+    expect(status).toBe(404);
+    expect(body).toStrictEqual({});
+  });
 
   it('returns a 400 with validation rules if request does not meet validation rules', async () => {
     const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
