@@ -40,7 +40,7 @@ on:
 
 env:
   PRODUCT: apim
-  ENVIRONMENT: ${{ github.ref_name }}
+  ENVIRONMENT: dev
   TIMEZONE: 'Europe/London'
   # Base artifact
   FROM: latest
@@ -63,7 +63,7 @@ jobs:
 
   # 2. ESTORE micro-service deployment
   estore:
-    name: ESTORE 📦️
+    name: eStore 📦️
     needs: setup
     environment: ${{ needs.setup.outputs.environment }}
     env:
