@@ -27,6 +27,7 @@ on:
       - dev
       - staging
       - production
+      - feat/iac
 
     paths:
       - 'src/**'
