@@ -1,7 +1,6 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import supertest from 'supertest';
-
 import { commonGraphExceptionTestCases } from '@ukef-test/common-test-cases/common-graph-exception-handling-test-cases';
+import supertest from 'supertest';
 
 export const withCommonGraphExceptionHandlingTests = ({
   givenRequestWouldOtherwiseSucceed,

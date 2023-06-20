@@ -1,4 +1,3 @@
-import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
@@ -12,7 +11,7 @@ jest.mock('../graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.word()  + '.sharepoint.com';;
+  const ukefSharepointName = valueGenerator.word() + '.sharepoint.com';
   const tfisSiteName = valueGenerator.word();
   const tfisListId = valueGenerator.word();
 
@@ -27,7 +26,7 @@ describe('SiteService', () => {
 
     graphServiceGetRequest = jest.fn();
     graphService.get = graphServiceGetRequest;
-    resetAllWhenMocks( )
+    resetAllWhenMocks();
   });
 
   describe('getSiteStatusByExporterName', () => {

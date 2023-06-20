@@ -22,7 +22,7 @@ class MockRequest {
 export class MockGraphClientService {
   client: Client;
   request: GraphRequest;
-  
+
   constructor() {
     this.client = new MockClient() as unknown as Client;
     this.request = new MockRequest() as unknown as GraphRequest;

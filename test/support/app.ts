@@ -6,7 +6,6 @@ import GraphClientService from '@ukef/modules/graph-client/graph-client.service'
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class App extends AppUnderTest {
-  
   static async create(): Promise<MockApp> {
     const mockGraphClientService = new MockGraphClientService();
     const moduleFixture: TestingModule = await Test.createTestingModule({
