@@ -73,21 +73,22 @@ describe('getSiteStatusByExporterName', () => {
   ];
   it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
     const {
-      siteStatusByExporterNameQueryDto,
-      siteStatusByExporterNameResponse,
-      graphServiceGetParams: { path, expand, filter },
-      graphGetSiteStatusResponseDto,
+      siteStatusByExporterNameQueryDto: modifiedSiteStatusByExporterNameQueryDto,
+      siteStatusByExporterNameResponse: modifiedSiteStatusByExporterNameResponse,
+      graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
+      graphGetSiteStatusResponseDto: modifiedGraphGetSiteStatusResponseDto,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
 
-    const { status, body } = await api.get(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`);
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(modifiedPath)
+      .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
+      .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
+      .mockSuccessfulGraphGetCall(modifiedGraphGetSiteStatusResponseDto);
+
+    const { status, body } = await api.get(`/api/v1/sites?exporterName=${modifiedSiteStatusByExporterNameQueryDto.exporterName}`);
 
     expect(status).toBe(expectedStatusCode);
-    expect(body).toStrictEqual(siteStatusByExporterNameResponse);
+    expect(body).toStrictEqual(modifiedSiteStatusByExporterNameResponse);
   });
 
   it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
