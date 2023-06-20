@@ -1,4 +1,4 @@
-import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common/withCommonGraphExceptionHandlingTests';
+import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common/with-common-exception-handling-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
