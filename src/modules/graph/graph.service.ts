@@ -38,12 +38,36 @@ export class GraphService {
       commonGraphExceptionHandling(error);
     }
   }
+
+  post<T>({ path, requestBody }: GraphPostParams): Promise<T> {
+    const request = this.createPostRequest({ path });
+    return this.makePostRequest({ request, requestBody });
+  }
+
+  private createPostRequest({ path }): GraphRequest {
+    const request = this.client.api(path);
+
+    return request;
+  }
+
+  private async makePostRequest({ request, requestBody }: { request: GraphRequest; requestBody: any }) {
+    try {
+      return await request.post(requestBody);
+    } catch (error) {
+      commonGraphExceptionHandling(error);
+    }
+  }
 }
 
 export interface GraphGetParams {
   path: string;
   filter?: string;
   expand?: string;
+}
+
+export interface GraphPostParams {
+  path: string;
+  requestBody: any;
 }
 
 export default GraphService;

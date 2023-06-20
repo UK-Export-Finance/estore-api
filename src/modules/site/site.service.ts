@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
+import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
+import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
+import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 
-import { GraphGetSiteStatusByExporterNameResponseDto } from '../graph/dto/graph-get-site-status-by-exporter-name-response.dto';
+import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 
@@ -30,5 +33,27 @@ export class SiteService {
 
     const { URL: siteId, Sitestatus: status } = data.value[0].fields;
     return { siteId, status };
+  }
+
+  async createSite(exporterName: string, newSiteId: string): Promise<CreateSiteResponse> {
+    const data = await this.graphService.post<GraphCreateSiteResponseDto>({
+      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
+      requestBody: {
+        fields: {
+          Title: exporterName,
+          URL: newSiteId,
+          HomePage: exporterName,
+          Description: exporterName,
+        },
+      },
+    });
+
+    const { URL: siteId, Sitestatus: status } = data.fields;
+    return { siteId: siteId as UkefSiteId, status };
+  }
+
+  // TODO: APIM-454 temporary helper to be replaced by MDM API POST /numbers.
+  mockSiteIdGeneration() {
+    return '03' + (Math.round(Math.random() * 899999) + 100000).toString();
   }
 }

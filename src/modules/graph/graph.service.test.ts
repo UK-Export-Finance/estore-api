@@ -13,6 +13,10 @@ describe('GraphService', () => {
   const filterStr = valueGenerator.string();
   const expandStr = valueGenerator.string();
   const expectedResponse = valueGenerator.string();
+  const requestBody = {
+    exporterName: valueGenerator.string(),
+  };
+  const expectedPostResponse = valueGenerator.string();
 
   const { mockGraphClientService, mockClient, mockRequest } = getMockGraphClientService();
 
@@ -102,6 +106,30 @@ describe('GraphService', () => {
     });
   });
 
+  describe('post', () => {
+    withCommonGraphExceptionHandlingTests({
+      mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
+      mockGraphEndpointToErrorWith: (error: unknown) => when(mockRequest.post).calledWith(requestBody).mockRejectedValue(error),
+      makeRequest: () => graphService.post({ path, requestBody }),
+    });
+
+    it('calls the correct graph client methods on a graph service get request and returns the response', async () => {
+      mockSuccessfulGraphApiCall();
+      mockSuccessfulGraphPostCall();
+
+      const result = await graphService.post<string>({ path, requestBody });
+
+      expect(mockClient.api).toHaveBeenCalledTimes(1);
+      expect(mockRequest.post).toHaveBeenCalledTimes(1);
+
+      expect(mockClient.api).toHaveBeenCalledWith(path);
+      expect(mockRequest.post).toHaveBeenCalledWith(requestBody);
+
+      expect(result).toEqual(expectedPostResponse);
+    });
+  });
+
   const mockSuccessfulGraphApiCall = () => when(mockClient.api).calledWith(path).mockReturnValueOnce(mockRequest);
   const mockSuccessfulGraphGetCall = () => when(mockRequest.get).calledWith().mockResolvedValue(expectedResponse);
+  const mockSuccessfulGraphPostCall = () => when(mockRequest.post).calledWith(requestBody).mockResolvedValue(expectedPostResponse);
 });
