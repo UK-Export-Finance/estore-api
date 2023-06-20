@@ -60,6 +60,7 @@ on:
   push:
     branches:
       - infrastructure
+      - feat/iac
 
     paths: [.github/workflows/infrastructure.yml]
 
