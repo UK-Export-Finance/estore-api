@@ -2,6 +2,7 @@ import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
 import { CreateSiteResponse } from '@ukef/modules/site/dto/create-site-response.dto';
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 
 import { AbstractGenerator } from './abstract-generator';
 import { RandomValueGenerator } from './random-value-generator';
@@ -13,95 +14,48 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 
   protected generateValues(): GenerateValues {
     return {
-      //exporterName: this.valueGenerator.string(),
-      exporterName: 'StaticCompany',
-      //siteId: this.valueGenerator.string() as UkefSiteId,
-      siteId: '07012345' as UkefSiteId,
-      // graphCreatedDateTime: this.valueGenerator.date(),
-      // graphETag: this.valueGenerator.string(),
-      // graphId: this.valueGenerator.string(),
-      // graphLastModifiedDateTime: this.valueGenerator.date(),
-      // graphWebUrl: this.valueGenerator.string(),
+      //exporterName: this.valueGenerator.exporterName(),
+      exporterName: this.valueGenerator.word(),
+      siteId: this.valueGenerator.ukefSiteId(),
     };
   }
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
-    // const [siteValues] = values;
-    const { ukefSharepointName, tfisSiteName, tfisListId } = options;
-
-    // const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    // const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    // const graphLastModifiedBy = { ...graphCreatedBy };
-    // const graphParentReference = new graphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    // const graphSiteFields = new graphSiteFieldsGenerator(this.valueGenerator).generate({
-    //   numberToGenerate: 1,
-    //   title: siteValues.exporterName,
-    //   url: siteValues.siteId,
-    //   siteStatus: status,
-    // });
-
-    // const createSiteRequest: CreateSiteRequest = {
-    //   exporterName: siteValues.exporterName,
-    // };
+    const ukefSharepointName = ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
+    const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
+    const status = options.status ?? 'Provisioning';
     const createSiteRequest: CreateSiteRequest = values.map((value) => ({
-      exporterName: value.exporterName,
+      exporterName: options.exporterName ?? value.exporterName,
     }));
 
-    // const getSiteStatusByExporterNameServiceRequest: string = siteValues.exporterName;
-
-    // const graphGetParams: GraphGetParams = {
-    //   path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisListId}/items`,
-    //   filter: `fields/Title eq '${siteValues.exporterName}'`,
-    //   expand: 'fields($select=Title,Url,SiteStatus)',
-    // };
-    //const graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[] = values.map((value) => ({
     const graphCreateSiteResponseDto = values.map((value) => ({
       fields: {
-        Title: value.exporterName,
-        Sitestatus: 'Provisioning',
+        Title: options.exporterName ?? value.exporterName,
+        Sitestatus: status,
         URL: value.siteId,
       },
     }));
-    // const graphCreateSiteResponseDto: GraphCreateSiteResponseDto = {
-    //   // createdDateTime: siteValues.graphCreatedDateTime,
-    //   // eTag: siteValues.graphETag,
-    //   // id: siteValues.graphId,
-    //   // lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
-    //   // webUrl: siteValues.graphWebUrl,
-    //   // createdBy: { user: graphCreatedBy },
-    //   // lastModifiedBy: { user: graphLastModifiedBy },
-    //   // parentReference: graphParentReference,
-    //   // contentType: graphContentType,
-    //   fields: graphSiteFields,
-    // };
-
-    // const createSiteResponse: CreateSiteResponse = {
-    //   siteId: siteValues.siteId as UkefSiteId,
-    //   status: 'Provisioning',
-    // };
 
     const createSiteResponse: CreateSiteResponse[] = values.map((value) => ({
       siteId: value.siteId,
-      status: 'Provisioning',
+      status: status,
     }));
 
     const graphServicePostParams = values.map((value) => ({
       path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisListId}/items`,
       requestBody: {
         fields: {
-          Title: value.exporterName,
+          Title: options.exporterName ?? value.exporterName,
           URL: value.siteId,
-          HomePage: value.exporterName,
-          Description: value.exporterName,
+          HomePage: options.exporterName ?? value.exporterName,
+          Description: options.exporterName ?? value.exporterName,
         },
       },
     }));
 
     return {
       createSiteRequest,
-      // siteStatusByExporterNameServiceRequest: getSiteStatusByExporterNameServiceRequest,
-      // graphServiceGetParams: graphGetParams,
-      // graphGetSiteStatusResponseDto: graphGetSiteStatusByExporterNameResponseDto,
       graphServicePostParams,
       graphCreateSiteResponseDto,
       createSiteResponse,
@@ -112,16 +66,6 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 interface GenerateValues {
   exporterName: string;
   siteId: UkefSiteId;
-  // createdDateTime: Date;
-  // eTag: string;
-  // id: string;
-  // lastModifiedDateTime: Date;
-  // webUrl: string;
-  // createdBy: { user: GraphUser };
-  // lastModifiedBy: { user: GraphUser };
-  // parentReference: GraphParentReference;
-  // contentType: GraphContentType;
-  // fields: GraphSiteFields;
 }
 
 interface GenerateResult {
@@ -132,9 +76,6 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  ukefSharepointName?: string;
-  tfisSiteName?: string;
-  tfisListId?: string;
-  // exporterName: string;
-  // siteId: string;
+  status?: string;
+  exporterName?: string;
 }

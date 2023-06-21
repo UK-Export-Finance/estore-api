@@ -3,11 +3,14 @@ import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables'
 import request from 'supertest';
 
 import { App } from './app';
+import { MockGraphClientService } from './mocks/graph-client.service.mock';
+import { MockMockSiteIdGeneratorService } from './mocks/mockSiteIdGenerator.service.mock';
 
 export class Api {
-  static async create(): Promise<Api> {
-    const app = await App.create();
-    return new Api(app);
+  static async create(): Promise<CreateApiResponse> {
+    const { app, mockGraphClientService, mockMockSiteIdGeneratorService } = await App.create();
+    const api = new Api(app);
+    return { api, mockGraphClientService, mockMockSiteIdGeneratorService };
   }
 
   constructor(private readonly app: App) {}
@@ -44,6 +47,10 @@ export class Api {
     return this.app.destroy();
   }
 
+  getGraphClientServiceMock(): MockGraphClientService {
+    return this.app.getGraphClientServiceMock();
+  }
+
   private request(): request.SuperTest<request.Test> {
     return request(this.app.getHttpServer());
   }
@@ -53,4 +60,10 @@ export class Api {
     const strategy = AUTH.STRATEGY;
     return { [strategy]: apiKey };
   }
+}
+
+interface CreateApiResponse {
+  api: Api;
+  mockGraphClientService: MockGraphClientService;
+  mockMockSiteIdGeneratorService: MockMockSiteIdGeneratorService;
 }

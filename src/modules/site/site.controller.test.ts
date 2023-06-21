@@ -6,12 +6,14 @@ import { Response } from 'express';
 import { when } from 'jest-when';
 
 import { SiteNotFoundException } from './exception/site-not-found.exception';
+import { MockSiteIdGeneratorService } from './mockSiteIdGeneratorService';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
 
 describe('SiteController', () => {
   const valueGenerator = new RandomValueGenerator();
   const siteService = new SiteService(null, null);
+  const mockSiteIdGeneratorService = new MockSiteIdGeneratorService();
 
   let siteController: SiteController;
 
@@ -22,11 +24,11 @@ describe('SiteController', () => {
   siteService.createSite = siteCreateSite;
 
   const siteMockSiteIdGeneration = jest.fn();
-  siteService.mockSiteIdGeneration = siteMockSiteIdGeneration;
+  mockSiteIdGeneratorService.newId = siteMockSiteIdGeneration;
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();
-    siteController = new SiteController(siteService);
+    siteController = new SiteController(siteService, mockSiteIdGeneratorService);
   });
 
   describe('getSiteStatusByExporterName', () => {
@@ -148,6 +150,7 @@ describe('SiteController', () => {
 
       await siteController.createSite(createSiteRequest, responseMock);
 
+      expect(siteCreateSite).toHaveBeenCalledTimes(1);
       expect(responseMock.json).toHaveBeenCalledTimes(1);
       expect(responseMock.json).toHaveBeenCalledWith({
         siteId: siteId,

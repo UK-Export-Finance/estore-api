@@ -9,7 +9,7 @@ export class GraphService {
   private readonly client: Client;
 
   constructor(graphClientService: GraphClientService) {
-    this.client = graphClientService.getClient();
+    this.client = graphClientService.client;
   }
 
   async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {

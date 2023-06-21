@@ -2,12 +2,13 @@ import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
+import { graphContentTypeGenerator } from '@ukef-test/support/generator/common/graph-content-type-generator';
+import { graphParentReferenceGenerator } from '@ukef-test/support/generator/common/graph-parent-reference-generator';
+import { graphSiteFieldsGenerator } from '@ukef-test/support/generator/common/graph-site-fields-generator';
+import { graphUserGenerator } from '@ukef-test/support/generator/common/graph-user-generator';
 
+import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
-import { graphContentTypeGenerator } from './common/graph-content-type-generator';
-import { graphParentReferenceGenerator } from './common/graph-parent-reference-generator';
-import { graphSiteFieldsGenerator } from './common/graph-site-fields-generator';
-import { graphUserGenerator } from './common/graph-user-generator';
 import { RandomValueGenerator } from './random-value-generator';
 
 export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
@@ -17,19 +18,21 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
   protected generateValues(): GenerateValues {
     return {
-      exporterName: this.valueGenerator.string(),
+      exporterName: this.valueGenerator.word(),
       siteId: this.valueGenerator.string(),
       graphCreatedDateTime: this.valueGenerator.date(),
       graphETag: this.valueGenerator.string(),
       graphId: this.valueGenerator.string(),
       graphLastModifiedDateTime: this.valueGenerator.date(),
-      graphWebUrl: this.valueGenerator.string(),
+      graphWebUrl: this.valueGenerator.httpsUrl(),
     };
   }
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
-    const { ukefSharepointName, tfisSiteName, tfisListId } = options;
+    const ukefSharepointName = ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
+    const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
     const status = options.status ?? 'Provisioning';
 
     const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
@@ -107,7 +110,4 @@ interface GenerateResult {
 
 interface GenerateOptions {
   status?: string;
-  ukefSharepointName?: string;
-  tfisSiteName?: string;
-  tfisListId?: string;
 }

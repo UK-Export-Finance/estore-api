@@ -7,7 +7,7 @@ import GraphConfig from '@ukef/config/graph.config';
 
 @Injectable()
 export class GraphClientService {
-  private client: Client;
+  client: Client;
 
   constructor(
     @Inject(GraphConfig.KEY)

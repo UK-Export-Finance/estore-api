@@ -32,9 +32,6 @@ export class App {
         whitelist: true,
         transform: true,
         forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
       }),
     );
 

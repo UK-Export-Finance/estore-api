@@ -9,6 +9,7 @@ export const UKEFID = {
     TEN_DIGIT_REGEX: /^00\d{8}$/,
   },
   SITE_ID: {
-    REGEX: /^07\d{6}$/,
+    PREFIX: '0070',
+    REGEX: /^0070\d{4}$/,
   },
 };

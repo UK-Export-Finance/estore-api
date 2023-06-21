@@ -18,11 +18,12 @@ import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
+import { MockSiteIdGeneratorService } from './mockSiteIdGeneratorService';
 import { SiteService } from './site.service';
 
 @Controller('sites')
 export class SiteController {
-  constructor(private readonly service: SiteService) {}
+  constructor(private readonly service: SiteService, private readonly mockSiteIdGeneratorService: MockSiteIdGeneratorService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get the site status by exporter name' })
@@ -72,7 +73,7 @@ export class SiteController {
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
         // Site doesn't exists, add item to sharepoint create site list.
-        const siteId = this.service.mockSiteIdGeneration();
+        const siteId = this.mockSiteIdGeneratorService.newId();
         const createSiteResponse = await this.service.createSite(exporterName, siteId);
         res.status(HttpStatusCode.Accepted).json(createSiteResponse);
         return;
