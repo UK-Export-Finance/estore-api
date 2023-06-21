@@ -1,3 +1,4 @@
+import { FileGetPropertiesResponse } from '@azure/storage-file-share';
 import { BadRequestException } from '@nestjs/common';
 import { MAX_FILE_SIZE } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -12,21 +13,22 @@ describe('FileService', () => {
   const fileLocationPath = valueGenerator.string();
   const expectedFileSize = valueGenerator.integer({ min: 1, max: MAX_FILE_SIZE });
 
+  let mockDtfsStorageFileService: DtfsStorageFileService;
+  let mockDtfsStorageFileServiceGetFileProperties: jest.Mock;
   let service: FileService;
 
-  let dtfsStorageFileServiceGetFileProperties: jest.Mock;
-
   beforeEach(() => {
-    const dtfsStorageFileService = new DtfsStorageFileService({ baseUrl: null, accountName: null, accountKey: null });
-    dtfsStorageFileServiceGetFileProperties = jest.fn();
-    dtfsStorageFileService.getFileProperties = dtfsStorageFileServiceGetFileProperties;
-
-    service = new FileService(dtfsStorageFileService);
+    mockDtfsStorageFileService = {} as DtfsStorageFileService;
+    mockDtfsStorageFileServiceGetFileProperties = jest.fn();
+    mockDtfsStorageFileService.getFileProperties = mockDtfsStorageFileServiceGetFileProperties;
+    service = new FileService(mockDtfsStorageFileService);
   });
 
   describe('getFileSize', () => {
     it('returns the file size', async () => {
-      when(dtfsStorageFileServiceGetFileProperties).calledWith(fileName, fileLocationPath).mockResolvedValueOnce({ contentLength: expectedFileSize });
+      when(mockDtfsStorageFileServiceGetFileProperties)
+        .calledWith(fileName, fileLocationPath)
+        .mockResolvedValueOnce({ contentLength: expectedFileSize } as FileGetPropertiesResponse);
 
       const { fileSize } = await service.getFileSize({ fileName, fileLocationPath });
 
@@ -34,9 +36,9 @@ describe('FileService', () => {
     });
 
     it('throws a BadRequestException if the file size exceeds the maximum allowed', async () => {
-      when(dtfsStorageFileServiceGetFileProperties)
+      when(mockDtfsStorageFileServiceGetFileProperties)
         .calledWith(fileName, fileLocationPath)
-        .mockResolvedValueOnce({ contentLength: MAX_FILE_SIZE + 1 });
+        .mockResolvedValueOnce({ contentLength: MAX_FILE_SIZE + 1 } as FileGetPropertiesResponse);
 
       const getFileSizePromise = service.getFileSize({ fileName, fileLocationPath });
 
