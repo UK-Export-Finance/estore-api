@@ -1,11 +1,8 @@
 import { Controller, Post } from '@nestjs/common';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
-import {
-  GetFileSizeIfExistsAndNotTooLargeRequest,
-  GetFileSizeIfExistsAndNotTooLargeRequestItem,
-} from './dto/get-file-size-if-exists-and-not-too-large-request.dto';
-import { GetFileSizeIfExistsAndNotTooLargeResponse } from './dto/get-file-size-if-exists-and-not-too-large-response.dto';
+import { GetFileSizeRequest, GetFileSizeRequestItem } from './dto/get-file-size-request.dto';
+import { GetFileSizeResponse } from './dto/get-file-size-response.dto';
 import { FileService } from './file.service';
 
 @Controller('temporary-file-check')
@@ -13,10 +10,8 @@ export class TemporaryFileCheckController {
   constructor(private readonly service: FileService) {}
 
   @Post()
-  getFileSizeIfExistsAndNotTooLargeResponse(
-    @ValidatedArrayBody({ items: GetFileSizeIfExistsAndNotTooLargeRequestItem }) body: GetFileSizeIfExistsAndNotTooLargeRequest,
-  ): Promise<GetFileSizeIfExistsAndNotTooLargeResponse> {
+  getFileSize(@ValidatedArrayBody({ items: GetFileSizeRequestItem }) body: GetFileSizeRequest): Promise<GetFileSizeResponse> {
     const [fileToCheck] = body;
-    return this.service.getFileSizeIfExistsAndNotTooLarge(fileToCheck);
+    return this.service.getFileSize(fileToCheck);
   }
 }

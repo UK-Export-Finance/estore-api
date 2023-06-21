@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DtfsModule } from '@ukef/modules/dtfs/dtfs.module';
+import { DtfsStorageModule } from '@ukef/modules/dtfs-storage/dtfs-storage.module';
 
 import { FileService } from './file.service';
 import { TemporaryFileCheckController } from './temporary-file-check.controller';
 
 @Module({
-  imports: [DtfsModule],
+  imports: [DtfsStorageModule],
   controllers: [TemporaryFileCheckController],
   providers: [FileService],
 })

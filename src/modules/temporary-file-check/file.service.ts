@@ -1,19 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { MAX_FILE_SIZE } from '@ukef/constants';
-import { DtfsFileService } from '@ukef/modules/dtfs/dtfs-file.service';
+import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
 
-import { DtfsAuthenticationService } from '../dtfs-authentication/dtfs-authentication.service';
-import { GetFileSizeIfExistsAndNotTooLargeRequestItem } from './dto/get-file-size-if-exists-and-not-too-large-request.dto';
-import { GetFileSizeIfExistsAndNotTooLargeResponse } from './dto/get-file-size-if-exists-and-not-too-large-response.dto';
+import { GetFileSizeRequestItem } from './dto/get-file-size-request.dto';
+import { GetFileSizeResponse } from './dto/get-file-size-response.dto';
 
 @Injectable()
 export class FileService {
-  constructor(private readonly dtfsAuthenticationService: DtfsAuthenticationService, private readonly dtfsFileService: DtfsFileService) {}
+  constructor(private readonly dtfsStorageFileService: DtfsStorageFileService) {}
 
-  async getFileSizeIfExistsAndNotTooLarge(fileToCheck: GetFileSizeIfExistsAndNotTooLargeRequestItem): Promise<GetFileSizeIfExistsAndNotTooLargeResponse> {
+  async getFileSize(fileToCheck: GetFileSizeRequestItem): Promise<GetFileSizeResponse> {
     const { fileName, fileLocationPath } = fileToCheck;
-    const idToken = await this.getIdToken();
-    const fileSize = await this.dtfsFileService.getFileSize(fileName, fileLocationPath, idToken);
+    const fileSize = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => {
+      return response.contentLength as number;
+    });
     if (fileSize > MAX_FILE_SIZE) {
       throw new BadRequestException('Bad request', 'The file exceeds the maximum allowed size.');
     }
@@ -21,9 +21,5 @@ export class FileService {
     return {
       fileSize,
     };
-  }
-
-  private getIdToken(): Promise<string> {
-    return this.dtfsAuthenticationService.getIdToken();
   }
 }
