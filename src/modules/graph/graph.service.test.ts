@@ -3,7 +3,7 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { withKnownGraphExceptionHandlingTests } from './graph.test-parts/with-known-graph-exception-handling-tests';
+import { withKnownGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();

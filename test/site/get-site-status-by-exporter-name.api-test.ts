@@ -1,5 +1,5 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withKnownGraphExceptionHandlingTests } from '@ukef-test/common-tests/known-graph-exception-handling-api-tests';
+import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -44,7 +44,7 @@ describe('getSiteStatusByExporterName', () => {
       api.getWithoutAuth(getSiteStatusByExporterNameUrl({}), incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  withKnownGraphExceptionHandlingTests({
+  withSharedGraphExceptionHandlingTests({
     givenRequestWouldOtherwiseSucceed: () => {
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(path)

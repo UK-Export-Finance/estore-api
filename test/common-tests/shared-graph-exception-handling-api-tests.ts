@@ -1,8 +1,8 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { knownGraphExceptionTestCases } from '@ukef-test/common-test-cases/known-graph-exception-handling-test-cases';
+import { sharedGraphExceptionTestCases } from '@ukef-test/common-test-cases/shared-graph-exception-handling-test-cases';
 import supertest from 'supertest';
 
-export const withKnownGraphExceptionHandlingTests = ({
+export const withSharedGraphExceptionHandlingTests = ({
   givenRequestWouldOtherwiseSucceed,
   givenGraphServiceCallWillThrowError,
   makeRequest,
@@ -11,11 +11,11 @@ export const withKnownGraphExceptionHandlingTests = ({
   givenGraphServiceCallWillThrowError: (error: Error) => void;
   makeRequest: () => supertest.Test;
 }) => {
-  describe('Handles known Microsoft Graph exceptions', () => {
+  describe('Handles shared Microsoft Graph exceptions', () => {
     const graphStatusCode = 0;
     const graphErrorMessage = 'GraphErrorMessage';
 
-    it.each(knownGraphExceptionTestCases)(
+    it.each(sharedGraphExceptionTestCases)(
       'returns a 500 with message "Internal server error" if Microsoft Graph responds with code $graphErrorCode',
       async ({ graphErrorCode }) => {
         const graphError = new GraphError(graphStatusCode, graphErrorMessage);
