@@ -42,7 +42,7 @@ export class SiteController {
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
     try {
       const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
-      this.setGetSiteExpressResponse(res, getSiteStatusByExporterNameResponse);
+      this.setSiteStatusResponse(res, getSiteStatusByExporterNameResponse);
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
         res.status(HttpStatusCode.NotFound).json({});
@@ -69,20 +69,20 @@ export class SiteController {
     const exporterName = createSiteDto[0].exporterName;
     try {
       const existingSite = await this.service.getSiteStatusByExporterName(exporterName);
-      this.setGetSiteExpressResponse(res, existingSite);
+      this.setSiteStatusResponse(res, existingSite);
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
         // Site doesn't exists, add item to sharepoint create site list.
         const siteId = this.mockSiteIdGeneratorService.newId();
         const createSiteResponse = await this.service.createSite(exporterName, siteId);
-        res.status(HttpStatusCode.Accepted).json(createSiteResponse);
+        this.setSiteStatusResponse(res, createSiteResponse);
         return;
       }
       throw error;
     }
   }
 
-  private setGetSiteExpressResponse(res, getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse): void {
+  private setSiteStatusResponse(res, getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse): void {
     if (getSiteStatusByExporterNameResponse.status === 'Failed') {
       res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
       return;
