@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
@@ -58,9 +57,9 @@ describe('SiteController', () => {
       expect(responseMock.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    it('returns a status code of 404 and the expected response if site service throws a SiteNotFoundException', async () => {
-      const siteNotFoundError = new SiteNotFoundException(`Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`);
-      const expectedResponse = new NotFoundException('Not found', { cause: siteNotFoundError });
+    it('returns the expected response if site service throws a SiteNotFoundException', async () => {
+      const errorMessage = `Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`;
+      const siteNotFoundError = new SiteNotFoundException(errorMessage);
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
@@ -70,7 +69,7 @@ describe('SiteController', () => {
 
       const responsePromise = siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
 
-      await expect(responsePromise).rejects.toThrow(expectedResponse);
+      await expect(responsePromise).rejects.toThrow(errorMessage);
     });
 
     it('throws an error if site service throws an error which is not SiteNotFoundException', async () => {
