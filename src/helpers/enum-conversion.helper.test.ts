@@ -13,17 +13,17 @@ describe('EnumConversion helper', () => {
     VALUE_3 = 3,
   }
 
-    it('should convert a valid string value to the enum', () => {
-      expect(convertToEnum<typeof TestStringEnum>('value 1',  TestStringEnum)).toBe(TestStringEnum.VALUE_1);
-    });
-
-    it('should convert a valid number value to the enum', () => {
-      expect(convertToEnum<typeof TestNumberEnum>(1, TestNumberEnum)).toBe(TestNumberEnum.VALUE_1);
-    });
-
-    it('should throw an error for an invalid value', () => {
-        const valueNotInList=  'value not in list';
-      expect(() => convertToEnum<typeof TestStringEnum>(valueNotInList, TestStringEnum)).toThrowError(`Enum does not contain value: ${valueNotInList}`);
-    });
+  it('should convert a valid string value to the enum', () => {
+    expect(convertToEnum<typeof TestStringEnum>('value 1', TestStringEnum)).toBe(TestStringEnum.VALUE_1);
   });
 
+  it('should convert a valid number value to the enum', () => {
+    expect(convertToEnum<typeof TestNumberEnum>(1, TestNumberEnum)).toBe(TestNumberEnum.VALUE_1);
+  });
+
+  it('should throw an error for an invalid value', () => {
+    const valueNotInList = 'value not in list';
+
+    expect(() => convertToEnum<typeof TestStringEnum>(valueNotInList, TestStringEnum)).toThrow(`Enum does not contain value: ${valueNotInList}`);
+  });
+});

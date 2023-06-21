@@ -1,6 +1,6 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { EnumConversionException } from './enum-conversion.exception';
 
+import { EnumConversionException } from './enum-conversion.exception';
 
 describe('EnumConversionException', () => {
   const valueGenerator = new RandomValueGenerator();

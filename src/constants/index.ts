@@ -8,5 +8,5 @@
  */
 
 export * from './auth.constant';
-export * from './examples.constant';
 export * from './enum.constant';
+export * from './examples.constant';

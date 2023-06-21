@@ -1,4 +1,4 @@
-import { ENUMS } from "./enum.constant";
+import { ENUMS } from './enum.constant';
 
 export const EXAMPLES = {
   SITE_ID: '12345678',

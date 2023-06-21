@@ -1,4 +1,3 @@
-import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { EnumConversionException } from './exception/enum-conversion.exception';
 
 export const convertToEnum = <T>(value: unknown, enumObject: T): T[keyof T] => {
