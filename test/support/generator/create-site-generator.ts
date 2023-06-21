@@ -21,9 +21,9 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
   }
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
-    const ukefSharepointName = ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
-    const tfisSiteName = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
-    const tfisListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
+    const ukefSharepointName = options.ukefSharepointName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
+    const tfisSiteName = options.tfisSiteName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
     const status = options.status ?? 'Provisioning';
     const createSiteRequest: CreateSiteRequest = values.map((value) => ({
       exporterName: options.exporterName ?? value.exporterName,
@@ -78,4 +78,7 @@ interface GenerateResult {
 interface GenerateOptions {
   status?: string;
   exporterName?: string;
+  ukefSharepointName?: string;
+  tfisSiteName?: string;
+  tfisListId?: string;
 }

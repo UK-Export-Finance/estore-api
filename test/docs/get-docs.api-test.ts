@@ -4,7 +4,7 @@ describe('GET /openapi/yaml', () => {
   let api: Api;
 
   beforeAll(async () => {
-    api = await Api.create();
+    ({ api } = await Api.create());
   });
 
   afterAll(async () => {
@@ -26,7 +26,7 @@ describe('GET /openapi/json', () => {
   let api: Api;
 
   beforeAll(async () => {
-    api = await Api.create();
+    ({ api } = await Api.create());
   });
 
   afterAll(async () => {
