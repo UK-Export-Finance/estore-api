@@ -1,5 +1,5 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common-tests/common-graph-exception-handling-api-tests';
+import { withKnownGraphExceptionHandlingTests } from '@ukef-test/common-tests/known-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -44,7 +44,7 @@ describe('getSiteStatusByExporterName', () => {
       api.getWithoutAuth(getSiteStatusByExporterNameUrl({}), incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  withCommonGraphExceptionHandlingTests({
+  withKnownGraphExceptionHandlingTests({
     givenRequestWouldOtherwiseSucceed: () => {
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(path)
@@ -71,7 +71,7 @@ describe('getSiteStatusByExporterName', () => {
       expectedStatusCode: 424,
     },
   ];
-  it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
+  it.each(statusCodeTestInputs)('returns $expectedStatusCode if site status in Sharepoint is $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
     const {
       siteStatusByExporterNameQueryDto: modifiedSiteStatusByExporterNameQueryDto,
       siteStatusByExporterNameResponse: modifiedSiteStatusByExporterNameResponse,
@@ -101,28 +101,60 @@ describe('getSiteStatusByExporterName', () => {
     const { status, body } = await api.get(getSiteStatusByExporterNameUrl({}));
 
     expect(status).toBe(404);
-    expect(body).toStrictEqual({});
+    expect(body).toStrictEqual({ siteId: '' });
   });
 
-  it('returns a 400 with validation rules if request does not meet validation rules', async () => {
+  it('returns a 400 with message containing "property does not exist" if query property does not exist', async () => {
     const incorrectQueryName = 'IncorrectQueryName';
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
       .mockSuccessfulExpandCallWithExpandString(expand)
       .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ value: [] });
+      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
 
     const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryName: incorrectQueryName }));
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
       error: 'Bad Request',
-      message: [
-        `property ${incorrectQueryName} should not exist`,
-        'exporterName must be a string',
-        'exporterName must be longer than or equal to 0 characters',
-      ],
+      message: expect.arrayContaining([`property ${incorrectQueryName} should not exist`]),
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 with message containing "exporterName must be longer than or equal to 1 characters" if exporterName is an empty string', async () => {
+    const incorrectQueryValue = '';
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
+      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
+
+    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      error: 'Bad Request',
+      message: expect.arrayContaining([`exporterName must be longer than or equal to 1 characters`]),
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 with message containing the validation parameters of the query if no query is present', async () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
+      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
+
+    const { status, body } = await api.get('/api/v1/sites');
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      error: 'Bad Request',
+      message: expect.arrayContaining(['exporterName must be longer than or equal to 1 characters', 'exporterName must be a string']),
       statusCode: 400,
     });
   });

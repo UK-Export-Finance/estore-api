@@ -53,7 +53,7 @@ export class SiteController {
       throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
-        res.status(HttpStatusCode.NotFound).json({});
+        res.status(HttpStatusCode.NotFound).json({ siteId: '' });
         return;
       }
       throw error;

@@ -1,8 +1,9 @@
 import { GraphError } from '@microsoft/microsoft-graph-client/lib/src/GraphError';
 import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
-import { commonGraphExceptionTestCases } from '@ukef-test/common-test-cases/common-graph-exception-handling-test-cases';
+import { knownGraphExceptionTestCases } from '@ukef-test/common-test-cases/known-graph-exception-handling-test-cases';
+import { resetAllWhenMocks } from 'jest-when';
 
-export const withCommonGraphExceptionHandlingTests = ({
+export const withKnownGraphExceptionHandlingTests = ({
   mockSuccessfulGraphApiCall,
   mockGraphEndpointToErrorWith,
   makeRequest,
@@ -13,13 +14,14 @@ export const withCommonGraphExceptionHandlingTests = ({
 }) => {
   beforeEach(() => {
     jest.resetAllMocks();
+    resetAllWhenMocks();
   });
 
-  describe('Common Graph Exceptions', () => {
+  describe('Known Graph Exceptions', () => {
     const errorMessage = 'ErrorMessage';
     const statusCode = 0;
 
-    describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ graphErrorCode, expectedError }) => {
+    describe.each(knownGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ graphErrorCode, expectedError }) => {
       const graphError = new GraphError(statusCode, errorMessage);
       graphError.code = graphErrorCode;
       it(`throws a ${expectedError.name}`, async () => {

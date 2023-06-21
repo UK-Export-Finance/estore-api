@@ -2,7 +2,7 @@ import { GraphAuthenticationFailedException } from '@ukef/modules/graph/exceptio
 import { GraphInvalidRequestException } from '@ukef/modules/graph/exception/graph-invalid-request.exception';
 import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
 
-export const commonGraphExceptionTestCases = [
+export const knownGraphExceptionTestCases = [
   {
     graphErrorCode: 'CredentialUnavailableError',
     expectedError: GraphAuthenticationFailedException,

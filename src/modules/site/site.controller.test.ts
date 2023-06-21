@@ -69,7 +69,7 @@ describe('SiteController', () => {
       await siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
 
       expect(responseMock.json).toHaveBeenCalledTimes(1);
-      expect(responseMock.json).toHaveBeenCalledWith({});
+      expect(responseMock.json).toHaveBeenCalledWith({ siteId: '' });
       expect(responseMock.status).toHaveBeenCalledTimes(1);
       expect(responseMock.status).toHaveBeenCalledWith(404);
     });

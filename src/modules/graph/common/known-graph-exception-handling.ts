@@ -4,7 +4,7 @@ import { GraphAuthenticationFailedException } from '../exception/graph-authentic
 import { GraphInvalidRequestException } from '../exception/graph-invalid-request.exception';
 import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
 
-export const commonGraphExceptionHandling = (error: unknown) => {
+export const knownGraphExceptionHandling = (error: unknown) => {
   if (!(error instanceof Error)) {
     throw new GraphUnexpectedException('An unexpected error occurred.');
   }

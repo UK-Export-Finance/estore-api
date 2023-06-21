@@ -2,7 +2,7 @@ import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
 
 import GraphClientService from '../graph-client/graph-client.service';
-import { commonGraphExceptionHandling } from './common/common-graph-exception-handling';
+import { knownGraphExceptionHandling } from './common/known-graph-exception-handling';
 
 @Injectable()
 export class GraphService {
@@ -35,7 +35,7 @@ export class GraphService {
     try {
       return await request.get();
     } catch (error) {
-      commonGraphExceptionHandling(error);
+      knownGraphExceptionHandling(error);
     }
   }
 }
