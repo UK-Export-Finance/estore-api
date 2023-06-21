@@ -143,7 +143,7 @@ this.logger.log({ id: 'your message here' }, 'context-name');
 ```
 
 ### Authentication
-The ESTORE API requires an API Key in order to access its resources.
+The eStore API requires an API Key in order to access its resources.
 This can be achieved by providing a randomised API Key as an environment variable (`API_KEY`) which defines the name of the header passed to the API.
 
 

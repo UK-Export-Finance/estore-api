@@ -8,21 +8,30 @@ services:
     restart: always
     command: npm run start:prod
     ports:
-      - 3002:3002
+      - ${PORT}:${PORT}
     volumes:
-      - ./:/app/src:ro
+      - ./:/app/src:rw
     environment:
       PORT:
       NODE_ENV:
       TZ:
-      LOG_LEVEL:
       SWAGGER_USER:
       SWAGGER_PASSWORD:
       API_KEY:
-
+      APIM_MDM_URL:
+      APIM_MDM_KEY:
+      APIM_MDM_VALUE:
+      GRAPH_BASE_URL:
+      GRAPH_AUTHENTICATION_TENANT_ID:
+      GRAPH_AUTHENTICATION_CLIENT_ID:
+      GRAPH_AUTHENTICATION_CLIENT_SECRET:
+      SHAREPOINT_MAIN_SITE_NAME:
+      SHAREPOINT_TFIS_SITE_NAME:
+      SHAREPOINT_TFIS_LIST_ID:
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:${PORT}']
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT}"]
       retries: 3
       interval: 60s
       timeout: 10s
-      start_period: 40s
+      start_period: 30s
+
