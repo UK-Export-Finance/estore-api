@@ -23,10 +23,6 @@ export class GraphClientService {
       authProvider,
     });
   }
-
-  getClient(): Client {
-    return this.client;
-  }
 }
 
 export default GraphClientService;

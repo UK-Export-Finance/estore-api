@@ -14,8 +14,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 
   protected generateValues(): GenerateValues {
     return {
-      //exporterName: this.valueGenerator.exporterName(),
-      exporterName: this.valueGenerator.word(),
+      exporterName: this.valueGenerator.exporterName(),
       siteId: this.valueGenerator.ukefSiteId(),
     };
   }

@@ -1,16 +1,16 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
+import { commonGraphExceptionTestCases } from '@ukef-test/common-test-cases/common-graph-exception-handling-test-cases';
 
 import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
 import { commonGraphExceptionHandling } from './common-graph-exception-handling';
-import { commonGraphExceptionTestCases } from './test-parts/common-graph-exception-handling-test-parts';
 
 describe('commonGraphExceptionHandling', () => {
   const errorMessage = 'ErrorMessage';
   const statusCode = 0;
 
-  describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ errorCode, expectedError }) => {
+  describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $graphErrorCode', ({ graphErrorCode, expectedError }) => {
     const graphError = new GraphError(statusCode, errorMessage);
-    graphError.code = errorCode;
+    graphError.code = graphErrorCode;
 
     it(`throws a ${expectedError.name}`, () => {
       expect(() => commonGraphExceptionHandling(graphError)).toThrow(expectedError);

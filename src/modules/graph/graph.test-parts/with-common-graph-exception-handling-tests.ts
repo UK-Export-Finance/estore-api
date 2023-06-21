@@ -1,7 +1,6 @@
 import { GraphError } from '@microsoft/microsoft-graph-client/lib/src/GraphError';
-
-import { commonGraphExceptionTestCases } from '../common/test-parts/common-graph-exception-handling-test-parts';
-import { GraphUnexpectedException } from '../exception/graph-unexpected.exception';
+import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
+import { commonGraphExceptionTestCases } from '@ukef-test/common-test-cases/common-graph-exception-handling-test-cases';
 
 export const withCommonGraphExceptionHandlingTests = ({
   mockSuccessfulGraphApiCall,
@@ -20,9 +19,9 @@ export const withCommonGraphExceptionHandlingTests = ({
     const errorMessage = 'ErrorMessage';
     const statusCode = 0;
 
-    describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ errorCode, expectedError }) => {
+    describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ graphErrorCode, expectedError }) => {
       const graphError = new GraphError(statusCode, errorMessage);
-      graphError.code = errorCode;
+      graphError.code = graphErrorCode;
       it(`throws a ${expectedError.name}`, async () => {
         mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(graphError);
