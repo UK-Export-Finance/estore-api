@@ -4,7 +4,9 @@
  *
  * 1. Auth
  * 2. EXAMPLES
+ * 3. ENUMS
  */
 
 export * from './auth.constant';
 export * from './examples.constant';
+export * from './enum.constant';

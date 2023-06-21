@@ -6,7 +6,9 @@ import { GraphService } from '@ukef/modules/graph/graph.service';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '../graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-
+import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
+import { SiteHasUnexpectedStatusException } from './exception/site-has-unexpected-status.exception';
+import { convertToEnum } from '@ukef/helpers';
 type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId';
 
 @Injectable()
@@ -27,7 +29,10 @@ export class SiteService {
       throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
     }
 
-    const { URL: siteId, Sitestatus: status } = data.value[0].fields;
+    const { URL: siteId, Sitestatus: siteStatus } = data.value[0].fields;
+
+    const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
+    
     return { siteId, status };
   }
 }
