@@ -1,3 +1,5 @@
+import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common-tests/common-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
@@ -13,6 +15,20 @@ describe('createSite', () => {
   let mockGraphClientService: MockGraphClientService;
   let mockMockSiteIdGeneratorService: MockMockSiteIdGeneratorService;
 
+  const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    numberToGenerate: 1,
+  });
+
+  const { exporterName } = siteStatusByExporterNameQueryDto;
+
+  const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
+    numberToGenerate: 1,
+    status: 'Provisioning',
+    exporterName,
+  });
+
+  const { siteId } = createSiteResponse[0];
+
   beforeAll(async () => {
     ({ api, mockGraphClientService, mockMockSiteIdGeneratorService } = await Api.create());
   });
@@ -26,28 +42,33 @@ describe('createSite', () => {
     await api.destroy();
   });
 
-  // withClientAuthenticationTests({
-  //   givenTheRequestWouldOtherwiseSucceed: () => {
-  //     mockGraphClientService
-  //       .mockSuccessfulGraphApiCallWithPath(path)
-  //       .mockSuccessfulExpandCallWithExpandString(expand)
-  //       .mockSuccessfulFilterCallWithFilterString(filter)
-  //       .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
-  //   },
-  //   makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
-  //     api.getWithoutAuth(`/api/v1/sites?exporterName=${siteStatusByExporterNameQueryDto.exporterName}`,
-  //incorrectAuth?.headerName, incorrectAuth?.headerValue),
-  // });
+  withClientAuthenticationTests({
+    givenTheRequestWouldOtherwiseSucceed: () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+        .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+        .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+        .mockSuccessfulGraphGetCall({ value: [] });
 
-  // withCommonGraphExceptionHandlingTests({
-  //   givenRequestWouldOtherwiseSucceed: () => {
-  //     mockGraphClientService.mockSuccessfulGraphApiCallWithPath(path);
-  //   },
-  //   givenGraphServiceCallWillThrowError: (error: Error) => {
-  //     mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
-  //   },
-  //   makeRequest: () => api.post(`/api/v1/sites`, createSiteRequest[0]),
-  // });
+      mockMockSiteIdGeneratorService.mockReturnValue(siteId);
+
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
+        .mockSuccessfulGraphPostCall(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
+    },
+    makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
+      api.postWithoutAuth('/api/v1/sites', createSiteRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
+  });
+
+  withCommonGraphExceptionHandlingTests({
+    givenRequestWouldOtherwiseSucceed: () => {
+      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path);
+    },
+    givenGraphServiceCallWillThrowError: (error: Error) => {
+      mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+    },
+    makeRequest: () => api.post(`/api/v1/sites`, createSiteRequest),
+  });
 
   const statusCodeTestInputs = [
     {
