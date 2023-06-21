@@ -1,4 +1,4 @@
-import { Controller, Get, InternalServerErrorException, Query, Res } from '@nestjs/common';
+import { Controller, Get, InternalServerErrorException, NotFoundException, Query, Res } from '@nestjs/common';
 import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
@@ -53,8 +53,7 @@ export class SiteController {
       throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
-        res.status(HttpStatusCode.NotFound).json({ siteId: '' });
-        return;
+        throw new NotFoundException('Not found', { cause: error });
       }
       throw error;
     }

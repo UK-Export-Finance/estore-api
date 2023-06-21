@@ -101,7 +101,7 @@ describe('getSiteStatusByExporterName', () => {
     const { status, body } = await api.get(getSiteStatusByExporterNameUrl({}));
 
     expect(status).toBe(404);
-    expect(body).toStrictEqual({ siteId: '' });
+    expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
   it('returns a 400 with message containing "property does not exist" if query property does not exist', async () => {
