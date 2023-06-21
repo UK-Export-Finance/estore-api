@@ -5,6 +5,8 @@ import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphService } from '@ukef/modules/graph/graph.service';
+import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
 
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
@@ -16,6 +18,7 @@ export class SiteService {
     @Inject(SharepointConfig.KEY)
     private readonly config: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
     private readonly graphService: GraphService,
+    private readonly mdmService: MdmService,
   ) {}
 
   async getSiteStatusByExporterName(exporterName: string): Promise<GetSiteStatusByExporterNameResponse> {
@@ -33,5 +36,24 @@ export class SiteService {
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
     return { siteId, status };
+  }
+
+  async createSiteId(): Promise<string> {
+    const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
+    // TODO APIM-133: Do we want to wrap any errors in a new error?
+    const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
+    return createdSiteId;
+  }
+
+  private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
+    // TODO APIM-133: Should we use the config for app.name for this, or are they separate concepts?
+    const applicationName = 'Estore';
+    return [
+      {
+        numberTypeId: 6,
+        createdBy: applicationName,
+        requestingSystem: applicationName,
+      },
+    ];
   }
 }

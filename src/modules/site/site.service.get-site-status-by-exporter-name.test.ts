@@ -1,4 +1,5 @@
 import { GraphService } from '@ukef/modules/graph/graph.service';
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
@@ -15,18 +16,17 @@ describe('SiteService', () => {
   const tfisSiteName = valueGenerator.word();
   const tfisListId = valueGenerator.word();
 
-  let graphService: GraphService;
-
   let siteService: SiteService;
   let graphServiceGetRequest: jest.Mock;
 
   beforeEach(() => {
-    graphService = new GraphService(null);
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService);
-
     graphServiceGetRequest = jest.fn();
+    const graphService = new GraphService(null);
     graphService.get = graphServiceGetRequest;
     resetAllWhenMocks();
+
+    const mdmService = new MdmService(null);
+    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
   });
 
   describe('getSiteStatusByExporterName', () => {
