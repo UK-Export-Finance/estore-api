@@ -51,9 +51,4 @@ export class SiteService {
     const { URL: siteId, Sitestatus: status } = data.fields;
     return { siteId: siteId as UkefSiteId, status };
   }
-
-  // TODO: APIM-454 temporary helper to be replaced by MDM API POST /numbers.
-  mockSiteIdGeneration() {
-    return '03' + (Math.round(Math.random() * 899999) + 100000).toString();
-  }
 }
