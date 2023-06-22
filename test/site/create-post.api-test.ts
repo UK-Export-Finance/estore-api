@@ -5,7 +5,7 @@ import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-ge
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
-import { MockMockSiteIdGeneratorService } from '@ukef-test/support/mocks/mockSiteIdGenerator.service.mock';
+import { MockMdmService } from '@ukef-test/support/mocks/mdm.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('createSite', () => {
@@ -13,7 +13,7 @@ describe('createSite', () => {
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
-  let mockMockSiteIdGeneratorService: MockMockSiteIdGeneratorService;
+  let mockMdmService: MockMdmService;
 
   const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
@@ -30,7 +30,7 @@ describe('createSite', () => {
   const { siteId } = createSiteResponse[0];
 
   beforeAll(async () => {
-    ({ api, mockGraphClientService, mockMockSiteIdGeneratorService } = await Api.create());
+    ({ api, mockGraphClientService, mockMdmService } = await Api.create());
   });
 
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('createSite', () => {
         .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
         .mockSuccessfulGraphGetCall({ value: [] });
 
-      mockMockSiteIdGeneratorService.mockReturnValue(siteId);
+      mockMdmService.mockSuccessfulReturnValue(siteId);
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
@@ -103,7 +103,7 @@ describe('createSite', () => {
     expect(body).toStrictEqual(createSiteResponse);
   });
 
-  it('returns 202 with status Provisioning if the site does not exist in sharepoint and new site creation started', async () => {
+  it('returns 202 with status Provisioning if the site does not exist in Sharepoint and new site creation started', async () => {
     const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
@@ -124,7 +124,7 @@ describe('createSite', () => {
       .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    mockMockSiteIdGeneratorService.mockReturnValue(siteId);
+    mockMdmService.mockSuccessfulReturnValue(siteId);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
@@ -133,6 +133,35 @@ describe('createSite', () => {
     const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
     expect(status).toBe(202);
     expect(body).toStrictEqual(createSiteResponse[0]);
+  });
+
+  it('returns 500 with message Internal server error, if mdm call fails', async () => {
+    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      numberToGenerate: 1,
+    });
+
+    const { exporterName } = siteStatusByExporterNameQueryDto;
+
+    const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({
+      numberToGenerate: 1,
+      status: 'Provisioning',
+      exporterName,
+    });
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphGetCall({ value: [] });
+
+    mockMdmService.mockMdMCallError();
+
+    const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
+    expect(status).toBe(500);
+    expect(body).toStrictEqual({
+      statusCode: 500,
+      message: 'Internal server error',
+    });
   });
 
   it('returns a 400 with validation rules if request does not meet validation rules', async () => {
@@ -161,6 +190,18 @@ describe('createSite', () => {
         'exporterName must be longer than or equal to 1 characters',
         'exporterName must match /^[A-Za-z\\d-._()\\s]+$/ regular expression',
       ],
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 with one validation rule if exporterName has unsupported characters', async () => {
+    const characterUnsupportedForWindowsFolder = '\\/:*?"<>|';
+    const { status, body } = await api.post('/api/v1/sites', [{ exporterName: characterUnsupportedForWindowsFolder }]);
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      error: 'Bad Request',
+      message: ['exporterName must match /^[A-Za-z\\d-._()\\s]+$/ regular expression'],
       statusCode: 400,
     });
   });

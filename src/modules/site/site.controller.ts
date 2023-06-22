@@ -13,17 +13,18 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 
+import { MdmException } from '../mdm/exception/mdm.exception';
 import { CreateSiteRequest, CreateSiteRequestItem } from './dto/create-site-request.dto';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
+import { SiteIdCreationFailedException } from './exception/site-id-creation-failed.exception';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-import { MockSiteIdGeneratorService } from './mockSiteIdGeneratorService';
 import { SiteService } from './site.service';
 
 @Controller('sites')
 export class SiteController {
-  constructor(private readonly service: SiteService, private readonly mockSiteIdGeneratorService: MockSiteIdGeneratorService) {}
+  constructor(private readonly service: SiteService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get the site status by exporter name' })
@@ -73,9 +74,16 @@ export class SiteController {
     } catch (error) {
       if (error instanceof SiteNotFoundException) {
         // Site doesn't exists, add item to sharepoint create site list.
-        const siteId = this.mockSiteIdGeneratorService.newId();
-        const createSiteResponse = await this.service.createSite(exporterName, siteId);
-        this.setSiteStatusResponse(res, createSiteResponse);
+        try {
+          const siteId = await this.service.createSiteId();
+          const createSiteResponse = await this.service.createSite(exporterName, siteId);
+          this.setSiteStatusResponse(res, createSiteResponse);
+        } catch (error) {
+          if (error instanceof MdmException) {
+            throw new SiteIdCreationFailedException('Failed to create a site ID', error);
+          }
+          throw error;
+        }
         return;
       }
       throw error;

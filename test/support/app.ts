@@ -2,24 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { App as AppUnderTest } from '@ukef/app';
 import { MainModule } from '@ukef/main.module';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
-import { MockSiteIdGeneratorService } from '@ukef/modules/site/mockSiteIdGeneratorService';
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
 
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
-import { MockMockSiteIdGeneratorService } from './mocks/mockSiteIdGenerator.service.mock';
+import { MockMdmService } from './mocks/mdm.service.mock';
 
 export class App extends AppUnderTest {
   mockGraphClientService: MockGraphClientService;
   static async create(): Promise<MockApp> {
     const mockGraphClientService = new MockGraphClientService();
-    const mockMockSiteIdGeneratorService = new MockMockSiteIdGeneratorService();
+    const mockMdmService = new MockMdmService();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [MainModule],
     })
       .overrideProvider(GraphClientService)
       .useValue(mockGraphClientService)
-      .overrideProvider(MockSiteIdGeneratorService)
-      .useValue(mockMockSiteIdGeneratorService)
+      .overrideProvider(MdmService)
+      .useValue(mockMdmService)
       .compile();
 
     const nestApp = moduleFixture.createNestApplication();
@@ -28,7 +28,7 @@ export class App extends AppUnderTest {
 
     await nestApp.init();
 
-    return { app, mockGraphClientService, mockMockSiteIdGeneratorService };
+    return { app, mockGraphClientService, mockMdmService };
   }
 
   getGraphClientServiceMock(): MockGraphClientService {
@@ -47,5 +47,5 @@ export class App extends AppUnderTest {
 export interface MockApp {
   app: App;
   mockGraphClientService: MockGraphClientService;
-  mockMockSiteIdGeneratorService: MockMockSiteIdGeneratorService;
+  mockMdmService: MockMdmService;
 }

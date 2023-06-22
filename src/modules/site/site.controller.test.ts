@@ -5,15 +5,15 @@ import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 import { when } from 'jest-when';
 
+import { MdmException } from '../mdm/exception/mdm.exception';
+import { SiteIdCreationFailedException } from './exception/site-id-creation-failed.exception';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-import { MockSiteIdGeneratorService } from './mockSiteIdGeneratorService';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
 
 describe('SiteController', () => {
   const valueGenerator = new RandomValueGenerator();
   const siteService = new SiteService(null, null, null);
-  const mockSiteIdGeneratorService = new MockSiteIdGeneratorService();
 
   let siteController: SiteController;
 
@@ -23,12 +23,12 @@ describe('SiteController', () => {
   const siteCreateSite = jest.fn();
   siteService.createSite = siteCreateSite;
 
-  const siteMockSiteIdGeneration = jest.fn();
-  mockSiteIdGeneratorService.newId = siteMockSiteIdGeneration;
+  const siteCreateSiteId = jest.fn();
+  siteService.createSiteId = siteCreateSiteId;
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();
-    siteController = new SiteController(siteService, mockSiteIdGeneratorService);
+    siteController = new SiteController(siteService);
   });
 
   describe('getSiteStatusByExporterName', () => {
@@ -145,7 +145,7 @@ describe('SiteController', () => {
       } as unknown as Response;
 
       when(siteGetSiteStatusByExporterName).calledWith(exporterName).mockRejectedValueOnce(siteNotFoundError);
-      when(siteMockSiteIdGeneration).calledWith().mockReturnValue(siteId);
+      when(siteCreateSiteId).calledWith().mockReturnValue(siteId);
       when(siteCreateSite).calledWith(exporterName, siteId).mockResolvedValueOnce(createSiteResponse[0]);
 
       await siteController.createSite(createSiteRequest, responseMock);
@@ -172,6 +172,23 @@ describe('SiteController', () => {
       const responsePromise = siteController.createSite(createSiteRequest, responseMock);
 
       await expect(responsePromise).rejects.toThrow(error);
+    });
+
+    it('throws error SiteIdCreationFailedException if site service throws MdmException', async () => {
+      const siteNotFoundError = new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
+      const mdmError = new MdmException('Error message');
+      const expectedFinalError = new SiteIdCreationFailedException('Failed to create a site ID');
+      const responseMock = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
+      when(siteGetSiteStatusByExporterName).calledWith(exporterName).mockRejectedValueOnce(siteNotFoundError);
+      when(siteCreateSiteId).calledWith().mockRejectedValueOnce(mdmError);
+
+      const responsePromise = siteController.createSite(createSiteRequest, responseMock);
+
+      await expect(responsePromise).rejects.toThrow(expectedFinalError);
     });
   });
 });

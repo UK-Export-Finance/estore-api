@@ -4,13 +4,13 @@ import request from 'supertest';
 
 import { App } from './app';
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
-import { MockMockSiteIdGeneratorService } from './mocks/mockSiteIdGenerator.service.mock';
+import { MockMdmService } from './mocks/mdm.service.mock';
 
 export class Api {
   static async create(): Promise<CreateApiResponse> {
-    const { app, mockGraphClientService, mockMockSiteIdGeneratorService } = await App.create();
+    const { app, mockGraphClientService, mockMdmService } = await App.create();
     const api = new Api(app);
-    return { api, mockGraphClientService, mockMockSiteIdGeneratorService };
+    return { api, mockGraphClientService, mockMdmService };
   }
 
   constructor(private readonly app: App) {}
@@ -65,5 +65,5 @@ export class Api {
 interface CreateApiResponse {
   api: Api;
   mockGraphClientService: MockGraphClientService;
-  mockMockSiteIdGeneratorService: MockMockSiteIdGeneratorService;
+  mockMdmService: MockMdmService;
 }

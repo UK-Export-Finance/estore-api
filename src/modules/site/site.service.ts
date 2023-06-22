@@ -55,10 +55,10 @@ export class SiteService {
     return { siteId: siteId as UkefSiteId, status };
   }
 
-  async createSiteId(): Promise<string> {
+  async createSiteId(): Promise<UkefSiteId> {
     const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
     const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
-    return createdSiteId;
+    return createdSiteId as UkefSiteId;
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
