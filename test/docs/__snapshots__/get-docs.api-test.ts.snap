@@ -8,7 +8,7 @@ paths:
   /api/v1/sites:
     get:
       operationId: SiteController_getSiteStatusByExporterName
-      summary: Get the site status by exporter name
+      summary: Get the site status by exporter name.
       parameters:
         - name: exporterName
           required: true
@@ -22,13 +22,13 @@ paths:
             type: string
       responses:
         '200':
-          description: Site has been created
+          description: Site has been created.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetSiteStatusByExporterNameResponse'
         '202':
-          description: Site is provisioning
+          description: Site is provisioning.
           content:
             application/json:
               schema:
@@ -36,11 +36,11 @@ paths:
         '400':
           description: Bad request.
         '401':
-          description: Unauthorized
+          description: Unauthorized.
         '404':
-          description: Site not found
+          description: Site not found.
         '424':
-          description: Site has failed to be created
+          description: Site has failed to be created.
           content:
             application/json:
               schema:

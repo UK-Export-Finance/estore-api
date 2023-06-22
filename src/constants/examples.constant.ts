@@ -1,5 +1,4 @@
 import { ENUMS } from './enum.constant';
-
 import { MAX_FILE_SIZE } from './max-file-size.constant';
 
 export const EXAMPLES = {
