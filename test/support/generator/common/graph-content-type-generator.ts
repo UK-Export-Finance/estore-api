@@ -1,7 +1,7 @@
 import { GraphContentType } from '@ukef/modules/graph/dto/common/graph-content-type.dto';
 
-import { AbstractGenerator } from '../abstract-generator';
-import { RandomValueGenerator } from '../random-value-generator';
+import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
+import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 export class graphContentTypeGenerator extends AbstractGenerator<GenerateValues, GenerateResult, unknown> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {

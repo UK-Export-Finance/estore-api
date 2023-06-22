@@ -5,7 +5,7 @@ import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 
-import { GraphGetSiteStatusByExporterNameResponseDto } from '../graph/dto/graph-get-site-status-by-exporter-name-response.dto';
+import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId';

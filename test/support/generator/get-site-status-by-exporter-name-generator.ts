@@ -6,7 +6,7 @@ import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
 
-import { ENVIRONMENT_VARIABLES } from '../environment-variables';
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { AbstractGenerator } from './abstract-generator';
 import { graphContentTypeGenerator } from './common/graph-content-type-generator';
 import { graphParentReferenceGenerator } from './common/graph-parent-reference-generator';

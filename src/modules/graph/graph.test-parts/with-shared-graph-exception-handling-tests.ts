@@ -2,7 +2,7 @@ import { GraphError } from '@microsoft/microsoft-graph-client/lib/src/GraphError
 import { sharedGraphExceptionTestCases } from '@ukef-test/common-test-cases/shared-graph-exception-handling-test-cases';
 import { resetAllWhenMocks } from 'jest-when';
 
-import { GraphException } from '../exception/graph.exception';
+import { GraphException } from '@ukef/modules/graph/exception/graph.exception';
 
 export const withKnownGraphExceptionHandlingTests = ({
   mockSuccessfulGraphApiCall,

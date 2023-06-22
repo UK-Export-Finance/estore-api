@@ -1,7 +1,7 @@
 import { GraphSiteFields } from '@ukef/modules/graph/dto/common/graph-site-fields.dto';
 
-import { AbstractGenerator } from '../abstract-generator';
-import { RandomValueGenerator } from '../random-value-generator';
+import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
+import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 export class graphSiteFieldsGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
