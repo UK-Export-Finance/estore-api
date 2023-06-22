@@ -61,20 +61,19 @@ export class SiteService {
     return { siteId: siteId as UkefSiteId, status };
   }
 
-  async createSiteId(): Promise<UkefSiteId> {
+  async createSiteId(): Promise<string> {
     const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
     const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
-    return createdSiteId as UkefSiteId;
+    return createdSiteId;
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
-    // TODO APIM-133: Should we use the config for app.name for this, or are they separate concepts?
-    const applicationName = 'Estore';
+    const applicationNameToCreateSiteIdWith = 'Estore';
     return [
       {
         numberTypeId: 6,
-        createdBy: applicationName,
-        requestingSystem: applicationName,
+        createdBy: applicationNameToCreateSiteIdWith,
+        requestingSystem: applicationNameToCreateSiteIdWith,
       },
     ];
   }

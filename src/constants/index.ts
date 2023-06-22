@@ -5,10 +5,12 @@
  * 1. Auth
  * 2. EXAMPLES
  * 3. ENUMS
- * 4. UKEF_ID
+ * 4. EXPORTER_NAME
+ * 5. UKEF_ID
  */
 
 export * from './auth.constant';
 export * from './enum.constant';
 export * from './examples.constant';
+export * from './exporter-name.constant';
 export * from './ukef-id.constant';
