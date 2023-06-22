@@ -1,8 +1,9 @@
 import { GraphError } from '@microsoft/microsoft-graph-client/lib/src/GraphError';
-import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
-import { commonGraphExceptionTestCases } from '@ukef-test/common-test-cases/common-graph-exception-handling-test-cases';
+import { GraphException } from '@ukef/modules/graph/exception/graph.exception';
+import { sharedGraphExceptionTestCases } from '@ukef-test/common-test-cases/shared-graph-exception-handling-test-cases';
+import { resetAllWhenMocks } from 'jest-when';
 
-export const withCommonGraphExceptionHandlingTests = ({
+export const withKnownGraphExceptionHandlingTests = ({
   mockSuccessfulGraphApiCall,
   mockGraphEndpointToErrorWith,
   makeRequest,
@@ -13,13 +14,14 @@ export const withCommonGraphExceptionHandlingTests = ({
 }) => {
   beforeEach(() => {
     jest.resetAllMocks();
+    resetAllWhenMocks();
   });
 
-  describe('Common Graph Exceptions', () => {
+  describe('Shared Graph Exceptions', () => {
     const errorMessage = 'ErrorMessage';
     const statusCode = 0;
 
-    describe.each(commonGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ graphErrorCode, expectedError }) => {
+    describe.each(sharedGraphExceptionTestCases)('When a graph error is thrown with code $errorCode', ({ graphErrorCode, expectedError }) => {
       const graphError = new GraphError(statusCode, errorMessage);
       graphError.code = graphErrorCode;
       it(`throws a ${expectedError.name}`, async () => {
@@ -43,37 +45,37 @@ export const withCommonGraphExceptionHandlingTests = ({
 
     describe('When a non GraphError is thrown', () => {
       const error = new Error(errorMessage);
-      it('throws a GraphUnexpectedException', async () => {
+      it('throws a GraphException', async () => {
         mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
 
-        await expect(errorPromise).rejects.toThrow(GraphUnexpectedException);
+        await expect(errorPromise).rejects.toThrow(GraphException);
       });
 
-      it('passes the error message to the GraphUnexpectedException', async () => {
+      it('passes the error message to the GraphException', async () => {
         mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
 
-        await expect(errorPromise).rejects.toThrow(errorMessage);
+        await expect(errorPromise).rejects.toThrow(error);
       });
     });
 
     describe('When the error is not an instance of Error', () => {
       const error = { notAnError: 'Not an error' };
-      it('throws a GraphUnexpectedException', async () => {
+      it('throws a GraphException', async () => {
         mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
 
-        await expect(errorPromise).rejects.toThrow(GraphUnexpectedException);
+        await expect(errorPromise).rejects.toThrow(GraphException);
       });
 
-      it('throws a GraphUnexpectedException with message "An unexpected error occurred."', async () => {
+      it('throws a GraphException with message "An unexpected error occurred."', async () => {
         mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 

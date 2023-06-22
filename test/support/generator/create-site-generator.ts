@@ -1,3 +1,5 @@
+import { ENUMS } from '@ukef/constants';
+import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
@@ -23,7 +25,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
     const ukefSharepointName = options.ukefSharepointName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
     const tfisSiteName = options.tfisSiteName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
     const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
-    const status = options.status ?? 'Provisioning';
+    const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
     const createSiteRequest: CreateSiteRequest = values.map((value) => ({
       exporterName: options.exporterName ?? value.exporterName,
     }));
@@ -75,7 +77,7 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  status?: string;
+  status?: SiteStatusEnum;
   exporterName?: string;
   ukefSharepointName?: string;
   tfisSiteName?: string;

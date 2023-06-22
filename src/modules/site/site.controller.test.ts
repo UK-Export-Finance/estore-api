@@ -1,3 +1,4 @@
+import { ENUMS } from '@ukef/constants';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -37,15 +38,15 @@ describe('SiteController', () => {
 
     it.each([
       {
-        status: 'Failed',
+        status: ENUMS.SITE_STATUSES.FAILED,
         expectedStatusCode: HttpStatusCode.FailedDependency,
       },
       {
-        status: 'Provisioning',
+        status: ENUMS.SITE_STATUSES.PROVISIONING,
         expectedStatusCode: HttpStatusCode.Accepted,
       },
       {
-        status: 'Created',
+        status: ENUMS.SITE_STATUSES.CREATED,
         expectedStatusCode: HttpStatusCode.Ok,
       },
     ])('returns a status code of $expectedStatusCode and the expected response if site status is "$status"', async ({ status, expectedStatusCode }) => {
@@ -66,8 +67,9 @@ describe('SiteController', () => {
       expect(responseMock.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    it('returns a status code of 404 and the expected response if site service throws a SiteNotFoundException', async () => {
-      const siteNotFoundError = new SiteNotFoundException(`Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`);
+    it('returns the expected response if site service throws a SiteNotFoundException', async () => {
+      const errorMessage = `Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`;
+      const siteNotFoundError = new SiteNotFoundException(errorMessage);
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
@@ -75,12 +77,9 @@ describe('SiteController', () => {
 
       when(siteGetSiteStatusByExporterName).calledWith(siteStatusByExporterNameServiceRequest).mockRejectedValueOnce(siteNotFoundError);
 
-      await siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
+      const responsePromise = siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
 
-      expect(responseMock.json).toHaveBeenCalledTimes(1);
-      expect(responseMock.json).toHaveBeenCalledWith({});
-      expect(responseMock.status).toHaveBeenCalledTimes(1);
-      expect(responseMock.status).toHaveBeenCalledWith(404);
+      await expect(responsePromise).rejects.toThrow(errorMessage);
     });
 
     it('throws an error if site service throws an error which is not SiteNotFoundException', async () => {

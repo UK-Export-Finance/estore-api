@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
+import { convertToEnum } from '@ukef/helpers';
 import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
@@ -11,7 +13,6 @@ import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-
 type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId';
 
 @Injectable()
@@ -29,12 +30,14 @@ export class SiteService {
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=Title,Url,SiteStatus)',
     });
-
     if (!data.value.length) {
       throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
     }
 
-    const { URL: siteId, Sitestatus: status } = data.value[0].fields;
+    const { URL: siteId, Sitestatus: siteStatus } = data.value[0].fields;
+
+    const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
+
     return { siteId, status };
   }
 
@@ -51,7 +54,10 @@ export class SiteService {
       },
     });
 
-    const { URL: siteId, Sitestatus: status } = data.fields;
+    const { URL: siteId, Sitestatus: siteStatus } = data.fields;
+
+    const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
+
     return { siteId: siteId as UkefSiteId, status };
   }
 

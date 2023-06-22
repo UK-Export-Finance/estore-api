@@ -1,8 +1,7 @@
 import { GraphAuthenticationFailedException } from '@ukef/modules/graph/exception/graph-authentication-failed.exception';
 import { GraphInvalidRequestException } from '@ukef/modules/graph/exception/graph-invalid-request.exception';
-import { GraphUnexpectedException } from '@ukef/modules/graph/exception/graph-unexpected.exception';
 
-export const commonGraphExceptionTestCases = [
+export const sharedGraphExceptionTestCases = [
   {
     graphErrorCode: 'CredentialUnavailableError',
     expectedError: GraphAuthenticationFailedException,
@@ -14,9 +13,5 @@ export const commonGraphExceptionTestCases = [
   {
     graphErrorCode: 'invalidRequest',
     expectedError: GraphInvalidRequestException,
-  },
-  {
-    graphErrorCode: 'UnexpectedErrorCode',
-    expectedError: GraphUnexpectedException,
   },
 ];

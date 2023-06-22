@@ -7,7 +7,7 @@ import { MockGraphClientService } from './mocks/graph-client.service.mock';
 import { MockMdmService } from './mocks/mdm.service.mock';
 
 export class Api {
-  static async create(): Promise<CreateApiResponse> {
+  static async create(): Promise<CreateApi> {
     const { app, mockGraphClientService, mockMdmService } = await App.create();
     const api = new Api(app);
     return { api, mockGraphClientService, mockMdmService };
@@ -47,10 +47,6 @@ export class Api {
     return this.app.destroy();
   }
 
-  getGraphClientServiceMock(): MockGraphClientService {
-    return this.app.getGraphClientServiceMock();
-  }
-
   private request(): request.SuperTest<request.Test> {
     return request(this.app.getHttpServer());
   }
@@ -62,7 +58,7 @@ export class Api {
   }
 }
 
-interface CreateApiResponse {
+interface CreateApi {
   api: Api;
   mockGraphClientService: MockGraphClientService;
   mockMdmService: MockMdmService;

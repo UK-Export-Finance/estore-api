@@ -1,8 +1,9 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { withCommonGraphExceptionHandlingTests } from './graph.test-parts/with-common-graph-exception-handling-tests';
+import { withKnownGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -25,10 +26,11 @@ describe('GraphService', () => {
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService);
     jest.resetAllMocks();
+    resetAllWhenMocks();
   });
 
   describe('get', () => {
-    withCommonGraphExceptionHandlingTests({
+    withKnownGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
       mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphGetCall(error),
       makeRequest: () => graphService.get({ path }),
@@ -39,12 +41,13 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path });
 
-      expectGraphMethodsToHaveBeenCalled({
+      const expectations = getCallExpectations({
         apiCalled: true,
         filterCalled: false,
         expandCalled: false,
         getCalled: true,
       });
+      expectations.forEach((expectation) => expectation());
 
       expect(result).toEqual(expectedResponse);
     });
@@ -54,12 +57,13 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path, filter: filterStr });
 
-      expectGraphMethodsToHaveBeenCalled({
+      const expectations = getCallExpectations({
         apiCalled: true,
         filterCalled: true,
         expandCalled: false,
         getCalled: true,
       });
+      expectations.forEach((expectation) => expectation());
 
       expect(result).toEqual(expectedResponse);
     });
@@ -69,34 +73,36 @@ describe('GraphService', () => {
 
       const result = await graphService.get<string>({ path, filter: filterStr, expand: expandStr });
 
-      expectGraphMethodsToHaveBeenCalled({
+      const expectations = getCallExpectations({
         apiCalled: true,
         filterCalled: true,
         expandCalled: true,
         getCalled: true,
       });
+      expectations.forEach((expectation) => expectation());
 
       expect(result).toEqual(expectedResponse);
     });
   });
 
   describe('post', () => {
-    withCommonGraphExceptionHandlingTests({
+    // mockSuccessfulCompleteGraphPostRequest();
+    withKnownGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
-      //mockGraphEndpointToErrorWith: (error: unknown) => when(mockRequest.post).calledWith(requestBody).mockRejectedValue(error),
       mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, error),
       makeRequest: () => graphService.post({ path, requestBody }),
     });
 
     it('calls the correct graph client methods on a graph service post request with no additional parameters and returns the response', async () => {
-      mockSuccessfulCompletePostGraphRequest();
+      mockSuccessfulCompleteGraphPostRequest();
 
       const result = await graphService.post<string>({ path, requestBody });
 
-      expectGraphMethodsToHaveBeenCalled({
+      const expectations = getCallExpectations({
         apiCalled: true,
         postCalled: true,
       });
+      expectations.forEach((expectation) => expectation(requestBody));
 
       expect(result).toEqual(expectedPostResponse);
     });
@@ -118,13 +124,13 @@ describe('GraphService', () => {
     mockSuccessfulGraphGetCall();
   };
 
-  const mockSuccessfulCompletePostGraphRequest = () => {
+  const mockSuccessfulCompleteGraphPostRequest = () => {
     mockSuccessfulGraphApiCall();
     mockSuccessfulChainingCalls();
     mockSuccessfulGraphPostCall();
   };
 
-  const expectGraphMethodsToHaveBeenCalled = ({
+  const getCallExpectations = ({
     apiCalled = false,
     filterCalled = false,
     expandCalled = false,
@@ -137,20 +143,26 @@ describe('GraphService', () => {
     getCalled?: boolean;
     postCalled?: boolean;
   }) => {
-    apiCalled
-      ? (expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1), expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path))
-      : expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(0);
-    filterCalled
-      ? (expect(mockRequest.filter).toHaveBeenCalledTimes(1), expect(mockRequest.filter).toHaveBeenCalledWith(filterStr))
-      : expect(mockRequest.filter).toHaveBeenCalledTimes(0);
-    expandCalled
-      ? (expect(mockRequest.expand).toHaveBeenCalledTimes(1), expect(mockRequest.expand).toHaveBeenCalledWith(expandStr))
-      : expect(mockRequest.expand).toHaveBeenCalledTimes(0);
-    getCalled
-      ? (expect(mockRequest.get).toHaveBeenCalledTimes(1), expect(mockRequest.get).toHaveBeenCalledWith())
-      : expect(mockRequest.get).toHaveBeenCalledTimes(0);
-    postCalled
-      ? (expect(mockRequest.post).toHaveBeenCalledTimes(1), expect(mockRequest.post).toHaveBeenCalledWith(requestBody))
-      : expect(mockRequest.post).toHaveBeenCalledTimes(0);
+    const apiCallExpectations = apiCalled
+      ? [() => expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1), () => expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path)]
+      : [() => expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(0)];
+
+    const filterCallExpectations = filterCalled
+      ? [() => expect(mockRequest.filter).toHaveBeenCalledTimes(1), () => expect(mockRequest.filter).toHaveBeenCalledWith(filterStr)]
+      : [() => expect(mockRequest.filter).toHaveBeenCalledTimes(0)];
+
+    const expandCallExpectations = expandCalled
+      ? [() => expect(mockRequest.expand).toHaveBeenCalledTimes(1), () => expect(mockRequest.expand).toHaveBeenCalledWith(expandStr)]
+      : [() => expect(mockRequest.expand).toHaveBeenCalledTimes(0)];
+
+    const getCallExpectations = getCalled
+      ? [() => expect(mockRequest.get).toHaveBeenCalledTimes(1), () => expect(mockRequest.get).toHaveBeenCalledWith()]
+      : [() => expect(mockRequest.get).toHaveBeenCalledTimes(0)];
+
+    const postCallExpectations = postCalled
+      ? [() => expect(mockRequest.post).toHaveBeenCalledTimes(1), (requestBody?) => expect(mockRequest.post).toHaveBeenCalledWith(requestBody)]
+      : [() => expect(mockRequest.post).toHaveBeenCalledTimes(0)];
+
+    return [...apiCallExpectations, ...filterCallExpectations, ...expandCallExpectations, ...getCallExpectations, ...postCallExpectations];
   };
 });

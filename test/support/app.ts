@@ -9,10 +9,10 @@ import { MockMdmService } from './mocks/mdm.service.mock';
 
 export class App extends AppUnderTest {
   mockGraphClientService: MockGraphClientService;
+  mockMdmService: MockMdmService;
   static async create(): Promise<MockApp> {
     const mockGraphClientService = new MockGraphClientService();
     const mockMdmService = new MockMdmService();
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [MainModule],
     })
@@ -29,10 +29,6 @@ export class App extends AppUnderTest {
     await nestApp.init();
 
     return { app, mockGraphClientService, mockMdmService };
-  }
-
-  getGraphClientServiceMock(): MockGraphClientService {
-    return this.mockGraphClientService;
   }
 
   getHttpServer(): any {

@@ -1,14 +1,17 @@
+import { ENUMS } from '@ukef/constants';
+import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
+import { convertToEnum } from '@ukef/helpers';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
-import { graphContentTypeGenerator } from '@ukef-test/support/generator/common/graph-content-type-generator';
-import { graphParentReferenceGenerator } from '@ukef-test/support/generator/common/graph-parent-reference-generator';
-import { graphSiteFieldsGenerator } from '@ukef-test/support/generator/common/graph-site-fields-generator';
-import { graphUserGenerator } from '@ukef-test/support/generator/common/graph-user-generator';
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 
-import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
+import { graphContentTypeGenerator } from './common/graph-content-type-generator';
+import { graphParentReferenceGenerator } from './common/graph-parent-reference-generator';
+import { graphSiteFieldsGenerator } from './common/graph-site-fields-generator';
+import { graphUserGenerator } from './common/graph-user-generator';
 import { RandomValueGenerator } from './random-value-generator';
 
 export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
@@ -33,7 +36,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const ukefSharepointName = options.ukefSharepointName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
     const tfisSiteName = options.tfisSiteName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
     const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
-    const status = options.status ?? 'Provisioning';
+    const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
     const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
@@ -77,7 +80,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
     const getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
       siteId: siteValues.siteId,
-      status,
+      status: convertToEnum(status, SiteStatusEnum),
     };
 
     return {

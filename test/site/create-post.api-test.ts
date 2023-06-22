@@ -1,5 +1,6 @@
+import { ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withCommonGraphExceptionHandlingTests } from '@ukef-test/common-tests/common-graph-exception-handling-api-tests';
+import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
@@ -23,7 +24,7 @@ describe('createSite', () => {
 
   const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
     numberToGenerate: 1,
-    status: 'Provisioning',
+    status: ENUMS.SITE_STATUSES.PROVISIONING,
     exporterName,
   });
 
@@ -60,7 +61,7 @@ describe('createSite', () => {
       api.postWithoutAuth('/api/v1/sites', createSiteRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  withCommonGraphExceptionHandlingTests({
+  withSharedGraphExceptionHandlingTests({
     givenRequestWouldOtherwiseSucceed: () => {
       mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path);
     },
@@ -72,15 +73,15 @@ describe('createSite', () => {
 
   const statusCodeTestInputs = [
     {
-      siteStatus: 'Created',
+      siteStatus: ENUMS.SITE_STATUSES.CREATED,
       expectedStatusCode: 200,
     },
     {
-      siteStatus: 'Provisioning',
+      siteStatus: ENUMS.SITE_STATUSES.PROVISIONING,
       expectedStatusCode: 202,
     },
     {
-      siteStatus: 'Failed',
+      siteStatus: ENUMS.SITE_STATUSES.FAILED,
       expectedStatusCode: 424,
     },
   ];
@@ -112,7 +113,7 @@ describe('createSite', () => {
 
     const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
       numberToGenerate: 1,
-      status: 'Provisioning',
+      status: ENUMS.SITE_STATUSES.PROVISIONING,
       exporterName,
     });
 
@@ -144,7 +145,7 @@ describe('createSite', () => {
 
     const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({
       numberToGenerate: 1,
-      status: 'Provisioning',
+      status: ENUMS.SITE_STATUSES.PROVISIONING,
       exporterName,
     });
 
