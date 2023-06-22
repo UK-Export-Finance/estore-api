@@ -1,5 +1,6 @@
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+import { ENUMS } from '@ukef/constants';
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 import { when } from 'jest-when';
@@ -28,15 +29,15 @@ describe('SiteController', () => {
 
     it.each([
       {
-        status: 'Failed',
+        status: ENUMS.SITE_STATUSES.FAILED,
         expectedStatusCode: HttpStatusCode.FailedDependency,
       },
       {
-        status: 'Provisioning',
+        status: ENUMS.SITE_STATUSES.PROVISIONING,
         expectedStatusCode: HttpStatusCode.Accepted,
       },
       {
-        status: 'Created',
+        status: ENUMS.SITE_STATUSES.CREATED,
         expectedStatusCode: HttpStatusCode.Ok,
       },
     ])('returns a status code of $expectedStatusCode and the expected response if site status is "$status"', async ({ status, expectedStatusCode }) => {

@@ -9,6 +9,7 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ENUMS } from '@ukef/constants';
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 
@@ -36,15 +37,15 @@ export class SiteController {
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
     const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
-    if (getSiteStatusByExporterNameResponse.status === 'Failed') {
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.FAILED) {
       res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
       return;
     }
-    if (getSiteStatusByExporterNameResponse.status === 'Created') {
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.CREATED) {
       res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
       return;
     }
-    if (getSiteStatusByExporterNameResponse.status === 'Provisioning') {
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.PROVISIONING) {
       res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
       return;
     }

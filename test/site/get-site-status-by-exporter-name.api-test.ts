@@ -4,6 +4,7 @@ import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { ENUMS } from '@ukef/constants';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
@@ -59,15 +60,15 @@ describe('getSiteStatusByExporterName', () => {
 
   const statusCodeTestInputs = [
     {
-      siteStatus: 'Created',
+      siteStatus: ENUMS.SITE_STATUSES.CREATED,
       expectedStatusCode: 200,
     },
     {
-      siteStatus: 'Provisioning',
+      siteStatus: ENUMS.SITE_STATUSES.PROVISIONING,
       expectedStatusCode: 202,
     },
     {
-      siteStatus: 'Failed',
+      siteStatus: ENUMS.SITE_STATUSES.FAILED,
       expectedStatusCode: 424,
     },
   ];
