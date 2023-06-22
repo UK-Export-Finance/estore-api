@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { MAX_FILE_SIZE } from '@ukef/constants';
+import { MAX_FILE_SIZE_BYTES } from '@ukef/constants';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
 
 import { GetFileSizeRequestItem } from './dto/get-file-size-request.dto';
@@ -11,15 +11,15 @@ export class FileService {
 
   async getFileSize(fileToCheck: GetFileSizeRequestItem): Promise<GetFileSizeResponse> {
     const { fileName, fileLocationPath } = fileToCheck;
-    const fileSize = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => {
-      return response.contentLength as number;
+    const fileSizeInBytes = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => {
+      return response.contentLength;
     });
-    if (fileSize > MAX_FILE_SIZE) {
-      throw new BadRequestException('Bad request', 'The file exceeds the maximum allowed size.');
+    if (fileSizeInBytes > MAX_FILE_SIZE_BYTES) {
+      throw new BadRequestException('Bad request', `The file exceeds the maximum allowed size of ${MAX_FILE_SIZE_BYTES} bytes.`);
     }
 
     return {
-      fileSize,
+      fileSize: fileSizeInBytes,
     };
   }
 }

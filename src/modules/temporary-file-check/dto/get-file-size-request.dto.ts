@@ -8,7 +8,7 @@ export class GetFileSizeRequestItem {
     description: 'The file name with the file extension.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[A-Za-z0-_.()\s]+$/,
+    pattern: /^[\w\-.()\s]+$/,
     example: EXAMPLES.FILE_NAME,
   })
   fileName: string;
@@ -17,7 +17,7 @@ export class GetFileSizeRequestItem {
     description: 'The location or file path in Azure storage from which the file needs to be loaded.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[A-Za-z/-_.()\s\-]+$/,
+    pattern: /^[\w\-:/\\()\s]+$/,
     example: EXAMPLES.FILE_LOCATION_PATH,
   })
   fileLocationPath: string;
