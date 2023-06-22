@@ -1,5 +1,4 @@
 import { GraphContentType } from '@ukef/modules/graph/dto/common/graph-content-type.dto';
-
 import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 

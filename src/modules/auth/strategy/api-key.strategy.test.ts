@@ -1,11 +1,11 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { AUTH } from '@ukef/constants';
+import { AuthService } from '@ukef/modules/auth/auth.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { Request } from 'express';
 import { when } from 'jest-when';
 import { BadRequestError } from 'passport-headerapikey';
 
-import { AuthService } from '@ukef/modules/auth/auth.service';
 import { ApiKeyStrategy } from './api-key.strategy';
 
 jest.mock('@ukef/modules/auth/auth.service');

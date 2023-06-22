@@ -1,7 +1,7 @@
 import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
-
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+
 import { createGraphError as createWrapGraphError } from './createGraphError';
 
 @Injectable()
