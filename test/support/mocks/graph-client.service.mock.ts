@@ -12,7 +12,7 @@ class MockRequest {
   get: jest.Mock<any, any, any>;
   filter: jest.Mock<any, any, any>;
   expand: jest.Mock<any, any, any>;
-  
+
   constructor() {
     this.get = jest.fn();
     this.filter = jest.fn();
