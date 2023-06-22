@@ -45,13 +45,12 @@ export class SiteService {
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
-    // TODO APIM-133: Should we use the config for app.name for this, or are they separate concepts?
-    const applicationName = 'Estore';
+    const applicationNameToCreateSiteIdWith = 'Estore';
     return [
       {
         numberTypeId: 6,
-        createdBy: applicationName,
-        requestingSystem: applicationName,
+        createdBy: applicationNameToCreateSiteIdWith,
+        requestingSystem: applicationNameToCreateSiteIdWith,
       },
     ];
   }
