@@ -15,6 +15,10 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   GRAPH_AUTHENTICATION_TENANT_ID: valueGenerator.string(),
   GRAPH_AUTHENTICATION_CLIENT_ID: valueGenerator.string(),
   GRAPH_AUTHENTICATION_CLIENT_SECRET: valueGenerator.string(),
+
+  SHAREPOINT_MAIN_SITE_NAME: valueGenerator.string(),
+  SHAREPOINT_TFIS_SITE_NAME: valueGenerator.string(),
+  SHAREPOINT_TFIS_LIST_ID: valueGenerator.string(),
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({

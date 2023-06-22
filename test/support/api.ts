@@ -3,11 +3,13 @@ import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables'
 import request from 'supertest';
 
 import { App } from './app';
+import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class Api {
-  static async create(): Promise<Api> {
-    const app = await App.create();
-    return new Api(app);
+  static async create(): Promise<CreateApi> {
+    const { app, mockGraphClientService } = await App.create();
+    const api = new Api(app);
+    return { api, mockGraphClientService };
   }
 
   constructor(private readonly app: App) {}
@@ -53,4 +55,9 @@ export class Api {
     const strategy = AUTH.STRATEGY;
     return { [strategy]: apiKey };
   }
+}
+
+interface CreateApi {
+  api: Api;
+  mockGraphClientService: MockGraphClientService;
 }

@@ -1,19 +1,19 @@
+import { GraphService } from '@ukef/modules/graph/graph.service';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when } from 'jest-when';
+import { resetAllWhenMocks, when } from 'jest-when';
 
-import { GraphService } from '../graph/graph.service';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
-jest.mock('../graph/graph.service');
+jest.mock('@ukef/modules/graph/graph.service');
 
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.string();
-  const tfisSiteName = valueGenerator.string();
-  const tfisListId = valueGenerator.string();
+  const ukefSharepointName = valueGenerator.word() + '.sharepoint.com';
+  const tfisSiteName = valueGenerator.word();
+  const tfisListId = valueGenerator.word();
 
   let graphService: GraphService;
 
@@ -26,6 +26,7 @@ describe('SiteService', () => {
 
     graphServiceGetRequest = jest.fn();
     graphService.get = graphServiceGetRequest;
+    resetAllWhenMocks();
   });
 
   describe('getSiteStatusByExporterName', () => {
