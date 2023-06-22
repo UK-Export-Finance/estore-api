@@ -1,4 +1,4 @@
-import { ENUMS } from '@ukef/constants';
+import { ENUMS, EXPORTER_NAME } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withStringFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/string-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -175,7 +175,7 @@ describe('createSite', () => {
       message: [
         'exporterName must be a string',
         'exporterName must be longer than or equal to 1 characters',
-        'exporterName must match /^[A-Za-z\\d-._()\\s]+$/ regular expression',
+        'exporterName must match /^[\\w\\-.()\\s]+$/ regular expression',
       ],
       statusCode: 400,
     });
@@ -190,20 +190,8 @@ describe('createSite', () => {
       message: [
         'exporterName must be a string',
         'exporterName must be longer than or equal to 1 characters',
-        'exporterName must match /^[A-Za-z\\d-._()\\s]+$/ regular expression',
+        'exporterName must match /^[\\w\\-.()\\s]+$/ regular expression',
       ],
-      statusCode: 400,
-    });
-  });
-
-  it('returns a 400 with one validation rule if exporterName has unsupported characters', async () => {
-    const characterUnsupportedForWindowsFolder = '\\/:*?"<>|';
-    const { status, body } = await api.post('/api/v1/sites', [{ exporterName: characterUnsupportedForWindowsFolder }]);
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: ['exporterName must match /^[A-Za-z\\d-._()\\s]+$/ regular expression'],
       statusCode: 400,
     });
   });
@@ -253,6 +241,8 @@ describe('createSite', () => {
       minLength: 1,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.exporterName({ length }),
+      pattern: EXPORTER_NAME.REGEX,
+      generateFieldValueThatDoesNotMatchRegex: () => '\\/:*?"<>|',
       validRequestBody: createSiteRequest,
       makeRequest,
       givenAnyRequestBodyWouldSucceed,

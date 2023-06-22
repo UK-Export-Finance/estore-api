@@ -42,31 +42,8 @@ export class SiteController {
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
-    // try {
-    //   const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
-    //   this.setSiteStatusResponse(res, getSiteStatusByExporterNameResponse);
-    // } catch (error) {
-    //   if (error instanceof SiteNotFoundException) {
-    //     res.status(HttpStatusCode.NotFound).json({});
-    //     return;
-    //   }
-    //   throw error;
-
     const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
     this.setSiteStatusResponse(res, getSiteStatusByExporterNameResponse);
-    // if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.FAILED) {
-    //   res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
-    //   return;
-    // }
-    // if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.CREATED) {
-    //   res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
-    //   return;
-    // }
-    // if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.PROVISIONING) {
-    //   res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
-    //   return;
-    // }
-    // throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
   }
 
   @Post()

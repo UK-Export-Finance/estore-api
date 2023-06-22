@@ -106,15 +106,15 @@ describe('SiteController', () => {
 
     it.each([
       {
-        status: 'Failed',
+        status: ENUMS.SITE_STATUSES.FAILED,
         expectedStatusCode: HttpStatusCode.FailedDependency,
       },
       {
-        status: 'Provisioning',
+        status: ENUMS.SITE_STATUSES.PROVISIONING,
         expectedStatusCode: HttpStatusCode.Accepted,
       },
       {
-        status: 'Created',
+        status: ENUMS.SITE_STATUSES.CREATED,
         expectedStatusCode: HttpStatusCode.Ok,
       },
     ])('returns a status code of $expectedStatusCode and the expected response if site status is "$status"', async ({ status, expectedStatusCode }) => {
@@ -153,7 +153,7 @@ describe('SiteController', () => {
       expect(responseMock.json).toHaveBeenCalledTimes(1);
       expect(responseMock.json).toHaveBeenCalledWith({
         siteId: siteId,
-        status: 'Provisioning',
+        status: ENUMS.SITE_STATUSES.PROVISIONING,
       });
       expect(responseMock.status).toHaveBeenCalledTimes(1);
       expect(responseMock.status).toHaveBeenCalledWith(HttpStatusCode.Accepted);
