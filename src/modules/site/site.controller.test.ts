@@ -12,7 +12,7 @@ import { SiteService } from './site.service';
 
 describe('SiteController', () => {
   const valueGenerator = new RandomValueGenerator();
-  const siteService = new SiteService(null, null);
+  const siteService = new SiteService(null, null, null);
   const mockSiteIdGeneratorService = new MockSiteIdGeneratorService();
 
   let siteController: SiteController;

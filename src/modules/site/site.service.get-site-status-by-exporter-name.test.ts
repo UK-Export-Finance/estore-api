@@ -4,6 +4,7 @@ import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generat
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
+import { MdmService } from '../mdm/mdm.service';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
@@ -16,21 +17,21 @@ describe('SiteService', () => {
   const tfisSiteName = valueGenerator.word();
   const tfisListId = valueGenerator.word();
 
-  let graphService: GraphService;
-
   let siteService: SiteService;
   let graphServiceGetRequest: jest.Mock;
   let graphServicePostRequest: jest.Mock;
+  let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
-    graphService = new GraphService(null);
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService);
-
     graphServiceGetRequest = jest.fn();
+    const graphService = new GraphService(null);
     graphService.get = graphServiceGetRequest;
-
     graphServicePostRequest = jest.fn();
     graphService.post = graphServicePostRequest;
+    mdmServiceCreateNumbers = jest.fn();
+    const mdmService = new MdmService(null);
+    mdmService.createNumbers = mdmServiceCreateNumbers;
+    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
   });
 
   describe('getSiteStatusByExporterName', () => {
