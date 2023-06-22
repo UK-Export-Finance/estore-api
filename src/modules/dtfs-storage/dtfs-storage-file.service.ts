@@ -1,4 +1,4 @@
-import { FileGetPropertiesResponse, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
+import { FileGetPropertiesResponse, RestError, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import DtfsConfig from '@ukef/config/dtfs-storage.config';
