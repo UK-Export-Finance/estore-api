@@ -40,7 +40,6 @@ export class SiteService {
 
   async createSiteId(): Promise<string> {
     const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
-    // TODO APIM-133: Do we want to wrap any errors in a new error?
     const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
     return createdSiteId;
   }
