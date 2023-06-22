@@ -14,7 +14,7 @@ export class GetFileSizeRequestItem {
   fileName: string;
 
   @ValidatedStringApiProperty({
-    description: 'The location or file path in Azure storage from which the file needs to be loaded.',
+    description: 'The path of the location/folder in Azure storage from which the file needs to be loaded.',
     minLength: 1,
     maxLength: 250,
     pattern: /^[\w\-:/\\()\s]+$/,
