@@ -1,6 +1,5 @@
 import { DTFS_MAX_FILE_SIZE_BYTES } from './dtfs-max-file-size-bytes.constant';
 import { ENUMS } from './enum.constant';
-
 import { MAX_FILE_SIZE } from './max-file-size.constant';
 
 export const EXAMPLES = {
