@@ -1,31 +1,32 @@
+import { GraphService } from '@ukef/modules/graph/graph.service';
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when } from 'jest-when';
+import { resetAllWhenMocks, when } from 'jest-when';
 
-import { GraphService } from '../graph/graph.service';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
-jest.mock('../graph/graph.service');
+jest.mock('@ukef/modules/graph/graph.service');
 
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.string();
-  const tfisSiteName = valueGenerator.string();
-  const tfisListId = valueGenerator.string();
-
-  let graphService: GraphService;
+  const ukefSharepointName = valueGenerator.word() + '.sharepoint.com';
+  const tfisSiteName = valueGenerator.word();
+  const tfisListId = valueGenerator.word();
 
   let siteService: SiteService;
   let graphServiceGetRequest: jest.Mock;
 
   beforeEach(() => {
-    graphService = new GraphService(null);
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService);
-
     graphServiceGetRequest = jest.fn();
+    const graphService = new GraphService(null);
     graphService.get = graphServiceGetRequest;
+    resetAllWhenMocks();
+
+    const mdmService = new MdmService(null);
+    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
   });
 
   describe('getSiteStatusByExporterName', () => {

@@ -1,15 +1,15 @@
 import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
+import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 
-import GraphClientService from '../graph-client/graph-client.service';
-import { commonGraphExceptionHandling } from './common/common-graph-exception-handling';
+import { createGraphError as createWrapGraphError } from './createGraphError';
 
 @Injectable()
 export class GraphService {
   private readonly client: Client;
 
   constructor(graphClientService: GraphClientService) {
-    this.client = graphClientService.getClient();
+    this.client = graphClientService.client;
   }
 
   async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
@@ -42,7 +42,11 @@ export class GraphService {
     try {
       return await request.get();
     } catch (error) {
-      commonGraphExceptionHandling(error);
+      createWrapGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [],
+      });
     }
   }
 

@@ -1,4 +1,4 @@
-# ESTORE-API Git Hub Actions
+# eStore Git Hub Actions
 #####################################
 # This GHA is responsible for initiating various test suites
 # upon a PR creation. Following test suites are executed:
@@ -11,7 +11,7 @@ run-name: Executing test QA on ${{ github.repository }} 🚀
 
 on:
   pull_request:
-    branches: [ TODO ]
+    branches: [main]
     paths:
       - '.github/workflows/test.yml'
       - 'src/**'
@@ -24,13 +24,12 @@ on:
       - 'nest.cli.json'
 
 env:
-  environment: dev
+  environment: 'qa'
   timezone: 'Europe/London'
-  node: '18'
+  node: ${{ vars.NODE_VERSION }}
 
 jobs:
-
-# 1. Setup test infrastructure
+  # 1. Setup test infrastructure
   setup:
     name: Infrastructure setup 🔧
     runs-on: ubuntu-latest
@@ -38,13 +37,13 @@ jobs:
       environment: ${{ env.environment }}
       timezone: ${{ env.timezone }}
     steps:
-    - name: Environment 🧪
-      run: echo "Environment set to ${{ env.environment }}"
+      - name: Environment 🧪
+        run: echo "Environment set to ${{ env.environment }}"
 
-    - name: Timezone 🌐
-      run: echo "Timezone set to ${{ env.timezone }}"
+      - name: Timezone 🌐
+        run: echo "Timezone set to ${{ env.timezone }}"
 
-# 2. Unit tests
+  # 2. Unit tests
   unit-tests:
     name: Unit 👷
     needs: setup
@@ -73,7 +72,7 @@ jobs:
         working-directory: ./
         run: npm run unit-test
 
-# 3. API tests
+  # 3. API tests
   api-tests:
     name: API 👷
     needs: setup
@@ -102,7 +101,7 @@ jobs:
         working-directory: ./
         run: npm run api-test
 
-# 4. E2E tests
+  # 4. E2E tests
   e2e-tests:
     name: E2E 🧑‍💻
     needs: setup
@@ -137,6 +136,16 @@ jobs:
           SWAGGER_USER: ${{ secrets.SWAGGER_USER }}
           SWAGGER_PASSWORD: ${{ secrets.SWAGGER_PASSWORD }}
           API_KEY: ${{ secrets.API_KEY }}
+          APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
+          APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
+          APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}
+          GRAPH_BASE_URL: ${{ secrets.GRAPH_BASE_URL }}
+          GRAPH_AUTHENTICATION_TENANT_ID: ${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}
+          GRAPH_AUTHENTICATION_CLIENT_ID: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}
+          GRAPH_AUTHENTICATION_CLIENT_SECRET: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}
+          SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
+          SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
+          SHAREPOINT_TFIS_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_LIST_ID }}
         run: docker-compose up --build -d
 
       - name: Execute

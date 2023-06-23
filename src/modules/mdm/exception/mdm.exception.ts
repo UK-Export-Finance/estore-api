@@ -1,6 +1,4 @@
-import { GraphException } from './graph.exception';
-
-export class GraphUnexpectedException extends GraphException {
+export class MdmException extends Error {
   constructor(message: string, public readonly innerError?: Error) {
     super(message);
     this.name = this.constructor.name;

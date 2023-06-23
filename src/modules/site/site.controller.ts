@@ -9,12 +9,12 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ENUMS } from '@ukef/constants';
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
-import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
 @Controller('sites')
@@ -36,27 +36,19 @@ export class SiteController {
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async getSiteStatusByExporterName(@Query() query: GetSiteStatusByExporterNameQueryDto, @Res() res: Response): Promise<void> {
-    try {
-      const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
-      if (getSiteStatusByExporterNameResponse.status === 'Failed') {
-        res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
-        return;
-      }
-      if (getSiteStatusByExporterNameResponse.status === 'Created') {
-        res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
-        return;
-      }
-      if (getSiteStatusByExporterNameResponse.status === 'Provisioning') {
-        res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
-        return;
-      }
-      throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
-    } catch (error) {
-      if (error instanceof SiteNotFoundException) {
-        res.status(HttpStatusCode.NotFound).json({});
-        return;
-      }
-      throw error;
+    const getSiteStatusByExporterNameResponse = await this.service.getSiteStatusByExporterName(query.exporterName);
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.FAILED) {
+      res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
+      return;
     }
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.CREATED) {
+      res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
+      return;
+    }
+    if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.PROVISIONING) {
+      res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
+      return;
+    }
+    throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
   }
 }
