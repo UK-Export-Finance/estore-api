@@ -19,8 +19,16 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_MAIN_SITE_NAME: valueGenerator.string(),
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.string(),
   SHAREPOINT_TFIS_LIST_ID: valueGenerator.string(),
+
+  MDM_BASE_URL: valueGenerator.httpsUrl(),
+  MDM_API_KEY_HEADER_NAME: valueGenerator.word(),
+  MDM_API_KEY_HEADER_VALUE: valueGenerator.string(),
+  MDM_MAX_REDIRECTS: 0,
+  MDM_TIMEOUT: 1000,
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
   ...ENVIRONMENT_VARIABLES,
+  MDM_MAX_REDIRECTS: ENVIRONMENT_VARIABLES.MDM_MAX_REDIRECTS.toString(),
+  MDM_TIMEOUT: ENVIRONMENT_VARIABLES.MDM_TIMEOUT.toString(),
 });

@@ -126,16 +126,18 @@ jobs:
             "SWAGGER_USER=${{ secrets.SWAGGER_USER }}" \
             "SWAGGER_PASSWORD=${{ secrets.SWAGGER_PASSWORD }}" \
             "API_KEY=${{ secrets.API_KEY }}" \
-            "APIM_MDM_URL=${{ secrets.APIM_MDM_URL }}" \
-            "APIM_MDM_KEY=${{ secrets.APIM_MDM_KEY }}" \
-            "APIM_MDM_VALUE=${{ secrets.APIM_MDM_VALUE }}" \
             "GRAPH_BASE_URL=${{ secrets.GRAPH_BASE_URL }}" \
             "GRAPH_AUTHENTICATION_TENANT_ID=${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}" \
             "GRAPH_AUTHENTICATION_CLIENT_ID=${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}" \
             "GRAPH_AUTHENTICATION_CLIENT_SECRET=${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}" \
             "SHAREPOINT_MAIN_SITE_NAME=${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}" \
             "SHAREPOINT_TFIS_SITE_NAME=${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}" \
-            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}"
+            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}" \
+            "MDM_BASE_URL=${{ secrets.MDM_BASE_URL }}" \
+            "MDM_API_KEY_HEADER_NAME=${{ secrets.MDM_API_KEY_HEADER_NAME }}" \
+            "MDM_API_KEY_HEADER_VALUE=${{ secrets.MDM_API_KEY_HEADER_VALUE }}" \
+            "MDM_MAX_REDIRECTS=${{ secrets.MDM_MAX_REDIRECTS }}" \
+            "MDM_TIMEOUT=${{ secrets.MDM_TIMEOUT }}"
 
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}
