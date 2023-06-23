@@ -15,7 +15,7 @@ export class TermsService {
   ) {}
 
   async postFacilityToTermStore(id: string): Promise<any> {
-    const listItem = {
+    const requestBody = {
       fields: {
         Title: id,
       },
@@ -25,7 +25,7 @@ export class TermsService {
 
     await this.graphService.post<any>({
       path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisTermStoreId}/items`,
-      listItem,
+      requestBody,
     });
     return { message: RESPONSE.FACILITY_TERM_CREATED };
   }

@@ -14,14 +14,7 @@ export class GraphService {
 
   async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
     const request = this.createGetRequest({ path, filter, expand });
-    const response = await this.makeGetRequest({ request });
-    return response;
-  }
-
-  async post<T>({ path, listItem }: GraphPostParams): Promise<T> {
-    const request = this.client.api(path);
-    const response = await this.makePostRequest({ request }, listItem);
-    return response;
+    return await this.makeGetRequest({ request });
   }
 
   private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
@@ -50,9 +43,20 @@ export class GraphService {
     }
   }
 
-  private async makePostRequest({ request }: { request: GraphRequest }, listItem: any) {
+  post<T>({ path, requestBody }: GraphPostParams): Promise<T> {
+    const request = this.createPostRequest({ path });
+    return this.makePostRequest({ request, requestBody });
+  }
+
+  private createPostRequest({ path }): GraphRequest {
+    const request = this.client.api(path);
+
+    return request;
+  }
+
+  private async makePostRequest({ request, requestBody }: { request: GraphRequest; requestBody: any }) {
     try {
-      return await request.post(listItem);
+      return await request.post(requestBody);
     } catch (error) {
       createWrapGraphError({
         error,
@@ -71,7 +75,7 @@ export interface GraphGetParams {
 
 export interface GraphPostParams {
   path: string;
-  listItem: object;
+  requestBody: any;
 }
 
 export default GraphService;
