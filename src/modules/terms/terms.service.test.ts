@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { RESPONSE } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
@@ -46,13 +46,13 @@ describe('TermsService', () => {
   });
 
   describe('postFacilityToTermStore', () => {
-    it('should call the graphService post method with the correct parameters and return a success message', async () => {
+    it('should call the graphService post method and return a success message', async () => {
       when(mockGraphServicePost).calledWith(expect.any(Object)).mockResolvedValue(undefined);
 
       const result = await service.postFacilityToTermStore(facilityId);
 
       expect(graphService.post).toHaveBeenCalled();
-      expect(result).toEqual({ message: RESPONSE.FACILITY_TERM_CREATED });
+      expect(result).toStrictEqual({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED });
     });
 
     it('should throw an error when the graphService post method throws an error', async () => {

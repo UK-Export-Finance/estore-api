@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { RESPONSE } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
 import { GraphService } from '@ukef/modules/graph/graph.service';
+
+import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 
 type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisTermStoreId';
 
@@ -14,7 +16,7 @@ export class TermsService {
     private readonly graphService: GraphService,
   ) {}
 
-  async postFacilityToTermStore(id: string): Promise<any> {
+  async postFacilityToTermStore(id: string): Promise<CreateTermFacilityResponse> {
     const requestBody = {
       fields: {
         Title: id,
@@ -27,6 +29,6 @@ export class TermsService {
       path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisTermStoreId}/items`,
       requestBody,
     });
-    return { message: RESPONSE.FACILITY_TERM_CREATED };
+    return { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED };
   }
 }

@@ -135,7 +135,8 @@ jobs:
             "GRAPH_AUTHENTICATION_CLIENT_SECRET=${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}" \
             "SHAREPOINT_MAIN_SITE_NAME=${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}" \
             "SHAREPOINT_TFIS_SITE_NAME=${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}" \
-            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}"
+            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}" \
+            "SHAREPOINT_TFIS_TERM_STORE=${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}"
 
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}

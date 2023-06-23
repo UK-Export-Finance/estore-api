@@ -28,6 +28,7 @@ services:
       SHAREPOINT_MAIN_SITE_NAME:
       SHAREPOINT_TFIS_SITE_NAME:
       SHAREPOINT_TFIS_LIST_ID:
+      SHAREPOINT_TFIS_TERM_STORE:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT}"]
       retries: 3

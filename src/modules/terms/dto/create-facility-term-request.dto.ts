@@ -1,6 +1,7 @@
 import { EXAMPLES, UKEFID } from '@ukef/constants';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
+export type CreateFacilityTermRequest = CreateFacilityTermRequestItem[];
 export class CreateFacilityTermRequestItem {
   @ValidatedStringApiProperty({
     description: 'The facility ID to create in termStore.',
@@ -10,8 +11,4 @@ export class CreateFacilityTermRequestItem {
     pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
   })
   readonly id: string;
-
-  constructor(id: string) {
-    this.id = id;
-  }
 }

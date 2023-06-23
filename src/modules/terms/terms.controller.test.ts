@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RESPONSE } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
+import { RESPONSE } from '@ukef-test/support/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
@@ -44,7 +45,7 @@ describe('TermsController', () => {
 
   describe('postFacilityToTermStore', () => {
     it('should call the service with the correct term id and return its result', async () => {
-      const result = { message: RESPONSE.FACILITY_TERM_CREATED };
+      const result = { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED };
 
       when(mockService).calledWith(term.id).mockResolvedValue(result);
 

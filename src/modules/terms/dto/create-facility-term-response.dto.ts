@@ -1,13 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RESPONSE } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
+import { CreateTermForFacilityResponseEnum } from '@ukef/constants/enums/create-term-for-facility-response';
 
-export class CreateDealResponse {
+export class CreateTermFacilityResponse {
   @ApiProperty({
-    example: RESPONSE.FACILITY_TERM_CREATED,
+    example: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED,
+    description: `Response for successful call is always "${ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED}"`,
   })
-  message: string;
-
-  constructor(message: string) {
-    this.message = message;
-  }
+  message: CreateTermForFacilityResponseEnum;
 }

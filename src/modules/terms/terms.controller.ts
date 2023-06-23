@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOperation } from '@nestjs/swagger';
-import { RESPONSE } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
+import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
-import { CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
+import { CreateFacilityTermRequest, CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
+import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 import { TermsService } from './terms.service';
 
 @Controller('terms')
@@ -15,10 +17,11 @@ export class TermsController {
   })
   @ApiBody({
     type: CreateFacilityTermRequestItem,
+    isArray: true,
   })
   @ApiCreatedResponse({
-    description: RESPONSE.FACILITY_TERM_CREATED,
-    type: CreateFacilityTermRequestItem,
+    description: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED,
+    type: CreateTermFacilityResponse,
   })
   @ApiNotFoundResponse({
     description: 'The facility ID was not found.',
@@ -29,7 +32,7 @@ export class TermsController {
   @ApiInternalServerErrorResponse({
     description: 'An internal server error has occurred.',
   })
-  postFacilityToTermStore(@Body() term: CreateFacilityTermRequestItem): Promise<CreateFacilityTermRequestItem> {
-    return this.service.postFacilityToTermStore(term.id);
+  postFacilityToTermStore(@ValidatedArrayBody({ items: CreateFacilityTermRequestItem }) term: CreateFacilityTermRequest): Promise<CreateTermFacilityResponse> {
+    return this.service.postFacilityToTermStore(term[0].id);
   }
 }

@@ -146,6 +146,7 @@ jobs:
           SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
           SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
           SHAREPOINT_TFIS_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_LIST_ID }}
+          SHAREPOINT_TFIS_TERM_STORE: ${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}
         run: docker-compose up --build -d
 
       - name: Execute
