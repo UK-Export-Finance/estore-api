@@ -50,9 +50,9 @@ export class GraphService {
     }
   }
 
-  private makePostRequest({ request }: { request: GraphRequest }, listItem: any) {
+  private async makePostRequest({ request }: { request: GraphRequest }, listItem: any) {
     try {
-      return request.post(listItem);
+      return await request.post(listItem);
     } catch (error) {
       createWrapGraphError({
         error,
