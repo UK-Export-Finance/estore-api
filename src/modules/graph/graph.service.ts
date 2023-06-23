@@ -54,7 +54,11 @@ export class GraphService {
     try {
       return request.post(listItem);
     } catch (error) {
-      commonGraphExceptionHandling(error);
+      createWrapGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [],
+      });
     }
   }
 }
