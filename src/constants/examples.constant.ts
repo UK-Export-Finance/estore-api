@@ -1,5 +1,5 @@
-import { ENUMS } from './enum.constant';
 import { MAX_FILE_SIZE_BYTES } from './dtfs-max-file-size-bytes.constant';
+import { ENUMS } from './enum.constant';
 
 export const EXAMPLES = {
   SITE_ID: '12345678',
