@@ -12,8 +12,4 @@ export class CreateSiteRequestItem {
     pattern: EXPORTER_NAME.REGEX,
   })
   readonly exporterName: string;
-
-  constructor(exporterName: string) {
-    this.exporterName = exporterName;
-  }
 }
