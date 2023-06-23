@@ -110,7 +110,7 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual(siteStatusByExporterNameResponse);
   });
 
-  it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
+  it('returns 404 with message "Not Found" if the site does not exist in sharepoint', async () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
       .mockSuccessfulExpandCallWithExpandString(expand)

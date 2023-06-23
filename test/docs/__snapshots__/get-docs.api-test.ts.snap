@@ -84,6 +84,50 @@ paths:
                 $ref: '#/components/schemas/CreateSiteResponse'
         '500':
           description: An internal server error has occurred.
+  /api/v1/sites/{siteId}/deals/{dealId}/facilities:
+    post:
+      operationId: SiteDealController_createFacilityFolder
+      summary: Creates a facility folder for a deal
+      parameters:
+        - name: siteId
+          required: true
+          in: path
+          description: The identifier of the deal in ACBS.
+          example: '12345678'
+          schema:
+            minLength: 0
+            type: string
+        - name: dealId
+          required: true
+          in: path
+          description: The identifier of the deal in ACBS.
+          example: '0030000321'
+          schema:
+            minLength: 10
+            maxLength: 10
+            pattern: ^00\\d{8}$
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateFacilityFolderRequestItem'
+      responses:
+        '201':
+          description: The name of the folder created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFacilityFolderResponseDto'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized
+        '500':
+          description: An internal server error has occurred.
   /api/v1/temporary-file-check:
     post:
       operationId: TemporaryFileCheckController_getFileSize
@@ -181,6 +225,54 @@ components:
       required:
         - siteId
         - status
+    CreateFacilityFolderRequestItem:
+      type: object
+      properties:
+        exporterName:
+          type: string
+          description: The name of the exporter used in the deal.
+          minLength: 1
+          maxLength: 250
+          pattern: ^[\\w\\-.()\\s]+$
+        buyerName:
+          type: string
+          description: The name of the buyer used in the deal.
+          minLength: 1
+          maxLength: 250
+          pattern: ^[\\w\\-.()\\s]+$
+        facilityIdentifier:
+          type: string
+          description: The identifier of the facility.
+          minLength: 1
+          maxLength: 250
+          pattern: ^[\\w\\-.()\\s]+$
+        destinationMarket:
+          type: string
+          description: The country name of the destination market of the facility.
+          minLength: 10
+          maxLength: 250
+          pattern: ^[\\w\\-.()\\s]+$
+        riskMarket:
+          type: string
+          description: The country name of the risk market of the facility.
+          minLength: 1
+          maxLength: 250
+          pattern: ^[\\w\\-.()\\s]+$
+      required:
+        - exporterName
+        - buyerName
+        - facilityIdentifier
+        - destinationMarket
+        - riskMarket
+    CreateFacilityFolderResponseDto:
+      type: object
+      properties:
+        folderName:
+          type: string
+          readOnly: true
+          example: Example folder name
+      required:
+        - folderName
     GetFileSizeRequestItem:
       type: object
       properties:

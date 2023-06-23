@@ -9,4 +9,5 @@ export const EXAMPLES = {
   FILE_SIZE: MAX_FILE_SIZE_BYTES,
   FILE_NAME: process.env.DTFS_STORAGE_EXAMPLE_FILE_NAME,
   FILE_LOCATION_PATH: process.env.DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH,
+  FOLDER_NAME: 'Example folder name', // TODO apim-139: Check this folder name
 };

@@ -58,7 +58,7 @@ describe('SiteController', () => {
       expect(responseMock.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    it('returns the expected response if site service throws a SiteNotFoundException', async () => {
+    it('returns "Site not found for exporter name" if site service throws a SiteNotFoundException', async () => {
       const errorMessage = `Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`;
       const siteNotFoundError = new SiteNotFoundException(errorMessage);
       const responseMock = {

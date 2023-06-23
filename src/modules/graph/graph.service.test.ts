@@ -5,7 +5,7 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { withKnownGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
+import { withSharedGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -32,7 +32,7 @@ describe('GraphService', () => {
   });
 
   describe('get', () => {
-    withKnownGraphExceptionHandlingTests({
+    withSharedGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
       mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphGetCall(error),
       makeRequest: () => graphService.get({ path }),
@@ -88,7 +88,7 @@ describe('GraphService', () => {
   });
 
   describe('post', () => {
-    withKnownGraphExceptionHandlingTests({
+    withSharedGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
       mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, error),
       makeRequest: () => graphService.post({ path, requestBody }),
