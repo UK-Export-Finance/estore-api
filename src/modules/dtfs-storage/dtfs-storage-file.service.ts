@@ -3,24 +3,20 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import DtfsConfig from '@ukef/config/dtfs-storage.config';
 
+import DtfsStorageClientService from '../dtfs-storage-client/dtfs-storage-client.service';
 import { DtfsStorageException } from './exception/dtfs-storage.exception';
 import { DtfsStorageFileNotFoundException } from './exception/dtfs-storage-file-not-found.exception';
 
 @Injectable()
 export class DtfsStorageFileService {
-  private readonly baseUrl: string;
-  private readonly storageSharedKeyCredential: StorageSharedKeyCredential;
+  private readonly dtfsStorageClientService: DtfsStorageClientService;
 
-  constructor(
-    @Inject(DtfsConfig.KEY)
-    { baseUrl, accountName, accountKey }: ConfigType<typeof DtfsConfig>,
-  ) {
-    this.baseUrl = baseUrl;
-    this.storageSharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
+  constructor(dtfsStorageClientService: DtfsStorageClientService) {
+    this.dtfsStorageClientService = dtfsStorageClientService;
   }
 
   getFileProperties(fileName: string, fileLocationPath: string): Promise<FileGetPropertiesResponse> {
-    const shareFileClient = this.getShareFileClient(fileName, fileLocationPath);
+    const shareFileClient = this.dtfsStorageClientService.getShareFileClient(fileName, fileLocationPath);
 
     return shareFileClient.getProperties().catch((error) => this.handleGetFilePropertiesError(error, fileName, fileLocationPath));
   }
