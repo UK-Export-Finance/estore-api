@@ -18,15 +18,15 @@ describe('mdmConfig', () => {
   const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof MdmConfig; environmentVariableName: string }[] = [
     {
       configPropertyName: 'baseUrl',
-      environmentVariableName: 'MDM_BASE_URL',
+      environmentVariableName: 'APIM_MDM_BASE_URL',
     },
     {
       configPropertyName: 'apiKeyHeaderName',
-      environmentVariableName: 'MDM_API_KEY_HEADER_NAME',
+      environmentVariableName: 'APIM_MDM_API_KEY_HEADER_NAME',
     },
     {
       configPropertyName: 'apiKeyHeaderValue',
-      environmentVariableName: 'MDM_API_KEY_HEADER_VALUE',
+      environmentVariableName: 'APIM_MDM_API_KEY_HEADER_VALUE',
     },
   ];
 
@@ -50,12 +50,12 @@ describe('mdmConfig', () => {
   }[] = [
     {
       configPropertyName: 'maxRedirects',
-      environmentVariableName: 'MDM_MAX_REDIRECTS',
+      environmentVariableName: 'APIM_MDM_MAX_REDIRECTS',
       defaultConfigValue: 5,
     },
     {
       configPropertyName: 'timeout',
-      environmentVariableName: 'MDM_TIMEOUT',
+      environmentVariableName: 'APIM_MDM_TIMEOUT',
       defaultConfigValue: 30000,
     },
   ];
