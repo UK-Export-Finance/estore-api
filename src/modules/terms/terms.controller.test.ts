@@ -49,7 +49,7 @@ describe('TermsController', () => {
 
       when(mockService).calledWith(term.id).mockResolvedValue(result);
 
-      const response = await controller.postFacilityToTermStore(term);
+      const response = await controller.postFacilityToTermStore([term]);
 
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
       expect(response).toBe(result);
@@ -60,7 +60,7 @@ describe('TermsController', () => {
 
       when(mockService).calledWith(term.id).mockRejectedValue(error);
 
-      await expect(controller.postFacilityToTermStore(term)).rejects.toEqual(error);
+      await expect(controller.postFacilityToTermStore([term])).rejects.toEqual(error);
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
     });
 
@@ -69,7 +69,7 @@ describe('TermsController', () => {
 
       when(mockService).calledWith(term.id).mockRejectedValue(error);
 
-      await expect(controller.postFacilityToTermStore(term)).rejects.toEqual(error);
+      await expect(controller.postFacilityToTermStore([term])).rejects.toEqual(error);
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
     });
   });
