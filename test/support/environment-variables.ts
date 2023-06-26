@@ -19,6 +19,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_MAIN_SITE_NAME: valueGenerator.string(),
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.string(),
   SHAREPOINT_TFIS_LIST_ID: valueGenerator.string(),
+  SHAREPOINT_TFIS_TERM_STORE: valueGenerator.string(),
 
   APIM_MDM_URL: valueGenerator.httpsUrl(),
   APIM_MDM_KEY: valueGenerator.word(),

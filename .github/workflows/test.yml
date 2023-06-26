@@ -143,6 +143,7 @@ jobs:
           SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
           SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
           SHAREPOINT_TFIS_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_LIST_ID }}
+          SHAREPOINT_TFIS_TERM_STORE: ${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}
           APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
           APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
           APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}

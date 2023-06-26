@@ -1,3 +1,5 @@
+import { UKEFID } from '@ukef/constants';
+import { UkefId } from '@ukef/helpers';
 import { Chance } from 'chance';
 
 export class RandomValueGenerator {
@@ -62,5 +64,14 @@ export class RandomValueGenerator {
 
   nonnegativeInteger({ max }: { max?: number } = {}): number {
     return this.integer({ min: 0, max });
+  }
+
+  // UKEF id example 0030000321. It should be used for Deal and Facility IDs.
+  ukefId(lengthExcludingPrefix?: number): UkefId {
+    return UKEFID.MAIN_ID.PREFIX.DEV.concat(this.stringOfNumericCharacters({ length: lengthExcludingPrefix ?? 6 })) as UkefId;
+  }
+
+  facilityId(lengthExcludingPrefix?: number): UkefId {
+    return this.ukefId(lengthExcludingPrefix ?? 6);
   }
 }
