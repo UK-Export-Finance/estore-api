@@ -13,9 +13,9 @@ export interface MdmConfig {
 export default registerAs(
   KEY,
   (): MdmConfig => ({
-    baseUrl: process.env.APIM_MDM_BASE_URL,
-    apiKeyHeaderName: process.env.APIM_MDM_API_KEY_HEADER_NAME,
-    apiKeyHeaderValue: process.env.APIM_MDM_API_KEY_HEADER_VALUE,
+    baseUrl: process.env.APIM_MDM_URL,
+    apiKeyHeaderName: process.env.APIM_MDM_KEY,
+    apiKeyHeaderValue: process.env.APIM_MDM_VALUE,
     maxRedirects: parseInt(process.env.APIM_MDM_MAX_REDIRECTS) || 5,
     timeout: parseInt(process.env.APIM_MDM_TIMEOUT) || 30000,
   }),

@@ -20,9 +20,9 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.string(),
   SHAREPOINT_TFIS_LIST_ID: valueGenerator.string(),
 
-  APIM_MDM_BASE_URL: valueGenerator.httpsUrl(),
-  APIM_MDM_API_KEY_HEADER_NAME: valueGenerator.word(),
-  APIM_MDM_API_KEY_HEADER_VALUE: valueGenerator.string(),
+  APIM_MDM_URL: valueGenerator.httpsUrl(),
+  APIM_MDM_KEY: valueGenerator.word(),
+  APIM_MDM_VALUE: valueGenerator.string(),
   APIM_MDM_MAX_REDIRECTS: 0,
   APIM_MDM_TIMEOUT: 1000,
 });

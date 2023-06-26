@@ -18,15 +18,15 @@ describe('mdmConfig', () => {
   const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof MdmConfig; environmentVariableName: string }[] = [
     {
       configPropertyName: 'baseUrl',
-      environmentVariableName: 'APIM_MDM_BASE_URL',
+      environmentVariableName: 'APIM_MDM_URL',
     },
     {
       configPropertyName: 'apiKeyHeaderName',
-      environmentVariableName: 'APIM_MDM_API_KEY_HEADER_NAME',
+      environmentVariableName: 'APIM_MDM_KEY',
     },
     {
       configPropertyName: 'apiKeyHeaderValue',
-      environmentVariableName: 'APIM_MDM_API_KEY_HEADER_VALUE',
+      environmentVariableName: 'APIM_MDM_VALUE',
     },
   ];
 

@@ -143,9 +143,9 @@ jobs:
           SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
           SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
           SHAREPOINT_TFIS_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_LIST_ID }}
-          APIM_MDM_BASE_URL: ${{ secrets.APIM_MDM_BASE_URL }}
-          APIM_MDM_API_KEY_HEADER_NAME: ${{ secrets.APIM_MDM_API_KEY_HEADER_NAME }}
-          APIM_MDM_API_KEY_HEADER_VALUE: ${{ secrets.APIM_MDM_API_KEY_HEADER_VALUE }}
+          APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
+          APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
+          APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}
           APIM_MDM_MAX_REDIRECTS: ${{ secrets.APIM_MDM_MAX_REDIRECTS }}
           APIM_MDM_TIMEOUT: ${{ secrets.APIM_MDM_TIMEOUT }}
         run: docker-compose up --build -d
