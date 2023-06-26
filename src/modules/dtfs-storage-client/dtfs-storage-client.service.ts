@@ -18,8 +18,7 @@ export class DtfsStorageClientService {
 
   public getShareFileClient(fileName: string, fileLocationPath: string): ShareFileClient {
     const url = `${this.baseUrl}/${fileLocationPath}/${fileName}`;
-    const options = { fileRequestIntent: 'backup' };
-    return new ShareFileClient(url, this.storageSharedKeyCredential, options);
+    return new ShareFileClient(url, this.storageSharedKeyCredential);
   }
 }
 

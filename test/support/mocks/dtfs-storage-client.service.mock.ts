@@ -1,4 +1,4 @@
-import { FileGetPropertiesResponse, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
+import { FileGetPropertiesResponse, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { when } from 'jest-when';
 
 class MockFileShareClient {
@@ -27,5 +27,9 @@ export class MockDtfsStorageClientService {
     when(this.fileShareClient.getProperties)
       .calledWith()
       .mockResolvedValueOnce({ contentLength: fileSizeInBytes } as FileGetPropertiesResponse);
+  }
+
+  mockUnsuccessfulGetPropertiesCall(error: RestError): void {
+    when(this.fileShareClient.getProperties).calledWith().mockRejectedValueOnce(error);
   }
 }

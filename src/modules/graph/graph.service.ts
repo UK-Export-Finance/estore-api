@@ -2,7 +2,7 @@ import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 
-import { createGraphError as createWrapGraphError } from './createGraphError';
+import { createGraphError } from './create-graph-error';
 import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class GraphService {
     try {
       return await request.get();
     } catch (error) {
-      createWrapGraphError({
+      createGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
         knownErrors: knownErrors ?? [],

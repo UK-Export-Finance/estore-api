@@ -5,6 +5,7 @@ import DtfsConfig from '@ukef/config/dtfs-storage.config';
 
 import DtfsStorageClientService from '../dtfs-storage-client/dtfs-storage-client.service';
 import { DtfsStorageException } from './exception/dtfs-storage.exception';
+import { DtfsStorageAuthenticationFailedException } from './exception/dtfs-storage-authentication-failed.exception';
 import { DtfsStorageFileNotFoundException } from './exception/dtfs-storage-file-not-found.exception';
 
 @Injectable()
@@ -27,6 +28,9 @@ export class DtfsStorageFileService {
   }
 
   private handleGetFilePropertiesError(error: RestError, fileName: string, fileLocationPath: string): never {
+    if (error.statusCode === 403) {
+      throw new DtfsStorageAuthenticationFailedException('Failed to authenticate with the DTFS storage account.', error);
+    }
     if (error.statusCode === 404) {
       throw new DtfsStorageFileNotFoundException(`File ${fileLocationPath}/${fileName} was not found in DTFS.`, error);
     }
