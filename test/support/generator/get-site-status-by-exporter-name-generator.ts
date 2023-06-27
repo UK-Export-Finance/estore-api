@@ -1,6 +1,7 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
+import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
@@ -22,7 +23,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
   protected generateValues(): GenerateValues {
     return {
       exporterName: this.valueGenerator.word(),
-      siteId: this.valueGenerator.string(),
+      siteId: this.valueGenerator.ukefSiteId(),
       graphCreatedDateTime: this.valueGenerator.date(),
       graphETag: this.valueGenerator.string(),
       graphId: this.valueGenerator.string(),
@@ -95,7 +96,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
 interface GenerateValues {
   exporterName: string;
-  siteId: string;
+  siteId: UkefSiteId;
   graphCreatedDateTime: Date;
   graphETag: string;
   graphId: string;

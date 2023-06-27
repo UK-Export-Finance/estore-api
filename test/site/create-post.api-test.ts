@@ -156,7 +156,7 @@ describe('createSite', () => {
       .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    mockMdmService.mockMdMCallError();
+    mockMdmService.mockMdmCallError();
 
     const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
     expect(status).toBe(500);

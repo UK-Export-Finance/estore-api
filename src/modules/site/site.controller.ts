@@ -14,13 +14,10 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 
-import { MdmException } from '../mdm/exception/mdm.exception';
 import { CreateSiteRequest, CreateSiteRequestItem } from './dto/create-site-request.dto';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
-import { SiteIdCreationFailedException } from './exception/site-id-creation-failed.exception';
-import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
 @Controller('sites')
@@ -60,27 +57,8 @@ export class SiteController {
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async createSite(@ValidatedArrayBody({ items: CreateSiteRequestItem }) createSiteDto: CreateSiteRequest, @Res() res: Response): Promise<void> {
-    const exporterName = createSiteDto[0].exporterName;
-    try {
-      const existingSite = await this.service.getSiteStatusByExporterName(exporterName);
-      this.setSiteStatusResponse(res, existingSite);
-    } catch (error) {
-      if (error instanceof SiteNotFoundException) {
-        // Site doesn't exists, add item to sharepoint create site list.
-        try {
-          const siteId = await this.service.createSiteId();
-          const createSiteResponse = await this.service.createSite(exporterName, siteId);
-          this.setSiteStatusResponse(res, createSiteResponse);
-        } catch (error) {
-          if (error instanceof MdmException) {
-            throw new SiteIdCreationFailedException('Failed to create a site ID', error);
-          }
-          throw error;
-        }
-        return;
-      }
-      throw error;
-    }
+    const siteStatus = await this.service.createSiteIfDoesNotExist(createSiteDto[0].exporterName);
+    this.setSiteStatusResponse(res, siteStatus);
   }
 
   private setSiteStatusResponse(res, getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse): void {

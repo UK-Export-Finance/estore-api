@@ -15,7 +15,7 @@ export class MockMdmService {
       .mockReturnValueOnce([{ maskedId: siteId }]);
   }
 
-  mockMdMCallError() {
+  mockMdmCallError() {
     when(this.createNumbers).calledWith(expect.anything()).mockRejectedValueOnce(new MdmException('Failed to create numbers in MDM.'));
     return this;
   }

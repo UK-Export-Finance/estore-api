@@ -25,23 +25,33 @@ export class SiteService {
   ) {}
 
   async getSiteStatusByExporterName(exporterName: string): Promise<GetSiteStatusByExporterNameResponse> {
-    const data = await this.graphService.get<GraphGetSiteStatusByExporterNameResponseDto>({
-      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
-      filter: `fields/Title eq '${exporterName}'`,
-      expand: 'fields($select=Title,Url,SiteStatus)',
+    const { siteId, status } = await this.getSiteFromSitesList({
+      exporterName,
+      ifNotFound: () => {
+        throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
+      },
     });
-    if (!data.value.length) {
-      throw new SiteNotFoundException(`Site not found for exporter name: ${exporterName}`);
-    }
-
-    const { URL: siteId, Sitestatus: siteStatus } = data.value[0].fields;
-
-    const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
     return { siteId, status };
   }
 
-  async createSite(exporterName: string, newSiteId: string): Promise<CreateSiteResponse> {
+  async createSiteIfDoesNotExist(exporterName: string): Promise<CreateSiteResponse> {
+    const { siteId, status } = await this.getSiteFromSitesList({
+      exporterName,
+      ifNotFound: () => this.createSite(exporterName),
+    });
+
+    return { siteId, status };
+  }
+
+  async createSiteId(): Promise<string> {
+    const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
+    const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
+    return createdSiteId;
+  }
+
+  private async createSite(exporterName: string): Promise<CreateSiteResponse> {
+    const newSiteId = await this.createSiteId();
     const data = await this.graphService.post<GraphCreateSiteResponseDto>({
       path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
       requestBody: {
@@ -61,10 +71,20 @@ export class SiteService {
     return { siteId: siteId as UkefSiteId, status };
   }
 
-  async createSiteId(): Promise<string> {
-    const requestToCreateSiteId: MdmCreateNumbersRequest = this.buildRequestToCreateSiteId();
-    const [{ maskedId: createdSiteId }] = await this.mdmService.createNumbers(requestToCreateSiteId);
-    return createdSiteId;
+  private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
+    const data = await this.graphService.get<GraphGetSiteStatusByExporterNameResponseDto>({
+      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
+      filter: `fields/Title eq '${exporterName}'`,
+      expand: 'fields($select=Title,Url,SiteStatus)',
+    });
+    if (!data.value.length) {
+      return ifNotFound();
+    }
+    const { URL: siteId, Sitestatus: siteStatus } = data.value[0].fields;
+
+    const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
+
+    return { siteId: siteId as UkefSiteId, status };
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {

@@ -55,11 +55,21 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       },
     }));
 
+    const applicationNameToCreateSiteIdWith = 'Estore';
+    const requestToCreateSiteId = [
+      {
+        numberTypeId: 6,
+        createdBy: applicationNameToCreateSiteIdWith,
+        requestingSystem: applicationNameToCreateSiteIdWith,
+      },
+    ];
+
     return {
       createSiteRequest,
       graphServicePostParams,
       graphCreateSiteResponseDto,
       createSiteResponse,
+      requestToCreateSiteId,
     };
   }
 }
@@ -74,6 +84,7 @@ interface GenerateResult {
   graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[];
   createSiteResponse: CreateSiteResponse[];
   graphServicePostParams;
+  requestToCreateSiteId;
 }
 
 interface GenerateOptions {

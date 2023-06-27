@@ -77,7 +77,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         it(`returns a 400 response if ${fieldName} is not present`, async () => {
           const { [fieldNameSymbol]: _removed, ...requestWithoutTheField } = requestBodyItem;
 
-          const { status, body } = await makeRequest([requestWithoutTheField]);
+          const { status, body } = await makeRequest(prepareModifiedRequest(requestIsAnArray, requestWithoutTheField));
 
           expect(status).toBe(400);
           expect(body).toMatchObject({

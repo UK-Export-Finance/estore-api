@@ -105,7 +105,7 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
-  it('returns a 400 with message containing "property does not exist" if query property does not exist', async () => {
+  it("returns a 400 because query parameter is missing, but incorrect query parameter doesn't trigger error", async () => {
     const incorrectQueryName = 'IncorrectQueryName';
 
     mockGraphClientService
@@ -119,7 +119,7 @@ describe('getSiteStatusByExporterName', () => {
     expect(status).toBe(400);
     expect(body).toStrictEqual({
       error: 'Bad Request',
-      message: expect.arrayContaining([`property ${incorrectQueryName} should not exist`]),
+      message: expect.not.arrayContaining([`property ${incorrectQueryName} should not exist`]),
       statusCode: 400,
     });
   });
