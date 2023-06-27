@@ -26,6 +26,12 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   APIM_MDM_VALUE: valueGenerator.string(),
   APIM_MDM_MAX_REDIRECTS: 0,
   APIM_MDM_TIMEOUT: 1000,
+
+  DTFS_STORAGE_ACCOUNT_NAME: valueGenerator.word(),
+  DTFS_STORAGE_ACCOUNT_KEY: valueGenerator.word(),
+  DTFS_STORAGE_FILE_SHARE_NAME: valueGenerator.word(),
+  DTFS_STORAGE_EXAMPLE_FILE_NAME: valueGenerator.word(),
+  DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH: valueGenerator.word(),
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
