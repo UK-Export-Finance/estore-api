@@ -138,7 +138,12 @@ jobs:
             "APIM_MDM_KEY=${{ secrets.APIM_MDM_KEY }}" \
             "APIM_MDM_VALUE=${{ secrets.APIM_MDM_VALUE }}" \
             "APIM_MDM_MAX_REDIRECTS=${{ secrets.APIM_MDM_MAX_REDIRECTS }}" \
-            "APIM_MDM_TIMEOUT=${{ secrets.APIM_MDM_TIMEOUT }}"
+            "APIM_MDM_TIMEOUT=${{ secrets.APIM_MDM_TIMEOUT }}" \
+            "DTFS_STORAGE_ACCOUNT_NAME=${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}" \
+            "DTFS_STORAGE_ACCOUNT_KEY=${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}" \
+            "DTFS_STORAGE_FILE_SHARE_NAME=${{ secrets.DTFS_STORAGE_FILE_SHARE_NAME }}" \
+            "DTFS_STORAGE_EXAMPLE_FILE_NAME=${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_NAME }}" \
+            "DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH=${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH }}"
 
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}
