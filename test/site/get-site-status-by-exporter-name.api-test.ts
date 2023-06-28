@@ -92,6 +92,30 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual(modifiedSiteStatusByExporterNameResponse);
   });
 
+  it('if you use the correct query parameter and an unexpected one as well, then it still succeeds/you get a 202 response', async () => {
+    const {
+      siteStatusByExporterNameQueryDto,
+      siteStatusByExporterNameResponse,
+      graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
+      graphGetSiteStatusResponseDto: modifiedGraphGetSiteStatusResponseDto,
+    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(modifiedPath)
+      .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
+      .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
+      .mockSuccessfulGraphGetCall(modifiedGraphGetSiteStatusResponseDto);
+
+    const incorrectQueryName = 'IncorrectQueryName';
+    const urlWithIncorrectQueryParam =
+      getSiteStatusByExporterNameUrl({ queryValue: siteStatusByExporterNameQueryDto.exporterName }) + '&' + incorrectQueryName + '=test';
+
+    const { status, body } = await api.get(urlWithIncorrectQueryParam);
+
+    expect(status).toBe(202);
+    expect(body).toStrictEqual(siteStatusByExporterNameResponse);
+  });
+
   it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
@@ -103,25 +127,6 @@ describe('getSiteStatusByExporterName', () => {
 
     expect(status).toBe(404);
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
-  });
-
-  it("returns a 400 because query parameter is missing, but incorrect query parameter doesn't trigger error", async () => {
-    const incorrectQueryName = 'IncorrectQueryName';
-
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
-
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryName: incorrectQueryName }));
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.not.arrayContaining([`property ${incorrectQueryName} should not exist`]),
-      statusCode: 400,
-    });
   });
 
   it('returns a 400 with message containing "exporterName must be longer than or equal to 1 characters" if exporterName is an empty string', async () => {
