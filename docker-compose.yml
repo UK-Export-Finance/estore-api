@@ -12,7 +12,7 @@ services:
     volumes:
       - ./:/app/src:rw
     environment:
-      PORT :
+      PORT:
       NODE_ENV:
       TZ:
       LOG_LEVEL:
