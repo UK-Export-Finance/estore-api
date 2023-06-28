@@ -1,4 +1,4 @@
-import { UkefSiteId } from "@ukef/helpers";
+import { UkefSiteId } from '@ukef/helpers';
 
 export interface GraphParentReference {
   id: string;
