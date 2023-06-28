@@ -12,9 +12,10 @@ services:
     volumes:
       - ./:/app/src:rw
     environment:
-      PORT:
+      PORT :
       NODE_ENV:
       TZ:
+      LOG_LEVEL:
       SWAGGER_USER:
       SWAGGER_PASSWORD:
       API_KEY:
@@ -35,7 +36,12 @@ services:
       DTFS_STORAGE_ACCOUNT_KEY:
       DTFS_STORAGE_FILE_SHARE_NAME:
       DTFS_STORAGE_EXAMPLE_FILE_NAME:
-      DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH:
+      DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH :
+      CUSTODIAN_BASE_URL:
+      CUSTODIAN_API_KEY_HEADER_NAME:
+      CUSTODIAN_API_KEY_HEADER_VALUE:
+      CUSTODIAN_MAX_REDIRECTS:
+      CUSTODIAN_TIMEOUT:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT}"]
       retries: 3
