@@ -6,7 +6,7 @@
  * 2. EXAMPLES
  * 3. ENUMS
  * 4. EXPORTER_NAME
- * 5. UKEFID
+ * 5. UKEF_ID
  */
 
 export * from './auth.constant';

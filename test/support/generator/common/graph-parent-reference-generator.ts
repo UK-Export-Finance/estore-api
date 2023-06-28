@@ -10,7 +10,7 @@ export class graphParentReferenceGenerator extends AbstractGenerator<GenerateVal
   protected generateValues(): GenerateValues {
     return {
       id: this.valueGenerator.string(),
-      siteId: this.valueGenerator.string(),
+      siteId: this.valueGenerator.ukefSiteId(),
     };
   }
 

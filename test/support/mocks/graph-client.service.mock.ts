@@ -10,11 +10,13 @@ class MockClient {
 
 class MockRequest {
   get: jest.Mock<any, any, any>;
+  post: jest.Mock<any, any, any>;
   filter: jest.Mock<any, any, any>;
   expand: jest.Mock<any, any, any>;
 
   constructor() {
     this.get = jest.fn();
+    this.post = jest.fn();
     this.filter = jest.fn();
     this.expand = jest.fn();
   }
@@ -54,5 +56,13 @@ export class MockGraphClientService {
   mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphClientService {
     when(this.request.expand).calledWith(expandString).mockReturnValueOnce(this.request);
     return this;
+  }
+
+  mockSuccessfulGraphPostCall(requestBody, response) {
+    when(this.request.post).calledWith(requestBody).mockReturnValueOnce(response);
+  }
+
+  mockUnsuccessfulGraphPostCall(requestBody, error: unknown) {
+    when(this.request.post).calledWith(requestBody).mockRejectedValueOnce(error);
   }
 }

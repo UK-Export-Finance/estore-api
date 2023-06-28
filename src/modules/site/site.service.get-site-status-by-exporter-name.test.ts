@@ -23,6 +23,7 @@ describe('SiteService', () => {
     graphServiceGetRequest = jest.fn();
     const graphService = new GraphService(null);
     graphService.get = graphServiceGetRequest;
+    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, null);
     resetAllWhenMocks();
 
     const mdmService = new MdmService(null);
@@ -33,7 +34,7 @@ describe('SiteService', () => {
     const { siteStatusByExporterNameServiceRequest, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
       new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, ukefSharepointName, tfisSiteName, tfisListId });
 
-    it('returns the site name and status from the service', async () => {
+    it('returns the site id and status from the service', async () => {
       when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphGetSiteStatusResponseDto);
 
       const response = await siteService.getSiteStatusByExporterName(siteStatusByExporterNameServiceRequest);

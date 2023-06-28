@@ -18,6 +18,11 @@ describe('GraphService', () => {
 
   const mockRequest = mockGraphClientService.getApiRequestObject();
 
+  const requestBody = {
+    exporterName: valueGenerator.string(),
+  };
+  const expectedPostResponse = valueGenerator.string();
+
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService);
     jest.resetAllMocks();
@@ -80,6 +85,28 @@ describe('GraphService', () => {
     });
   });
 
+  describe('post', () => {
+    withKnownGraphExceptionHandlingTests({
+      mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
+      mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, error),
+      makeRequest: () => graphService.post({ path, requestBody }),
+    });
+
+    it('calls the correct graph client methods on a graph service post request with no additional parameters and returns the response', async () => {
+      mockSuccessfulCompleteGraphPostRequest();
+
+      const result = await graphService.post<string>({ path, requestBody });
+
+      const expectations = getCallExpectations({
+        apiCalled: true,
+        postCalled: true,
+      });
+      expectations.forEach((expectation) => expectation(requestBody));
+
+      expect(result).toEqual(expectedPostResponse);
+    });
+  });
+
   const mockSuccessfulGraphApiCall = () => mockGraphClientService.mockSuccessfulGraphApiCallWithPath(path);
 
   const mockSuccessfulChainingCalls = () => {
@@ -88,10 +115,18 @@ describe('GraphService', () => {
 
   const mockSuccessfulGraphGetCall = () => mockGraphClientService.mockSuccessfulGraphGetCall(expectedResponse);
 
+  const mockSuccessfulGraphPostCall = () => mockGraphClientService.mockSuccessfulGraphPostCall(requestBody, expectedPostResponse);
+
   const mockSuccessfulCompleteGraphRequest = () => {
     mockSuccessfulGraphApiCall();
     mockSuccessfulChainingCalls();
     mockSuccessfulGraphGetCall();
+  };
+
+  const mockSuccessfulCompleteGraphPostRequest = () => {
+    mockSuccessfulGraphApiCall();
+    mockSuccessfulChainingCalls();
+    mockSuccessfulGraphPostCall();
   };
 
   const getCallExpectations = ({
@@ -99,11 +134,13 @@ describe('GraphService', () => {
     filterCalled = false,
     expandCalled = false,
     getCalled = false,
+    postCalled = false,
   }: {
     apiCalled?: boolean;
     filterCalled?: boolean;
     expandCalled?: boolean;
     getCalled?: boolean;
+    postCalled?: boolean;
   }) => {
     const apiCallExpectations = apiCalled
       ? [() => expect(mockGraphClientService.client.api).toHaveBeenCalledTimes(1), () => expect(mockGraphClientService.client.api).toHaveBeenCalledWith(path)]
@@ -121,6 +158,10 @@ describe('GraphService', () => {
       ? [() => expect(mockRequest.get).toHaveBeenCalledTimes(1), () => expect(mockRequest.get).toHaveBeenCalledWith()]
       : [() => expect(mockRequest.get).toHaveBeenCalledTimes(0)];
 
-    return [...apiCallExpectations, ...filterCallExpectations, ...expandCallExpectations, ...getCallExpectations];
+    const postCallExpectations = postCalled
+      ? [() => expect(mockRequest.post).toHaveBeenCalledTimes(1), (requestBody?) => expect(mockRequest.post).toHaveBeenCalledWith(requestBody)]
+      : [() => expect(mockRequest.post).toHaveBeenCalledTimes(0)];
+
+    return [...apiCallExpectations, ...filterCallExpectations, ...expandCallExpectations, ...getCallExpectations, ...postCallExpectations];
   };
 });

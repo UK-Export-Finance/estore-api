@@ -1,5 +1,6 @@
 import { UKEFID } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
+import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { Chance } from 'chance';
 
 export class RandomValueGenerator {
@@ -22,6 +23,17 @@ export class RandomValueGenerator {
   stringOfNumericCharacters(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = this.getStringLengthFromOptions(options);
     return this.chance.string({ length, pool: '0123456789' });
+  }
+
+  exporterName(options?: { length?: number; minLength?: number; maxLength?: number }): string {
+    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
+    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() ';
+    return this.chance.string({ length, pool });
+  }
+
+  // UKEF Site id example 00701234.
+  ukefSiteId(lengthExcludingPrefix?: number): UkefSiteId {
+    return UKEFID.SITE_ID.PREFIX.concat(this.stringOfNumericCharacters({ length: lengthExcludingPrefix ?? 4 })) as UkefSiteId;
   }
 
   private getStringLengthFromOptions(options?: { length?: number; minLength?: number; maxLength?: number }): number {
