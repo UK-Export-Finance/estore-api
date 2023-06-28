@@ -126,16 +126,24 @@ jobs:
             "SWAGGER_USER=${{ secrets.SWAGGER_USER }}" \
             "SWAGGER_PASSWORD=${{ secrets.SWAGGER_PASSWORD }}" \
             "API_KEY=${{ secrets.API_KEY }}" \
-            "APIM_MDM_URL=${{ secrets.APIM_MDM_URL }}" \
-            "APIM_MDM_KEY=${{ secrets.APIM_MDM_KEY }}" \
-            "APIM_MDM_VALUE=${{ secrets.APIM_MDM_VALUE }}" \
             "GRAPH_BASE_URL=${{ secrets.GRAPH_BASE_URL }}" \
             "GRAPH_AUTHENTICATION_TENANT_ID=${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}" \
             "GRAPH_AUTHENTICATION_CLIENT_ID=${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}" \
             "GRAPH_AUTHENTICATION_CLIENT_SECRET=${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}" \
             "SHAREPOINT_MAIN_SITE_NAME=${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}" \
             "SHAREPOINT_TFIS_SITE_NAME=${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}" \
-            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}"
+            "SHAREPOINT_TFIS_LIST_ID=${{ secrets.SHAREPOINT_TFIS_LIST_ID }}" \
+            "SHAREPOINT_TFIS_TERM_STORE=${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}" \
+            "APIM_MDM_URL=${{ secrets.APIM_MDM_URL }}" \
+            "APIM_MDM_KEY=${{ secrets.APIM_MDM_KEY }}" \
+            "APIM_MDM_VALUE=${{ secrets.APIM_MDM_VALUE }}" \
+            "APIM_MDM_MAX_REDIRECTS=${{ secrets.APIM_MDM_MAX_REDIRECTS }}" \
+            "APIM_MDM_TIMEOUT=${{ secrets.APIM_MDM_TIMEOUT }}" \
+            "DTFS_STORAGE_ACCOUNT_NAME=${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}" \
+            "DTFS_STORAGE_ACCOUNT_KEY=${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}" \
+            "DTFS_STORAGE_FILE_SHARE_NAME=${{ secrets.DTFS_STORAGE_FILE_SHARE_NAME }}" \
+            "DTFS_STORAGE_EXAMPLE_FILE_NAME=${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_NAME }}" \
+            "DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH=${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH }}"
 
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}

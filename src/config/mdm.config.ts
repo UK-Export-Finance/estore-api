@@ -13,10 +13,10 @@ export interface MdmConfig {
 export default registerAs(
   KEY,
   (): MdmConfig => ({
-    baseUrl: process.env.MDM_BASE_URL,
-    apiKeyHeaderName: process.env.MDM_API_KEY_HEADER_NAME,
-    apiKeyHeaderValue: process.env.MDM_API_KEY_HEADER_VALUE,
-    maxRedirects: parseInt(process.env.MDM_MAX_REDIRECTS) || 5,
-    timeout: parseInt(process.env.MDM_TIMEOUT) || 30000,
+    baseUrl: process.env.APIM_MDM_URL,
+    apiKeyHeaderName: process.env.APIM_MDM_KEY,
+    apiKeyHeaderValue: process.env.APIM_MDM_VALUE,
+    maxRedirects: parseInt(process.env.APIM_MDM_MAX_REDIRECTS) || 5,
+    timeout: parseInt(process.env.APIM_MDM_TIMEOUT) || 30000,
   }),
 );
