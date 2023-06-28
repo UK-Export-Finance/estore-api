@@ -4,7 +4,6 @@ import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 
 export class GetSiteStatusByExporterNameResponse {
-  // TODO apim-139: make UkefSiteId
   @ApiResponseProperty({ example: EXAMPLES.SITE_ID })
   siteId: UkefSiteId;
   @ApiResponseProperty({ example: EXAMPLES.SITE_STATUS_CODE, enum: SiteStatusEnum })

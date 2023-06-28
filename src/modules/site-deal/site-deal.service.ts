@@ -8,6 +8,7 @@ import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-re
 import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { SiteDealException } from './exception/site-deal.exception';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { UkefId, UkefSiteId } from '@ukef/helpers';
 
 type RequiredConfigKeys = 'tfisFacilityListId' | 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId' | 'tfisScSiteName' | 'tfisFacilityHiddenListTermStoreId';
 
@@ -20,8 +21,8 @@ export class SiteDealService {
   ) {}
 
   async createFacilityFolder(
-    siteId: string,
-    dealId: string,
+    siteId: UkefSiteId,
+    dealId: UkefId,
     createFacilityFolderRequestItem: CreateFacilityFolderRequestItem,
   ): Promise<CreateFacilityFolderResponseDto> {
     const { facilityIdentifier, buyerName, destinationMarket, riskMarket } = createFacilityFolderRequestItem;
@@ -47,7 +48,7 @@ export class SiteDealService {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getParentFolderId(siteId: string, parentFolderName: string): Promise<string> {
+  private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<string> {
     const parentFolderData: GraphGetListItemsResponseDto = await this.graphService.get({
       path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisScSiteName}:/lists/${this.config.tfisFacilityListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${parentFolderName}'`,

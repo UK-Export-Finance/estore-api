@@ -1,3 +1,4 @@
+import { UkefId, UkefSiteId } from '@ukef/helpers';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
@@ -10,11 +11,10 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     super(valueGenerator);
   }
 
-  // TODO apim-139: update generation types
   protected generateValues(): GenerateValues {
     return {
-      siteId: this.valueGenerator.word(),
-      dealId: this.valueGenerator.word(),
+      siteId: this.valueGenerator.ukefSiteId(),
+      dealId: this.valueGenerator.ukefId(),
 
       exporterName: this.valueGenerator.word(),
       buyerName: this.valueGenerator.word(),
@@ -60,10 +60,9 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
   }
 }
 
-// TODO apim-139: update the types
 interface GenerateValues {
-  siteId: string;
-  dealId: string;
+  siteId: UkefSiteId;
+  dealId: UkefId;
 
   exporterName: string;
   buyerName: string;
@@ -82,6 +81,6 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  siteId?: string;
-  dealId?: string;
+  siteId?: UkefSiteId;
+  dealId?: UkefId;
 }
