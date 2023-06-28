@@ -13,6 +13,7 @@ describe('getSiteStatusByExporterName', () => {
     siteStatusByExporterNameQueryDto,
     graphServiceGetParams: { path, expand, filter },
     graphGetSiteStatusResponseDto,
+    siteStatusByExporterNameResponse,
   } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
@@ -93,18 +94,11 @@ describe('getSiteStatusByExporterName', () => {
   });
 
   it('if you use the correct query parameter and an unexpected one as well, then it still succeeds/you get a 202 response', async () => {
-    const {
-      siteStatusByExporterNameQueryDto,
-      siteStatusByExporterNameResponse,
-      graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
-      graphGetSiteStatusResponseDto: modifiedGraphGetSiteStatusResponseDto,
-    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
-
     mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(modifiedPath)
-      .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
-      .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
-      .mockSuccessfulGraphGetCall(modifiedGraphGetSiteStatusResponseDto);
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expand)
+      .mockSuccessfulFilterCallWithFilterString(filter)
+      .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
 
     const incorrectQueryName = 'IncorrectQueryName';
     const urlWithIncorrectQueryParam =
