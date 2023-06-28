@@ -69,13 +69,11 @@ describe('SiteController', () => {
 
     it('throws MdmException if site service throws MdmException', async () => {
       const mdmError = new MdmException('Error message');
-      //const expectedResponseError = new SiteIdCreationFailedException('Failed to create a site ID');
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      // when(siteGetSiteStatusByExporterName).calledWith(exporterName).mockRejectedValueOnce(siteNotFoundError);
       when(siteCreateSiteIfDoesNotExist).calledWith(exporterName).mockRejectedValueOnce(mdmError);
 
       const responsePromise = siteController.createSite(createSiteRequest, responseMock);
