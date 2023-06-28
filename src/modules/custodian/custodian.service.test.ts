@@ -51,7 +51,6 @@ describe('CustodianService', () => {
           Values: [],
         },
       ],
-      ConnectedListMetadata: [],
       TypeGuid: valueGenerator.string(),
       SPHostUrl: valueGenerator.string(),
     };

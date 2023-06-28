@@ -11,7 +11,6 @@ export interface CustodianCreateAndProvisionRequest {
   FormButton?: string;
   HasAttachments?: boolean;
   Metadata?: MetadataItem[];
-  ConnectedListMetadata?: []; // TODO APIM-136: Mulesoft sends an empty array for this field but it is not mentioned in Custodian's documentation.
   TypeGuid: string;
   SPHostUrl: string;
 }
