@@ -1,24 +1,19 @@
-import { BUYER_NAME, EXPORTER_NAME, FACILITY_IDENTIFIER } from '@ukef/constants';
-import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
+import { ValidatedFacilityIdentifierApiProperty } from '@ukef/decorators/validated-facility-identifier-api-property';
+import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/validated-sharepoint-resource-name-api-property';
 
 export type CreateFacilityFolderRequestDto = CreateFacilityFolderRequestItem[];
 export class CreateFacilityFolderRequestItem {
-  // TODO apim-139: add custom validation decorator?
-  // TODO apim-139: add examples?
-  // TODO apim-139: update these following APIM454
-  @ValidatedStringApiProperty({ description: 'The name of the exporter used in the deal.', pattern: EXPORTER_NAME.REGEX, minLength: 1, maxLength: 250 })
+  @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the exporter used in the deal.', example: 'Example exporter name' })
   exporterName: string;
-  @ValidatedStringApiProperty({ description: 'The name of the buyer used in the deal.', pattern: BUYER_NAME.REGEX, minLength: 1, maxLength: 250 })
+  @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the buyer used in the deal.', example: 'Example buyer name' })
   buyerName: string;
-  @ValidatedStringApiProperty({ description: 'The identifier of the facility.', pattern: FACILITY_IDENTIFIER.REGEX, minLength: 1, maxLength: 250 })
+  @ValidatedFacilityIdentifierApiProperty({ description: 'The identifier of the facility.' })
   facilityIdentifier: string;
-  @ValidatedStringApiProperty({
+  @ValidatedSharepointResourceNameApiProperty({
     description: 'The country name of the destination market of the facility.',
-    pattern: /^[\w\-.()\s]+$/,
-    minLength: 10,
-    maxLength: 250,
+    example: 'Germany',
   })
   destinationMarket: string;
-  @ValidatedStringApiProperty({ description: 'The country name of the risk market of the facility.', pattern: /^[\w\-.()\s]+$/, minLength: 1, maxLength: 250 })
+  @ValidatedSharepointResourceNameApiProperty({ description: 'The country name of the risk market of the facility.', example: 'Germany' })
   riskMarket: string;
 }

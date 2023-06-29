@@ -2,20 +2,17 @@
  * eStore centralised constants, referred as `@ukef/constants`.
  * Following constants are served:
  *
- * 1. Auth
- * 2. EXAMPLES
- * 3. ENUMS
- * 4. EXPORTER_NAME
+ * 1. AUTH
+ * 2. DTFS_MAX_FILE_SIZE_BYTES
+ * 2. ENUMS
+ * 3. EXAMPLES
+ * 4. SHAREPOINT
  * 5. UKEF_ID
- * 6. BUYER_NAME
- * 7. FACILITY_IDENTIFIER
  */
 
 export * from './auth.constant';
-export * from './buyer-name.constant';
 export * from './dtfs-max-file-size-bytes.constant';
 export * from './enum.constant';
 export * from './examples.constant';
-export * from './exporter-name.constant';
-export * from './facility-identifier.constant';
+export * from './sharepoint.constant';
 export * from './ukef-id.constant';

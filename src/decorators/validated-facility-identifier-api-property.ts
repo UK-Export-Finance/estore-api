@@ -6,10 +6,10 @@ interface Options {
   description: string;
 }
 
-export const ValidatedSiteIdentifierApiProperty = ({ description }: Options) =>
+export const ValidatedFacilityIdentifierApiProperty = ({ description }: Options) =>
   ValidatedStringApiProperty({
     description,
-    length: 8,
-    pattern: UKEFID.SITE_ID.REGEX,
-    example: EXAMPLES.SITE_ID,
+    length: 10,
+    pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
+    example: EXAMPLES.FACILITY_ID,
   });
