@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { UkefId, UkefSiteId } from '@ukef/helpers';
 
+import { CustodianService } from '../custodian/custodian.service';
+import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '../graph/dto/graph-get-list-item-response.dto';
 import GraphService from '../graph/graph.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
@@ -10,14 +13,17 @@ import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-re
 import { SiteDealException } from './exception/site-deal.exception';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
 
-type RequiredConfigKeys = 'tfisFacilityListId' | 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId' | 'tfisScSiteName' | 'tfisFacilityHiddenListTermStoreId';
-
+type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'tfisFacilityHiddenListTermStoreId';
+type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
 @Injectable()
 export class SiteDealService {
   constructor(
     @Inject(SharepointConfig.KEY)
-    private readonly config: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
+    @Inject(CustodianConfig.KEY)
+    private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
     private readonly graphService: GraphService,
+    private readonly custodianService: CustodianService,
   ) {}
 
   async createFacilityFolder(
@@ -30,13 +36,37 @@ export class SiteDealService {
     const parentFolderName = this.getParentFolderName(buyerName, dealId);
 
     // TODO apim-139: plug into new function
-    const parentFolder = await this.getParentFolderId(siteId, parentFolderName);
+    const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
+    const itemToCreateAndProvision: CustodianCreateAndProvisionRequest = {
+      Title: 'TODO', // TODO apim-139 add title
+      Id: 0,
+      Code: '',
+      TemplateId: this.custodianConfig.facilityTemplateId,
+      // TemplateIdToCopy: '',
+      ParentId: 0, //parentFolderId,
+      InterestedParties: '',
+      Secure: false,
+      DoNotSubscribeInterestedParties: false,
+      Links: [],
+      FormButton: '',
+      HasAttachments: false,
+      Metadata: [
+        {
+          Name: 'Facility ID',
+          Values: [`${termGuid}||${termTitle}`],
+        },
+      ],
+      // ConnectedListMetadata: [],
+      TypeGuid: this.custodianConfig.facilityTypeGuid,
+      SPHostUrl: this.sharepointConfig.scSharepointUrl,
+    };
+    this.custodianService.createAndProvision(itemToCreateAndProvision);
     // TODO apim-139: update response
     return {
-      folderName: `${destinationMarket} - ${riskMarket} - ${parentFolder} - ${termGuid}- ${termTitle} - ${parentFolderName}`,
+      folderName: `${destinationMarket} - ${riskMarket} - ${parentFolderId} - ${termGuid}- ${termTitle} - ${parentFolderName}`,
     };
   }
 
@@ -50,7 +80,7 @@ export class SiteDealService {
 
   private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<string> {
     const parentFolderData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisScSiteName}:/lists/${this.config.tfisFacilityListId}/items`,
+      path: `sites/${this.sharepointConfig.scSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${parentFolderName}'`,
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     });
@@ -72,7 +102,7 @@ export class SiteDealService {
 
   private async getTermGuid(facilityIdentifier: string) {
     const facilityTermData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisFacilityHiddenListTermStoreId}/items`,
+      path: `sites/${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
       filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
       expand: 'fields($select=FacilityGUID,Title)',
     });

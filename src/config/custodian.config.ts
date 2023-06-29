@@ -8,6 +8,8 @@ export interface CustodianConfig {
   apiKeyHeaderValue: string;
   maxRedirects: number;
   timeout: number;
+  facilityTemplateId: string;
+  facilityTypeGuid: string;
 }
 
 export default registerAs(
@@ -18,5 +20,7 @@ export default registerAs(
     apiKeyHeaderValue: process.env.CUSTODIAN_API_KEY_HEADER_VALUE,
     maxRedirects: parseInt(process.env.CUSTODIAN_MAX_REDIRECTS) || 5,
     timeout: parseInt(process.env.CUSTODIAN_TIMEOUT) || 30000,
+    facilityTemplateId: process.env.CUSTODIAN_FACILITY_TEMPLATE_ID,
+    facilityTypeGuid: process.env.CUSTODIAN_FACILITY_TYPE_GUID,
   }),
 );

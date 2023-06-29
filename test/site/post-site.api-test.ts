@@ -1,4 +1,4 @@
-import { ENUMS, EXPORTER_NAME } from '@ukef/constants';
+import { ENUMS, SHAREPOINT } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withStringFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/string-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -17,11 +17,11 @@ describe('createSite', () => {
   let mockGraphClientService: MockGraphClientService;
   let mockMdmService: MockMdmService;
 
-  const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+  const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
 
-  const { exporterName } = siteStatusByExporterNameQueryDto;
+  const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
 
   const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
     numberToGenerate: 1,
@@ -88,17 +88,17 @@ describe('createSite', () => {
   ];
   it.each(statusCodeTestInputs)('returns $expectedStatusCode if graph replies with $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
     const {
-      siteStatusByExporterNameQueryDto: createSiteRequestItem,
+      siteControllerGetSiteStatusByExporterNameQueryDto: createSiteRequestItem,
       siteStatusByExporterNameResponse: createSiteResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
-      graphGetSiteStatusResponseDto: modifiedGraphGetSiteStatusResponseDto,
+      graphServiceGetSiteStatusByExporterNameResponseDto: modifiedGraphServiceGetSiteStatusByExporterNameResponseDto,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)
       .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
       .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
-      .mockSuccessfulGraphGetCall(modifiedGraphGetSiteStatusResponseDto);
+      .mockSuccessfulGraphGetCall(modifiedGraphServiceGetSiteStatusByExporterNameResponseDto);
 
     const { status, body } = await api.post('/api/v1/sites', [createSiteRequestItem]);
     expect(status).toBe(expectedStatusCode);
@@ -106,11 +106,11 @@ describe('createSite', () => {
   });
 
   it('returns 202 with status Provisioning if the site does not exist in Sharepoint and new site creation started', async () => {
-    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
 
-    const { exporterName } = siteStatusByExporterNameQueryDto;
+    const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
 
     const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
       numberToGenerate: 1,
@@ -138,11 +138,11 @@ describe('createSite', () => {
   });
 
   it('returns 500 with message Internal server error, if mdm call fails', async () => {
-    const { siteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
 
-    const { exporterName } = siteStatusByExporterNameQueryDto;
+    const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
 
     const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({
       numberToGenerate: 1,
@@ -241,7 +241,7 @@ describe('createSite', () => {
       minLength: 1,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.exporterName({ length }),
-      pattern: EXPORTER_NAME.REGEX,
+      pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
       generateFieldValueThatDoesNotMatchRegex: () => '\\/:*?"<>|',
       validRequestBody: createSiteRequest,
       makeRequest,

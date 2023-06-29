@@ -1,4 +1,4 @@
-import { EXPORTER_NAME } from '@ukef/constants';
+import { SHAREPOINT } from '@ukef/constants';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
 export type CreateSiteRequest = CreateSiteRequestItem[];
@@ -9,7 +9,7 @@ export class CreateSiteRequestItem {
     example: 'Example Name Limited',
     minLength: 1,
     maxLength: 250,
-    pattern: EXPORTER_NAME.REGEX,
+    pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
   })
   readonly exporterName: string;
 }

@@ -7,10 +7,10 @@ interface Options {
   example: string;
 }
 
-export const ValidatedSharepointResourceNameApiProperty = ({ description, example }: Options) =>
+export const ValidatedSharepointResourceNameApiProperty = ({ description, example,  }: Options) =>
   ValidatedStringApiProperty({
     description,
-    minLength: 10,
+    minLength: 1,
     maxLength: 250,
     pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
     example: example,

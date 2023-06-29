@@ -14,8 +14,7 @@ jest.mock('@ukef/modules/graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.word() + '.sharepoint.com';
-  const tfisSiteName = valueGenerator.word();
+  const tfisSharepointUrl = valueGenerator.word() + '.sharepoint.com';
   const tfisListId = valueGenerator.word();
 
   let siteService: SiteService;
@@ -32,27 +31,25 @@ describe('SiteService', () => {
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
+    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, mdmService);
     resetAllWhenMocks();
   });
 
   describe('createSite', () => {
     it('creates site and returns new site id and status from the service', async () => {
-      const { siteStatusByExporterNameServiceRequest, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      const { siteServiceGetSiteStatusByExporterNameRequest, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
-        ukefSharepointName,
-        tfisSiteName,
+        tfisSharepointUrl,
         tfisListId,
       });
 
-      const exporterName = siteStatusByExporterNameServiceRequest;
+      const exporterName = siteServiceGetSiteStatusByExporterNameRequest;
 
       const { createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto, requestToCreateSiteId } = new CreateSiteGenerator(
         valueGenerator,
       ).generate({
         numberToGenerate: 1,
-        ukefSharepointName,
-        tfisSiteName,
+        tfisSharepointUrl,
         tfisListId,
         exporterName,
       });
@@ -83,18 +80,17 @@ describe('SiteService', () => {
       },
     ])('returns expected status and siteId if site status is "$status"', async ({ status }) => {
       const {
-        siteStatusByExporterNameServiceRequest: exporterName,
-        graphGetSiteStatusResponseDto,
+        siteServiceGetSiteStatusByExporterNameRequest: exporterName,
+        graphServiceGetSiteStatusByExporterNameResponseDto,
         siteStatusByExporterNameResponse,
         graphServiceGetParams,
       } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
-        ukefSharepointName,
-        tfisSiteName,
+        tfisSharepointUrl,
         tfisListId,
         status,
       });
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphGetSiteStatusResponseDto);
+      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphServiceGetSiteStatusByExporterNameResponseDto);
 
       const response: CreateSiteResponse = await siteService.createSiteIfDoesNotExist(exporterName);
 

@@ -95,7 +95,9 @@ paths:
           description: The identifier of the deal in ACBS.
           example: '12345678'
           schema:
-            minLength: 0
+            minLength: 8
+            maxLength: 8
+            pattern: ^0070\\d{4}$
             type: string
         - name: dealId
           required: true
@@ -231,33 +233,38 @@ components:
         exporterName:
           type: string
           description: The name of the exporter used in the deal.
-          minLength: 1
+          minLength: 10
           maxLength: 250
           pattern: ^[\\w\\-.()\\s]+$
+          example: Example exporter name
         buyerName:
           type: string
           description: The name of the buyer used in the deal.
-          minLength: 1
+          minLength: 10
           maxLength: 250
           pattern: ^[\\w\\-.()\\s]+$
+          example: Example buyer name
         facilityIdentifier:
           type: string
           description: The identifier of the facility.
-          minLength: 1
-          maxLength: 250
-          pattern: ^[\\w\\-.()\\s]+$
+          minLength: 10
+          maxLength: 10
+          pattern: ^00\\d{8}$
+          example: '0030000322'
         destinationMarket:
           type: string
           description: The country name of the destination market of the facility.
           minLength: 10
           maxLength: 250
           pattern: ^[\\w\\-.()\\s]+$
+          example: Germany
         riskMarket:
           type: string
           description: The country name of the risk market of the facility.
-          minLength: 1
+          minLength: 10
           maxLength: 250
           pattern: ^[\\w\\-.()\\s]+$
+          example: Germany
       required:
         - exporterName
         - buyerName

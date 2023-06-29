@@ -7,7 +7,7 @@ import { SiteDealService } from './site-deal.service';
 
 describe('SiteDealController', () => {
   const valueGenerator = new RandomValueGenerator();
-  const siteDealService = new SiteDealService(null, null);
+  const siteDealService = new SiteDealService(null, null, null, null);
 
   let siteDealController: SiteDealController;
 
