@@ -7,7 +7,7 @@ interface Options {
   example: string;
 }
 
-export const ValidatedSharepointResourceNameApiProperty = ({ description, example,  }: Options) =>
+export const ValidatedSharepointResourceNameApiProperty = ({ description, example }: Options) =>
   ValidatedStringApiProperty({
     description,
     minLength: 1,
