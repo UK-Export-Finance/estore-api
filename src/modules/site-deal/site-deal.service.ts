@@ -31,42 +31,23 @@ export class SiteDealService {
     dealId: UkefId,
     createFacilityFolderRequestItem: CreateFacilityFolderRequestItem,
   ): Promise<CreateFacilityFolderResponseDto> {
-    const { facilityIdentifier, buyerName, destinationMarket, riskMarket } = createFacilityFolderRequestItem;
+    const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
 
     const parentFolderName = this.getParentFolderName(buyerName, dealId);
 
     // TODO apim-139: plug into new function
+    const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
     const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
-    const itemToCreateAndProvision: CustodianCreateAndProvisionRequest = {
-      Title: 'TODO', // TODO apim-139 add title
-      Id: 0,
-      Code: '',
-      TemplateId: this.custodianConfig.facilityTemplateId,
-      // TemplateIdToCopy: '',
-      ParentId: 0, //parentFolderId,
-      InterestedParties: '',
-      Secure: false,
-      DoNotSubscribeInterestedParties: false,
-      Links: [],
-      FormButton: '',
-      HasAttachments: false,
-      Metadata: [
-        {
-          Name: 'Facility ID',
-          Values: [`${termGuid}||${termTitle}`],
-        },
-      ],
-      // ConnectedListMetadata: [],
-      TypeGuid: this.custodianConfig.facilityTypeGuid,
-      SPHostUrl: this.sharepointConfig.scSharepointUrl,
-    };
-    this.custodianService.createAndProvision(itemToCreateAndProvision);
-    // TODO apim-139: update response
+    // TODO apim-139: It's worth noting here that we don't use destinationMarket or riskMarket at all
+    const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, parentFolderId, termGuid, termTitle);
+
+    this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);
+
     return {
-      folderName: `${destinationMarket} - ${riskMarket} - ${parentFolderId} - ${termGuid}- ${termTitle} - ${parentFolderName}`,
+      folderName: facilityFolderName,
     };
   }
 
@@ -78,9 +59,9 @@ export class SiteDealService {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<string> {
+  private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<number> {
     const parentFolderData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `sites/${this.sharepointConfig.scSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityListId}/items`,
+      path: `${this.sharepointConfig.scSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${parentFolderName}'`,
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     });
@@ -97,12 +78,12 @@ export class SiteDealService {
       );
     }
 
-    return parentFolderData.value[0].fields.id;
+    return parseInt(parentFolderData.value[0].fields.id);
   }
 
   private async getTermGuid(facilityIdentifier: string) {
     const facilityTermData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `sites/${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
+      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
       filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
       expand: 'fields($select=FacilityGUID,Title)',
     });
@@ -118,5 +99,34 @@ export class SiteDealService {
     }
 
     return facilityTermData.value[0].fields.FacilityGUID;
+  }
+
+  private createCustodianCreateAndProvisionRequest(
+    facilityFolderName: string,
+    parentFolderId: number,
+    termGuid: string,
+    termTitle: string,
+  ): CustodianCreateAndProvisionRequest {
+    return {
+      Title: facilityFolderName,
+      Id: 0,
+      Code: '',
+      TemplateId: this.custodianConfig.facilityTemplateId,
+      ParentId: parentFolderId,
+      InterestedParties: '',
+      Secure: false,
+      DoNotSubscribeInterestedParties: false,
+      Links: [],
+      FormButton: '',
+      HasAttachments: false,
+      Metadata: [
+        {
+          Name: 'Facility ID',
+          Values: [`${termGuid}||${termTitle}`],
+        },
+      ],
+      TypeGuid: this.custodianConfig.facilityTypeGuid,
+      SPHostUrl: this.sharepointConfig.scSharepointUrl,
+    };
   }
 }
