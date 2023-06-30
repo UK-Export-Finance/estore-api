@@ -5,14 +5,10 @@ import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
-import { create } from 'domain';
-import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 
+import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
 import { graphListItemsGenerator } from './common/graph-list-items-generator';
-import { graphParentReferenceGenerator } from './common/graph-parent-reference-generator';
-import { graphSiteFieldsGenerator } from './common/graph-site-fields-generator';
-import { graphUserGenerator } from './common/graph-user-generator';
 import { RandomValueGenerator } from './random-value-generator';
 
 export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {

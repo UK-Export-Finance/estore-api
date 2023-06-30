@@ -1,13 +1,11 @@
-import { ENUMS } from '@ukef/constants';
-import { GraphSiteFields } from '@ukef/modules/graph/dto/common/graph-site-fields.dto';
+import { GraphListItemFields } from '@ukef/modules/graph/dto/common/graph-list-item-fields.dto';
+import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
-import { graphParentReferenceGenerator } from './graph-parent-reference-generator';
-import { graphSiteFieldsGenerator } from './graph-site-fields-generator';
-import { graphUserGenerator } from './graph-user-generator';
+
 import { graphContentTypeGenerator } from './graph-content-type-generator';
-import { GraphListItemFields } from '@ukef/modules/graph/dto/common/graph-list-item-fields.dto';
+import { graphParentReferenceGenerator } from './graph-parent-reference-generator';
+import { graphUserGenerator } from './graph-user-generator';
 
 export class graphListItemsGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
