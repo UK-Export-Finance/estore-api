@@ -40,9 +40,9 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
-    const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
+    const graphCreatedByUser = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const graphLastModifiedBy = { ...graphCreatedBy };
+    const graphLastModifiedByUser = { ...graphCreatedByUser };
     const graphParentReference = new graphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphSiteFields = new graphSiteFieldsGenerator(this.valueGenerator).generate({
       numberToGenerate: 1,
@@ -71,8 +71,8 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
           id: siteValues.graphId,
           lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
           webUrl: siteValues.graphWebUrl,
-          createdBy: { user: graphCreatedBy },
-          lastModifiedBy: { user: graphLastModifiedBy },
+          createdBy: { user: graphCreatedByUser },
+          lastModifiedBy: { user: graphLastModifiedByUser },
           parentReference: graphParentReference,
           contentType: graphContentType,
           fields: graphSiteFields,

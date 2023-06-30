@@ -42,6 +42,8 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   CUSTODIAN_API_KEY_HEADER_VALUE: valueGenerator.string(),
   CUSTODIAN_MAX_REDIRECTS: 0,
   CUSTODIAN_TIMEOUT: 1000,
+  CUSTODIAN_FACILITY_TEMPLATE_ID: valueGenerator.word(),
+  CUSTODIAN_FACILITY_TYPE_GUID: valueGenerator.word(),
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
