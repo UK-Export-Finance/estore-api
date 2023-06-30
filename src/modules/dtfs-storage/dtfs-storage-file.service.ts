@@ -19,7 +19,16 @@ export class DtfsStorageFileService {
   getFileProperties(fileName: string, fileLocationPath: string): Promise<FileGetPropertiesResponse> {
     const shareFileClient = this.dtfsStorageClientService.getShareFileClient(fileName, fileLocationPath);
 
-    return shareFileClient.getProperties().catch((error) => this.handleGetFilePropertiesError(error, fileName, fileLocationPath));
+    return shareFileClient.getProperties().catch((error) => this.handleGetFileError(error, fileName, fileLocationPath, true));
+  }
+
+  getFile(fileName: string, fileLocationPath: string): Promise<NodeJS.ReadableStream> {
+    const shareFileClient = this.dtfsStorageClientService.getShareFileClient(fileName, fileLocationPath);
+
+    return shareFileClient
+      .download()
+      .then((response) => response.readableStreamBody)
+      .catch((error) => this.handleGetFileError(error, fileName, fileLocationPath));
   }
 
   private getShareFileClient(fileName: string, fileLocationPath: string): ShareFileClient {
@@ -27,13 +36,13 @@ export class DtfsStorageFileService {
     return new ShareFileClient(url, this.storageSharedKeyCredential);
   }
 
-  private handleGetFilePropertiesError(error: RestError, fileName: string, fileLocationPath: string): never {
+  private handleGetFileError(error: RestError, fileName: string, fileLocationPath: string, isGetFilePropertiesRequest?: boolean): never {
     if (error.statusCode === 403) {
       throw new DtfsStorageAuthenticationFailedException('Failed to authenticate with the DTFS storage account.', error);
     }
     if (error.statusCode === 404) {
       throw new DtfsStorageFileNotFoundException(`File ${fileLocationPath}/${fileName} was not found in DTFS.`, error);
     }
-    throw new DtfsStorageException(`Failed to get properties for file ${fileLocationPath}/${fileName}.`, error);
+    throw new DtfsStorageException(`Failed to get ${isGetFilePropertiesRequest ? 'properties for ' : ''}file ${fileLocationPath}/${fileName}.`, error);
   }
 }

@@ -1,6 +1,15 @@
-import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
+import {
+  Client,
+  GraphRequest,
+  LargeFileUploadSession,
+  LargeFileUploadTask,
+  LargeFileUploadTaskOptions,
+  StreamUpload,
+  UploadResult,
+} from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+import { Readable } from 'stream';
 
 import { createGraphError } from './create-graph-error';
 import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
@@ -65,6 +74,17 @@ export class GraphService {
         knownErrors: [postFacilityTermExistsKnownError()],
       });
     }
+  }
+
+  async uploadFile(url: string, file: NodeJS.ReadableStream, fileName: string, fileSize: number): Promise<UploadResult> {
+    const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, `https://graph.microsoft.com/v1.0/${url}`, {});
+    const fileToUpload = new Readable().wrap(file);
+    const options: LargeFileUploadTaskOptions = {
+      rangeSize: fileSize,
+    };
+    const task = new LargeFileUploadTask(this.client, new StreamUpload(fileToUpload, fileName, fileSize), uploadSession, options);
+    const uploadResult = await task.upload();
+    return uploadResult;
   }
 }
 
