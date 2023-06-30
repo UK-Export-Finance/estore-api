@@ -22,7 +22,7 @@ const config: JestConfigWithTsJest = {
     {
       displayName: 'Unit',
       setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
-      testMatch: ['**/sharepoint.config.test.ts'],
+      testMatch: ['**/*.test.ts'],
       transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
       ...defaultSettings,
       rootDir: 'src',
