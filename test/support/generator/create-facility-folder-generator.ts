@@ -12,17 +12,18 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
   }
 
   protected generateValues(): GenerateValues {
+    const facilityIdentifier = this.valueGenerator.word();
     return {
       siteId: this.valueGenerator.ukefSiteId(),
       dealId: this.valueGenerator.ukefId(),
 
       exporterName: this.valueGenerator.word(),
       buyerName: this.valueGenerator.word(),
-      facilityIdentifier: this.valueGenerator.word(),
+      facilityIdentifier,
       destinationMarket: this.valueGenerator.word(),
       riskMarket: this.valueGenerator.word(),
 
-      folderName: this.valueGenerator.word(),
+      folderName: `F ${facilityIdentifier}`,
     };
   }
 
