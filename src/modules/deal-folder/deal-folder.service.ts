@@ -16,12 +16,7 @@ export class DealFolderService {
 
     const fileToUpload = await this.getFile(fileName, fileLocationPath);
 
-    this.graphService.uploadFile(
-      ``,
-      fileToUpload,
-      fileName,
-      fileSizeInBytes,
-    );
+    this.graphService.uploadFile(``, fileToUpload, fileName, fileSizeInBytes);
 
     return 'hello world';
     // const { contentType, documentTitle, documentType } = DOCUMENT_TYPE_MAPPING[documentTypeFromRequest];
