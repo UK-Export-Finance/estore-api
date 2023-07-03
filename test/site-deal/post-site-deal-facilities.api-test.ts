@@ -1,3 +1,5 @@
+import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
@@ -5,11 +7,13 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
+import { mock } from 'node:test';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     createFacilityFolderParamsDto,
+    createFacilityFolderRequestItem,
     createFacilityFolderRequestDto,
     createFacilityFolderResponseDto,
     tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
@@ -42,9 +46,62 @@ describe('Create Site Deal Facility Folder', () => {
     nock.cleanAll();
   });
 
+  withClientAuthenticationTests({
+    givenTheRequestWouldOtherwiseSucceed: () => {
+      mockSuccessfulTfisFacilityListParentFolderRequest();
+      mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+      mockSuccessfulCreateAndProvision();
+    },
+    makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
+      api.postWithoutAuth(
+        getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto),
+        createFacilityFolderRequestDto,
+        incorrectAuth?.headerName,
+        incorrectAuth?.headerValue,
+      ),
+  });
+
+  // Todo-apim 139 There is an issue here with how we mock our graph get call -- it is a generalised graph get call.
+  describe.each([
+    {
+      testName: 'tfisFacilityHiddenListTermStoreFacilityTermDataRequest',
+      givenRequestWouldOtherwiseSucceed: () => {
+        mockSuccessfulTfisFacilityListParentFolderRequest();
+        mockSuccessfulCreateAndProvision();
+        mockGraphClientService
+          .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
+          .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
+          .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter);
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
+        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+      },
+    },
+    {
+      testName: 'tfisFacilityListParentFolderRequest',
+      givenRequestWouldOtherwiseSucceed: () => {
+        mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+        mockSuccessfulCreateAndProvision();
+        mockGraphClientService
+          .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+          .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
+          .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter);
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
+        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+      },
+    },
+  ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
+    withSharedGraphExceptionHandlingTests({
+      givenRequestWouldOtherwiseSucceed: () => givenRequestWouldOtherwiseSucceed(),
+      givenGraphServiceCallWillThrowError: (error: Error) => givenGraphServiceCallWillThrowError(error),
+      makeRequest: () => api.post(getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto), createFacilityFolderRequestDto),
+    });
+  });
+
   it('returns the name of the folder created with status code 201 when successful', async () => {
-    mockSuccessfulGraphGetTfisFacilityListItems();
-    mockSuccessfulGraphGetTfisFacilityHiddenListTermStoreItems();
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
     mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
@@ -53,21 +110,45 @@ describe('Create Site Deal Facility Folder', () => {
     expect(body).toEqual(createFacilityFolderResponseDto);
   });
 
-  //   it('makes a list item query to scSharepointUrl with the expected parameters', () => {});
+  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest returns an empty value list', async () => {
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulCreateAndProvision();
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
+      .mockSuccessfulGraphGetCall({ value: [] });
 
-  //   it('makes a list item query to tfisSharepointUrl with the expected parameters', () => {});
+    const { status, body } = await makeRequest();
 
-  //   it('returns a 400 if the list item query to scSharepointUrl returns an empty value list', () => {});
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: `Site deal folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      statusCode: 400,
+    });
+  });
 
-  //   it('returns a 500 if the list item query to scSharepointUrl returns an empty id value', () => {});
+  it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest returns an empty value list', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulCreateAndProvision();
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter)
+      .mockSuccessfulGraphGetCall({ value: [] });
 
-  //   it('returns a 400 if the list item query to tfisSharepointUrl returns an empty value list', () => {});
+    const { status, body } = await makeRequest();
 
-  //   it('returns a 500 if the list item query to tfisSharepointUrl returns an empty facilityGUID value', () => {});
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: `Facility term folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /term/facility`,
+      statusCode: 400,
+    });
+  });
 
   //   it('returns a 500 if the folder creation fails', () => {});
 
-  const mockSuccessfulGraphGetTfisFacilityHiddenListTermStoreItems = () => {
+  const mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest = () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
@@ -75,7 +156,7 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulGraphGetCall(tfisFacilityHiddenListTermStoreFacilityTermDataResponse);
   };
 
-  const mockSuccessfulGraphGetTfisFacilityListItems = () => {
+  const mockSuccessfulTfisFacilityListParentFolderRequest = () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
@@ -95,9 +176,11 @@ describe('Create Site Deal Facility Folder', () => {
   };
 
   const makeRequest = async () => {
-    return await api.post(
-      `/api/v1/sites/${createFacilityFolderParamsDto.siteId}/deals/${createFacilityFolderParamsDto.dealId}/facilities`,
-      createFacilityFolderRequestDto,
-    );
+    return await api.post(getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto), createFacilityFolderRequestDto);
+  };
+
+  const getPostSiteDealFacilitiesUrl = (params: { siteId: string; dealId: string }) => {
+    const { siteId, dealId } = params;
+    return `/api/v1/sites/${siteId}/deals/${dealId}/facilities`;
   };
 });

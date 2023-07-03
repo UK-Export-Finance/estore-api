@@ -10,7 +10,6 @@ import { GraphGetListItemsResponseDto } from '../graph/dto/graph-get-list-item-r
 import GraphService from '../graph/graph.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
-import { SiteDealException } from './exception/site-deal.exception';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'tfisFacilityHiddenListTermStoreId';
@@ -71,12 +70,6 @@ export class SiteDealService {
       );
     }
 
-    if (!parentFolderData.value[0].fields.id) {
-      throw new SiteDealException(
-        `Site deal folder ${parentFolderName} has no id. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
-      );
-    }
-
     return parseInt(parentFolderData.value[0].fields.id);
   }
 
@@ -89,12 +82,6 @@ export class SiteDealService {
 
     if (!facilityTermData.value.length) {
       throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /term/facility`);
-    }
-
-    if (!facilityTermData.value[0].fields.FacilityGUID) {
-      throw new SiteDealException(
-        `Facility term folder ${facilityIdentifier} is missing facility term GUID. To create this resource, call POST /term/facility`,
-      );
     }
 
     return facilityTermData.value[0].fields.FacilityGUID;
