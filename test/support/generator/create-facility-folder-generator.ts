@@ -4,7 +4,7 @@ import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
-import { CreateFacilityFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
+import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -84,7 +84,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const createFacilityFolderRequestDto: CreateFacilityFolderRequestDto = [createFacilityFolderRequestItem];
 
-    const createFacilityFolderResponseDto: CreateFacilityFolderResponseDto = {
+    const createFacilityFolderResponseDto: CreateFolderResponseDto = {
       folderName: facilityFolderName,
     };
 
@@ -170,7 +170,7 @@ interface GenerateResult {
   createFacilityFolderRequestItem: CreateFacilityFolderRequestItem;
 
   createFacilityFolderRequestDto: CreateFacilityFolderRequestDto;
-  createFacilityFolderResponseDto: CreateFacilityFolderResponseDto;
+  createFacilityFolderResponseDto: CreateFolderResponseDto;
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
   tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto;

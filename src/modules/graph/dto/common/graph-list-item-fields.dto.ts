@@ -1,8 +1,1 @@
-export interface GraphListItemFields {
-  Title?: string;
-  ServerRelativeUrl?: string;
-  Code?: string;
-  id: string;
-  ParentCode?: string;
-  FacilityGUID?: string;
-}
+export type GraphListItemFields = Record<string, string>; // TODO APIM-136: Can we remove this altogether?

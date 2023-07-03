@@ -7,16 +7,23 @@ export interface SharepointConfig {
   tfisListId: string;
   tfisFacilityListId: string;
   tfisFacilityHiddenListTermStoreId: string;
+  tfisDealListId: string;
+  tfisCaseSitesListId: string;
+  taxonomyHiddenListTermStoreListId: string;
 }
 
+// TODO APIM-136: Raise ticket to add new env variables
 // TODO: apim-139: Check facility list id is named correctly (and not deal id)
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {
-    tfisSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}`,
+    tfisSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}`, // TODO APIM-136: Move : into here
     scSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_SC_SITE_NAME}`,
     scSiteFullUrl: `https://${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${process.env.SHAREPOINT_SC_SITE_NAME}`,
     tfisListId: process.env.SHAREPOINT_TFIS_LIST_ID,
     tfisFacilityListId: process.env.SHAREPOINT_TFIS_FACILITY_LIST_ID,
     tfisFacilityHiddenListTermStoreId: process.env.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID,
+    tfisDealListId: process.env.SHAREPOINT_TFIS_DEAL_LIST_ID,
+    tfisCaseSitesListId: process.env.SHAREPOINT_TFIS_CASE_SITES_LIST_ID, // TODO APIM-136: is this the same as tfisListId?
+    taxonomyHiddenListTermStoreListId: process.env.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID,
   };
 });

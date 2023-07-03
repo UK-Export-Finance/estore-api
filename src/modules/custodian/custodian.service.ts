@@ -14,16 +14,14 @@ export class CustodianService {
     this.httpClient = new HttpClient(httpService);
   }
 
-  // TODO APIM-136: Change this to return Promise<void> if we do not end up using the response data
-  async createAndProvision(itemToCreateAndProvision: CustodianCreateAndProvisionRequest): Promise<CustodianCreateAndProvisionResponse> {
+  async createAndProvision(itemToCreateAndProvision: CustodianCreateAndProvisionRequest): Promise<void> {
     const { Title: titleOfItemToCreateAndProvision } = itemToCreateAndProvision;
-    const { data } = await this.httpClient.post<CustodianCreateAndProvisionRequest, CustodianCreateAndProvisionResponse>({
+    await this.httpClient.post<CustodianCreateAndProvisionRequest, CustodianCreateAndProvisionResponse>({
       path: '/Create/CreateAndProvision',
       requestBody: itemToCreateAndProvision,
       headers: { 'Content-Type': 'application/json' },
       onError: (error: Error) =>
         throwError(() => new CustodianException(`Failed to create and provision an item via Custodian with title ${titleOfItemToCreateAndProvision}.`, error)),
     });
-    return data;
   }
 }

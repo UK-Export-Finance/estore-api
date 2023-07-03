@@ -2,6 +2,7 @@ import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/crea
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
+import { DealFolderService } from './deal-folder.service';
 import { SiteDealController } from './site-deal.controller';
 import { SiteDealService } from './site-deal.service';
 
@@ -16,7 +17,7 @@ describe('SiteDealController', () => {
 
   beforeEach(() => {
     siteDealServiceCreateFacilityFolder.mockReset();
-    siteDealController = new SiteDealController(siteDealService);
+    siteDealController = new SiteDealController(siteDealService, new DealFolderService(null, null, null, null));
   });
 
   describe('createFacilityFolder', () => {

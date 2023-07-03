@@ -60,7 +60,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const graphServiceGetParams: GraphGetParams = {
       path: `${tfisSharepointUrl}:/lists/${tfisListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
-      expand: 'fields($select=Title,Url,SiteStatus)',
+      expand: 'fields($select=Title,URL,Sitestatus)',
     };
 
     const graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {

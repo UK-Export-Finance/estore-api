@@ -8,10 +8,13 @@ export interface CustodianConfig {
   apiKeyHeaderValue: string;
   maxRedirects: number;
   timeout: number;
+  dealTemplateId: string;
+  dealTypeGuid: string;
   facilityTemplateId: string;
   facilityTypeGuid: string;
 }
 
+// TODO APIM-136: Raise ticket to add new env variables
 export default registerAs(
   KEY,
   (): CustodianConfig => ({
@@ -20,6 +23,8 @@ export default registerAs(
     apiKeyHeaderValue: process.env.CUSTODIAN_API_KEY_HEADER_VALUE,
     maxRedirects: parseInt(process.env.CUSTODIAN_MAX_REDIRECTS) || 5,
     timeout: parseInt(process.env.CUSTODIAN_TIMEOUT) || 30000,
+    dealTemplateId: process.env.CUSTODIAN_DEAL_TEMPLATE_ID,
+    dealTypeGuid: process.env.CUSTODIAN_DEAL_TYPE_GUID,
     facilityTemplateId: process.env.CUSTODIAN_FACILITY_TEMPLATE_ID,
     facilityTypeGuid: process.env.CUSTODIAN_FACILITY_TYPE_GUID,
   }),

@@ -1,14 +1,16 @@
 import { UKEFID } from '@ukef/constants';
-import { UkefId, UkefSiteId } from '@ukef/helpers';
+import { UkefId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withFacilityIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/facility-identifier-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
+import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/string-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
-import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
@@ -28,6 +30,8 @@ describe('Create Site Deal Facility Folder', () => {
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
+
+  const custodianApi = new MockCustodianApi(nock);
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
@@ -63,6 +67,15 @@ describe('Create Site Deal Facility Folder', () => {
         incorrectAuth?.headerName,
         incorrectAuth?.headerValue,
       ),
+  });
+
+  withCustodianCreateAndProvisionErrorCasesApiTests({
+    givenTheRequestWouldOtherwiseSucceed: () => {
+      mockSuccessfulTfisFacilityListParentFolderRequest();
+      mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    },
+    makeRequest: () => makeRequest(),
+    custodianApi,
   });
 
   describe.each([
@@ -212,24 +225,9 @@ describe('Create Site Deal Facility Folder', () => {
     });
   });
 
-  it('returns a 500 if the folder creation fails', async () => {
-    mockSuccessfulTfisFacilityListParentFolderRequest();
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockUnsuccessfulCreateAndProvision;
-
-    const { status, body } = await makeRequest();
-
-    expect(status).toBe(500);
-    expect(body).toStrictEqual({ statusCode: 500, message: 'Internal server error' });
-  });
-
   describe('param validation', () => {
-    withParamValidationApiTests({
-      paramName: 'siteId',
-      length: 8,
-      pattern: UKEFID.SITE_ID.REGEX,
-      generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
-      generateParamValueThatDoesNotMatchRegex: () => '00000000' as UkefSiteId,
+    withSiteIdParamValidationApiTests({
+      valueGenerator,
       validRequestParam: createFacilityFolderParamsDto.siteId,
       successStatusCode: 201,
       makeRequest: (siteId) => api.post(getPostSiteDealFacilitiesUrl({ siteId, dealId: createFacilityFolderParamsDto.dealId }), createFacilityFolderRequestDto),
@@ -290,12 +288,7 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCall()
       .mockSuccessfulGraphGetCall(tfisFacilityHiddenListTermStoreFacilityTermDataResponse);
 
-    const requestBodyPlaceholder = '*';
-    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
-      .filteringRequestBody(() => requestBodyPlaceholder)
-      .post(`/Create/CreateAndProvision`, requestBodyPlaceholder)
-      .matchHeader('Content-Type', 'application/json')
-      .reply(201);
+    custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
   };
 
   const mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest = () => {
@@ -314,23 +307,12 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulGraphGetCall(tfisFacilityListParentFolderResponse);
   };
 
-  const mockUnsuccessfulCreateAndProvision = () => {
-    mockUnsuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
-  };
-
-  const mockUnsuccessfulCreateAndProvisionWithBody = (requestBody: nock.RequestBodyMatcher) => {
-    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
-      .post('/Create/CreateAndProvision', requestBody)
-      .matchHeader('Content-Type', 'application/json')
-      .reply(400, 'Error');
-  };
-
   const mockSuccessfulCreateAndProvision = () => {
     mockSuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
   };
 
   const mockSuccessfulCreateAndProvisionWithBody = (requestBody: nock.RequestBodyMatcher) => {
-    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL).post('/Create/CreateAndProvision', requestBody).matchHeader('Content-Type', 'application/json').reply(201);
+    custodianApi.requestToCreateAndProvisionItem(requestBody).respondsWith(201);
   };
 
   const makeRequestWithBody = (requestBody: unknown[]) => {

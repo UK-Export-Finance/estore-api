@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { GraphModule } from '@ukef/modules/graph/graph.module';
+import { CustodianModule } from '@ukef/modules/custodian/custodian.module';
+import { SharepointModule } from '@ukef/modules/sharepoint/sharepoint.module';
 
-import { CustodianModule } from '../custodian/custodian.module';
+import { DealFolderService } from './deal-folder.service';
 import { SiteDealController } from './site-deal.controller';
 import { SiteDealService } from './site-deal.service';
 import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Module({
-  imports: [GraphModule, CustodianModule],
+  imports: [CustodianModule, SharepointModule],
   controllers: [SiteDealController],
-  providers: [SiteDealService, SiteDealNotFoundExceptionToBadRequestTransformInterceptor],
-  exports: [SiteDealService],
+  providers: [SiteDealService, SiteDealNotFoundExceptionToBadRequestTransformInterceptor, DealFolderService],
 })
 export class SiteDealModule {}

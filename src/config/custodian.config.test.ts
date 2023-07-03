@@ -17,6 +17,14 @@ describe('custodianConfig', () => {
       environmentVariableName: 'CUSTODIAN_API_KEY_HEADER_VALUE',
     },
     {
+      configPropertyName: 'dealTemplateId',
+      environmentVariableName: 'CUSTODIAN_DEAL_TEMPLATE_ID',
+    },
+    {
+      configPropertyName: 'dealTypeGuid',
+      environmentVariableName: 'CUSTODIAN_DEAL_TYPE_GUID',
+    },
+    {
       configPropertyName: 'facilityTemplateId',
       environmentVariableName: 'CUSTODIAN_FACILITY_TEMPLATE_ID',
     },

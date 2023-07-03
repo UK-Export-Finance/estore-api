@@ -6,10 +6,12 @@ import { UkefId, UkefSiteId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import { GraphGetListItemsResponseDto } from '../graph/dto/graph-get-list-item-response.dto';
-import GraphService from '../graph/graph.service';
+import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
+import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
-import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
+import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
@@ -21,7 +23,7 @@ export class SiteDealService {
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
-    private readonly graphService: GraphService,
+    private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
 
@@ -29,7 +31,7 @@ export class SiteDealService {
     siteId: UkefSiteId,
     dealId: UkefId,
     createFacilityFolderRequestItem: CreateFacilityFolderRequestItem,
-  ): Promise<CreateFacilityFolderResponseDto> {
+  ): Promise<CreateFolderResponseDto> {
     const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
 
     const parentFolderName = this.getParentFolderName(buyerName, dealId);
@@ -57,19 +59,20 @@ export class SiteDealService {
   }
 
   private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<number> {
-    const parentFolderData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `${this.sharepointConfig.scSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityListId}/items`,
-      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${parentFolderName}'`,
-      expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
+    const parentFolderListItems = await this.sharepointService.findListItems({
+      siteUrl: `${this.sharepointConfig.scSharepointUrl}:`,
+      listId: this.sharepointConfig.tfisFacilityListId,
+      fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
     });
 
-    if (!parentFolderData.value.length || !parentFolderData.value[0].fields.id) {
+    if (!parentFolderListItems.length || !parentFolderListItems[0].fields.id) {
       throw new SiteDealFolderNotFoundException(
         `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
       );
     }
 
-    const parentFolderId = parseInt(parentFolderData.value[0].fields.id);
+    const parentFolderId = parseInt(parentFolderListItems[0].fields.id);
     if (isNaN(parentFolderId)) {
       throw new SiteDealFolderNotFoundException(
         `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
@@ -80,17 +83,21 @@ export class SiteDealService {
   }
 
   private async getTermGuid(facilityIdentifier: string) {
-    const facilityTermData: GraphGetListItemsResponseDto = await this.graphService.get({
-      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
-      filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
-      expand: 'fields($select=FacilityGUID,Title)',
+    const facilityTermListItems = await this.sharepointService.findListItems({
+      siteUrl: `${this.sharepointConfig.tfisSharepointUrl}:`,
+      listId: this.sharepointConfig.tfisFacilityHiddenListTermStoreId,
+      fieldsToReturn: ['FacilityGUID', 'Title'],
+      filter: new AndListItemFilter(
+        new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: facilityIdentifier }),
+        new FieldNotNullListItemFilter({ fieldName: 'FacilityGUID' }),
+      ),
     });
 
-    if (!facilityTermData.value.length || !facilityTermData.value[0].fields.FacilityGUID) {
+    if (!facilityTermListItems.length || !facilityTermListItems[0].fields.FacilityGUID) {
       throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
     }
 
-    return facilityTermData.value[0].fields.FacilityGUID;
+    return facilityTermListItems[0].fields.FacilityGUID;
   }
 
   private createCustodianCreateAndProvisionRequest(

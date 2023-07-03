@@ -5,11 +5,12 @@ import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
 import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
-import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
 
+import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
@@ -72,15 +73,17 @@ export class SiteService {
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
-    const data = await this.graphService.get<GraphGetSiteStatusByExporterNameResponseDto>({
-      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisListId}/items`,
-      filter: `fields/Title eq '${exporterName}'`,
-      expand: 'fields($select=Title,Url,SiteStatus)',
+    const sharepointService = new SharepointService(this.graphService); // TODO APIM-136: inject sharepoint service instead
+    const listItems = await sharepointService.findListItems({
+      siteUrl: `${this.sharepointConfig.tfisSharepointUrl}:`,
+      listId: this.sharepointConfig.tfisListId,
+      fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
     });
-    if (!data.value.length) {
+    if (!listItems.length) {
       return ifNotFound();
     }
-    const { URL: siteId, Sitestatus: siteStatus } = data.value[0].fields;
+    const { URL: siteId, Sitestatus: siteStatus } = listItems[0].fields;
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
