@@ -7,7 +7,6 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
-import { mock } from 'node:test';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
