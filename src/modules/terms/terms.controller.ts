@@ -1,5 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
@@ -18,6 +18,10 @@ export class TermsController {
   @ApiBody({
     type: CreateFacilityTermRequestItem,
     isArray: true,
+  })
+  @ApiOkResponse({
+    description: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS,
+    type: CreateTermFacilityResponse,
   })
   @ApiCreatedResponse({
     description: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED,

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 
 import { createGraphError as createWrapGraphError } from './createGraphError';
+import { postFacilityTermExistsKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {
@@ -61,7 +62,7 @@ export class GraphService {
       createWrapGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
-        knownErrors: [],
+        knownErrors: [postFacilityTermExistsKnownError()],
       });
     }
   }

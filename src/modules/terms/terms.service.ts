@@ -24,7 +24,6 @@ export class TermsService {
     };
 
     const { tfisTermStoreId, tfisSiteName, ukefSharepointName } = this.config;
-
     await this.graphService.post<any>({
       path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisTermStoreId}/items`,
       requestBody,

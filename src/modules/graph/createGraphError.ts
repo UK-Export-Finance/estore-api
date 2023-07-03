@@ -20,15 +20,16 @@ export const createGraphError = ({
   }
 
   if (error instanceof GraphError && error.code) {
-    const errorMessageInLowerCase = error.code.toLowerCase();
+    // have changed this to read the message, not code - will need to change back for shared errors - but then will pick up invalidRequest for other reasons
+    const errorMessageInLowerCase = error.message.toLowerCase();
     knownAndSharedErrors.forEach(({ caseInsensitiveSubstringsToFind, throwError }) => {
       caseInsensitiveSubstringsToFind.forEach((substringToFind) => {
         if (errorMessageInLowerCase.includes(substringToFind.toLowerCase())) {
+          // console.log(errorMessageInLowerCase)
           return throwError(error);
         }
       });
     });
   }
-
   throw new GraphException(error.message, error);
 };
