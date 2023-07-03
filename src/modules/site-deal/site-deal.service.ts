@@ -35,7 +35,6 @@ export class SiteDealService {
 
     const parentFolderName = this.getParentFolderName(buyerName, dealId);
 
-    // TODO apim-139: plug into new function
     const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
     const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
