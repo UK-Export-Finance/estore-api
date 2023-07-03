@@ -175,7 +175,7 @@ interface GenerateValues {
 interface GenerateResult {
   createFacilityFolderParamsDto: CreateFacilityFolderParamsDto;
   createFacilityFolderRequestItem: CreateFacilityFolderRequestItem;
-  
+
   createFacilityFolderRequestDto: CreateFacilityFolderRequestDto;
   createFacilityFolderResponseDto: CreateFacilityFolderResponseDto;
 

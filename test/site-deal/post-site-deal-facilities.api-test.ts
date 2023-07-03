@@ -1,11 +1,10 @@
 import { Api } from '@ukef-test/support/api';
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
-import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
-import { mock } from 'node:test';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -50,23 +49,23 @@ describe('Create Site Deal Facility Folder', () => {
 
     const { status, body } = await makeRequest();
 
-    expect(status).toEqual(201);
+    expect(status).toBe(201);
     expect(body).toEqual(createFacilityFolderResponseDto);
   });
 
-//   it('makes a list item query to scSharepointUrl with the expected parameters', () => {});
+  //   it('makes a list item query to scSharepointUrl with the expected parameters', () => {});
 
-//   it('makes a list item query to tfisSharepointUrl with the expected parameters', () => {});
+  //   it('makes a list item query to tfisSharepointUrl with the expected parameters', () => {});
 
-//   it('returns a 400 if the list item query to scSharepointUrl returns an empty value list', () => {});
+  //   it('returns a 400 if the list item query to scSharepointUrl returns an empty value list', () => {});
 
-//   it('returns a 500 if the list item query to scSharepointUrl returns an empty id value', () => {});
+  //   it('returns a 500 if the list item query to scSharepointUrl returns an empty id value', () => {});
 
-//   it('returns a 400 if the list item query to tfisSharepointUrl returns an empty value list', () => {});
+  //   it('returns a 400 if the list item query to tfisSharepointUrl returns an empty value list', () => {});
 
-//   it('returns a 500 if the list item query to tfisSharepointUrl returns an empty facilityGUID value', () => {});
+  //   it('returns a 500 if the list item query to tfisSharepointUrl returns an empty facilityGUID value', () => {});
 
-//   it('returns a 500 if the folder creation fails', () => {});
+  //   it('returns a 500 if the folder creation fails', () => {});
 
   const mockSuccessfulGraphGetTfisFacilityHiddenListTermStoreItems = () => {
     mockGraphClientService
