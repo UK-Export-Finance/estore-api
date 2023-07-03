@@ -1,7 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { GraphError } from '@microsoft/microsoft-graph-client';
+import { Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
+import { Response } from 'express';
 
 import { CreateFacilityTermRequest, CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
 import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
@@ -36,7 +46,18 @@ export class TermsController {
   @ApiInternalServerErrorResponse({
     description: 'An internal server error has occurred.',
   })
-  postFacilityToTermStore(@ValidatedArrayBody({ items: CreateFacilityTermRequestItem }) term: CreateFacilityTermRequest): Promise<CreateTermFacilityResponse> {
+  postFacilityToTermStore(
+    @ValidatedArrayBody({ items: CreateFacilityTermRequestItem }) term: CreateFacilityTermRequest,
+    @Res() res: Response,
+  ): Promise<CreateTermFacilityResponse> {
+    try {
+      return this.service.postFacilityToTermStore(term[0].id);
+    } catch (error) {
+      if (error instanceof GraphError) {
+        res.status(HttpStatus.OK).json({ message: test });
+        return;
+      }
+    }
     return this.service.postFacilityToTermStore(term[0].id);
   }
 }

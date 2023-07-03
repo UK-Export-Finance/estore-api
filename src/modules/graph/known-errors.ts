@@ -1,4 +1,4 @@
-import { TermsFacilityExistsException } from "../terms/exception/terms-facility-exists.exception";
+import { TermsFacilityExistsException } from '../terms/exception/terms-facility-exists.exception';
 
 export type KnownErrors = KnownError[];
 
