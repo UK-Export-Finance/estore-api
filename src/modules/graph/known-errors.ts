@@ -7,7 +7,6 @@ export type KnownError = { caseInsensitiveSubstringsToFind: string[]; throwError
 export const postFacilityTermExistsKnownError = (): KnownError => ({
   caseInsensitiveSubstringsToFind: ['One or more fields with unique constraints already has the provided value'],
   throwError: (error) => {
-    // console.log("hello")
     throw new TermsFacilityExistsException('Facility Term item with this identifier already exists.', error);
   },
 });
