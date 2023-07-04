@@ -110,19 +110,19 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest returns an empty value list', async () => {
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockSuccessfulCreateAndProvision();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: `Site deal folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
       statusCode: 400,
     });
   });
