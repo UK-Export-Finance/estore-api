@@ -1,36 +1,36 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import mdmConfig, { MdmConfig } from './mdm.config';
+import custodianConfig, { CustodianConfig } from './custodian.config';
 
-describe('mdmConfig', () => {
-  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof MdmConfig; environmentVariableName: string }[] = [
+describe('custodianConfig', () => {
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof CustodianConfig; environmentVariableName: string }[] = [
     {
       configPropertyName: 'baseUrl',
-      environmentVariableName: 'APIM_MDM_URL',
+      environmentVariableName: 'CUSTODIAN_BASE_URL',
     },
     {
       configPropertyName: 'apiKeyHeaderName',
-      environmentVariableName: 'APIM_MDM_KEY',
+      environmentVariableName: 'CUSTODIAN_API_KEY_HEADER_NAME',
     },
     {
       configPropertyName: 'apiKeyHeaderValue',
-      environmentVariableName: 'APIM_MDM_VALUE',
+      environmentVariableName: 'CUSTODIAN_API_KEY_HEADER_VALUE',
     },
   ];
 
   const configParsedAsIntFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof MdmConfig;
+    configPropertyName: keyof CustodianConfig;
     environmentVariableName: string;
     defaultConfigValue: number;
   }[] = [
     {
       configPropertyName: 'maxRedirects',
-      environmentVariableName: 'APIM_MDM_MAX_REDIRECTS',
+      environmentVariableName: 'CUSTODIAN_MAX_REDIRECTS',
       defaultConfigValue: 5,
     },
     {
       configPropertyName: 'timeout',
-      environmentVariableName: 'APIM_MDM_TIMEOUT',
+      environmentVariableName: 'CUSTODIAN_TIMEOUT',
       defaultConfigValue: 30000,
     },
   ];
@@ -38,6 +38,6 @@ describe('mdmConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configParsedAsIntFromEnvironmentVariablesWithDefault,
-    getConfig: () => mdmConfig(),
+    getConfig: () => custodianConfig(),
   });
 });
