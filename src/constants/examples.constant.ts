@@ -1,6 +1,5 @@
 import { DTFS_MAX_FILE_SIZE_BYTES } from './dtfs-max-file-size-bytes.constant';
 import { ENUMS } from './enum.constant';
-import { MAX_FILE_SIZE_BYTES } from './max-file-size-bytes.constant';
 
 export const EXAMPLES = {
   SITE_ID: '00700001',
@@ -14,8 +13,7 @@ export const EXAMPLES = {
   BUYER_NAME: 'Example Buyer',
   EXPORTER_NAME: 'Example Exporter',
   MARKET: 'Germany',
-  BUYER_NAME: '***REMOVED***.',
+  BUYER_NAME: '***REMOVED***',
   DOCUMENT_TYPE: ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS,
-  DEAL_ID: '0012345678',
   FILE_UPLOAD: '', // TODO (APIM-138): add example.
 };

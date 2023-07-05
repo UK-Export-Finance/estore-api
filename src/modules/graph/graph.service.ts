@@ -68,7 +68,7 @@ export class GraphService {
     try {
       return await request.post(requestBody);
     } catch (error) {
-      createWrapGraphError({
+      createGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
         knownErrors: [postFacilityTermExistsKnownError()],

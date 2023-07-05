@@ -17,5 +17,4 @@ export * from './dtfs-max-file-size-bytes.constant';
 export * from './enum.constant';
 export * from './examples.constant';
 export * from './sharepoint.constant';
-export * from './max-file-size-bytes.constant';
 export * from './ukef-id.constant';

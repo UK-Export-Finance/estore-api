@@ -1,7 +1,5 @@
-import { FileGetPropertiesResponse, RestError, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import DtfsConfig from '@ukef/config/dtfs-storage.config';
+import { FileGetPropertiesResponse, RestError } from '@azure/storage-file-share';
+import { Injectable } from '@nestjs/common';
 
 import DtfsStorageClientService from '../dtfs-storage-client/dtfs-storage-client.service';
 import { DtfsStorageException } from './exception/dtfs-storage.exception';
@@ -29,11 +27,6 @@ export class DtfsStorageFileService {
       .download()
       .then((response) => response.readableStreamBody)
       .catch((error) => this.handleGetFileError(error, fileName, fileLocationPath));
-  }
-
-  private getShareFileClient(fileName: string, fileLocationPath: string): ShareFileClient {
-    const url = `${this.baseUrl}/${fileLocationPath}/${fileName}`;
-    return new ShareFileClient(url, this.storageSharedKeyCredential);
   }
 
   private handleGetFileError(error: RestError, fileName: string, fileLocationPath: string, isGetFilePropertiesRequest?: boolean): never {
