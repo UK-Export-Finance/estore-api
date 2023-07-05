@@ -51,7 +51,6 @@ describe('TermsController', () => {
         expectedResult: { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED },
         expectedStatusCode: HttpStatusCode.Created,
       },
-
       {
         expectedResult: { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS },
         expectedStatusCode: HttpStatusCode.Ok,
