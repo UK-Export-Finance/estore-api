@@ -5,6 +5,7 @@ import { GraphService } from '@ukef/modules/graph/graph.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
+import { TermsFacilityExistsException } from './exception/terms-facility-exists.exception';
 import { TermsService } from './terms.service';
 
 describe('TermsService', () => {
@@ -55,7 +56,17 @@ describe('TermsService', () => {
       expect(result).toStrictEqual({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED });
     });
 
-    it('should throw an error when the graphService post method throws an error', async () => {
+    it(`should return a success 'Facility Term already exists' message when the graphService post method throws a 'TermsFacilityExistsException'`, async () => {
+      const termsFacilityExistsException = new TermsFacilityExistsException('An error occurred');
+      when(mockGraphServicePost).calledWith(expect.any(Object)).mockRejectedValue(termsFacilityExistsException);
+
+      const result = await service.postFacilityToTermStore(facilityId);
+
+      expect(graphService.post).toHaveBeenCalled();
+      expect(result).toStrictEqual({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS });
+    });
+
+    it('should throw an error when the graphService post method throws an unknown error', async () => {
       const error = new Error('An error occurred');
       when(mockGraphServicePost).calledWith(expect.any(Object)).mockRejectedValue(error);
 

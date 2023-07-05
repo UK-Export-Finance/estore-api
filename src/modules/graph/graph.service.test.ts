@@ -1,3 +1,5 @@
+import { GraphError } from '@microsoft/microsoft-graph-client';
+import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
@@ -104,6 +106,20 @@ describe('GraphService', () => {
       expectations.forEach((expectation) => expectation(requestBody));
 
       expect(result).toEqual(expectedPostResponse);
+    });
+
+    it(`throws a TermsFacilityExistsException if SharePoint responds with a 400 response containing 'One or more fields with unique constraints already has the provided value'`, async () => {
+      const graphError = new GraphError(400, 'One or more fields with unique constraints already has the provided value.');
+      graphError.code = 'invalidRequest';
+
+      mockSuccessfulGraphApiCall();
+      mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, graphError);
+
+      const graphServicePromise = graphService.post<string>({ path, requestBody });
+
+      await expect(graphServicePromise).rejects.toBeInstanceOf(TermsFacilityExistsException);
+      await expect(graphServicePromise).rejects.toThrow('Facility Term item with this identifier already exists.');
+      await expect(graphServicePromise).rejects.toHaveProperty('innerError', graphError);
     });
   });
 

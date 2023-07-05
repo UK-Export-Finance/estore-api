@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ENUMS } from '@ukef/constants';
 import { RESPONSE } from '@ukef-test/support/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+import { HttpStatusCode } from 'axios';
+import { Response } from 'express';
 import { resetAllWhenMocks, when } from 'jest-when';
 
 import { TermsController } from './terms.controller';
@@ -44,32 +46,57 @@ describe('TermsController', () => {
   });
 
   describe('postFacilityToTermStore', () => {
-    it('should call the service with the correct term id and return its result', async () => {
-      const result = { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED };
+    it.each([
+      {
+        expectedResult: { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED },
+        expectedStatusCode: HttpStatusCode.Created,
+      },
+      {
+        expectedResult: { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS },
+        expectedStatusCode: HttpStatusCode.Ok,
+      },
+    ])('should call the service with the correct term id and return the correct message', async ({ expectedResult, expectedStatusCode }) => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis(),
+      } as unknown as Response;
 
-      when(mockService).calledWith(term.id).mockResolvedValue(result);
+      when(mockService).calledWith(term.id).mockResolvedValue(expectedResult);
 
-      const response = await controller.postFacilityToTermStore([term]);
+      await controller.postFacilityToTermStore([term], res);
 
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
-      expect(response).toBe(result);
+      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(res.json).toHaveBeenCalledWith(expectedResult);
+      expect(res.status).toHaveBeenCalledTimes(1);
+      expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
     it('should handle the case where the service rejects due to an already existing term', async () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
       const error = new Error(RESPONSE.FACILITY_TERM_EXISTS);
 
       when(mockService).calledWith(term.id).mockRejectedValue(error);
 
-      await expect(controller.postFacilityToTermStore([term])).rejects.toEqual(error);
+      await expect(controller.postFacilityToTermStore([term], res)).rejects.toEqual(error);
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
     });
 
     it('should handle the case where the service rejects due to an internal server error', async () => {
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn().mockReturnThis(),
+      } as unknown as Response;
+
       const error = new Error(RESPONSE.INTERNAL_SERVER_ERROR);
 
       when(mockService).calledWith(term.id).mockRejectedValue(error);
 
-      await expect(controller.postFacilityToTermStore([term])).rejects.toEqual(error);
+      await expect(controller.postFacilityToTermStore([term], res)).rejects.toEqual(error);
       expect(service.postFacilityToTermStore).toHaveBeenCalledWith(term.id);
     });
   });

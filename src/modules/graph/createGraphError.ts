@@ -20,15 +20,15 @@ export const createGraphError = ({
   }
 
   if (error instanceof GraphError && error.code) {
-    const errorMessageInLowerCase = error.code.toLowerCase();
+    const errorMessageInLowerCase = error.message.toLowerCase();
+    const errorCodeInLowerCase = error.code.toLowerCase();
     knownAndSharedErrors.forEach(({ caseInsensitiveSubstringsToFind, throwError }) => {
       caseInsensitiveSubstringsToFind.forEach((substringToFind) => {
-        if (errorMessageInLowerCase.includes(substringToFind.toLowerCase())) {
+        if (errorMessageInLowerCase.includes(substringToFind.toLowerCase()) || errorCodeInLowerCase.includes(substringToFind.toLowerCase())) {
           return throwError(error);
         }
       });
     });
   }
-
   throw new GraphException(error.message, error);
 };

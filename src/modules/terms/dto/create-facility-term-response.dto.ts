@@ -5,7 +5,7 @@ import { CreateTermForFacilityResponseEnum } from '@ukef/constants/enums/create-
 export class CreateTermFacilityResponse {
   @ApiProperty({
     example: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED,
-    description: `Response for successful call is always "${ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED}"`,
+    description: `Response message for successful call`,
     enum: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES,
   })
   message: CreateTermForFacilityResponseEnum;
