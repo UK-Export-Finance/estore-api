@@ -93,22 +93,6 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual(modifiedSiteStatusByExporterNameResponse);
   });
 
-  it('if you use the correct query parameter and an unexpected one as well, then it still succeeds/you get a 202 response', async () => {
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
-
-    const incorrectQueryName = 'IncorrectQueryName';
-    const urlWithIncorrectQueryParam = getSiteStatusByExporterNameUrl({}) + '&' + incorrectQueryName + '=test';
-
-    const { status, body } = await api.get(urlWithIncorrectQueryParam);
-
-    expect(status).toBe(202);
-    expect(body).toStrictEqual(siteStatusByExporterNameResponse);
-  });
-
   it('returns 404 with message "Not Found" if the site does not exist in sharepoint', async () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
@@ -122,80 +106,98 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
-  it('returns a 400 with message containing "exporterName must be longer than or equal to 1 characters" if exporterName is an empty string', async () => {
-    const incorrectQueryValue = '';
+  describe('query validation', () => {
+    it('if you use the correct query parameter and an unexpected one as well, then it still succeeds/you get a 202 response', async () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
 
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
+      const incorrectQueryName = 'IncorrectQueryName';
+      const urlWithIncorrectQueryParam = getSiteStatusByExporterNameUrl({}) + '&' + incorrectQueryName + '=test';
 
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
+      const { status, body } = await api.get(urlWithIncorrectQueryParam);
 
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must be longer than or equal to 1 characters`]),
-      statusCode: 400,
+      expect(status).toBe(202);
+      expect(body).toStrictEqual(siteStatusByExporterNameResponse);
     });
-  });
 
-  it('returns a 400 with message containing "exporterName must be shorter than or equal to 250 characters" if exporterName is too long', async () => {
-    const incorrectQueryValue =
-      'This is a valid regex expression that is 251 characters long. ' +
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Aenean ' +
-      'dapibus erat ac eros tincidunt a commodo nunc vulputate. Donec ' +
-      'ut aliquam lacus luctus augue. Pellentesque lorem eros faucibus.';
+    it('returns a 400 with message containing "exporterName must be longer than or equal to 1 characters" if exporterName is an empty string', async () => {
+      const incorrectQueryValue = '';
 
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
 
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
+      const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
 
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must be shorter than or equal to 250 characters`]),
-      statusCode: 400,
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: expect.arrayContaining([`exporterName must be longer than or equal to 1 characters`]),
+        statusCode: 400,
+      });
     });
-  });
 
-  it(`returns a 400 with message containing "exporterName must match ${SHAREPOINT.RESOURCE_NAME.REGEX} regular expression" if exporterName contains invalid characters`, async () => {
-    const incorrectQueryValue = siteControllerGetSiteStatusByExporterNameQueryDto.exporterName + '{}';
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
+    it('returns a 400 with message containing "exporterName must be shorter than or equal to 250 characters" if exporterName is too long', async () => {
+      const incorrectQueryValue =
+        'This is a valid regex expression that is 251 characters long. ' +
+        'Lorem ipsum dolor sit amet consectetur adipiscing elit. Aenean ' +
+        'dapibus erat ac eros tincidunt a commodo nunc vulputate. Donec ' +
+        'ut aliquam lacus luctus augue. Pellentesque lorem eros faucibus.';
 
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
 
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must match ${SHAREPOINT.RESOURCE_NAME.REGEX} regular expression`]),
-      statusCode: 400,
+      const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
+
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: expect.arrayContaining([`exporterName must be shorter than or equal to 250 characters`]),
+        statusCode: 400,
+      });
     });
-  });
 
-  it('returns a 400 with message containing the validation parameters of the query if no query is present', async () => {
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
+    it(`returns a 400 with message containing "exporterName must match ${SHAREPOINT.RESOURCE_NAME.REGEX} regular expression" if exporterName contains invalid characters`, async () => {
+      const incorrectQueryValue = siteControllerGetSiteStatusByExporterNameQueryDto.exporterName + '{}';
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
 
-    const { status, body } = await api.get('/api/v1/sites');
+      const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
 
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining(['exporterName must be longer than or equal to 1 characters', 'exporterName must be a string']),
-      statusCode: 400,
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: expect.arrayContaining([`exporterName must match ${SHAREPOINT.RESOURCE_NAME.REGEX} regular expression`]),
+        statusCode: 400,
+      });
+    });
+
+    it('returns a 400 with message containing the validation parameters of the query if no query is present', async () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(path)
+        .mockSuccessfulExpandCallWithExpandString(expand)
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockSuccessfulGraphGetCall({ graphServiceGetSiteStatusByExporterNameResponseDto });
+
+      const { status, body } = await api.get('/api/v1/sites');
+
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: expect.arrayContaining(['exporterName must be longer than or equal to 1 characters', 'exporterName must be a string']),
+        statusCode: 400,
+      });
     });
   });
 

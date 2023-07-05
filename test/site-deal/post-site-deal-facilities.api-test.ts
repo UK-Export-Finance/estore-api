@@ -146,9 +146,20 @@ describe('Create Site Deal Facility Folder', () => {
     });
   });
 
-  //   it('returns a 500 if the folder creation fails', () => {});
+    it('returns a 500 if the folder creation fails', async () => {
+      mockSuccessfulTfisFacilityListParentFolderRequest();
+      mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+      mockUnsuccessfulCreateAndProvision
 
-  describe('query validation', () => {});
+      const { status, body } = await makeRequest();
+  
+      expect(status).toBe(500);
+      expect(body).toStrictEqual({statusCode: 500, message: 'Internal server error'});
+  
+    }
+    );
+
+  // describe('query validation', () => {});
   describe('field validation', () => {
     withSharepointResourceNameFieldValidationApiTests({
       fieldName: 'exporterName',
@@ -227,6 +238,17 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulGraphGetCall(tfisFacilityListParentFolderResponse);
   };
 
+  const mockUnsuccessfulCreateAndProvision = () => {
+  mockUnsuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
+  }
+
+  const mockUnsuccessfulCreateAndProvisionWithBody = (requestBody: nock.RequestBodyMatcher) => {
+    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
+      .post('/Create/CreateAndProvision', requestBody)
+      .matchHeader('Content-Type', 'application/json')
+      .reply(400, 'Error');
+  };
+
   const mockSuccessfulCreateAndProvision = () => {
     mockSuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
   };
@@ -235,7 +257,7 @@ describe('Create Site Deal Facility Folder', () => {
     nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
       .post('/Create/CreateAndProvision', requestBody)
       .matchHeader('Content-Type', 'application/json')
-      .reply(201, 'TODO apim-139');
+      .reply(201);
   };
 
   const makeRequestWithBody = (requestBody: unknown[]) => {
