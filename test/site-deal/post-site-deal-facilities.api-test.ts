@@ -146,18 +146,16 @@ describe('Create Site Deal Facility Folder', () => {
     });
   });
 
-    it('returns a 500 if the folder creation fails', async () => {
-      mockSuccessfulTfisFacilityListParentFolderRequest();
-      mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-      mockUnsuccessfulCreateAndProvision
+  it('returns a 500 if the folder creation fails', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockUnsuccessfulCreateAndProvision;
 
-      const { status, body } = await makeRequest();
-  
-      expect(status).toBe(500);
-      expect(body).toStrictEqual({statusCode: 500, message: 'Internal server error'});
-  
-    }
-    );
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(500);
+    expect(body).toStrictEqual({ statusCode: 500, message: 'Internal server error' });
+  });
 
   // describe('query validation', () => {});
   describe('field validation', () => {
@@ -239,8 +237,8 @@ describe('Create Site Deal Facility Folder', () => {
   };
 
   const mockUnsuccessfulCreateAndProvision = () => {
-  mockUnsuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
-  }
+    mockUnsuccessfulCreateAndProvisionWithBody(JSON.stringify(custodianCreateAndProvisionRequest));
+  };
 
   const mockUnsuccessfulCreateAndProvisionWithBody = (requestBody: nock.RequestBodyMatcher) => {
     nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
@@ -254,10 +252,7 @@ describe('Create Site Deal Facility Folder', () => {
   };
 
   const mockSuccessfulCreateAndProvisionWithBody = (requestBody: nock.RequestBodyMatcher) => {
-    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
-      .post('/Create/CreateAndProvision', requestBody)
-      .matchHeader('Content-Type', 'application/json')
-      .reply(201);
+    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL).post('/Create/CreateAndProvision', requestBody).matchHeader('Content-Type', 'application/json').reply(201);
   };
 
   const makeRequestWithBody = (requestBody: unknown[]) => {
