@@ -1,4 +1,6 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withFacilityIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/facility-identifier-validation-api-tests';
+import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
@@ -60,7 +62,6 @@ describe('Create Site Deal Facility Folder', () => {
       ),
   });
 
-  // Todo-apim 139 There is an issue here with how we mock our graph get call -- it is a generalised graph get call.
   describe.each([
     {
       testName: 'tfisFacilityHiddenListTermStoreFacilityTermDataRequest',
@@ -140,12 +141,75 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: `Facility term folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /term/facility`,
+      message: `Facility term folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /terms/facility`,
       statusCode: 400,
     });
   });
 
   //   it('returns a 500 if the folder creation fails', () => {});
+
+  describe('query validation', () => {});
+  describe('field validation', () => {
+    withSharepointResourceNameFieldValidationApiTests({
+      fieldName: 'exporterName',
+      valueGenerator,
+      validRequestBody: createFacilityFolderRequestDto,
+      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
+      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+
+    withSharepointResourceNameFieldValidationApiTests({
+      fieldName: 'buyerName',
+      valueGenerator,
+      validRequestBody: createFacilityFolderRequestDto,
+      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
+      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+
+    withSharepointResourceNameFieldValidationApiTests({
+      fieldName: 'destinationMarket',
+      valueGenerator,
+      validRequestBody: createFacilityFolderRequestDto,
+      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
+      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+
+    withSharepointResourceNameFieldValidationApiTests({
+      fieldName: 'riskMarket',
+      valueGenerator,
+      validRequestBody: createFacilityFolderRequestDto,
+      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
+      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+
+    withFacilityIdentifierFieldValidationApiTests({
+      valueGenerator,
+      validRequestBody: createFacilityFolderRequestDto,
+      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
+      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+  });
+
+  const givenAnyRequestBodyWouldSucceed = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(tfisFacilityListParentFolderResponse);
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(tfisFacilityHiddenListTermStoreFacilityTermDataResponse);
+
+    const requestBodyPlaceholder = '*';
+    nock(ENVIRONMENT_VARIABLES.CUSTODIAN_BASE_URL)
+      .filteringRequestBody(() => requestBodyPlaceholder)
+      .post(`/Create/CreateAndProvision`, requestBodyPlaceholder)
+      .matchHeader('Content-Type', 'application/json')
+      .reply(201);
+  };
 
   const mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest = () => {
     mockGraphClientService
@@ -174,8 +238,12 @@ describe('Create Site Deal Facility Folder', () => {
       .reply(201, 'TODO apim-139');
   };
 
-  const makeRequest = async () => {
-    return await api.post(getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto), createFacilityFolderRequestDto);
+  const makeRequestWithBody = (requestBody: unknown[]) => {
+    return api.post(getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto), requestBody);
+  };
+
+  const makeRequest = () => {
+    return api.post(getPostSiteDealFacilitiesUrl(createFacilityFolderParamsDto), createFacilityFolderRequestDto);
   };
 
   const getPostSiteDealFacilitiesUrl = (params: { siteId: string; dealId: string }) => {

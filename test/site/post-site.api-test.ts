@@ -56,7 +56,7 @@ describe('createSite', () => {
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
-        .mockSuccessfulGraphPostCall(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
+        .mockSuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
       api.postWithoutAuth('/api/v1/sites', createSiteRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
@@ -130,7 +130,7 @@ describe('createSite', () => {
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
-      .mockSuccessfulGraphPostCall(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
+      .mockSuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
 
     const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
     expect(status).toBe(202);
@@ -233,7 +233,7 @@ describe('createSite', () => {
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
-        .mockSuccessfulGraphPostCall(expect.anything(), graphCreateSiteResponseDto[0]);
+        .mockSuccessfulGraphPostCallWithRequestBody(expect.anything(), graphCreateSiteResponseDto[0]);
     };
 
     withStringFieldValidationApiTests({

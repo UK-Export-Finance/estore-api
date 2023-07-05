@@ -12,7 +12,7 @@ import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-re
 import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
 
-type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'tfisFacilityHiddenListTermStoreId';
+type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
 @Injectable()
 export class SiteDealService {
@@ -42,7 +42,7 @@ export class SiteDealService {
     // TODO apim-139: It's worth noting here that we don't use destinationMarket or riskMarket at all
     const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, parentFolderId, termGuid, termTitle);
 
-    this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);
+    await this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);
 
     return {
       folderName: facilityFolderName,
@@ -81,7 +81,7 @@ export class SiteDealService {
     });
 
     if (!facilityTermData.value.length) {
-      throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /term/facility`);
+      throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
     }
 
     return facilityTermData.value[0].fields.FacilityGUID;
@@ -112,7 +112,7 @@ export class SiteDealService {
         },
       ],
       TypeGuid: this.custodianConfig.facilityTypeGuid,
-      SPHostUrl: this.sharepointConfig.scSharepointUrl,
+      SPHostUrl: this.sharepointConfig.scSiteFullUrl,
     };
   }
 }

@@ -90,7 +90,7 @@ describe('GraphService', () => {
   describe('post', () => {
     withSharedGraphExceptionHandlingTests({
       mockSuccessfulGraphApiCall: () => mockSuccessfulGraphApiCall(),
-      mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, error),
+      mockGraphEndpointToErrorWith: (error: unknown) => mockGraphClientService.mockUnsuccessfulGraphPostCallWithRequestBody(requestBody, error),
       makeRequest: () => graphService.post({ path, requestBody }),
     });
 
@@ -131,7 +131,7 @@ describe('GraphService', () => {
 
   const mockSuccessfulGraphGetCall = () => mockGraphClientService.mockSuccessfulGraphGetCall(expectedResponse);
 
-  const mockSuccessfulGraphPostCall = () => mockGraphClientService.mockSuccessfulGraphPostCall(requestBody, expectedPostResponse);
+  const mockSuccessfulGraphPostCall = () => mockGraphClientService.mockSuccessfulGraphPostCallWithRequestBody(requestBody, expectedPostResponse);
 
   const mockSuccessfulCompleteGraphRequest = () => {
     mockSuccessfulGraphApiCall();

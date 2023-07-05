@@ -13,5 +13,5 @@ export const ValidatedSharepointResourceNameApiProperty = ({ description, exampl
     minLength: 1,
     maxLength: 250,
     pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
-    example: example,
+    example,
   });

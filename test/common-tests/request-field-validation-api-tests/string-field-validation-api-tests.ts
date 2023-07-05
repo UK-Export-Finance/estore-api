@@ -105,7 +105,6 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         const preparedRequestWithEmptyField = prepareModifiedRequest(requestIsAnArray, requestWithEmptyField);
 
         const { status, body } = await makeRequest(preparedRequestWithEmptyField);
-
         expect(status).toBe(400);
         expect(body).toMatchObject({
           error: 'Bad Request',
