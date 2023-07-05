@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 
 import { createGraphError as createWrapGraphError } from './createGraphError';
-import { KnownError } from './known-errors';
-import { postFacilityTermExistsKnownError } from './known-errors';
+import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {

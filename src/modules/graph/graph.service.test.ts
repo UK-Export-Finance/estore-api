@@ -113,7 +113,7 @@ describe('GraphService', () => {
       graphError.code = 'invalidRequest';
 
       mockSuccessfulGraphApiCall();
-      mockGraphClientService.mockUnsuccessfulGraphPostCall(requestBody, graphError);
+      mockGraphClientService.mockUnsuccessfulGraphPostCallWithRequestBody(requestBody, graphError);
 
       const graphServicePromise = graphService.post<string>({ path, requestBody });
 
