@@ -11,7 +11,7 @@ export const withSharedGraphExceptionHandlingTests = ({
   givenGraphServiceCallWillThrowError: (error: Error) => void;
   makeRequest: () => supertest.Test;
 }) => {
-  describe('Handles shared Microsoft Graph exceptions', () => {
+  describe('handles shared Microsoft Graph exceptions', () => {
     const graphStatusCode = 0;
     const graphErrorMessage = 'GraphErrorMessage';
 
