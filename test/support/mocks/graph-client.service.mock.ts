@@ -84,6 +84,4 @@ export class MockGraphClientService {
     when(this.request.expand).calledWith(expandString).mockReturnValueOnce(this.request);
     return this;
   }
-
-
 }
