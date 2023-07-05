@@ -63,7 +63,7 @@ export class DealFolderService {
     ukefSiteId: string,
   ): Promise<void> {
     const urlToCreateUploadSession = await this.constructUrlToCreateUploadSession(fileName, dealId, buyerName, ukefSiteId);
-    this.graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
+    await this.graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
   }
 
   private async updateFileInformationInSharepoint(
@@ -93,7 +93,7 @@ export class DealFolderService {
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const sharepointSiteId = await this.getSharepointSiteIdByUkefSiteId(ukefSiteId);
     const driveId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.DRIVE_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.DRIVE);
-    // Getting the sharepointSiteId () and driveId appears to necessary because using the ukefSiteId and drive name only appears to work when accessing drives,
+    // Getting the sharepointSiteId and driveId appears to necessary because using the ukefSiteId and drive name only appears to work when accessing drives,
     // not items *within* drives.
     const fileDestinationPath = `${buyerName}/D${dealId}`;
 
@@ -157,7 +157,7 @@ export class DealFolderService {
     const encodedFileName = encodeURIComponent(fileName);
 
     return new RegExp(
-      `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/.*${encodedFileName}`,
+      `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/.*${encodedFileName}`, // TODO APIM-138: remove Reg Exp if no longer needed and return to hardcoded string.
     );
     // Using a reg exp is necessary because Sharepoint temporarily prepends a code (which appears to always start with '~tmp') to the file name in the web url.
   }
