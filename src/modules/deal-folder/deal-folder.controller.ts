@@ -26,8 +26,9 @@ export class DealFolderController {
   uploadFileInDealFolder(
     @Param() params: UploadFileInDealFolderParamsDto,
     @ValidatedArrayBody({ items: UploadFileInDealFolderRequestItem }) body: UploadFileInDealFolderRequestDto,
-  ): Promise<string> {
-    const [fileInfoFromRequest] = body;
-    return this.service.uploadFileInDealFolder(fileInfoFromRequest);
+  ): Promise<UploadFileInDealFolderResponseDto> {
+    const [{ buyerName, documentType, fileName, fileLocationPath }] = body;
+    const { siteId: ukefSiteId, dealId } = params;
+    return this.service.uploadFileInDealFolder(fileName, fileLocationPath, dealId, buyerName, ukefSiteId, documentType);
   }
 }

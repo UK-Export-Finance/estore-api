@@ -9,6 +9,7 @@ export interface SharepointConfig {
   tfisDealListId: string;
   tfisCaseSitesListId: string;
   taxonomyHiddenListTermStoreListId: string;
+  estoreDocumentTypeIdFieldName: string;
 }
 
 // TODO APIM-139: Check facility list id is named correctly (and not deal id)
@@ -22,5 +23,6 @@ export default registerAs('sharepoint', (): SharepointConfig => {
     tfisDealListId: process.env.SHAREPOINT_TFIS_DEAL_LIST_ID,
     tfisCaseSitesListId: process.env.SHAREPOINT_TFIS_CASE_SITES_LIST_ID,
     taxonomyHiddenListTermStoreListId: process.env.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID,
+    estoreDocumentTypeIdFieldName: process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME,
   };
 });

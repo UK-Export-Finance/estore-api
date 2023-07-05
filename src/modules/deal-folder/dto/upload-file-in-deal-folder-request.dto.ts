@@ -1,4 +1,5 @@
 import { ENUMS } from '@ukef/constants';
+import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
@@ -19,7 +20,7 @@ export class UploadFileInDealFolderRequestItem {
     enum: ENUMS.DOCUMENT_TYPES,
     example: EXAMPLES.DOCUMENT_TYPE,
   })
-  documentType: string;
+  documentType: DocumentTypeEnum;
 
   @ValidatedStringApiProperty({
     description: 'The file name with the file extension.',

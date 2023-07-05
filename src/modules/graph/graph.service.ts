@@ -76,14 +76,35 @@ export class GraphService {
     }
   }
 
-  async uploadFile(url: string, file: NodeJS.ReadableStream, fileName: string, fileSize: number): Promise<UploadResult> {
-    const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, `https://graph.microsoft.com/v1.0/${url}`, {});
-    const fileToUpload = new Readable().wrap(file);
+  async patch<RequestBody, ResponseBody>({ path, requestBody }: GraphPatchParams<RequestBody>): Promise<ResponseBody> {
+    const request = this.createPatchRequest({ path });
+    return await this.makePatchRequest({ request, requestBody });
+  }
+
+  private createPatchRequest({ path }: { path: string }): GraphRequest {
+    return this.client.api(path);
+  }
+
+  private async makePatchRequest<RequestBody>({ request, requestBody }: { request: GraphRequest; requestBody: RequestBody }) {
+    try {
+      return await request.patch(requestBody);
+    } catch (error) {
+      createGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [],
+      });
+    }
+  }
+
+  async uploadFile(file: NodeJS.ReadableStream, fileSizeInBytes: number, fileName: string, urlToCreateUploadSession: string): Promise<UploadResult> {
+    const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, urlToCreateUploadSession, {});
+    const fileAsReadable = new Readable().wrap(file);
     const options: LargeFileUploadTaskOptions = {
-      rangeSize: fileSize,
+      rangeSize: fileSizeInBytes,
     };
-    const task = new LargeFileUploadTask(this.client, new StreamUpload(fileToUpload, fileName, fileSize), uploadSession, options);
-    const uploadResult = await task.upload();
+    const uploadTask = new LargeFileUploadTask(this.client, new StreamUpload(fileAsReadable, fileName, fileSizeInBytes), uploadSession, options);
+    const uploadResult = await uploadTask.upload();
     return uploadResult;
   }
 }
@@ -98,6 +119,11 @@ export interface GraphGetParams {
 export interface GraphPostParams {
   path: string;
   requestBody: any;
+}
+
+export interface GraphPatchParams<RequestBody> {
+  path: string;
+  requestBody: RequestBody;
 }
 
 export default GraphService;

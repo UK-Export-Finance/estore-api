@@ -1,32 +1,32 @@
+import { ENUMS } from './enum.constant';
+
+const estoreDocumentTypeIdApplication = process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION;
+const estoreDocumentTypeIdFinancialStatement = process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT;
+const estoreDocumentTypeIdBusinessInformation = process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION;
+
 export const DOCUMENT_TYPE_MAPPING = {
-  Exporter_questionnaire: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.EXPORTER_QUESTIONNAIRE]: {
     documentTitle: 'Supplementary Questionnaire',
-    documentType: 'Exporter_questionnaire',
+    documentTypeId: estoreDocumentTypeIdApplication,
   },
-  Audited_financial_statements: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS]: {
     documentTitle: 'Annual Report',
-    documentType: 'Audited_financial_statements',
+    documentTypeId: estoreDocumentTypeIdFinancialStatement,
   },
-  Year_to_date_management: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.YEAR_TO_DATE_MANAGEMENT]: {
     documentTitle: 'Financial Statement',
-    documentType: 'Year_to_date_management',
+    documentTypeId: estoreDocumentTypeIdFinancialStatement,
   },
-  Financial_forecasts: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.FINANCIAL_FORECASTS]: {
     documentTitle: 'Financial Forecast',
-    documentType: 'Financial_forecasts',
+    documentTypeId: estoreDocumentTypeIdFinancialStatement,
   },
-  Financial_information_commentary: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.FINANCIAL_INFORMATION_COMMENTARY]: {
     documentTitle: 'Financial Commentary',
-    documentType: 'Financial_information_commentary',
+    documentTypeId: estoreDocumentTypeIdFinancialStatement,
   },
-  Corporate_structure: {
-    contentType: 'ECMS Document',
+  [ENUMS.DOCUMENT_TYPES.CORPORATE_STRUCTURE]: {
     documentTitle: 'Corporate Structure Diagram',
-    documentType: 'Corporate_structure',
+    documentTypeId: estoreDocumentTypeIdBusinessInformation,
   },
 };
