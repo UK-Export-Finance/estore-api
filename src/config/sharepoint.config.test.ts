@@ -9,8 +9,8 @@ describe('sharepointConfig', () => {
       environmentVariableName: 'SHAREPOINT_TFIS_LIST_ID',
     },
     {
-      configPropertyName: 'tfisTermStoreId',
-      environmentVariableName: 'SHAREPOINT_TFIS_TERM_STORE',
+      configPropertyName: 'tfisFacilityHiddenListTermStoreId',
+      environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID',
     },
     {
       configPropertyName: 'tfisFacilityListId',
