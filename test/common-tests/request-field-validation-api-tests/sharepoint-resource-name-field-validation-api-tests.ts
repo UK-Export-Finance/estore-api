@@ -27,7 +27,6 @@ export const withSharepointResourceNameFieldValidationApiTests = <
     fieldName,
     minLength: 1,
     maxLength: 250,
-    required: true,
     pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
     generateFieldValueOfLength: (length: number) => valueGenerator.word({ length }) as RequestBodyItem[SharepointResourceNameFieldName],
     generateFieldValueThatDoesNotMatchRegex: () => '£Word' as RequestBodyItem[SharepointResourceNameFieldName],

@@ -1,6 +1,9 @@
+import { UKEFID } from '@ukef/constants';
+import { UkefId, UkefSiteId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withFacilityIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/facility-identifier-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
+import { withParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/string-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
@@ -157,7 +160,30 @@ describe('Create Site Deal Facility Folder', () => {
     expect(body).toStrictEqual({ statusCode: 500, message: 'Internal server error' });
   });
 
-  // describe('query validation', () => {});
+  describe('param validation', () => {
+    withParamValidationApiTests({
+      paramName: 'siteId',
+      length: 8,
+      pattern: UKEFID.SITE_ID.REGEX,
+      generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
+      generateParamValueThatDoesNotMatchRegex: () => '00000000' as UkefSiteId,
+      validRequestParam: createFacilityFolderParamsDto.siteId,
+      makeRequest: (siteId) => api.post(getPostSiteDealFacilitiesUrl({ siteId, dealId: createFacilityFolderParamsDto.dealId }), createFacilityFolderRequestDto),
+      givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+
+    withParamValidationApiTests({
+      paramName: 'dealId',
+      length: 10,
+      pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
+      generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
+      generateParamValueThatDoesNotMatchRegex: () => '11000000' as UkefId,
+      validRequestParam: createFacilityFolderParamsDto.dealId,
+      makeRequest: (dealId) => api.post(getPostSiteDealFacilitiesUrl({ dealId, siteId: createFacilityFolderParamsDto.siteId }), createFacilityFolderRequestDto),
+      givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
+    });
+  });
+
   describe('field validation', () => {
     withSharepointResourceNameFieldValidationApiTests({
       fieldName: 'exporterName',
