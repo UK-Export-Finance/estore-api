@@ -39,7 +39,6 @@ export class SiteDealService {
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
-    // TODO apim-139: It's worth noting here that we don't use destinationMarket or riskMarket at all
     const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, parentFolderId, termGuid, termTitle);
 
     await this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);

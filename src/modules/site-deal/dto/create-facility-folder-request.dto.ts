@@ -9,11 +9,4 @@ export class CreateFacilityFolderRequestItem {
   buyerName: string;
   @ValidatedFacilityIdentifierApiProperty({ description: 'The identifier of the facility.' })
   facilityIdentifier: string;
-  @ValidatedSharepointResourceNameApiProperty({
-    description: 'The country name of the destination market of the facility.',
-    example: 'Germany',
-  })
-  destinationMarket: string;
-  @ValidatedSharepointResourceNameApiProperty({ description: 'The country name of the risk market of the facility.', example: 'Germany' })
-  riskMarket: string;
 }

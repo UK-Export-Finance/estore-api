@@ -24,8 +24,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       exporterName: this.valueGenerator.word(),
       buyerName: this.valueGenerator.word(),
       facilityIdentifier: this.valueGenerator.facilityId(),
-      destinationMarket: this.valueGenerator.word(),
-      riskMarket: this.valueGenerator.word(),
 
       facilityTermDataResponseFieldFacilityGUID: this.valueGenerator.string(),
 
@@ -41,8 +39,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       exporterName,
       buyerName,
       facilityIdentifier,
-      destinationMarket,
-      riskMarket,
       facilityTermDataResponseFieldFacilityGUID,
       parentFolderResponseFieldServerRelativeUrl,
       parentFolderResponseFieldCode,
@@ -84,8 +80,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       exporterName: exporterName,
       buyerName: buyerName,
       facilityIdentifier: facilityIdentifier,
-      destinationMarket: destinationMarket,
-      riskMarket: riskMarket,
     };
 
     const createFacilityFolderRequestDto: CreateFacilityFolderRequestDto = [createFacilityFolderRequestItem];
@@ -163,8 +157,6 @@ interface GenerateValues {
   exporterName: string;
   buyerName: string;
   facilityIdentifier: string;
-  destinationMarket: string;
-  riskMarket: string;
 
   facilityTermDataResponseFieldFacilityGUID: string;
 

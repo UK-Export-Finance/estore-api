@@ -201,22 +201,6 @@ describe('Create Site Deal Facility Folder', () => {
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
 
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'destinationMarket',
-      valueGenerator,
-      validRequestBody: createFacilityFolderRequestDto,
-      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
-    });
-
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'riskMarket',
-      valueGenerator,
-      validRequestBody: createFacilityFolderRequestDto,
-      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
-    });
-
     withFacilityIdentifierFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
