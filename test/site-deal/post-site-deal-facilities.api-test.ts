@@ -12,7 +12,6 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
-import { CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -133,7 +132,7 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest has no id field', async () => {
-    let modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
+    const modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
     delete modifiedTfisFacilityListParentFolderResponse.value[0].fields.id;
 
     mockGraphClientService
@@ -154,7 +153,7 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest id field is not a number', async () => {
-    let modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
+    const modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
     modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = 'not a number';
 
     mockGraphClientService
@@ -193,7 +192,7 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest has no facilityGUID field', async () => {
-    let modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
+    const modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
     delete modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID;
 
     mockSuccessfulTfisFacilityListParentFolderRequest();

@@ -1,14 +1,5 @@
 import { Controller, Param, Post } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { EXAMPLES } from '@ukef/constants';
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';

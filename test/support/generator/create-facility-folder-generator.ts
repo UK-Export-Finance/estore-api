@@ -5,7 +5,6 @@ import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
-import { length } from 'class-validator';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -26,7 +25,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       buyerName: this.valueGenerator.word(),
       facilityIdentifier: this.valueGenerator.facilityId(),
 
-      facilityTermDataResponseFieldFacilityGUID: this.valueGenerator.string({length: 36}),
+      facilityTermDataResponseFieldFacilityGUID: this.valueGenerator.string({ length: 36 }),
 
       parentFolderResponseFieldServerRelativeUrl: this.valueGenerator.string(),
       parentFolderResponseFieldCode: this.valueGenerator.stringOfNumericCharacters(),

@@ -1,6 +1,5 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import { HttpStatusCode } from 'axios';
-import { StatusCode } from 'nock/types';
 import request from 'supertest';
 
 export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems> {

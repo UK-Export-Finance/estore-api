@@ -8,7 +8,7 @@ type FacilityIdentifierFieldName = 'facilityIdentifier';
 interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }>
   extends Pick<
     StringFieldValidationApiTestOptions<RequestBodyItem, FacilityIdentifierFieldName>,
-    'validRequestBody' | 'successStatusCode' |'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+    'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
   > {
   valueGenerator: RandomValueGenerator;
 }
