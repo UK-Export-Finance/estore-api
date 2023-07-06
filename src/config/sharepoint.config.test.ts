@@ -34,20 +34,15 @@ describe('sharepointConfig', () => {
     {
       configPropertyName: 'tfisSharepointUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_TFIS_SITE_NAME'],
-      getExpectedResult: (environmentVariableValues: string[]) => `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}`,
+      getExpectedResult: (environmentVariableValues: string[]) =>
+        `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}:`,
     },
     {
       configPropertyName: 'scSharepointUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_SC_SITE_NAME'],
-      getExpectedResult: (environmentVariableValues: string[]) => `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}`,
-    },
-    {
-      configPropertyName: 'scSiteFullUrl',
-      environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_SC_SITE_NAME'],
       getExpectedResult: (environmentVariableValues: string[]) =>
-        `https://${environmentVariableValues[0]}.sharepoint.com/sites/${environmentVariableValues[1]}`,
+        `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}:`,
     },
-
     {
       configPropertyName: 'scSiteFullUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_SC_SITE_NAME'],

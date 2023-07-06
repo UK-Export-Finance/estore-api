@@ -23,7 +23,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const tfisSharepointUrl =
-      options.tfisSharepointUrl ?? `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}`;
+      options.tfisSharepointUrl ?? `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}:`;
     const tfisCaseSitesListId = options.tfisCaseSitesListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
     const createSiteRequest: CreateSiteRequest = values.map((value) => ({
@@ -44,7 +44,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
     }));
 
     const graphServicePostParams = values.map((value) => ({
-      path: `${tfisSharepointUrl}:/lists/${tfisCaseSitesListId}/items`,
+      path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       requestBody: {
         fields: {
           Title: options.exporterName ?? value.exporterName,

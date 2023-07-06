@@ -68,7 +68,7 @@ export class DealFolderService {
 
   private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
     const buyerFolderSearchResults = await this.sharepointService.findListItems({
-      siteUrl: `${this.sharepointConfig.scSharepointUrl}:`,
+      siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisDealListId,
       fieldsToReturn: ['id'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}` }),
@@ -101,7 +101,7 @@ export class DealFolderService {
     exporterName: string;
   }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
     const exporterTermSearchResults = await this.sharepointService.findListItems({
-      siteUrl: `${this.sharepointConfig.tfisSharepointUrl}:`,
+      siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
       fieldsToReturn: ['TermGuid', 'URL'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
@@ -125,7 +125,7 @@ export class DealFolderService {
 
   private async getMarketTermGuid(marketName: string): Promise<string> {
     const marketTermSearchResults = await this.sharepointService.findListItems({
-      siteUrl: `${this.sharepointConfig.scSharepointUrl}:`,
+      siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.taxonomyHiddenListTermStoreListId,
       fieldsToReturn: ['TermGuid'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: marketName }),

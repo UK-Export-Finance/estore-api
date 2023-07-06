@@ -60,7 +60,7 @@ export class SiteDealService {
 
   private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<number> {
     const parentFolderListItems = await this.sharepointService.findListItems({
-      siteUrl: `${this.sharepointConfig.scSharepointUrl}:`,
+      siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityListId,
       fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
@@ -84,7 +84,7 @@ export class SiteDealService {
 
   private async getTermGuid(facilityIdentifier: string) {
     const facilityTermListItems = await this.sharepointService.findListItems({
-      siteUrl: `${this.sharepointConfig.tfisSharepointUrl}:`,
+      siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityHiddenListTermStoreId,
       fieldsToReturn: ['FacilityGUID', 'Title'],
       filter: new AndListItemFilter(

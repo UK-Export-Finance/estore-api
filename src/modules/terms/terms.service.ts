@@ -27,7 +27,7 @@ export class TermsService {
     const { tfisFacilityHiddenListTermStoreId, tfisSharepointUrl } = this.config;
     try {
       await this.graphService.post<any>({
-        path: `${tfisSharepointUrl}:/lists/${tfisFacilityHiddenListTermStoreId}/items`,
+        path: `${tfisSharepointUrl}/lists/${tfisFacilityHiddenListTermStoreId}/items`,
         requestBody,
       });
       return { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED };

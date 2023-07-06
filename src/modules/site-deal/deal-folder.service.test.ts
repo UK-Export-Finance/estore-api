@@ -318,7 +318,7 @@ describe('DealFolderService', () => {
 
   const whenFindingListItemsMatchingTheBuyerName = (): WhenMockWithMatchers =>
     when(findListItems).calledWith({
-      siteUrl: `${scSharepointUrl}:`,
+      siteUrl: scSharepointUrl,
       listId: tfisDealListId,
       fieldsToReturn: ['id'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}` }),
@@ -326,7 +326,7 @@ describe('DealFolderService', () => {
 
   const whenFindingListItemsMatchingTheExporterName = (): WhenMockWithMatchers =>
     when(findListItems).calledWith({
-      siteUrl: `${tfisSharepointUrl}:`,
+      siteUrl: tfisSharepointUrl,
       listId: tfisCaseSitesListId,
       fieldsToReturn: ['TermGuid', 'URL'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
@@ -334,7 +334,7 @@ describe('DealFolderService', () => {
 
   const whenFindingListItemsMatchingTheDestinationMarket = (): WhenMockWithMatchers =>
     when(findListItems).calledWith({
-      siteUrl: `${scSharepointUrl}:`,
+      siteUrl: scSharepointUrl,
       listId: taxonomyHiddenListTermStoreListId,
       fieldsToReturn: ['TermGuid'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: destinationMarket }),
@@ -342,7 +342,7 @@ describe('DealFolderService', () => {
 
   const whenFindingListItemsMatchingTheRiskMarket = (): WhenMockWithMatchers =>
     when(findListItems).calledWith({
-      siteUrl: `${scSharepointUrl}:`,
+      siteUrl: scSharepointUrl,
       listId: taxonomyHiddenListTermStoreListId,
       fieldsToReturn: ['TermGuid'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: riskMarket }),

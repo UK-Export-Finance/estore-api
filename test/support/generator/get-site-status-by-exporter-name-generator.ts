@@ -36,7 +36,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const [siteValues] = values;
     const tfisSharepointUrl =
       options.tfisSharepointUrl ??
-      `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}`;
+      `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}:`;
     const tfisCaseSitesListId = options.tfisCaseSitesListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
@@ -58,7 +58,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
     const graphServiceGetParams: GraphGetParams = {
-      path: `${tfisSharepointUrl}:/lists/${tfisCaseSitesListId}/items`,
+      path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
       expand: 'fields($select=Title,URL,Sitestatus)',
     };

@@ -69,8 +69,8 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       TermGuid: riskMarketTermGuid,
     };
 
-    const sharepointConfigTfisSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}`;
-    const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
+    const sharepointConfigTfisSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}:`;
+    const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}:`;
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisDealListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_DEAL_LIST_ID;
     const sharepointConfigTfisCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
@@ -91,25 +91,25 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
     };
 
     const tfisDealListBuyerRequest: GraphGetParams = {
-      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTfisDealListId}/items`,
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisDealListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
       expand: 'fields($select=id)',
     };
 
     const tfisCaseSitesListExporterRequest: GraphGetParams = {
-      path: `${sharepointConfigTfisSharepointUrl}:/lists/${sharepointConfigTfisCaseSitesListId}/items`,
+      path: `${sharepointConfigTfisSharepointUrl}/lists/${sharepointConfigTfisCaseSitesListId}/items`,
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=TermGuid,URL)',
     };
 
     const taxonomyHiddenListTermStoreDestinationMarketRequest: GraphGetParams = {
-      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTaxonomyTermStoreListId}/items`,
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTaxonomyTermStoreListId}/items`,
       filter: `fields/Title eq '${destinationMarket}'`,
       expand: 'fields($select=TermGuid)',
     };
 
     const taxonomyHiddenListTermStoreRiskMarketRequest: GraphGetParams = {
-      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTaxonomyTermStoreListId}/items`,
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTaxonomyTermStoreListId}/items`,
       filter: `fields/Title eq '${riskMarket}'`,
       expand: 'fields($select=TermGuid)',
     };

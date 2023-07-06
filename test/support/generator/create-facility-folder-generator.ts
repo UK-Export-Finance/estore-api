@@ -65,8 +65,8 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const custodianConfigFacilityTemplateId = ENVIRONMENT_VARIABLES.CUSTODIAN_FACILITY_TEMPLATE_ID;
     const custodianConfigFacilityTypeGuid = ENVIRONMENT_VARIABLES.CUSTODIAN_FACILITY_TYPE_GUID;
-    const sharepointConfigTfisSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}`;
-    const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
+    const sharepointConfigTfisSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}:`;
+    const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}:`;
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisFacilityHiddenListTermStoreId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID;
     const sharepointConfigTfisFacilityListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_LIST_ID;
@@ -89,7 +89,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     };
 
     const tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams = {
-      path: `${sharepointConfigTfisSharepointUrl}:/lists/${sharepointConfigTfisFacilityHiddenListTermStoreId}/items`,
+      path: `${sharepointConfigTfisSharepointUrl}/lists/${sharepointConfigTfisFacilityHiddenListTermStoreId}/items`,
       filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
       expand: 'fields($select=FacilityGUID,Title)',
     };
@@ -100,7 +100,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     });
 
     const tfisFacilityListParentFolderRequest: GraphGetParams = {
-      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTfisFacilityListId}/items`,
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisFacilityListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${`${buyerName}/D ${dealId}`}'`,
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
