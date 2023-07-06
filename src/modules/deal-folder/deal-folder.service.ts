@@ -162,7 +162,6 @@ export class DealFolderService {
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
 
-    
     return `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 
