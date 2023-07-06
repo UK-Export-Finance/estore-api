@@ -3,7 +3,7 @@ import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-ap
 
 export class UploadFileInDealFolderResponseDto {
   @ValidatedStringApiProperty({
-    description: '', // TODO (APIM-138): add description.
+    description: `The file name (and extension) in Sharepoint. It is called 'fileLeafRef' by Sharepoint.`,
     example: EXAMPLES.FILE_UPLOAD,
   })
   fileUpload: string;
