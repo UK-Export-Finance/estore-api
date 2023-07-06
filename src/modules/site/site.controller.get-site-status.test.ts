@@ -24,7 +24,7 @@ describe('SiteController', () => {
   });
 
   describe('getSiteStatusByExporterName', () => {
-    const { siteStatusByExporterNameQueryDto, siteStatusByExporterNameServiceRequest, siteStatusByExporterNameResponse } =
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, siteServiceGetSiteStatusByExporterNameRequest, siteStatusByExporterNameResponse } =
       new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
     it.each([
@@ -48,9 +48,11 @@ describe('SiteController', () => {
         json: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      when(siteGetSiteStatusByExporterName).calledWith(siteStatusByExporterNameServiceRequest).mockResolvedValueOnce(modifiedSiteStatusByExporterNameResponse);
+      when(siteGetSiteStatusByExporterName)
+        .calledWith(siteServiceGetSiteStatusByExporterNameRequest)
+        .mockResolvedValueOnce(modifiedSiteStatusByExporterNameResponse);
 
-      await siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
+      await siteController.getSiteStatusByExporterName(siteControllerGetSiteStatusByExporterNameQueryDto, responseMock);
 
       expect(responseMock.json).toHaveBeenCalledTimes(1);
       expect(responseMock.json).toHaveBeenCalledWith(modifiedSiteStatusByExporterNameResponse);
@@ -58,17 +60,17 @@ describe('SiteController', () => {
       expect(responseMock.status).toHaveBeenCalledWith(expectedStatusCode);
     });
 
-    it('returns the expected response if site service throws a SiteNotFoundException', async () => {
-      const errorMessage = `Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`;
+    it('returns "Site not found for exporter name" if site service throws a SiteNotFoundException', async () => {
+      const errorMessage = `Site not found for exporter name: ${siteServiceGetSiteStatusByExporterNameRequest}`;
       const siteNotFoundError = new SiteNotFoundException(errorMessage);
       const responseMock = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      when(siteGetSiteStatusByExporterName).calledWith(siteStatusByExporterNameServiceRequest).mockRejectedValueOnce(siteNotFoundError);
+      when(siteGetSiteStatusByExporterName).calledWith(siteServiceGetSiteStatusByExporterNameRequest).mockRejectedValueOnce(siteNotFoundError);
 
-      const responsePromise = siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
+      const responsePromise = siteController.getSiteStatusByExporterName(siteControllerGetSiteStatusByExporterNameQueryDto, responseMock);
 
       await expect(responsePromise).rejects.toThrow(errorMessage);
     });
@@ -80,9 +82,9 @@ describe('SiteController', () => {
         json: jest.fn().mockReturnThis(),
       } as unknown as Response;
 
-      when(siteGetSiteStatusByExporterName).calledWith(siteStatusByExporterNameServiceRequest).mockRejectedValueOnce(error);
+      when(siteGetSiteStatusByExporterName).calledWith(siteServiceGetSiteStatusByExporterNameRequest).mockRejectedValueOnce(error);
 
-      const responsePromise = siteController.getSiteStatusByExporterName(siteStatusByExporterNameQueryDto, responseMock);
+      const responsePromise = siteController.getSiteStatusByExporterName(siteControllerGetSiteStatusByExporterNameQueryDto, responseMock);
 
       await expect(responsePromise).rejects.toThrow(error);
     });

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 
 import { createGraphError as createWrapGraphError } from './createGraphError';
-import { postFacilityTermExistsKnownError } from './known-errors';
+import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {
@@ -13,9 +13,9 @@ export class GraphService {
     this.client = graphClientService.client;
   }
 
-  async get<T>({ path, filter, expand }: GraphGetParams): Promise<T> {
+  async get<T>({ path, filter, expand, knownErrors }: GraphGetParams): Promise<T> {
     const request = this.createGetRequest({ path, filter, expand });
-    return await this.makeGetRequest({ request });
+    return await this.makeGetRequest({ request, knownErrors });
   }
 
   private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
@@ -32,14 +32,14 @@ export class GraphService {
     return request;
   }
 
-  private async makeGetRequest({ request }: { request: GraphRequest }) {
+  private async makeGetRequest({ request, knownErrors }: { request: GraphRequest; knownErrors?: KnownError[] }) {
     try {
       return await request.get();
     } catch (error) {
       createWrapGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
-        knownErrors: [],
+        knownErrors: knownErrors ?? [],
       });
     }
   }
@@ -72,6 +72,7 @@ export interface GraphGetParams {
   path: string;
   filter?: string;
   expand?: string;
+  knownErrors?: KnownError[];
 }
 
 export interface GraphPostParams {

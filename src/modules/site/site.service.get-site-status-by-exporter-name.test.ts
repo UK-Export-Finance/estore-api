@@ -12,8 +12,7 @@ jest.mock('@ukef/modules/graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.word() + '.sharepoint.com';
-  const tfisSiteName = valueGenerator.word();
+  const tfisSharepointUrl = valueGenerator.word();
   const tfisListId = valueGenerator.word();
 
   let siteService: SiteService;
@@ -23,21 +22,25 @@ describe('SiteService', () => {
     graphServiceGetRequest = jest.fn();
     const graphService = new GraphService(null);
     graphService.get = graphServiceGetRequest;
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, null);
+    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, null);
     resetAllWhenMocks();
 
     const mdmService = new MdmService(null);
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
+    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, mdmService);
   });
 
   describe('getSiteStatusByExporterName', () => {
-    const { siteStatusByExporterNameServiceRequest, siteStatusByExporterNameResponse, graphServiceGetParams, graphGetSiteStatusResponseDto } =
-      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, ukefSharepointName, tfisSiteName, tfisListId });
+    const {
+      siteServiceGetSiteStatusByExporterNameRequest,
+      siteStatusByExporterNameResponse,
+      graphServiceGetParams,
+      graphServiceGetSiteStatusByExporterNameResponseDto,
+    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisListId });
 
     it('returns the site id and status from the service', async () => {
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphGetSiteStatusResponseDto);
+      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphServiceGetSiteStatusByExporterNameResponseDto);
 
-      const response = await siteService.getSiteStatusByExporterName(siteStatusByExporterNameServiceRequest);
+      const response = await siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest);
 
       expect(response).toEqual(siteStatusByExporterNameResponse);
     });
@@ -45,8 +48,8 @@ describe('SiteService', () => {
     it('throws a SiteNotFoundException if the site does not exist', async () => {
       when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce({ value: [] });
 
-      await expect(siteService.getSiteStatusByExporterName(siteStatusByExporterNameServiceRequest)).rejects.toThrow(
-        new SiteNotFoundException(`Site not found for exporter name: ${siteStatusByExporterNameServiceRequest}`),
+      await expect(siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest)).rejects.toThrow(
+        new SiteNotFoundException(`Site not found for exporter name: ${siteServiceGetSiteStatusByExporterNameRequest}`),
       );
     });
   });

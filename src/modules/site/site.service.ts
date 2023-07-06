@@ -13,13 +13,13 @@ import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-type RequiredConfigKeys = 'ukefSharepointName' | 'tfisSiteName' | 'tfisListId';
+type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisListId';
 
 @Injectable()
 export class SiteService {
   constructor(
     @Inject(SharepointConfig.KEY)
-    private readonly config: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
     private readonly graphService: GraphService,
     private readonly mdmService: MdmService,
   ) {}
@@ -53,7 +53,7 @@ export class SiteService {
   private async createSite(exporterName: string): Promise<CreateSiteResponse> {
     const newSiteId = await this.createSiteId();
     const data = await this.graphService.post<GraphCreateSiteResponseDto>({
-      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
+      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisListId}/items`,
       requestBody: {
         fields: {
           Title: exporterName,
@@ -73,7 +73,7 @@ export class SiteService {
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
     const data = await this.graphService.get<GraphGetSiteStatusByExporterNameResponseDto>({
-      path: `sites/${this.config.ukefSharepointName}:/sites/${this.config.tfisSiteName}:/lists/${this.config.tfisListId}/items`,
+      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisListId}/items`,
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=Title,Url,SiteStatus)',
     });

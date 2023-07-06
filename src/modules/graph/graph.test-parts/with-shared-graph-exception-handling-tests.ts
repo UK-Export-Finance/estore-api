@@ -3,7 +3,7 @@ import { GraphException } from '@ukef/modules/graph/exception/graph.exception';
 import { sharedGraphExceptionTestCases } from '@ukef-test/common-test-cases/shared-graph-exception-handling-test-cases';
 import { resetAllWhenMocks } from 'jest-when';
 
-export const withKnownGraphExceptionHandlingTests = ({
+export const withSharedGraphExceptionHandlingTests = ({
   mockSuccessfulGraphApiCall,
   mockGraphEndpointToErrorWith,
   makeRequest,

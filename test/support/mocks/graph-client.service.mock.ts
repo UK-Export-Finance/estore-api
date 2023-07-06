@@ -43,8 +43,30 @@ export class MockGraphClientService {
     when(this.request.get).calledWith().mockRejectedValueOnce(error);
   }
 
+  mockSuccessfulGraphPostCall<T>(response?: T) {
+    when(this.request.post).calledWith(expect.anything()).mockResolvedValueOnce(response);
+  }
+
+  mockSuccessfulGraphPostCallWithRequestBody<T, U>(requestBody: T, response?: U) {
+    when(this.request.post).calledWith(requestBody).mockResolvedValueOnce(response);
+  }
+
+  mockUnsuccessfulGraphPostCallWithRequestBody(requestBody, error: unknown) {
+    when(this.request.post).calledWith(requestBody).mockRejectedValueOnce(error);
+  }
+
+  mockSuccessfulGraphApiCall(): MockGraphClientService {
+    when(this.client.api).calledWith(expect.anything()).mockReturnValueOnce(this.request);
+    return this;
+  }
+
   mockSuccessfulGraphApiCallWithPath(path: string): MockGraphClientService {
     when(this.client.api).calledWith(path).mockReturnValueOnce(this.request);
+    return this;
+  }
+
+  mockSuccessfulFilterCall(): MockGraphClientService {
+    when(this.request.filter).calledWith(expect.anything()).mockReturnValueOnce(this.request);
     return this;
   }
 
@@ -53,16 +75,13 @@ export class MockGraphClientService {
     return this;
   }
 
-  mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphClientService {
-    when(this.request.expand).calledWith(expandString).mockReturnValueOnce(this.request);
+  mockSuccessfulExpandCall(): MockGraphClientService {
+    when(this.request.expand).calledWith(expect.anything()).mockReturnValueOnce(this.request);
     return this;
   }
 
-  mockSuccessfulGraphPostCall(requestBody, response) {
-    when(this.request.post).calledWith(requestBody).mockReturnValueOnce(response);
-  }
-
-  mockUnsuccessfulGraphPostCall(requestBody, error: unknown) {
-    when(this.request.post).calledWith(requestBody).mockRejectedValueOnce(error);
+  mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphClientService {
+    when(this.request.expand).calledWith(expandString).mockReturnValueOnce(this.request);
+    return this;
   }
 }

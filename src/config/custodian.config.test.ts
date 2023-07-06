@@ -16,6 +16,14 @@ describe('custodianConfig', () => {
       configPropertyName: 'apiKeyHeaderValue',
       environmentVariableName: 'CUSTODIAN_API_KEY_HEADER_VALUE',
     },
+    {
+      configPropertyName: 'facilityTemplateId',
+      environmentVariableName: 'CUSTODIAN_FACILITY_TEMPLATE_ID',
+    },
+    {
+      configPropertyName: 'facilityTypeGuid',
+      environmentVariableName: 'CUSTODIAN_FACILITY_TYPE_GUID',
+    },
   ];
 
   const configParsedAsIntFromEnvironmentVariablesWithDefault: {

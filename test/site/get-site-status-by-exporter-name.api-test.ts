@@ -1,5 +1,7 @@
-import { ENUMS, EXPORTER_NAME } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
+import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withSharepointResourceNameQueryValidationApiTests } from '@ukef-test/common-tests/request-query-validation-api-tests/sharepoint-resource-name-query-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
@@ -8,12 +10,12 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
+  const endpoint_url = '/api/v1/sites';
   const valueGenerator = new RandomValueGenerator();
   const {
-    siteStatusByExporterNameQueryDto,
+    siteControllerGetSiteStatusByExporterNameQueryDto,
     graphServiceGetParams: { path, expand, filter },
-    graphGetSiteStatusResponseDto,
-    siteStatusByExporterNameResponse,
+    graphServiceGetSiteStatusByExporterNameResponseDto,
   } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
@@ -40,10 +42,10 @@ describe('getSiteStatusByExporterName', () => {
         .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCallWithExpandString(expand)
         .mockSuccessfulFilterCallWithFilterString(filter)
-        .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
+        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
-      api.getWithoutAuth(getSiteStatusByExporterNameUrl({}), incorrectAuth?.headerName, incorrectAuth?.headerValue),
+      api.getWithoutAuth(endpoint_url, incorrectAuth?.headerName, incorrectAuth?.headerValue).query(siteControllerGetSiteStatusByExporterNameQueryDto),
   });
 
   withSharedGraphExceptionHandlingTests({
@@ -56,7 +58,7 @@ describe('getSiteStatusByExporterName', () => {
     givenGraphServiceCallWillThrowError: (error: Error) => {
       mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
     },
-    makeRequest: () => api.get(getSiteStatusByExporterNameUrl({})),
+    makeRequest: () => makeRequest(),
   });
 
   const statusCodeTestInputs = [
@@ -75,138 +77,57 @@ describe('getSiteStatusByExporterName', () => {
   ];
   it.each(statusCodeTestInputs)('returns $expectedStatusCode if site status in Sharepoint is $siteStatus', async ({ siteStatus, expectedStatusCode }) => {
     const {
-      siteStatusByExporterNameQueryDto: modifiedSiteStatusByExporterNameQueryDto,
+      siteControllerGetSiteStatusByExporterNameQueryDto: modifiedSiteControllerGetSiteStatusByExporterNameQueryDto,
       siteStatusByExporterNameResponse: modifiedSiteStatusByExporterNameResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
-      graphGetSiteStatusResponseDto: modifiedGraphGetSiteStatusResponseDto,
+      graphServiceGetSiteStatusByExporterNameResponseDto: modifiedGraphServiceGetSiteStatusByExporterNameResponseDto,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)
       .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
       .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
-      .mockSuccessfulGraphGetCall(modifiedGraphGetSiteStatusResponseDto);
+      .mockSuccessfulGraphGetCall(modifiedGraphServiceGetSiteStatusByExporterNameResponseDto);
 
-    const { status, body } = await api.get(`/api/v1/sites?exporterName=${modifiedSiteStatusByExporterNameQueryDto.exporterName}`);
+    const { status, body } = await api.get(`/api/v1/sites?exporterName=${modifiedSiteControllerGetSiteStatusByExporterNameQueryDto.exporterName}`);
 
     expect(status).toBe(expectedStatusCode);
     expect(body).toStrictEqual(modifiedSiteStatusByExporterNameResponse);
   });
 
-  it('if you use the correct query parameter and an unexpected one as well, then it still succeeds/you get a 202 response', async () => {
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall(graphGetSiteStatusResponseDto);
-
-    const incorrectQueryName = 'IncorrectQueryName';
-    const urlWithIncorrectQueryParam =
-      getSiteStatusByExporterNameUrl({ queryValue: siteStatusByExporterNameQueryDto.exporterName }) + '&' + incorrectQueryName + '=test';
-
-    const { status, body } = await api.get(urlWithIncorrectQueryParam);
-
-    expect(status).toBe(202);
-    expect(body).toStrictEqual(siteStatusByExporterNameResponse);
-  });
-
-  it('returns 404 with an empty object response if the site does not exist in sharepoint', async () => {
+  it('returns 404 with message "Not Found" if the site does not exist in sharepoint', async () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
       .mockSuccessfulExpandCallWithExpandString(expand)
       .mockSuccessfulFilterCallWithFilterString(filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({}));
+    const { status, body } = await makeRequest();
 
     expect(status).toBe(404);
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
-  it('returns a 400 with message containing "exporterName must be longer than or equal to 1 characters" if exporterName is an empty string', async () => {
-    const incorrectQueryValue = '';
-
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
-
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must be longer than or equal to 1 characters`]),
-      statusCode: 400,
-    });
+  withSharepointResourceNameQueryValidationApiTests({
+    queryName: 'exporterName',
+    valueGenerator,
+    validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
+    successStatusCode: 202,
+    makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
+    givenAnyRequestQueryWouldSucceed: () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCall()
+        .mockSuccessfulExpandCall()
+        .mockSuccessfulFilterCall()
+        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
+    },
   });
 
-  it('returns a 400 with message containing "exporterName must be shorter than or equal to 250 characters" if exporterName is too long', async () => {
-    const incorrectQueryValue =
-      'This is a valid regex expression that is 251 characters long. ' +
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit. Aenean ' +
-      'dapibus erat ac eros tincidunt a commodo nunc vulputate. Donec ' +
-      'ut aliquam lacus luctus augue. Pellentesque lorem eros faucibus.';
+  const makeRequest = () => {
+    return makeRequestWithQueries(siteControllerGetSiteStatusByExporterNameQueryDto);
+  };
 
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
-
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must be shorter than or equal to 250 characters`]),
-      statusCode: 400,
-    });
-  });
-
-  it(`returns a 400 with message containing "exporterName must match ${EXPORTER_NAME.REGEX} regular expression" if exporterName contains invalid characters`, async () => {
-    const incorrectQueryValue = siteStatusByExporterNameQueryDto.exporterName + '{}';
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
-
-    const { status, body } = await api.get(getSiteStatusByExporterNameUrl({ queryValue: incorrectQueryValue }));
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining([`exporterName must match ${EXPORTER_NAME.REGEX} regular expression`]),
-      statusCode: 400,
-    });
-  });
-
-  it('returns a 400 with message containing the validation parameters of the query if no query is present', async () => {
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(path)
-      .mockSuccessfulExpandCallWithExpandString(expand)
-      .mockSuccessfulFilterCallWithFilterString(filter)
-      .mockSuccessfulGraphGetCall({ graphGetSiteStatusResponseDto });
-
-    const { status, body } = await api.get('/api/v1/sites');
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      error: 'Bad Request',
-      message: expect.arrayContaining(['exporterName must be longer than or equal to 1 characters', 'exporterName must be a string']),
-      statusCode: 400,
-    });
-  });
-
-  const getSiteStatusByExporterNameUrl = ({
-    queryName = 'exporterName',
-    queryValue = siteStatusByExporterNameQueryDto.exporterName,
-  }: {
-    queryName?: string;
-    queryValue?: string;
-  }) => {
-    return `/api/v1/sites?${queryName}=${queryValue}`;
+  const makeRequestWithQueries = (queries: GetSiteStatusByExporterNameQueryDto) => {
+    return api.get(endpoint_url).query(queries);
   };
 });

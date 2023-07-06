@@ -6,7 +6,7 @@ interface Options {
   description: string;
 }
 
-export const ValidatedFacilityIdentifierApiProperty = ({ description }: Options) =>
+export const ValidatedSiteIdentifierApiProperty = ({ description }: Options) =>
   ValidatedStringApiProperty({
     description,
     length: 8,

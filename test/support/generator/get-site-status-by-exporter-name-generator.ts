@@ -34,14 +34,15 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [siteValues] = values;
-    const ukefSharepointName = options.ukefSharepointName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME + '.sharepoint.com';
-    const tfisSiteName = options.tfisSiteName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME;
+    const tfisSharepointUrl =
+      options.tfisSharepointUrl ??
+      `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}`;
     const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
-    const graphCreatedBy = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
+    const graphCreatedByUser = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const graphLastModifiedBy = { ...graphCreatedBy };
+    const graphLastModifiedByUser = { ...graphCreatedByUser };
     const graphParentReference = new graphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const graphSiteFields = new graphSiteFieldsGenerator(this.valueGenerator).generate({
       numberToGenerate: 1,
@@ -50,19 +51,19 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
       siteStatus: status,
     });
 
-    const getSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto = {
+    const siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto = {
       exporterName: siteValues.exporterName,
     };
 
-    const getSiteStatusByExporterNameServiceRequest: string = siteValues.exporterName;
+    const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
-    const graphGetParams: GraphGetParams = {
-      path: `sites/${ukefSharepointName}:/sites/${tfisSiteName}:/lists/${tfisListId}/items`,
+    const graphServiceGetParams: GraphGetParams = {
+      path: `${tfisSharepointUrl}:/lists/${tfisListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
       expand: 'fields($select=Title,Url,SiteStatus)',
     };
 
-    const graphGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {
+    const graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {
       value: [
         {
           createdDateTime: siteValues.graphCreatedDateTime,
@@ -70,8 +71,8 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
           id: siteValues.graphId,
           lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
           webUrl: siteValues.graphWebUrl,
-          createdBy: { user: graphCreatedBy },
-          lastModifiedBy: { user: graphLastModifiedBy },
+          createdBy: { user: graphCreatedByUser },
+          lastModifiedBy: { user: graphLastModifiedByUser },
           parentReference: graphParentReference,
           contentType: graphContentType,
           fields: graphSiteFields,
@@ -79,17 +80,17 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
       ],
     };
 
-    const getSiteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
+    const siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
       siteId: siteValues.siteId,
       status: convertToEnum(status, SiteStatusEnum),
     };
 
     return {
-      siteStatusByExporterNameQueryDto: getSiteStatusByExporterNameQueryDto,
-      siteStatusByExporterNameServiceRequest: getSiteStatusByExporterNameServiceRequest,
-      graphServiceGetParams: graphGetParams,
-      graphGetSiteStatusResponseDto: graphGetSiteStatusByExporterNameResponseDto,
-      siteStatusByExporterNameResponse: getSiteStatusByExporterNameResponse,
+      siteControllerGetSiteStatusByExporterNameQueryDto,
+      siteServiceGetSiteStatusByExporterNameRequest,
+      graphServiceGetParams,
+      graphServiceGetSiteStatusByExporterNameResponseDto,
+      siteStatusByExporterNameResponse,
     };
   }
 }
@@ -105,16 +106,15 @@ interface GenerateValues {
 }
 
 interface GenerateResult {
-  siteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
-  siteStatusByExporterNameServiceRequest: string;
+  siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
+  siteServiceGetSiteStatusByExporterNameRequest: string;
   graphServiceGetParams: GraphGetParams;
-  graphGetSiteStatusResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
+  graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;
 }
 
 interface GenerateOptions {
   status?: string;
-  ukefSharepointName?: string;
-  tfisSiteName?: string;
+  tfisSharepointUrl?: string;
   tfisListId?: string;
 }

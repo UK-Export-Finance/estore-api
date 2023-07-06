@@ -1,4 +1,6 @@
+import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import { prepareModifiedRequest } from '@ukef-test/support/helpers/request-field-validation-helper';
+import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem> {
@@ -13,6 +15,7 @@ export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBod
   generateFieldValueThatDoesNotMatchRegex?: () => RequestBodyItem[RequestBodyItemKey];
   generateFieldValueThatDoesNotMatchEnum?: () => RequestBodyItem[RequestBodyItemKey];
   validRequestBody: RequestBodyItem[] | RequestBodyItem;
+  successStatusCode: HttpStatusCode;
   makeRequest: ((body: unknown[]) => request.Test) | ((body: unknown) => request.Test);
   givenAnyRequestBodyWouldSucceed: () => void;
 }
@@ -29,11 +32,12 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
   generateFieldValueOfLength,
   generateFieldValueThatDoesNotMatchRegex,
   validRequestBody,
+  successStatusCode,
   makeRequest,
   givenAnyRequestBodyWouldSucceed,
 }: StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey>): void {
   const fieldName = fieldNameSymbol.toString();
-  const { minLength, maxLength } = getMinAndMaxLengthFromOptions({ fieldName, minLengthOption, maxLengthOption, lengthOption, theEnum });
+  const { minLength, maxLength } = getMinAndMaxLengthFromOptions({ parameterName: fieldName, minLengthOption, maxLengthOption, lengthOption, theEnum });
   const requestIsAnArray = Array.isArray(validRequestBody);
   const requestBodyItem = requestIsAnArray ? validRequestBody[0] : validRequestBody;
 
@@ -88,14 +92,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         });
       }
     } else {
-      it(`returns a 2xx response if ${fieldName} is not present`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} is not present`, async () => {
         const { [fieldNameSymbol]: _removed, ...requestWithField } = requestBodyItem;
         const preparedRequestWithField = prepareModifiedRequest(requestIsAnArray, requestWithField);
 
         const { status } = await makeRequest(preparedRequestWithField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 
@@ -105,7 +108,6 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         const preparedRequestWithEmptyField = prepareModifiedRequest(requestIsAnArray, requestWithEmptyField);
 
         const { status, body } = await makeRequest(preparedRequestWithEmptyField);
-
         expect(status).toBe(400);
         expect(body).toMatchObject({
           error: 'Bad Request',
@@ -114,14 +116,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         });
       });
 
-      it(`returns a 2xx response if ${fieldName} has ${minLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} has ${minLength} characters`, async () => {
         const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(minLength) };
         const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
 
         const { status } = await makeRequest(preparedRequestWithValidField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
 
       if (minLength > 1) {
@@ -141,7 +142,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       }
     } else {
       if (!theEnum) {
-        it(`returns a 2xx response if ${fieldName} is an empty string`, async () => {
+        it(`returns a ${successStatusCode} response if ${fieldName} is an empty string`, async () => {
           const requestWithEmptyField = { ...requestBodyItem, [fieldNameSymbol]: '' };
           const preparedRequestWithEmptyField = prepareModifiedRequest(requestIsAnArray, requestWithEmptyField);
           const { status } = await makeRequest(preparedRequestWithEmptyField);
@@ -153,14 +154,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
     }
 
     if (minLength !== maxLength) {
-      it(`returns a 2xx response if ${fieldName} has ${maxLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} has ${maxLength} characters`, async () => {
         const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(maxLength) };
         const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
 
         const { status } = await makeRequest(preparedRequestWithValidField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 
@@ -213,45 +213,3 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
     }
   });
 }
-
-const getMinAndMaxLengthFromOptions = ({
-  fieldName,
-  minLengthOption,
-  maxLengthOption,
-  lengthOption,
-  theEnum,
-}: {
-  fieldName: string;
-  minLengthOption?: number;
-  maxLengthOption?: number;
-  lengthOption?: number;
-  theEnum?: any;
-}): { minLength: number; maxLength: number } => {
-  const isLengthDefined = lengthOption || lengthOption === 0;
-  const isMinLengthDefined = minLengthOption || minLengthOption === 0;
-  const isMaxLengthDefined = maxLengthOption || maxLengthOption === 0;
-
-  if (isLengthDefined) {
-    if (isMinLengthDefined) {
-      throw new Error(`You cannot specify both minLength and length for ${fieldName}.`);
-    }
-
-    if (isMaxLengthDefined) {
-      throw new Error(`You cannot specify both maxLength and length for ${fieldName}.`);
-    }
-
-    return {
-      minLength: lengthOption,
-      maxLength: lengthOption,
-    };
-  }
-
-  if ((!isMinLengthDefined || !isMaxLengthDefined) && !theEnum) {
-    throw new Error(`You must specify either length, enum, or minLength and maxLength for ${fieldName}.`);
-  }
-
-  return {
-    minLength: minLengthOption,
-    maxLength: maxLengthOption,
-  };
-};

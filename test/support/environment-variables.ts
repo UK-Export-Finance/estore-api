@@ -17,10 +17,12 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   GRAPH_AUTHENTICATION_CLIENT_ID: valueGenerator.string(),
   GRAPH_AUTHENTICATION_CLIENT_SECRET: valueGenerator.string(),
 
-  SHAREPOINT_MAIN_SITE_NAME: valueGenerator.string(),
-  SHAREPOINT_TFIS_SITE_NAME: valueGenerator.string(),
-  SHAREPOINT_TFIS_LIST_ID: valueGenerator.string(),
-  SHAREPOINT_TFIS_TERM_STORE: valueGenerator.string(),
+  SHAREPOINT_MAIN_SITE_NAME: valueGenerator.word(),
+  SHAREPOINT_TFIS_SITE_NAME: valueGenerator.word(),
+  SHAREPOINT_SC_SITE_NAME: valueGenerator.word(),
+  SHAREPOINT_TFIS_LIST_ID: valueGenerator.word(),
+  SHAREPOINT_TFIS_FACILITY_LIST_ID: valueGenerator.word(),
+  SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID: valueGenerator.word(),
 
   APIM_MDM_URL: valueGenerator.httpsUrl(),
   APIM_MDM_KEY: valueGenerator.word(),
@@ -39,6 +41,8 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   CUSTODIAN_API_KEY_HEADER_VALUE: valueGenerator.string(),
   CUSTODIAN_MAX_REDIRECTS: 0,
   CUSTODIAN_TIMEOUT: 1000,
+  CUSTODIAN_FACILITY_TEMPLATE_ID: valueGenerator.word(),
+  CUSTODIAN_FACILITY_TYPE_GUID: valueGenerator.word(),
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({

@@ -10,8 +10,7 @@ jest.mock('../graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const ukefSharepointName = valueGenerator.string();
-  const tfisSiteName = valueGenerator.string();
+  const tfisSharepointUrl = valueGenerator.string();
   const tfisListId = valueGenerator.string();
   const maskedId = valueGenerator.stringOfNumericCharacters();
 
@@ -27,7 +26,7 @@ describe('SiteService', () => {
     mdmServiceCreateNumbers = jest.fn();
     const mdmService = new MdmService(null);
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ ukefSharepointName, tfisSiteName, tfisListId }, graphService, mdmService);
+    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, mdmService);
   });
 
   describe('createSiteId', () => {
