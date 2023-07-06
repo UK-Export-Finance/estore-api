@@ -11,7 +11,7 @@ export interface SharepointConfig {
   taxonomyHiddenListTermStoreListId: string;
 }
 
-// TODO: apim-139: Check facility list id is named correctly (and not deal id)
+// TODO APIM-139: Check facility list id is named correctly (and not deal id)
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {
     tfisSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}`, // TODO APIM-136: Move : into here
