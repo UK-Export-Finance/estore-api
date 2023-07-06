@@ -1,21 +1,12 @@
 import { Controller, Param, Post, UseInterceptors } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { EXAMPLES } from '@ukef/constants';
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
-import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './site-deal-not-found-exception-to-bad-request-transform.interceptor';
 import { SiteDealService } from './site-deal.service';
+import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Controller('sites/:siteId/deals/:dealId')
 export class SiteDealController {
