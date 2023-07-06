@@ -323,9 +323,10 @@ components:
       properties:
         fileUpload:
           type: string
-          description: ''
+          description: >-
+            The file name (and extension) in Sharepoint. It is called
+            'fileLeafRef' by Sharepoint.
           minLength: 0
-          example: ''
       required:
         - fileUpload
     GetSiteStatusByExporterNameResponse:

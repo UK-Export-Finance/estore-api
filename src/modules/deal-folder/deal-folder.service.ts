@@ -145,8 +145,8 @@ export class DealFolderService {
   ): Promise<{ urlToUpdateFileInfo: string; fileLeafRef: string }> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
-    const webUrlRegExpForFile = this.constructWebUrlRegExpForFile(fileName, dealId, buyerName, ukefSiteId);
-    const { itemId, fileLeafRef } = await this.getItemIdAndFileLeafRefByWebUrlRegExp(ukefSiteId, listId, webUrlRegExpForFile);
+    const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
+    const { itemId, fileLeafRef } = await this.getItemIdAndFileLeafRefByWebUrl(ukefSiteId, listId, webUrlForFile);
 
     const urlToUpdateFileInfo = `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
 
@@ -156,19 +156,17 @@ export class DealFolderService {
     };
   }
 
-  private constructWebUrlRegExpForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): RegExp {
+  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
 
-    return new RegExp(
-      `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/.*${encodedFileName}`, // TODO APIM-138: remove Reg Exp if no longer needed and return to hardcoded string.
-    );
-    // Using a reg exp is necessary because Sharepoint temporarily prepends a code (which appears to always start with '~tmp') to the file name in the web url.
+    
+    return `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 
-  private getItemIdAndFileLeafRefByWebUrlRegExp(ukefSiteId: string, listId: string, webUrlRegExp: RegExp): Promise<{ itemId: string; fileLeafRef: string }> {
+  private getItemIdAndFileLeafRefByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<{ itemId: string; fileLeafRef: string }> {
     return (
       this.graphService
         .get<{ value: { webUrl: string; id: string; fields: { FileLeafRef: string } }[] }>({
@@ -176,7 +174,7 @@ export class DealFolderService {
           expand: 'fields',
         })
         .then((response) => response.value)
-        .then((list) => list.find((item) => webUrlRegExp.test(item.webUrl)))
+        .then((list) => list.find((item) => item.webUrl === webUrl))
         /* The line above is necessary because the 'filter' query parameter does not currently support the 'webUrl' field on lists/list items 
       (see comment from Microsoft employee https://learn.microsoft.com/en-us/answers/questions/980144/graph-api-sharepoint-list-filter-by-createddatetim). */
         .then((item) => ({ itemId: item.id, fileLeafRef: item.fields.FileLeafRef }))
