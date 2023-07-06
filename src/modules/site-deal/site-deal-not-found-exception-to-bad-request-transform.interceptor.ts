@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
 
 @Injectable()
-export class SiteDealExceptionTransformInterceptor implements NestInterceptor {
+export class SiteDealNotFoundExceptionToBadRequestTransformInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((err) =>
