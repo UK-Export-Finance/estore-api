@@ -20,7 +20,6 @@ export class CreateDealFolderRequestItem {
   })
   destinationMarket: string;
 
-  // TODO APIM-136: Document that this is no longer optional because the SA layer required it
   @ValidatedSharepointResourceNameApiProperty({
     description: 'The country name of the risk market of the deal.',
     example: EXAMPLES.MARKET,

@@ -11,7 +11,6 @@ export interface SharepointConfig {
   taxonomyHiddenListTermStoreListId: string;
 }
 
-// TODO APIM-136: Raise ticket to add new env variables
 // TODO: apim-139: Check facility list id is named correctly (and not deal id)
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {

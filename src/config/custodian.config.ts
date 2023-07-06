@@ -14,7 +14,6 @@ export interface CustodianConfig {
   facilityTypeGuid: string;
 }
 
-// TODO APIM-136: Raise ticket to add new env variables
 export default registerAs(
   KEY,
   (): CustodianConfig => ({
