@@ -41,9 +41,7 @@ export class DealFolderService {
   }
 
   private async checkFileIsNotTooLargeAndReturnSizeInBytes(fileName: string, fileLocationPath: string): Promise<number> {
-    const fileSizeInBytes = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => {
-      return response.contentLength;
-    });
+    const fileSizeInBytes = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => response.contentLength);
     if (fileSizeInBytes > MAX_FILE_SIZE_BYTES) {
       throw new BadRequestException('Bad request', `The file exceeds the maximum allowed size of ${MAX_FILE_SIZE_BYTES} bytes.`);
     }

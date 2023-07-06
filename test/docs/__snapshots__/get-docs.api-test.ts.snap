@@ -286,7 +286,7 @@ components:
           minLength: 1
           maxLength: 250
           pattern: ^[\\w\\-.()\\s]+
-          example: ***REMOVED***
+          example: Example Buyer
         documentType:
           type: string
           description: The ESTORE document type.

@@ -9,6 +9,5 @@ import { DealFolderService } from './deal-folder.service';
   imports: [DtfsStorageModule, GraphModule],
   controllers: [DealFolderController],
   providers: [DealFolderService],
-  exports: [],
 })
 export class DealFolderModule {}

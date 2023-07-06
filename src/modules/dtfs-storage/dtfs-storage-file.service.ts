@@ -8,11 +8,7 @@ import { DtfsStorageFileNotFoundException } from './exception/dtfs-storage-file-
 
 @Injectable()
 export class DtfsStorageFileService {
-  private readonly dtfsStorageClientService: DtfsStorageClientService;
-
-  constructor(dtfsStorageClientService: DtfsStorageClientService) {
-    this.dtfsStorageClientService = dtfsStorageClientService;
-  }
+  constructor(private readonly dtfsStorageClientService: DtfsStorageClientService) {}
 
   getFileProperties(fileName: string, fileLocationPath: string): Promise<FileGetPropertiesResponse> {
     const shareFileClient = this.dtfsStorageClientService.getShareFileClient(fileName, fileLocationPath);

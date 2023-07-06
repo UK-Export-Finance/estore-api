@@ -19,7 +19,7 @@ export class DealFolderController {
     type: UploadFileInDealFolderRequestItem,
     isArray: true,
   })
-  @ApiCreatedResponse({ description: 'File has been uploaded.', type: UploadFileInDealFolderResponseDto, isArray: false })
+  @ApiCreatedResponse({ description: 'File has been uploaded.', type: UploadFileInDealFolderResponseDto })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })

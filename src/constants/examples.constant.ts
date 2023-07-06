@@ -13,7 +13,7 @@ export const EXAMPLES = {
   BUYER_NAME: 'Example Buyer',
   EXPORTER_NAME: 'Example Exporter',
   MARKET: 'Germany',
-  BUYER_NAME: '***REMOVED***',
+  BUYER_NAME: 'Example Buyer',
   DOCUMENT_TYPE: ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS,
   FILE_UPLOAD: '', // TODO (APIM-138): add example.
 };
