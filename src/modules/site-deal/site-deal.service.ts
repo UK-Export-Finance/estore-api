@@ -11,6 +11,7 @@ import GraphService from '../graph/graph.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { SiteDealException } from './exception/site-deal.exception';
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
@@ -63,13 +64,18 @@ export class SiteDealService {
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     });
 
-    if (!parentFolderData.value.length) {
+    if (!parentFolderData.value.length || !parentFolderData.value[0].fields.id) {
       throw new SiteDealFolderNotFoundException(
         `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
       );
     }
 
-    return parseInt(parentFolderData.value[0].fields.id);
+    const parentFolderId = parseInt(parentFolderData.value[0].fields.id);
+    if (isNaN(parentFolderId)) { 
+      throw new SiteDealFolderNotFoundException(`Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`)
+    }
+    
+    return parentFolderId;
   }
 
   private async getTermGuid(facilityIdentifier: string) {
@@ -79,7 +85,7 @@ export class SiteDealService {
       expand: 'fields($select=FacilityGUID,Title)',
     });
 
-    if (!facilityTermData.value.length) {
+    if (!facilityTermData.value.length || !facilityTermData.value[0].fields.FacilityGUID) {
       throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
     }
 

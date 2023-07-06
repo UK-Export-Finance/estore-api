@@ -1,4 +1,5 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
+import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface ParamValidationApiTestOptions {
@@ -12,6 +13,7 @@ export interface ParamValidationApiTestOptions {
   generateParamValueThatDoesNotMatchRegex?: () => string;
   generateParamValueThatDoesNotMatchEnum?: () => string;
   validRequestParam: string;
+  successStatusCode: HttpStatusCode;
   makeRequest: (paramValue: string) => request.Test;
   givenAnyRequestParamWouldSucceed: () => void;
 }
@@ -27,6 +29,7 @@ export const withParamValidationApiTests = ({
   generateParamValueThatDoesNotMatchRegex,
   generateParamValueThatDoesNotMatchEnum,
   validRequestParam,
+  successStatusCode,
   makeRequest,
   givenAnyRequestParamWouldSucceed,
 }: ParamValidationApiTestOptions) => {
@@ -38,18 +41,16 @@ export const withParamValidationApiTests = ({
       givenAnyRequestParamWouldSucceed();
     });
 
-    it(`returns a 2xx response if ${paramName} is valid`, async () => {
+    it(`returns a ${successStatusCode} response if ${paramName} is valid`, async () => {
       const { status } = await makeRequest(validRequestParam);
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
-    it(`returns a 2xx response if ${paramName} has ${minLength} characters`, async () => {
+    it(`returns a ${successStatusCode} response if ${paramName} has ${minLength} characters`, async () => {
       const { status } = await makeRequest(generateParamValueOfLength(minLength));
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
     if (minLength > 1) {
@@ -66,7 +67,7 @@ export const withParamValidationApiTests = ({
     }
 
     if (minLength !== maxLength) {
-      it(`returns a 2xx response if ${paramName} has ${maxLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${paramName} has ${maxLength} characters`, async () => {
         const { status } = await makeRequest(generateParamValueOfLength(maxLength));
 
         expect(status).toBeGreaterThanOrEqual(200);

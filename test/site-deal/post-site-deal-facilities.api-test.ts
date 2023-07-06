@@ -12,6 +12,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
+import { CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -131,6 +132,48 @@ describe('Create Site Deal Facility Folder', () => {
     });
   });
 
+  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest has no id field', async () => {
+    let modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
+    delete modifiedTfisFacilityListParentFolderResponse.value[0].fields.id;
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
+      .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulCreateAndProvision();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: getParentFolderNotFoundErrorMessage(createFacilityFolderRequestItem.buyerName, createFacilityFolderParamsDto.dealId),
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest id field is not a number', async () => {
+    let modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
+    modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = 'not a number';
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
+      .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulCreateAndProvision();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: getParentFolderNotFoundErrorMessage(createFacilityFolderRequestItem.buyerName, createFacilityFolderParamsDto.dealId),
+      statusCode: 400,
+    });
+  });
+
   it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest returns an empty value list', async () => {
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockSuccessfulCreateAndProvision();
@@ -144,7 +187,28 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: `Facility term folder not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /terms/facility`,
+      message: getFacilityTermDateRequestNotFoundErrorMessage(createFacilityFolderRequestItem.facilityIdentifier),
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest has no facilityGUID field', async () => {
+    let modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
+    delete modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID;
+
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulCreateAndProvision();
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter)
+      .mockSuccessfulGraphGetCall(modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse);
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: getFacilityTermDateRequestNotFoundErrorMessage(createFacilityFolderRequestItem.facilityIdentifier),
       statusCode: 400,
     });
   });
@@ -168,6 +232,7 @@ describe('Create Site Deal Facility Folder', () => {
       generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
       generateParamValueThatDoesNotMatchRegex: () => '00000000' as UkefSiteId,
       validRequestParam: createFacilityFolderParamsDto.siteId,
+      successStatusCode: 201,
       makeRequest: (siteId) => api.post(getPostSiteDealFacilitiesUrl({ siteId, dealId: createFacilityFolderParamsDto.dealId }), createFacilityFolderRequestDto),
       givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -179,6 +244,7 @@ describe('Create Site Deal Facility Folder', () => {
       generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
       generateParamValueThatDoesNotMatchRegex: () => '11000000' as UkefId,
       validRequestParam: createFacilityFolderParamsDto.dealId,
+      successStatusCode: 201,
       makeRequest: (dealId) => api.post(getPostSiteDealFacilitiesUrl({ dealId, siteId: createFacilityFolderParamsDto.siteId }), createFacilityFolderRequestDto),
       givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -189,6 +255,7 @@ describe('Create Site Deal Facility Folder', () => {
       fieldName: 'exporterName',
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
+      successStatusCode: 201,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -197,6 +264,7 @@ describe('Create Site Deal Facility Folder', () => {
       fieldName: 'buyerName',
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
+      successStatusCode: 201,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -204,6 +272,7 @@ describe('Create Site Deal Facility Folder', () => {
     withFacilityIdentifierFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
+      successStatusCode: 201,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -276,5 +345,12 @@ describe('Create Site Deal Facility Folder', () => {
   const getPostSiteDealFacilitiesUrl = (params: { siteId: string; dealId: string }) => {
     const { siteId, dealId } = params;
     return `/api/v1/sites/${siteId}/deals/${dealId}/facilities`;
+  };
+  const getFacilityTermDateRequestNotFoundErrorMessage = (facilityIdentifier: string): string => {
+    return `Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`;
+  };
+
+  const getParentFolderNotFoundErrorMessage = (buyerName: string, dealId: string): string => {
+    return `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`;
   };
 });

@@ -8,7 +8,7 @@ interface SharepointResourceNameFieldValidationApiTestOptions<
   SharepointResourceNameFieldName extends keyof any,
 > extends Pick<
     StringFieldValidationApiTestOptions<RequestBodyItem, SharepointResourceNameFieldName>,
-    'fieldName' | 'validRequestBody' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+    'fieldName' | 'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
   > {
   valueGenerator: RandomValueGenerator;
 }
@@ -20,6 +20,7 @@ export const withSharepointResourceNameFieldValidationApiTests = <
   fieldName,
   valueGenerator,
   validRequestBody,
+  successStatusCode,
   makeRequest,
   givenAnyRequestBodyWouldSucceed,
 }: SharepointResourceNameFieldValidationApiTestOptions<RequestBodyItem, SharepointResourceNameFieldName>): void =>
@@ -31,6 +32,7 @@ export const withSharepointResourceNameFieldValidationApiTests = <
     generateFieldValueOfLength: (length: number) => valueGenerator.word({ length }) as RequestBodyItem[SharepointResourceNameFieldName],
     generateFieldValueThatDoesNotMatchRegex: () => '£Word' as RequestBodyItem[SharepointResourceNameFieldName],
     validRequestBody,
+    successStatusCode,
     makeRequest,
     givenAnyRequestBodyWouldSucceed,
   });

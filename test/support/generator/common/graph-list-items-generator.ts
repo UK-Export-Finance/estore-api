@@ -7,7 +7,7 @@ import { graphContentTypeGenerator } from './graph-content-type-generator';
 import { graphParentReferenceGenerator } from './graph-parent-reference-generator';
 import { graphUserGenerator } from './graph-user-generator';
 
-export class graphListItemsGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
+export class GraphListItemsGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
     super(valueGenerator);
   }

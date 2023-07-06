@@ -9,7 +9,6 @@ export interface SharepointConfig {
   tfisFacilityHiddenListTermStoreId: string;
 }
 
-// TODO: apim-139: raise ticket for deployment of new env vars
 // TODO: apim-139: Check facility list id is named correctly (and not deal id)
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {

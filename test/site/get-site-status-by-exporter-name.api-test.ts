@@ -108,34 +108,19 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
-  describe('query validation', () => {
-    withSharepointResourceNameQueryValidationApiTests({
-      queryName: 'exporterName',
-      valueGenerator,
-      validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
-      makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
-      givenAnyRequestQueryWouldSucceed: () => {
-        mockGraphClientService
-          .mockSuccessfulGraphApiCall()
-          .mockSuccessfulExpandCall()
-          .mockSuccessfulFilterCall()
-          .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
-      },
-    });
-
-    withSharepointResourceNameQueryValidationApiTests({
-      queryName: 'exporterName',
-      valueGenerator,
-      validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
-      makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
-      givenAnyRequestQueryWouldSucceed: () => {
-        mockGraphClientService
-          .mockSuccessfulGraphApiCall()
-          .mockSuccessfulExpandCall()
-          .mockSuccessfulFilterCall()
-          .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
-      },
-    });
+  withSharepointResourceNameQueryValidationApiTests({
+    queryName: 'exporterName',
+    valueGenerator,
+    validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
+    successStatusCode: 202,
+    makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
+    givenAnyRequestQueryWouldSucceed: () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCall()
+        .mockSuccessfulExpandCall()
+        .mockSuccessfulFilterCall()
+        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
+    },
   });
 
   const makeRequest = () => {

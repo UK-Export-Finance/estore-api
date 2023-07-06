@@ -8,7 +8,7 @@ interface SharepointResourceNameQueryValidationApiTestOptions<
   SharepointResourceNameQueryName extends keyof any,
 > extends Pick<
     StringQueryValidationApiTestOptions<RequestQueryItems, SharepointResourceNameQueryName>,
-    'queryName' | 'validRequestQueries' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
+    'queryName' | 'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
   > {
   valueGenerator: RandomValueGenerator;
 }
@@ -20,6 +20,7 @@ export const withSharepointResourceNameQueryValidationApiTests = <
   queryName,
   valueGenerator,
   validRequestQueries,
+  successStatusCode,
   makeRequestWithQueries,
   givenAnyRequestQueryWouldSucceed,
 }: SharepointResourceNameQueryValidationApiTestOptions<RequestQueryItems, SharepointResourceNameQueryName>): void =>
@@ -31,6 +32,7 @@ export const withSharepointResourceNameQueryValidationApiTests = <
     generateQueryValueOfLength: (length: number) => valueGenerator.word({ length }) as RequestQueryItems[SharepointResourceNameQueryName],
     generateQueryValueThatDoesNotMatchRegex: () => '£Word' as RequestQueryItems[SharepointResourceNameQueryName],
     validRequestQueries,
+    successStatusCode,
     makeRequestWithQueries,
     givenAnyRequestQueryWouldSucceed,
   });

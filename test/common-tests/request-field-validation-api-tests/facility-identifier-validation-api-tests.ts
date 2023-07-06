@@ -8,7 +8,7 @@ type FacilityIdentifierFieldName = 'facilityIdentifier';
 interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }>
   extends Pick<
     StringFieldValidationApiTestOptions<RequestBodyItem, FacilityIdentifierFieldName>,
-    'validRequestBody' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+    'validRequestBody' | 'successStatusCode' |'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
   > {
   valueGenerator: RandomValueGenerator;
 }
@@ -16,6 +16,7 @@ interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extend
 export const withFacilityIdentifierFieldValidationApiTests = <RequestBodyItem extends { facilityIdentifier: string }>({
   valueGenerator,
   validRequestBody,
+  successStatusCode,
   makeRequest,
   givenAnyRequestBodyWouldSucceed,
 }: FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem>): void =>
@@ -26,6 +27,7 @@ export const withFacilityIdentifierFieldValidationApiTests = <RequestBodyItem ex
     generateFieldValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
     generateFieldValueThatDoesNotMatchRegex: () => '1000000000',
     validRequestBody,
+    successStatusCode,
     makeRequest,
     givenAnyRequestBodyWouldSucceed,
   });

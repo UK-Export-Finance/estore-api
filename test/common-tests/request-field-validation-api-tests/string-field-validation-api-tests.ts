@@ -1,5 +1,6 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import { prepareModifiedRequest } from '@ukef-test/support/helpers/request-field-validation-helper';
+import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem> {
@@ -14,6 +15,7 @@ export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBod
   generateFieldValueThatDoesNotMatchRegex?: () => RequestBodyItem[RequestBodyItemKey];
   generateFieldValueThatDoesNotMatchEnum?: () => RequestBodyItem[RequestBodyItemKey];
   validRequestBody: RequestBodyItem[] | RequestBodyItem;
+  successStatusCode: HttpStatusCode;
   makeRequest: ((body: unknown[]) => request.Test) | ((body: unknown) => request.Test);
   givenAnyRequestBodyWouldSucceed: () => void;
 }
@@ -30,6 +32,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
   generateFieldValueOfLength,
   generateFieldValueThatDoesNotMatchRegex,
   validRequestBody,
+  successStatusCode,
   makeRequest,
   givenAnyRequestBodyWouldSucceed,
 }: StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey>): void {
@@ -89,14 +92,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         });
       }
     } else {
-      it(`returns a 2xx response if ${fieldName} is not present`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} is not present`, async () => {
         const { [fieldNameSymbol]: _removed, ...requestWithField } = requestBodyItem;
         const preparedRequestWithField = prepareModifiedRequest(requestIsAnArray, requestWithField);
 
         const { status } = await makeRequest(preparedRequestWithField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 
@@ -114,14 +116,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         });
       });
 
-      it(`returns a 2xx response if ${fieldName} has ${minLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} has ${minLength} characters`, async () => {
         const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(minLength) };
         const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
 
         const { status } = await makeRequest(preparedRequestWithValidField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
 
       if (minLength > 1) {
@@ -141,7 +142,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       }
     } else {
       if (!theEnum) {
-        it(`returns a 2xx response if ${fieldName} is an empty string`, async () => {
+        it(`returns a ${successStatusCode} response if ${fieldName} is an empty string`, async () => {
           const requestWithEmptyField = { ...requestBodyItem, [fieldNameSymbol]: '' };
           const preparedRequestWithEmptyField = prepareModifiedRequest(requestIsAnArray, requestWithEmptyField);
           const { status } = await makeRequest(preparedRequestWithEmptyField);
@@ -153,14 +154,13 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
     }
 
     if (minLength !== maxLength) {
-      it(`returns a 2xx response if ${fieldName} has ${maxLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${fieldName} has ${maxLength} characters`, async () => {
         const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(maxLength) };
         const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
 
         const { status } = await makeRequest(preparedRequestWithValidField);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 

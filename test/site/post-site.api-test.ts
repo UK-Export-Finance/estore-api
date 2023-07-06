@@ -244,6 +244,7 @@ describe('createSite', () => {
       pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
       generateFieldValueThatDoesNotMatchRegex: () => '\\/:*?"<>|',
       validRequestBody: createSiteRequest,
+      successStatusCode: 202,
       makeRequest,
       givenAnyRequestBodyWouldSucceed,
     });

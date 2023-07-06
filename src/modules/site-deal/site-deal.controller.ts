@@ -22,20 +22,6 @@ export class SiteDealController {
 
   @Post('/facilities')
   @ApiOperation({ summary: 'Creates a facility folder for a deal' })
-  @ApiParam({
-    name: 'siteId',
-    required: true,
-    type: 'string',
-    description: 'The identifier of the deal in ACBS.',
-    example: EXAMPLES.SITE_ID,
-  })
-  @ApiParam({
-    name: 'dealId',
-    required: true,
-    type: 'string',
-    description: 'The identifier of the deal in ACBS.',
-    example: EXAMPLES.DEAL_ID,
-  })
   @ApiCreatedResponse({
     description: 'The name of the folder created.',
     type: CreateFacilityFolderResponseDto,

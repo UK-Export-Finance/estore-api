@@ -3,8 +3,7 @@ import { ValidatedSiteIdentifierApiProperty } from '@ukef/decorators/validated-s
 import { UkefId, UkefSiteId } from '@ukef/helpers';
 
 export class CreateFacilityFolderParamsDto {
-  // TODO apim-139: This is more restrictive than the ticket.
-  @ValidatedSiteIdentifierApiProperty({ description: 'The site name/identifier returned when the site was created by POST /sites.' })
+  @ValidatedSiteIdentifierApiProperty({ description: 'The site identifier returned when the site was created by POST /sites.' })
   siteId: UkefSiteId;
   @ValidatedDealIdentifierApiProperty({ description: 'The identifier of the deal.' })
   dealId: UkefId;

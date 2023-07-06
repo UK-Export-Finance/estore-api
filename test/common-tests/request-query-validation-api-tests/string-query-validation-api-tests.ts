@@ -1,4 +1,6 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
+import { HttpStatusCode } from 'axios';
+import { StatusCode } from 'nock/types';
 import request from 'supertest';
 
 export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems> {
@@ -13,6 +15,7 @@ export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQ
   generateQueryValueThatDoesNotMatchRegex?: () => RequestQueryItems[RequestQueryItemsKey];
   generateQueryValueThatDoesNotMatchEnum?: () => RequestQueryItems[RequestQueryItemsKey];
   validRequestQueries: RequestQueryItems;
+  successStatusCode: HttpStatusCode;
   makeRequestWithQueries: (queries: RequestQueryItems) => request.Test;
   givenAnyRequestQueryWouldSucceed: () => void;
 }
@@ -29,6 +32,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
   generateQueryValueThatDoesNotMatchRegex,
   generateQueryValueThatDoesNotMatchEnum,
   validRequestQueries,
+  successStatusCode,
   makeRequestWithQueries,
   givenAnyRequestQueryWouldSucceed,
 }: StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey>) => {
@@ -42,21 +46,19 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
       givenAnyRequestQueryWouldSucceed();
     });
 
-    it('returns a 2xx response if the query parameter is valid', async () => {
+    it(`returns a ${successStatusCode} response if the query parameter is valid`, async () => {
       const { status } = await makeRequestWithQueries(validRequestQueries);
 
       expect(status).toBeGreaterThanOrEqual(200);
       expect(status).toBeLessThan(300);
     });
 
-    it('returns a 2xx response if there is an unexpected query parameter', async () => {
+    it(`returns a ${successStatusCode} response if there is an unexpected query parameter`, async () => {
       const { status } = await makeRequestWithQueries({ ...validRequestQueries, unexpectedQueryParameter: 'unexpectedQueryParameterValue' });
 
       expect(status).toBeGreaterThanOrEqual(200);
       expect(status).toBeLessThan(300);
     });
-
-    it(`returns a 400 response if ${queryName} is number`, async () => {});
 
     if (required) {
       if (theEnum && generateQueryValueThatDoesNotMatchEnum) {
@@ -101,13 +103,12 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
         });
       });
 
-      it(`returns a 2xx response if ${queryName} has ${minLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${queryName} has ${minLength} characters`, async () => {
         const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(minLength) };
 
         const { status } = await makeRequestWithQueries(requestWithValidQuery);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
 
       if (minLength > 1) {
@@ -126,7 +127,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
       }
     } else {
       if (!theEnum) {
-        it(`returns a 2xx response if ${queryName} is an empty string`, async () => {
+        it(`returns a ${successStatusCode} response if ${queryName} is an empty string`, async () => {
           const requestWithEmptyQuery = { ...validRequestQueries, [queryNameSymbol]: '' };
           const { status } = await makeRequestWithQueries(requestWithEmptyQuery);
 
@@ -137,13 +138,12 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
     }
 
     if (minLength !== maxLength) {
-      it(`returns a 2xx response if ${queryName} has ${maxLength} characters`, async () => {
+      it(`returns a ${successStatusCode} response if ${queryName} has ${maxLength} characters`, async () => {
         const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength) };
 
         const { status } = await makeRequestWithQueries(requestWithValidQuery);
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 

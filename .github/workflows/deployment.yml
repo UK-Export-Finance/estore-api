@@ -154,7 +154,6 @@ jobs:
             "CUSTODIAN_FACILITY_TEMPLATE_ID"=${{ secrets.CUSTODIAN_FACILITY_TEMPLATE_ID }}" \
             "CUSTODIAN_FACILITY_TYPE_GUID"=${{ secrets.CUSTODIAN_FACILITY_TYPE_GUID }}" 
 
-
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}
         uses: Azure/cli@v1.0.7

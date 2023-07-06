@@ -5,10 +5,11 @@ import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFacilityFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
+import { length } from 'class-validator';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
-import { graphListItemsGenerator } from './common/graph-list-items-generator';
+import { GraphListItemsGenerator } from './common/graph-list-items-generator';
 import { RandomValueGenerator } from './random-value-generator';
 
 export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
@@ -25,7 +26,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       buyerName: this.valueGenerator.word(),
       facilityIdentifier: this.valueGenerator.facilityId(),
 
-      facilityTermDataResponseFieldFacilityGUID: this.valueGenerator.string(),
+      facilityTermDataResponseFieldFacilityGUID: this.valueGenerator.string({length: 36}),
 
       parentFolderResponseFieldServerRelativeUrl: this.valueGenerator.string(),
       parentFolderResponseFieldCode: this.valueGenerator.stringOfNumericCharacters(),
@@ -94,7 +95,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=FacilityGUID,Title)',
     };
 
-    const tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto = new graphListItemsGenerator(this.valueGenerator).generate({
+    const tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: facilityTermDataResponseFields,
     });
@@ -105,7 +106,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
 
-    const tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto = new graphListItemsGenerator(this.valueGenerator).generate({
+    const tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
