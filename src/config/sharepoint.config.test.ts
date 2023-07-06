@@ -24,6 +24,10 @@ describe('sharepointConfig', () => {
       configPropertyName: 'taxonomyHiddenListTermStoreListId',
       environmentVariableName: 'SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID',
     },
+    {
+      configPropertyName: 'scCaseSitesListId',
+      environmentVariableName: 'SHAREPOINT_SC_CASE_SITES_LIST_ID',
+    },
   ];
 
   const configModifiedFromEnvironmentVariables: {

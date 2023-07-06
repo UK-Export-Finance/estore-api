@@ -8,7 +8,7 @@ import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 export class SharepointService {
   constructor(private readonly graphService: GraphService) {}
 
-  async findListItems<FieldNames extends string>({
+  async findListItems<Fields>({
     siteUrl,
     listId,
     fieldsToReturn,
@@ -16,11 +16,11 @@ export class SharepointService {
   }: {
     siteUrl: string;
     listId: string;
-    fieldsToReturn: FieldNames[];
+    fieldsToReturn: (keyof Fields)[];
     filter: ListItemFilter;
-  }): Promise<ListItem<FieldNames>[]> {
+  }): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
-    const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<FieldNames>[] }>({
+    const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,

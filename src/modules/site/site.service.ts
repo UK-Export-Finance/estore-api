@@ -74,7 +74,7 @@ export class SiteService {
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
     const sharepointService = new SharepointService(this.graphService); // TODO APIM-136: inject sharepoint service instead
-    const listItems = await sharepointService.findListItems({
+    const listItems = await sharepointService.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
       fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
