@@ -5,10 +5,6 @@ import sharepointConfig, { SharepointConfig } from './sharepoint.config';
 describe('sharepointConfig', () => {
   const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof SharepointConfig; environmentVariableName: string }[] = [
     {
-      configPropertyName: 'tfisListId',
-      environmentVariableName: 'SHAREPOINT_TFIS_LIST_ID',
-    },
-    {
       configPropertyName: 'tfisFacilityHiddenListTermStoreId',
       environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID',
     },

@@ -20,7 +20,6 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_MAIN_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_SC_SITE_NAME: valueGenerator.word(),
-  SHAREPOINT_TFIS_LIST_ID: valueGenerator.word(),
   SHAREPOINT_TFIS_TERM_STORE: valueGenerator.word(),
   SHAREPOINT_TFIS_FACILITY_LIST_ID: valueGenerator.word(),
   SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID: valueGenerator.word(),

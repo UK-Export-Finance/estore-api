@@ -14,7 +14,7 @@ import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisListId';
+type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId';
 
 @Injectable()
 export class SiteService {
@@ -54,7 +54,7 @@ export class SiteService {
   private async createSite(exporterName: string): Promise<CreateSiteResponse> {
     const newSiteId = await this.createSiteId();
     const data = await this.graphService.post<GraphCreateSiteResponseDto>({
-      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisListId}/items`,
+      path: `${this.sharepointConfig.tfisSharepointUrl}:/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
       requestBody: {
         fields: {
           Title: exporterName,
@@ -76,7 +76,7 @@ export class SiteService {
     const sharepointService = new SharepointService(this.graphService); // TODO APIM-136: inject sharepoint service instead
     const listItems = await sharepointService.findListItems({
       siteUrl: `${this.sharepointConfig.tfisSharepointUrl}:`,
-      listId: this.sharepointConfig.tfisListId,
+      listId: this.sharepointConfig.tfisCaseSitesListId,
       fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
     });

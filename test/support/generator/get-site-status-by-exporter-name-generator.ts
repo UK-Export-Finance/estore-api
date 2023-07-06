@@ -37,7 +37,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const tfisSharepointUrl =
       options.tfisSharepointUrl ??
       `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_SITE_NAME}`;
-    const tfisListId = options.tfisListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_LIST_ID;
+    const tfisCaseSitesListId = options.tfisCaseSitesListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
     const graphCreatedByUser = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
@@ -58,7 +58,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
     const graphServiceGetParams: GraphGetParams = {
-      path: `${tfisSharepointUrl}:/lists/${tfisListId}/items`,
+      path: `${tfisSharepointUrl}:/lists/${tfisCaseSitesListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
       expand: 'fields($select=Title,URL,Sitestatus)',
     };
@@ -116,5 +116,5 @@ interface GenerateResult {
 interface GenerateOptions {
   status?: string;
   tfisSharepointUrl?: string;
-  tfisListId?: string;
+  tfisCaseSitesListId?: string;
 }
