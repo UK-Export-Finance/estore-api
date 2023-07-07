@@ -2,6 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 export interface SharepointConfig {
   baseUrl: string;
+  ukefSharepointName: string;
   tfisSharepointUrl: string;
   scSharepointUrl: string;
   scSiteFullUrl: string;
@@ -20,6 +21,7 @@ export interface SharepointConfig {
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {
     baseUrl: process.env.SHAREPOINT_BASE_URL,
+    ukefSharepointName: `${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com`,
     tfisSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_TFIS_SITE_NAME}:`,
     scSharepointUrl: `sites/${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${process.env.SHAREPOINT_SC_SITE_NAME}:`,
     scSiteFullUrl: `https://${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${process.env.SHAREPOINT_SC_SITE_NAME}`,

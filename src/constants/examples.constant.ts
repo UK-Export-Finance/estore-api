@@ -13,7 +13,6 @@ export const EXAMPLES = {
   BUYER_NAME: 'Example Buyer',
   EXPORTER_NAME: 'Example Exporter',
   MARKET: 'Germany',
-  BUYER_NAME: 'Example Buyer',
   DOCUMENT_TYPE: ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS,
   FILE_UPLOAD: process.env.DTFS_STORAGE_EXAMPLE_FILE_NAME,
 };

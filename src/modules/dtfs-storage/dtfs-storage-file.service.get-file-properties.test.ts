@@ -1,5 +1,5 @@
 import { FileGetPropertiesResponse, RestError } from '@azure/storage-file-share';
-import { MAX_FILE_SIZE_BYTES } from '@ukef/constants';
+import { DTFS_MAX_FILE_SIZE_BYTES } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockDtfsStorageClientService } from '@ukef-test/support/mocks/dtfs-storage-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
@@ -13,7 +13,7 @@ describe('DtfsStorageFileService', () => {
   const valueGenerator = new RandomValueGenerator();
   const fileName = valueGenerator.string();
   const fileLocationPath = valueGenerator.string();
-  const expectedFileSize = valueGenerator.integer({ min: 1, max: MAX_FILE_SIZE_BYTES });
+  const expectedFileSize = valueGenerator.integer({ min: 1, max: DTFS_MAX_FILE_SIZE_BYTES });
   let dtfsStorageFileService: DtfsStorageFileService;
 
   const mockDtfsStorageClientService = new MockDtfsStorageClientService();
