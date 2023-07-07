@@ -12,7 +12,7 @@ import GraphClientService from '@ukef/modules/graph-client/graph-client.service'
 import { Readable } from 'stream';
 
 import { createGraphError } from './create-graph-error';
-import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError } from './known-errors';
+import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {
@@ -48,7 +48,7 @@ export class GraphService {
       createGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
-        knownErrors: knownErrors ?? [],
+        knownErrors: knownErrors ?? [uploadFileSiteNotFoundKnownError()],
       });
     }
   }

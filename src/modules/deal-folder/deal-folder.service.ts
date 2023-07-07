@@ -35,10 +35,10 @@ export class DealFolderService {
 
     await this.uploadFileToSharepoint(file, fileSizeInBytes, fileName, dealId, buyerName, ukefSiteId);
 
-    const encodedFullFilePath = await this.updateFileInformationInSharepoint(fileName, dealId, buyerName, ukefSiteId, documentType);
+    await this.updateFileInformationInSharepoint(fileName, dealId, buyerName, ukefSiteId, documentType);
 
     return {
-      fileUpload: encodedFullFilePath,
+      fileUpload: `/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${buyerName}/D ${dealId}/${fileName}`,
     };
   }
 
@@ -72,8 +72,8 @@ export class DealFolderService {
     buyerName: string,
     ukefSiteId: string,
     documentType: DocumentTypeEnum,
-  ): Promise<string> {
-    const { encodedFullFilePath, urlToUpdateFileInfo } = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
+  ): Promise<void> {
+    const urlToUpdateFileInfo = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
     const requestBodyToUpdateFileInfo = this.constructRequestBodyToUpdateFileInfo(documentType);
 
     await this.graphService.patch<
@@ -86,8 +86,6 @@ export class DealFolderService {
       path: urlToUpdateFileInfo,
       requestBody: requestBodyToUpdateFileInfo,
     });
-
-    return encodedFullFilePath;
   }
 
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
@@ -137,41 +135,24 @@ export class DealFolderService {
     };
   }
 
-  private async constructUrlToUpdateFileInfo(
-    fileName: string,
-    dealId: string,
-    buyerName: string,
-    ukefSiteId: string,
-  ): Promise<{ encodedFullFilePath: string; urlToUpdateFileInfo: string }> {
+  private async constructUrlToUpdateFileInfo(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
-    const { encodedFullFilePath, webUrlForFile } = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
+    const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
     const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
     const urlToUpdateFileInfo = `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
 
-    return {
-      encodedFullFilePath,
-      urlToUpdateFileInfo,
-    };
+    return urlToUpdateFileInfo;
   }
 
-  private constructWebUrlForFile(
-    fileName: string,
-    dealId: string,
-    buyerName: string,
-    ukefSiteId: string,
-  ): { encodedFullFilePath: string; webUrlForFile: string } {
+  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
-    const encodedFullFilePath = `${encodedFileDestinationPath}/${encodedFileName}`;
 
-    return {
-      encodedFullFilePath,
-      webUrlForFile: `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFullFilePath}`,
-    };
+    return `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {

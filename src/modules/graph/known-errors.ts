@@ -18,3 +18,10 @@ export const uploadFileExistsKnownError = (fileName: string): KnownError => ({
     throw new UploadFileInDealFolderExistsException(`A file with the name ${fileName} already exists for the buyer name and deal ID specified.`, error);
   },
 });
+
+export const uploadFileSiteNotFoundKnownError = (): KnownError => ({
+  caseInsensitiveSubstringsToFind: ['Requested site could not be found'],
+  throwError: (error) => {
+    throw new UploadFileInDealFolderExistsException(`The site ID did not match any site in SharePoint.`, error);
+  },
+});

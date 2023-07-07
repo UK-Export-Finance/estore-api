@@ -10,7 +10,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The name of the buyer used in the deal.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[\w\-.()\s]+$/,
+    pattern: /^(?!\s)[\w\-.()\s]+(?<![\s.])$/,
     example: EXAMPLES.BUYER_NAME,
   })
   buyerName: string;
@@ -26,7 +26,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The file name with the file extension.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[\w\-.()\s]+$/,
+    pattern: /^(?!\s)[\w\-.()\s]+(?<![\s.])$/,
     example: EXAMPLES.FILE_NAME,
   })
   fileName: string;
