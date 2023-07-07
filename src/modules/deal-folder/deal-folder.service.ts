@@ -35,10 +35,10 @@ export class DealFolderService {
 
     await this.uploadFileToSharepoint(file, fileSizeInBytes, fileName, dealId, buyerName, ukefSiteId);
 
-    const fileLeafRef = await this.updateFileInformationInSharepoint(fileName, dealId, buyerName, ukefSiteId, documentType);
+    const encodedFullFilePath = await this.updateFileInformationInSharepoint(fileName, dealId, buyerName, ukefSiteId, documentType);
 
     return {
-      fileUpload: fileLeafRef,
+      fileUpload: encodedFullFilePath,
     };
   }
 
@@ -73,7 +73,7 @@ export class DealFolderService {
     ukefSiteId: string,
     documentType: DocumentTypeEnum,
   ): Promise<string> {
-    const { urlToUpdateFileInfo, fileLeafRef } = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
+    const { encodedFullFilePath, urlToUpdateFileInfo } = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
     const requestBodyToUpdateFileInfo = this.constructRequestBodyToUpdateFileInfo(documentType);
 
     await this.graphService.patch<
@@ -87,7 +87,7 @@ export class DealFolderService {
       requestBody: requestBodyToUpdateFileInfo,
     });
 
-    return fileLeafRef;
+    return encodedFullFilePath;
   }
 
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
@@ -142,30 +142,34 @@ export class DealFolderService {
     dealId: string,
     buyerName: string,
     ukefSiteId: string,
-  ): Promise<{ urlToUpdateFileInfo: string; fileLeafRef: string }> {
+  ): Promise<{ encodedFullFilePath: string; urlToUpdateFileInfo: string; }> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
-    const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
-    const { itemId, fileLeafRef } = await this.getItemIdAndFileLeafRefByWebUrl(ukefSiteId, listId, webUrlForFile);
+    const { encodedFullFilePath, webUrlForFile } = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
+    const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
     const urlToUpdateFileInfo = `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
 
     return {
+      encodedFullFilePath,
       urlToUpdateFileInfo,
-      fileLeafRef,
     };
   }
 
-  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
+  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): { encodedFullFilePath: string; webUrlForFile: string } {
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
+    const encodedFullFilePath = `${encodedFileDestinationPath}/${encodedFileName}`
 
-    return `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
+    return {
+      encodedFullFilePath,
+      webUrlForFile: `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFullFilePath}`,
+    }
   }
 
-  private getItemIdAndFileLeafRefByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<{ itemId: string; fileLeafRef: string }> {
+  private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
     return (
       this.graphService
         .get<{ value: { webUrl: string; id: string; fields: { FileLeafRef: string } }[] }>({
@@ -176,7 +180,7 @@ export class DealFolderService {
         .then((list) => list.find((item) => item.webUrl === webUrl))
         /* The line above is necessary because the 'filter' query parameter does not currently support the 'webUrl' field on lists/list items 
       (see comment from Microsoft employee https://learn.microsoft.com/en-us/answers/questions/980144/graph-api-sharepoint-list-filter-by-createddatetim). */
-        .then((item) => ({ itemId: item.id, fileLeafRef: item.fields.FileLeafRef }))
+        .then((item) => item.id)
     );
   }
 }

@@ -10,7 +10,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The name of the buyer used in the deal.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[\w\-.()\s]+/,
+    pattern: /^[\w\-.()\s]+$/,
     example: EXAMPLES.BUYER_NAME,
   })
   buyerName: string;
