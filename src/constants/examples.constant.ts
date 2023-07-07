@@ -1,3 +1,4 @@
+import { CASE_LIBRARY } from './case-library.constant';
 import { DTFS_MAX_FILE_SIZE_BYTES } from './dtfs-max-file-size-bytes.constant';
 import { ENUMS } from './enum.constant';
 
@@ -13,4 +14,6 @@ export const EXAMPLES = {
   BUYER_NAME: 'Example Buyer',
   EXPORTER_NAME: 'Example Exporter',
   MARKET: 'Germany',
+  DOCUMENT_TYPE: ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS,
+  FILE_UPLOAD: `/sites/00700001/${CASE_LIBRARY.LIST_NAME}/Example Buyer/D 0030000321/${process.env.DTFS_STORAGE_EXAMPLE_FILE_NAME}`,
 };

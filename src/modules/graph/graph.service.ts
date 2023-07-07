@@ -1,9 +1,18 @@
-import { Client, GraphRequest } from '@microsoft/microsoft-graph-client';
+import {
+  Client,
+  GraphRequest,
+  LargeFileUploadSession,
+  LargeFileUploadTask,
+  LargeFileUploadTaskOptions,
+  StreamUpload,
+  UploadResult,
+} from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+import { Readable } from 'stream';
 
-import { createGraphError as createWrapGraphError } from './createGraphError';
-import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
+import { createGraphError } from './create-graph-error';
+import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {
@@ -36,10 +45,10 @@ export class GraphService {
     try {
       return await request.get();
     } catch (error) {
-      createWrapGraphError({
+      createGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
-        knownErrors: knownErrors ?? [],
+        knownErrors: knownErrors ?? [uploadFileSiteNotFoundKnownError()],
       });
     }
   }
@@ -59,10 +68,53 @@ export class GraphService {
     try {
       return await request.post(requestBody);
     } catch (error) {
-      createWrapGraphError({
+      createGraphError({
         error,
         messageForUnknownError: 'An unexpected error occurred.',
         knownErrors: [postFacilityTermExistsKnownError()],
+      });
+    }
+  }
+
+  async patch<RequestBody, ResponseBody>({ path, requestBody }: GraphPatchParams<RequestBody>): Promise<ResponseBody> {
+    const request = this.createPatchRequest({ path });
+    return await this.makePatchRequest({ request, requestBody });
+  }
+
+  private createPatchRequest({ path }: { path: string }): GraphRequest {
+    return this.client.api(path);
+  }
+
+  private async makePatchRequest<RequestBody>({ request, requestBody }: { request: GraphRequest; requestBody: RequestBody }) {
+    try {
+      return await request.patch(requestBody);
+    } catch (error) {
+      createGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [],
+      });
+    }
+  }
+
+  async uploadFile(file: NodeJS.ReadableStream, fileSizeInBytes: number, fileName: string, urlToCreateUploadSession: string): Promise<UploadResult> {
+    try {
+      const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, urlToCreateUploadSession, {
+        item: {
+          '@microsoft.graph.conflictBehavior': 'fail',
+        },
+      });
+      const fileAsReadable = new Readable().wrap(file);
+      const options: LargeFileUploadTaskOptions = {
+        rangeSize: fileSizeInBytes,
+      };
+      const uploadTask = new LargeFileUploadTask(this.client, new StreamUpload(fileAsReadable, fileName, fileSizeInBytes), uploadSession, options);
+      return await uploadTask.upload();
+    } catch (error) {
+      createGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [uploadFileExistsKnownError(fileName)],
       });
     }
   }
@@ -78,6 +130,11 @@ export interface GraphGetParams {
 export interface GraphPostParams {
   path: string;
   requestBody: any;
+}
+
+export interface GraphPatchParams<RequestBody> {
+  path: string;
+  requestBody: RequestBody;
 }
 
 export default GraphService;
