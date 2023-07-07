@@ -42,7 +42,6 @@ export class GraphListItemsGenerator extends AbstractGenerator<GenerateValues, G
           lastModifiedBy: { user: facilityTermDateResponseLastModifiedByUser },
           parentReference: facilityTermDateResponseParentReference,
           contentType: facilityTermDateContentType,
-          // TODO APIM-136: Why do we always return an id field?
           fields: { id: createFacilityFolderValues.facilityTermDateResponseId, ...options.graphListItemsFields },
         },
       ],

@@ -21,7 +21,6 @@ type RequiredCustodianConfigKeys = 'dealTemplateId' | 'dealTypeGuid';
 
 @Injectable()
 export class DealFolderService {
-  // TODO APIM-136: Index all filtered fields in Sharepoint
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
