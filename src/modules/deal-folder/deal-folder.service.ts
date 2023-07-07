@@ -142,7 +142,7 @@ export class DealFolderService {
     dealId: string,
     buyerName: string,
     ukefSiteId: string,
-  ): Promise<{ encodedFullFilePath: string; urlToUpdateFileInfo: string; }> {
+  ): Promise<{ encodedFullFilePath: string; urlToUpdateFileInfo: string }> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
     const { encodedFullFilePath, webUrlForFile } = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
@@ -156,17 +156,22 @@ export class DealFolderService {
     };
   }
 
-  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): { encodedFullFilePath: string; webUrlForFile: string } {
+  private constructWebUrlForFile(
+    fileName: string,
+    dealId: string,
+    buyerName: string,
+    ukefSiteId: string,
+  ): { encodedFullFilePath: string; webUrlForFile: string } {
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
-    const encodedFullFilePath = `${encodedFileDestinationPath}/${encodedFileName}`
+    const encodedFullFilePath = `${encodedFileDestinationPath}/${encodedFileName}`;
 
     return {
       encodedFullFilePath,
       webUrlForFile: `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFullFilePath}`,
-    }
+    };
   }
 
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
