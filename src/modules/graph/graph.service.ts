@@ -12,7 +12,7 @@ import GraphClientService from '@ukef/modules/graph-client/graph-client.service'
 import { Readable } from 'stream';
 
 import { createGraphError } from './create-graph-error';
-import { KnownError, postFacilityTermExistsKnownError } from './known-errors';
+import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError } from './known-errors';
 
 @Injectable()
 export class GraphService {
@@ -98,14 +98,25 @@ export class GraphService {
   }
 
   async uploadFile(file: NodeJS.ReadableStream, fileSizeInBytes: number, fileName: string, urlToCreateUploadSession: string): Promise<UploadResult> {
-    const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, urlToCreateUploadSession, {});
-    const fileAsReadable = new Readable().wrap(file);
-    const options: LargeFileUploadTaskOptions = {
-      rangeSize: fileSizeInBytes,
-    };
-    const uploadTask = new LargeFileUploadTask(this.client, new StreamUpload(fileAsReadable, fileName, fileSizeInBytes), uploadSession, options);
-    const uploadResult = await uploadTask.upload();
-    return uploadResult;
+    try {
+      const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, urlToCreateUploadSession, {
+        item: {
+          '@microsoft.graph.conflictBehavior': 'fail',
+        },
+      });
+      const fileAsReadable = new Readable().wrap(file);
+      const options: LargeFileUploadTaskOptions = {
+        rangeSize: fileSizeInBytes,
+      };
+      const uploadTask = new LargeFileUploadTask(this.client, new StreamUpload(fileAsReadable, fileName, fileSizeInBytes), uploadSession, options);
+      return await uploadTask.upload();
+    } catch (error) {
+      createGraphError({
+        error,
+        messageForUnknownError: 'An unexpected error occurred.',
+        knownErrors: [uploadFileExistsKnownError(fileName)],
+      });
+    }
   }
 }
 

@@ -4,11 +4,12 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 
 import { DtfsStorageExceptionTransformInterceptor } from '../dtfs-storage/dtfs-storage-exception-transform.interceptor';
 import { DealFolderService } from './deal-folder.service';
+import { DealFolderExceptionTransformInterceptor } from './deal-folder-exception-transform.interceptor';
 import { UploadFileInDealFolderParamsDto } from './dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto, UploadFileInDealFolderRequestItem } from './dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
 
-@UseInterceptors(DtfsStorageExceptionTransformInterceptor)
+@UseInterceptors(DealFolderExceptionTransformInterceptor, DtfsStorageExceptionTransformInterceptor)
 @Controller()
 export class DealFolderController {
   constructor(private readonly service: DealFolderService) {}
