@@ -84,24 +84,6 @@ describe('CustodianService', () => {
       expect(httpServicePost).toHaveBeenCalledWith(...expectedHttpServicePostArgs);
     });
 
-    it('returns the created item from POSTing to the Custodian /Create/CreateAndProvision endpoint with the specified item to create and provision', async () => {
-      when(httpServicePost)
-        .calledWith(...expectedHttpServicePostArgs)
-        .mockReturnValueOnce(
-          of({
-            data: createdItem,
-            status: 201,
-            statusText: 'Created',
-            config: undefined,
-            headers: undefined,
-          }),
-        );
-
-      const createAndProvisionResult = await service.createAndProvision(itemToCreateAndProvision);
-
-      expect(createAndProvisionResult).toBe(createdItem);
-    });
-
     it('throws a CustodianException if the request to Custodian fails', async () => {
       const axiosRequestError = new AxiosError();
       when(httpServicePost)

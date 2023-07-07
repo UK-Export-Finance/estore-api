@@ -86,4 +86,8 @@ export class RandomValueGenerator {
   facilityId(lengthExcludingPrefix?: number): UkefId {
     return this.ukefId(lengthExcludingPrefix ?? 6);
   }
+
+  guid(): string {
+    return this.chance.guid();
+  }
 }

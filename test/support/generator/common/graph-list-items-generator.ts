@@ -60,5 +60,5 @@ interface GenerateValues {
 type GenerateResult = GraphGetListItemsResponseDto;
 
 interface GenerateOptions {
-  graphListItemsFields: Omit<GraphListItemFields, 'id'>;
+  graphListItemsFields: GraphListItemFields;
 }

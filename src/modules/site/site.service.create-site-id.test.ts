@@ -11,7 +11,7 @@ describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
   const tfisSharepointUrl = valueGenerator.string();
-  const tfisListId = valueGenerator.string();
+  const tfisCaseSitesListId = valueGenerator.string();
   const maskedId = valueGenerator.stringOfNumericCharacters();
 
   let siteService: SiteService;
@@ -26,7 +26,7 @@ describe('SiteService', () => {
     mdmServiceCreateNumbers = jest.fn();
     const mdmService = new MdmService(null);
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, mdmService);
+    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
   });
 
   describe('createSiteId', () => {

@@ -1,7 +1,7 @@
-import { ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { EXAMPLES } from '@ukef/constants';
 
-export class CreateFacilityFolderResponseDto {
-  @ApiResponseProperty({ example: EXAMPLES.FOLDER_NAME })
+export class CreateFolderResponseDto {
+  @ApiProperty({ description: 'The name of the created folder.', example: EXAMPLES.FOLDER_NAME })
   folderName: string;
 }

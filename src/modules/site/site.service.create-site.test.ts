@@ -15,7 +15,7 @@ describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
   const tfisSharepointUrl = valueGenerator.word() + '.sharepoint.com';
-  const tfisListId = valueGenerator.word();
+  const tfisCaseSitesListId = valueGenerator.word();
 
   let siteService: SiteService;
   let graphServiceGetRequest: jest.Mock;
@@ -31,7 +31,7 @@ describe('SiteService', () => {
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ tfisSharepointUrl, tfisListId }, graphService, mdmService);
+    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
     resetAllWhenMocks();
   });
 
@@ -40,7 +40,7 @@ describe('SiteService', () => {
       const { siteServiceGetSiteStatusByExporterNameRequest, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
-        tfisListId,
+        tfisCaseSitesListId,
       });
 
       const exporterName = siteServiceGetSiteStatusByExporterNameRequest;
@@ -50,7 +50,7 @@ describe('SiteService', () => {
       ).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
-        tfisListId,
+        tfisCaseSitesListId,
         exporterName,
       });
 
@@ -87,7 +87,7 @@ describe('SiteService', () => {
       } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
-        tfisListId,
+        tfisCaseSitesListId,
         status,
       });
       when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphServiceGetSiteStatusByExporterNameResponseDto);

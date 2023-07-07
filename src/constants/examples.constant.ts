@@ -10,4 +10,7 @@ export const EXAMPLES = {
   FILE_NAME: process.env.DTFS_STORAGE_EXAMPLE_FILE_NAME,
   FILE_LOCATION_PATH: process.env.DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH,
   FOLDER_NAME: 'Example folder name',
+  BUYER_NAME: 'Example Buyer',
+  EXPORTER_NAME: 'Example Exporter',
+  MARKET: 'Germany',
 };

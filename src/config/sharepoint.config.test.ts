@@ -5,16 +5,24 @@ import sharepointConfig, { SharepointConfig } from './sharepoint.config';
 describe('sharepointConfig', () => {
   const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof SharepointConfig; environmentVariableName: string }[] = [
     {
-      configPropertyName: 'tfisListId',
-      environmentVariableName: 'SHAREPOINT_TFIS_LIST_ID',
-    },
-    {
       configPropertyName: 'tfisFacilityHiddenListTermStoreId',
       environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID',
     },
     {
       configPropertyName: 'tfisFacilityListId',
       environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_LIST_ID',
+    },
+    {
+      configPropertyName: 'tfisDealListId',
+      environmentVariableName: 'SHAREPOINT_TFIS_DEAL_LIST_ID',
+    },
+    {
+      configPropertyName: 'tfisCaseSitesListId',
+      environmentVariableName: 'SHAREPOINT_TFIS_CASE_SITES_LIST_ID',
+    },
+    {
+      configPropertyName: 'taxonomyHiddenListTermStoreListId',
+      environmentVariableName: 'SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID',
     },
   ];
 
@@ -26,14 +34,15 @@ describe('sharepointConfig', () => {
     {
       configPropertyName: 'tfisSharepointUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_TFIS_SITE_NAME'],
-      getExpectedResult: (environmentVariableValues: string[]) => `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}`,
+      getExpectedResult: (environmentVariableValues: string[]) =>
+        `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}:`,
     },
     {
       configPropertyName: 'scSharepointUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_SC_SITE_NAME'],
-      getExpectedResult: (environmentVariableValues: string[]) => `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}`,
+      getExpectedResult: (environmentVariableValues: string[]) =>
+        `sites/${environmentVariableValues[0]}.sharepoint.com:/sites/${environmentVariableValues[1]}:`,
     },
-
     {
       configPropertyName: 'scSiteFullUrl',
       environmentVariableNames: ['SHAREPOINT_MAIN_SITE_NAME', 'SHAREPOINT_SC_SITE_NAME'],

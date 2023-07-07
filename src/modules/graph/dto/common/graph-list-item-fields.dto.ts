@@ -1,8 +1,1 @@
-export interface GraphListItemFields {
-  Title?: string;
-  ServerRelativeUrl?: string;
-  Code?: string;
-  id: string;
-  ParentCode?: string;
-  FacilityGUID?: string;
-}
+export type GraphListItemFields<FieldNames extends string = string> = Record<FieldNames, string>;
