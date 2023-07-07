@@ -3,7 +3,7 @@ import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-ap
 
 export class UploadFileInDealFolderResponseDto {
   @ValidatedStringApiProperty({
-    description: `The file name (and extension) in Sharepoint. It is called 'fileLeafRef' by Sharepoint.`,
+    description: `The path to the file in SharePoint.`,
     example: EXAMPLES.FILE_UPLOAD,
   })
   fileUpload: string;
