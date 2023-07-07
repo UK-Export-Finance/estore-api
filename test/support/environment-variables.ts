@@ -20,7 +20,6 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_MAIN_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_SC_SITE_NAME: valueGenerator.word(),
-  SHAREPOINT_TFIS_TERM_STORE: valueGenerator.word(),
   SHAREPOINT_TFIS_FACILITY_LIST_ID: valueGenerator.word(),
   SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID: valueGenerator.word(),
   SHAREPOINT_TFIS_DEAL_LIST_ID: valueGenerator.word(),
@@ -35,7 +34,6 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
 
   DTFS_STORAGE_ACCOUNT_NAME: valueGenerator.word(),
   DTFS_STORAGE_ACCOUNT_KEY: valueGenerator.word(),
-  DTFS_STORAGE_FILE_SHARE_NAME: valueGenerator.word(),
   DTFS_STORAGE_EXAMPLE_FILE_NAME: valueGenerator.word(),
   DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH: valueGenerator.word(),
 
