@@ -348,7 +348,7 @@ components:
             needs to be loaded.
           minLength: 1
           maxLength: 250
-          pattern: '^[\\w\\-:'
+          pattern: ^[\\w\\-:/\\\\()\\s]+$
       required:
         - buyerName
         - documentType
@@ -497,7 +497,7 @@ components:
             needs to be loaded.
           minLength: 1
           maxLength: 250
-          pattern: '^[\\w\\-:'
+          pattern: ^[\\w\\-:/\\\\()\\s]+$
       required:
         - fileName
         - fileLocationPath
