@@ -3,7 +3,7 @@ import { ValidatedSiteIdentifierApiProperty } from '@ukef/decorators/validated-s
 
 export class UploadFileInDealFolderParamsDto {
   @ValidatedSiteIdentifierApiProperty({
-    description: 'The site identifier returned when the site was created by POST /sites.',
+    description: 'The identifier of the site.',
   })
   siteId: string;
 
