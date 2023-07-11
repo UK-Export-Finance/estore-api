@@ -152,18 +152,18 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       }
     }
 
-    if (minLength !== maxLength) {
-      it(`returns a ${successStatusCode} response if ${fieldName} has ${maxLength} characters`, async () => {
-        const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(maxLength) };
-        const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
-
-        const { status } = await makeRequest(preparedRequestWithValidField);
-
-        expect(status).toBe(successStatusCode);
-      });
-    }
-
     if (maxLength) {
+      if (minLength !== maxLength) {
+        it(`returns a ${successStatusCode} response if ${fieldName} has ${maxLength} characters`, async () => {
+          const requestWithValidField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(maxLength) };
+          const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
+
+          const { status } = await makeRequest(preparedRequestWithValidField);
+
+          expect(status).toBe(successStatusCode);
+        });
+      }
+
       it(`returns a 400 response if ${fieldName} has more than ${maxLength} characters`, async () => {
         const requestWithTooLongField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(maxLength + 1) };
         const preparedRequestWithTooLongField = prepareModifiedRequest(requestIsAnArray, requestWithTooLongField);
@@ -176,6 +176,15 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
           message: expect.arrayContaining([`${fieldName} must be shorter than or equal to ${maxLength} characters`]),
           statusCode: 400,
         });
+      });
+    } else {
+      it(`returns a ${successStatusCode} response if ${fieldName} has 1000 characters`, async () => {
+        const requestWith1000CharacterField = { ...requestBodyItem, [fieldNameSymbol]: generateFieldValueOfLength(1000) };
+        const preparedRequestWith1000CharacterField = prepareModifiedRequest(requestIsAnArray, requestWith1000CharacterField);
+
+        const { status } = await makeRequest(preparedRequestWith1000CharacterField);
+
+        expect(status).toBe(successStatusCode);
       });
     }
 

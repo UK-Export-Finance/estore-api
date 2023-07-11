@@ -133,17 +133,17 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
       }
     }
 
-    if (minLength !== maxLength) {
-      it(`returns a ${successStatusCode} response if ${queryName} has ${maxLength} characters`, async () => {
-        const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength) };
-
-        const { status } = await makeRequestWithQueries(requestWithValidQuery);
-
-        expect(status).toBe(successStatusCode);
-      });
-    }
-
     if (maxLength) {
+      if (minLength !== maxLength) {
+        it(`returns a ${successStatusCode} response if ${queryName} has ${maxLength} characters`, async () => {
+          const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength) };
+
+          const { status } = await makeRequestWithQueries(requestWithValidQuery);
+
+          expect(status).toBe(successStatusCode);
+        });
+      }
+
       it(`returns a 400 response if ${queryName} has more than ${maxLength} characters`, async () => {
         const requestWithTooLongQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength + 1) };
         const { status, body } = await makeRequestWithQueries(requestWithTooLongQuery);
@@ -154,6 +154,14 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
           message: expect.arrayContaining([`${queryName} must be shorter than or equal to ${maxLength} characters`]),
           statusCode: 400,
         });
+      });
+    } else {
+      it(`returns a ${successStatusCode} response if ${queryName} has 1000 characters`, async () => {
+        const requestWith1000CharacterQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(1000) };
+
+        const { status } = await makeRequestWithQueries(requestWith1000CharacterQuery);
+
+        expect(status).toBe(successStatusCode);
       });
     }
 

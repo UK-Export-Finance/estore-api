@@ -66,15 +66,15 @@ export const withParamValidationApiTests = ({
       });
     }
 
-    if (minLength !== maxLength) {
-      it(`returns a ${successStatusCode} response if ${paramName} has ${maxLength} characters`, async () => {
-        const { status } = await makeRequest(generateParamValueOfLength(maxLength));
-
-        expect(status).toBe(successStatusCode);
-      });
-    }
-
     if (maxLength) {
+      if (minLength !== maxLength) {
+        it(`returns a ${successStatusCode} response if ${paramName} has ${maxLength} characters`, async () => {
+          const { status } = await makeRequest(generateParamValueOfLength(maxLength));
+
+          expect(status).toBe(successStatusCode);
+        });
+      }
+
       it(`returns a 400 response if ${paramName} has more than ${maxLength} characters`, async () => {
         const { status, body } = await makeRequest(generateParamValueOfLength(maxLength + 1));
 
@@ -84,6 +84,12 @@ export const withParamValidationApiTests = ({
           message: expect.arrayContaining([`${paramName} must be shorter than or equal to ${maxLength} characters`]),
           statusCode: 400,
         });
+      });
+    } else {
+      it(`returns a ${successStatusCode} response if ${paramName} has 1000 characters`, async () => {
+        const { status } = await makeRequest(generateParamValueOfLength(1000));
+
+        expect(status).toBe(successStatusCode);
       });
     }
 

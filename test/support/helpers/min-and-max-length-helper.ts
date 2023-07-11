@@ -30,8 +30,8 @@ export const getMinAndMaxLengthFromOptions = ({
     };
   }
 
-  if ((!isMinLengthDefined || !isMaxLengthDefined) && !theEnum) {
-    throw new Error(`You must specify either length, enum, or minLength and maxLength for ${parameterName}.`);
+  if (!isMinLengthDefined && !isMaxLengthDefined && !theEnum) {
+    throw new Error(`You must specify one of length, enum, minLength, or maxLength for ${parameterName}.`);
   }
 
   return {

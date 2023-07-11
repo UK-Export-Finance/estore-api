@@ -1,4 +1,4 @@
-import { EXAMPLES, UKEFID } from '@ukef/constants';
+import { EXAMPLES } from '@ukef/constants';
 
 import { ValidatedStringApiProperty } from './validated-string-api-property.decorator';
 
@@ -9,7 +9,6 @@ interface Options {
 export const ValidatedSiteIdentifierApiProperty = ({ description }: Options) =>
   ValidatedStringApiProperty({
     description,
-    length: 8,
-    pattern: UKEFID.SITE_ID.REGEX,
+    minLength: 1,
     example: EXAMPLES.SITE_ID,
   });
