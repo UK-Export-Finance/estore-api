@@ -238,7 +238,7 @@ describe('Create Site Deal Facility Folder', () => {
       paramName: 'dealId',
       length: 10,
       pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
-      generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
+      generateParamValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
       generateParamValueThatDoesNotMatchRegex: () => '11000000' as UkefId,
       validRequestParam: createFacilityFolderParamsDto.dealId,
       successStatusCode: 201,
