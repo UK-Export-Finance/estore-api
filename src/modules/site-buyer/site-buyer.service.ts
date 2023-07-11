@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { UkefSiteId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
@@ -26,7 +25,7 @@ export class SiteBuyerService {
     private readonly custodianService: CustodianService,
   ) {}
 
-  async createBuyerFolder(siteId: UkefSiteId, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
+  async createBuyerFolder(siteId: string, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
     const { exporterName, buyerName } = createBuyerFolderRequestItem;
 
     const caseSiteId = await this.getCaseSiteId(siteId);

@@ -1,4 +1,3 @@
-import { UkefSiteId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
@@ -146,7 +145,7 @@ type TfisCaseSitesListFields = {
 };
 
 interface GenerateValues {
-  siteId: UkefSiteId;
+  siteId: string;
 
   exporterName: string;
   buyerName: string;
@@ -158,7 +157,7 @@ interface GenerateValues {
 }
 
 interface GenerateResult {
-  siteId: UkefSiteId;
+  siteId: string;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;
