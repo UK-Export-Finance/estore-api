@@ -48,7 +48,7 @@ export class SiteBuyerService {
       filter: new FieldEqualsListItemFilter({ fieldName: 'CustodianSiteURL', targetValue: siteId }),
     });
 
-    if (searchResults.length === 0) {
+    if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site ${siteId} in the scCaseSitesList.`);
     }
 
@@ -77,7 +77,7 @@ export class SiteBuyerService {
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
     });
 
-    if (searchResults.length === 0) {
+    if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
     }
 
