@@ -1,5 +1,6 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
+import { SiteBuyerException } from './site-buyer.exception';
 import { SiteExporterInvalidException } from './site-exporter-invalid.exception';
 
 describe('SiteExporterInvalidException', () => {
@@ -18,7 +19,7 @@ describe('SiteExporterInvalidException', () => {
     expect(exception.name).toBe('SiteExporterInvalidException');
   });
 
-  it('is instance of Error', () => {
-    expect(new SiteExporterInvalidException(message)).toBeInstanceOf(Error);
+  it('is instance of SiteBuyerException', () => {
+    expect(new SiteExporterInvalidException(message)).toBeInstanceOf(SiteBuyerException);
   });
 });
