@@ -4,7 +4,7 @@ export class FieldNotNullListItemFilter implements ListItemFilter {
   private readonly filterString: string;
 
   constructor({ fieldName }: { fieldName: string }) {
-    this.filterString = `fields/${fieldName} neq null`;
+    this.filterString = `fields/${fieldName} ne null`;
   }
 
   getFilterString(): string {
