@@ -1,6 +1,5 @@
 import { UKEFID } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
-import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { Chance } from 'chance';
 
 export class RandomValueGenerator {
@@ -31,9 +30,8 @@ export class RandomValueGenerator {
     return this.chance.string({ length, pool });
   }
 
-  // UKEF Site id example 00701234.
-  ukefSiteId(lengthExcludingPrefix?: number): UkefSiteId {
-    return UKEFID.SITE_ID.PREFIX.concat(this.stringOfNumericCharacters({ length: lengthExcludingPrefix ?? 4 })) as UkefSiteId;
+  ukefSiteId(length?: number): string {
+    return this.word({ length });
   }
 
   private getStringLengthFromOptions(options?: { length?: number; minLength?: number; maxLength?: number }): number {

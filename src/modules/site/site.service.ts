@@ -3,7 +3,6 @@ import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
-import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
@@ -69,7 +68,7 @@ export class SiteService {
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
-    return { siteId: siteId as UkefSiteId, status };
+    return { siteId: siteId, status };
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
@@ -87,7 +86,7 @@ export class SiteService {
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
-    return { siteId: siteId as UkefSiteId, status };
+    return { siteId: siteId, status };
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
