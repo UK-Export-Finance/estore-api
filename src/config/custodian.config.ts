@@ -8,6 +8,8 @@ export interface CustodianConfig {
   apiKeyHeaderValue: string;
   maxRedirects: number;
   timeout: number;
+  buyerTemplateId: string;
+  buyerTypeGuid: string;
   dealTemplateId: string;
   dealTypeGuid: string;
   facilityTemplateId: string;
@@ -22,6 +24,8 @@ export default registerAs(
     apiKeyHeaderValue: process.env.CUSTODIAN_API_KEY_HEADER_VALUE,
     maxRedirects: parseInt(process.env.CUSTODIAN_MAX_REDIRECTS) || 5,
     timeout: parseInt(process.env.CUSTODIAN_TIMEOUT) || 30000,
+    buyerTemplateId: process.env.CUSTODIAN_BUYER_TEMPLATE_ID,
+    buyerTypeGuid: process.env.CUSTODIAN_BUYER_TYPE_GUID,
     dealTemplateId: process.env.CUSTODIAN_DEAL_TEMPLATE_ID,
     dealTypeGuid: process.env.CUSTODIAN_DEAL_TYPE_GUID,
     facilityTemplateId: process.env.CUSTODIAN_FACILITY_TEMPLATE_ID,

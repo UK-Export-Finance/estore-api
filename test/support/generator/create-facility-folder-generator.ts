@@ -51,14 +51,14 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     const facilityFolderName = `F ${facilityIdentifier}`;
     const dealFolderName = `D ${dealId}`;
 
-    const tfisFacilityListParentFolderResponseFields = {
+    const tfisFacilityListParentFolderResponseFields: TfisFacilityListParentFolderResponseFields = {
       Title: dealFolderName,
       ServerRelativeUrl: parentFolderResponseFieldServerRelativeUrl,
       Code: parentFolderResponseFieldCode,
       ParentCode: parentFolderResponseFieldParentCode,
     };
 
-    const facilityTermDataResponseFields = {
+    const facilityTermDataResponseFields: TfisFacilityHiddenListTermStoreFields = {
       Title: facilityIdentifier,
       FacilityGUID: facilityTermDataResponseFieldFacilityGUID,
     };
@@ -94,7 +94,9 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=FacilityGUID,Title)',
     };
 
-    const tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const tfisFacilityHiddenListTermStoreFacilityTermDataResponse = new GraphListItemsGenerator<TfisFacilityHiddenListTermStoreFields>(
+      this.valueGenerator,
+    ).generate({
       numberToGenerate: 1,
       graphListItemsFields: facilityTermDataResponseFields,
     });
@@ -105,7 +107,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
 
-    const tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const tfisFacilityListParentFolderResponse = new GraphListItemsGenerator<TfisFacilityListParentFolderResponseFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
@@ -150,6 +152,15 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
   }
 }
 
+type TfisFacilityHiddenListTermStoreFields = { Title: string; FacilityGUID: string };
+
+type TfisFacilityListParentFolderResponseFields = {
+  Title: string;
+  ServerRelativeUrl: string;
+  Code: string;
+  ParentCode: string;
+};
+
 interface GenerateValues {
   siteId: UkefSiteId;
   dealId: UkefId;
@@ -173,10 +184,10 @@ interface GenerateResult {
   createFacilityFolderResponseDto: CreateFolderResponseDto;
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
-  tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto;
+  tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto<TfisFacilityHiddenListTermStoreFields>;
 
   tfisFacilityListParentFolderRequest: GraphGetParams;
-  tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto;
+  tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto<TfisFacilityListParentFolderResponseFields>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }

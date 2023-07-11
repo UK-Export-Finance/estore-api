@@ -66,7 +66,7 @@ export class DealFolderService {
   }
 
   private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
-    const buyerFolderSearchResults = await this.sharepointService.findListItems({
+    const buyerFolderSearchResults = await this.sharepointService.findListItems<{ id: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisDealListId,
       fieldsToReturn: ['id'],
@@ -99,7 +99,7 @@ export class DealFolderService {
     siteId: string;
     exporterName: string;
   }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
-    const exporterTermSearchResults = await this.sharepointService.findListItems({
+    const exporterTermSearchResults = await this.sharepointService.findListItems<{ TermGuid: string; URL: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
       fieldsToReturn: ['TermGuid', 'URL'],
@@ -123,7 +123,7 @@ export class DealFolderService {
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {
-    const marketTermSearchResults = await this.sharepointService.findListItems({
+    const marketTermSearchResults = await this.sharepointService.findListItems<{ TermGuid: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.taxonomyHiddenListTermStoreListId,
       fieldsToReturn: ['TermGuid'],

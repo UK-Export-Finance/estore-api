@@ -114,22 +114,22 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       expand: 'fields($select=TermGuid)',
     };
 
-    const tfisDealListBuyerResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const tfisDealListBuyerResponse = new GraphListItemsGenerator<TfisDealListFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisDealListBuyerResponseFields,
     });
 
-    const tfisCaseSitesListExporterResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const tfisCaseSitesListExporterResponse = new GraphListItemsGenerator<TfisCaseSitesListFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisCaseSitesListExporterResponseFields,
     });
 
-    const taxonomyHiddenListTermStoreDestinationMarketResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const taxonomyHiddenListTermStoreDestinationMarketResponse = new GraphListItemsGenerator<TaxonomyHiddenListTermStoreFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: taxonomyTermStoreListDestinationMarketResponseFields,
     });
 
-    const taxonomyHiddenListTermStoreRiskMarketResponse: GraphGetListItemsResponseDto = new GraphListItemsGenerator(this.valueGenerator).generate({
+    const taxonomyHiddenListTermStoreRiskMarketResponse = new GraphListItemsGenerator<TaxonomyHiddenListTermStoreFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: taxonomyTermStoreListRiskMarketResponseFields,
     });
@@ -191,6 +191,10 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
   }
 }
 
+type TfisDealListFields = { id: string };
+type TfisCaseSitesListFields = { TermGuid: string; URL: string };
+type TaxonomyHiddenListTermStoreFields = { TermGuid: string };
+
 interface GenerateValues {
   siteId: UkefSiteId;
 
@@ -214,16 +218,16 @@ interface GenerateResult {
   createDealFolderResponse: CreateFolderResponseDto;
 
   tfisDealListBuyerRequest: GraphGetParams;
-  tfisDealListBuyerResponse: GraphGetListItemsResponseDto;
+  tfisDealListBuyerResponse: GraphGetListItemsResponseDto<TfisDealListFields>;
 
   tfisCaseSitesListExporterRequest: GraphGetParams;
-  tfisCaseSitesListExporterResponse: GraphGetListItemsResponseDto;
+  tfisCaseSitesListExporterResponse: GraphGetListItemsResponseDto<TfisCaseSitesListFields>;
 
   taxonomyHiddenListTermStoreDestinationMarketRequest: GraphGetParams;
-  taxonomyHiddenListTermStoreDestinationMarketResponse: GraphGetListItemsResponseDto;
+  taxonomyHiddenListTermStoreDestinationMarketResponse: GraphGetListItemsResponseDto<TaxonomyHiddenListTermStoreFields>;
 
   taxonomyHiddenListTermStoreRiskMarketRequest: GraphGetParams;
-  taxonomyHiddenListTermStoreRiskMarketResponse: GraphGetListItemsResponseDto;
+  taxonomyHiddenListTermStoreRiskMarketResponse: GraphGetListItemsResponseDto<TaxonomyHiddenListTermStoreFields>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }

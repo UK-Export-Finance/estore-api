@@ -1,3 +1,3 @@
-export interface ListItem<FieldNames extends string> {
-  fields: Record<FieldNames, string>;
+export interface ListItem<Fields> {
+  fields: Fields;
 }

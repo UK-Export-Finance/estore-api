@@ -1,13 +1,12 @@
 import { GraphContentType } from './common/graph-content-type.dto';
-import { GraphListItemFields } from './common/graph-list-item-fields.dto';
 import { GraphParentReference } from './common/graph-parent-reference.dto';
 import { GraphUser } from './common/graph-user.dto';
 
-export interface GraphGetListItemsResponseDto {
-  value: GraphGetListItemsResponseItem[];
+export interface GraphGetListItemsResponseDto<ListItemFields> {
+  value: GraphGetListItemsResponseItem<ListItemFields>[];
 }
 
-export interface GraphGetListItemsResponseItem {
+export interface GraphGetListItemsResponseItem<ListItemFields> {
   createdDateTime: Date;
   eTag: string;
   id: string;
@@ -17,5 +16,5 @@ export interface GraphGetListItemsResponseItem {
   lastModifiedBy: { user: GraphUser };
   parentReference: GraphParentReference;
   contentType: GraphContentType;
-  fields: GraphListItemFields;
+  fields: ListItemFields;
 }
