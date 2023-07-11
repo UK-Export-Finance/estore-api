@@ -147,8 +147,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
           const preparedRequestWithEmptyField = prepareModifiedRequest(requestIsAnArray, requestWithEmptyField);
           const { status } = await makeRequest(preparedRequestWithEmptyField);
 
-          expect(status).toBeGreaterThanOrEqual(200);
-          expect(status).toBeLessThan(300);
+          expect(status).toBe(successStatusCode);
         });
       }
     }

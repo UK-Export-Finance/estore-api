@@ -48,15 +48,13 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
     it(`returns a ${successStatusCode} response if the query parameter is valid`, async () => {
       const { status } = await makeRequestWithQueries(validRequestQueries);
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
     it(`returns a ${successStatusCode} response if there is an unexpected query parameter`, async () => {
       const { status } = await makeRequestWithQueries({ ...validRequestQueries, unexpectedQueryParameter: 'unexpectedQueryParameterValue' });
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
     if (required) {
@@ -130,8 +128,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
           const requestWithEmptyQuery = { ...validRequestQueries, [queryNameSymbol]: '' };
           const { status } = await makeRequestWithQueries(requestWithEmptyQuery);
 
-          expect(status).toBeGreaterThanOrEqual(200);
-          expect(status).toBeLessThan(300);
+          expect(status).toBe(successStatusCode);
         });
       }
     }

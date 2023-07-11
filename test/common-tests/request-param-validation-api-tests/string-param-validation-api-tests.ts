@@ -70,8 +70,7 @@ export const withParamValidationApiTests = ({
       it(`returns a ${successStatusCode} response if ${paramName} has ${maxLength} characters`, async () => {
         const { status } = await makeRequest(generateParamValueOfLength(maxLength));
 
-        expect(status).toBeGreaterThanOrEqual(200);
-        expect(status).toBeLessThan(300);
+        expect(status).toBe(successStatusCode);
       });
     }
 
