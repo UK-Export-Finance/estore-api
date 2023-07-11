@@ -1,18 +1,14 @@
-import { EXAMPLES } from '@ukef/constants/examples.constant';
-import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
+import { ValidatedDealIdentifierApiProperty } from '@ukef/decorators/validated-deal-identifier-api-property';
+import { ValidatedSiteIdentifierApiProperty } from '@ukef/decorators/validated-site-identifier-api-property';
 
 export class UploadFileInDealFolderParamsDto {
-  @ValidatedStringApiProperty({
+  @ValidatedSiteIdentifierApiProperty({
     description: 'The site identifier returned when the site was created by POST /sites.',
-    example: EXAMPLES.SITE_ID,
   })
   siteId: string;
 
-  @ValidatedStringApiProperty({
+  @ValidatedDealIdentifierApiProperty({
     description: 'The identifier of the deal.',
-    length: 10,
-    pattern: /^00\d{8}$/,
-    example: EXAMPLES.DEAL_ID,
   })
   dealId: string;
 }

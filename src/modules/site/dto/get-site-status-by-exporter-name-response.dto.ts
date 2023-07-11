@@ -6,6 +6,7 @@ import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 export class GetSiteStatusByExporterNameResponse {
   @ApiResponseProperty({ example: EXAMPLES.SITE_ID })
   siteId: UkefSiteId;
+
   @ApiResponseProperty({ example: EXAMPLES.SITE_STATUS_CODE, enum: SiteStatusEnum })
   status: SiteStatusEnum;
 }
