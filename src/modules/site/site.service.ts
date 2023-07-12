@@ -68,7 +68,7 @@ export class SiteService {
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
-    return { siteId: siteId, status };
+    return { siteId, status };
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
@@ -86,7 +86,7 @@ export class SiteService {
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
 
-    return { siteId: siteId, status };
+    return { siteId, status };
   }
 
   private buildRequestToCreateSiteId(): MdmCreateNumbersRequest {
