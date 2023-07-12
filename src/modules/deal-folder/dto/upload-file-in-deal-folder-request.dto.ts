@@ -1,4 +1,4 @@
-import { ENUMS } from '@ukef/constants';
+import { ENUMS, SHAREPOINT } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
@@ -26,7 +26,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The file name with the file extension.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^(?!\s)[\w\-.()\s]+(?<![\s.])$/,
+    pattern: SHAREPOINT.DOCUMENT_FILE_NAME.REGEX,
     example: EXAMPLES.FILE_NAME,
   })
   fileName: string;
