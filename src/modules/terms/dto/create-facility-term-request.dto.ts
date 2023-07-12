@@ -1,14 +1,9 @@
-import { EXAMPLES, UKEFID } from '@ukef/constants';
-import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
+import { ValidatedFacilityIdentifierApiProperty } from '@ukef/decorators/validated-facility-identifier-api-property';
 
 export type CreateFacilityTermRequest = CreateFacilityTermRequestItem[];
 export class CreateFacilityTermRequestItem {
-  @ValidatedStringApiProperty({
+  @ValidatedFacilityIdentifierApiProperty({
     description: 'The facility ID to create in termStore.',
-    example: EXAMPLES.FACILITY_ID,
-    minLength: 10,
-    maxLength: 10,
-    pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
   })
   readonly id: string;
 }

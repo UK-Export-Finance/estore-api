@@ -1,5 +1,3 @@
-import { UKEFID } from '@ukef/constants';
-import { UkefSiteId } from '@ukef/helpers';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import { ParamValidationApiTestOptions, withParamValidationApiTests } from './string-param-validation-api-tests';
@@ -17,10 +15,8 @@ export const withSiteIdParamValidationApiTests = ({
 }: Options): void =>
   withParamValidationApiTests({
     paramName: 'siteId',
-    length: 8,
-    pattern: UKEFID.SITE_ID.REGEX,
-    generateParamValueOfLength: (length: number) => valueGenerator.ukefSiteId(length - 4),
-    generateParamValueThatDoesNotMatchRegex: () => '00000000' as UkefSiteId,
+    minLength: 1,
+    generateParamValueOfLength: (length: number) => valueGenerator.word({ length }),
     validRequestParam,
     makeRequest,
     givenAnyRequestParamWouldSucceed,

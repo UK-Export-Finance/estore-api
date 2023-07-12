@@ -1,4 +1,4 @@
-import { UkefId, UkefSiteId } from '@ukef/helpers';
+import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
@@ -162,7 +162,7 @@ type TfisFacilityListParentFolderResponseFields = {
 };
 
 interface GenerateValues {
-  siteId: UkefSiteId;
+  siteId: string;
   dealId: UkefId;
 
   exporterName: string;
@@ -193,6 +193,6 @@ interface GenerateResult {
 }
 
 interface GenerateOptions {
-  siteId?: UkefSiteId;
+  siteId?: string;
   dealId?: UkefId;
 }

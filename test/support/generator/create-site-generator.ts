@@ -1,6 +1,5 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
-import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
 import { CreateSiteResponse } from '@ukef/modules/site/dto/create-site-response.dto';
@@ -76,7 +75,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 
 interface GenerateValues {
   exporterName: string;
-  siteId: UkefSiteId;
+  siteId: string;
 }
 
 interface GenerateResult {
