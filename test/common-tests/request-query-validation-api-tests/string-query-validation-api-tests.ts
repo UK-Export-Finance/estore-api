@@ -48,15 +48,13 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
     it(`returns a ${successStatusCode} response if the query parameter is valid`, async () => {
       const { status } = await makeRequestWithQueries(validRequestQueries);
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
     it(`returns a ${successStatusCode} response if there is an unexpected query parameter`, async () => {
       const { status } = await makeRequestWithQueries({ ...validRequestQueries, unexpectedQueryParameter: 'unexpectedQueryParameterValue' });
 
-      expect(status).toBeGreaterThanOrEqual(200);
-      expect(status).toBeLessThan(300);
+      expect(status).toBe(successStatusCode);
     });
 
     if (required) {
@@ -130,23 +128,22 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
           const requestWithEmptyQuery = { ...validRequestQueries, [queryNameSymbol]: '' };
           const { status } = await makeRequestWithQueries(requestWithEmptyQuery);
 
-          expect(status).toBeGreaterThanOrEqual(200);
-          expect(status).toBeLessThan(300);
+          expect(status).toBe(successStatusCode);
         });
       }
     }
 
-    if (minLength !== maxLength) {
-      it(`returns a ${successStatusCode} response if ${queryName} has ${maxLength} characters`, async () => {
-        const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength) };
-
-        const { status } = await makeRequestWithQueries(requestWithValidQuery);
-
-        expect(status).toBe(successStatusCode);
-      });
-    }
-
     if (maxLength) {
+      if (minLength !== maxLength) {
+        it(`returns a ${successStatusCode} response if ${queryName} has ${maxLength} characters`, async () => {
+          const requestWithValidQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength) };
+
+          const { status } = await makeRequestWithQueries(requestWithValidQuery);
+
+          expect(status).toBe(successStatusCode);
+        });
+      }
+
       it(`returns a 400 response if ${queryName} has more than ${maxLength} characters`, async () => {
         const requestWithTooLongQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(maxLength + 1) };
         const { status, body } = await makeRequestWithQueries(requestWithTooLongQuery);
@@ -157,6 +154,14 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
           message: expect.arrayContaining([`${queryName} must be shorter than or equal to ${maxLength} characters`]),
           statusCode: 400,
         });
+      });
+    } else {
+      it(`returns a ${successStatusCode} response if ${queryName} has 1000 characters`, async () => {
+        const requestWith1000CharacterQuery = { ...validRequestQueries, [queryNameSymbol]: generateQueryValueOfLength(1000) };
+
+        const { status } = await makeRequestWithQueries(requestWith1000CharacterQuery);
+
+        expect(status).toBe(successStatusCode);
       });
     }
 

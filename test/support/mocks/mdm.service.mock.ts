@@ -1,4 +1,3 @@
-import { UkefSiteId } from '@ukef/helpers/ukef-id.type';
 import { MdmException } from '@ukef/modules/mdm/exception/mdm.exception';
 import { when } from 'jest-when';
 
@@ -9,7 +8,7 @@ export class MockMdmService {
     this.createNumbers = jest.fn();
   }
 
-  mockSuccessfulReturnValue(siteId: UkefSiteId) {
+  mockSuccessfulReturnValue(siteId: string) {
     when(this.createNumbers)
       .calledWith(expect.anything())
       .mockReturnValueOnce([{ maskedId: siteId }]);

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { UkefId, UkefSiteId } from '@ukef/helpers';
+import { UkefId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
@@ -28,7 +28,7 @@ export class SiteDealService {
   ) {}
 
   async createFacilityFolder(
-    siteId: UkefSiteId,
+    siteId: string,
     dealId: UkefId,
     createFacilityFolderRequestItem: CreateFacilityFolderRequestItem,
   ): Promise<CreateFolderResponseDto> {
@@ -58,7 +58,7 @@ export class SiteDealService {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getParentFolderId(siteId: UkefSiteId, parentFolderName: string): Promise<number> {
+  private async getParentFolderId(siteId: string, parentFolderName: string): Promise<number> {
     const parentFolderListItems = await this.sharepointService.findListItems<{
       Title: string;
       ServerRelativeUrl: string;

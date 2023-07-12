@@ -1,6 +1,8 @@
 import { ValidatedSiteIdentifierApiProperty } from '@ukef/decorators/validated-site-identifier-api-property';
 
 export class CreateDealFolderParams {
-  @ValidatedSiteIdentifierApiProperty({ description: 'The site identifier returned when the site was created by POST /sites.' })
+  @ValidatedSiteIdentifierApiProperty({
+    description: 'The identifier of the site.',
+  })
   siteId: string;
 }
