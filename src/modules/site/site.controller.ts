@@ -2,6 +2,7 @@ import { Controller, Get, InternalServerErrorException, Post, Query, Res } from 
 import {
   ApiAcceptedResponse,
   ApiBadRequestResponse,
+  ApiBody,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -45,6 +46,10 @@ export class SiteController {
 
   @Post()
   @ApiOperation({ summary: 'Start creation of new sharepoint site for exporter' })
+  @ApiBody({
+    type: CreateSiteRequestItem,
+    isArray: true,
+  })
   @ApiOkResponse({ description: 'Site has been created', type: CreateSiteResponse, isArray: false })
   @ApiAcceptedResponse({ description: 'Site is provisioning', type: CreateSiteResponse, isArray: false })
   @ApiResponse({
