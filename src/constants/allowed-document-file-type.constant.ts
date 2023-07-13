@@ -1,4 +1,4 @@
-export const DOCUMENT_FILE_TYPE = {
+export const ALLOWED_DOCUMENT_FILE_TYPE = {
   BMP: 'bmp',
   DOC: 'doc',
   DOCX: 'docx',
