@@ -1,0 +1,18 @@
+export const ALLOWED_DOCUMENT_FILE_TYPE = {
+  BMP: 'bmp',
+  DOC: 'doc',
+  DOCX: 'docx',
+  GIF: 'gif',
+  JPEG: 'jpeg',
+  JPG: 'jpg',
+  MSG: 'msg',
+  PDF: 'pdf',
+  PNG: 'png',
+  PPT: 'ppt',
+  PPTX: 'pptx',
+  TIF: 'tif',
+  TXT: 'txt',
+  XLS: 'xls',
+  XLSX: 'xlsx',
+  ZIP: 'zip',
+};
