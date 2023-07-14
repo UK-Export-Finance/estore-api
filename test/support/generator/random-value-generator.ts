@@ -107,7 +107,7 @@ export class RandomValueGenerator {
   fileName(options?: { length?: number }) {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
     const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
-    return this.chance.string({ length, pool });
+    return `${this.chance.string({ length, pool })}.txt`;
   }
 
   fileLocationPath(options?: { length?: number }) {
