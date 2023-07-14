@@ -1,4 +1,5 @@
 import { UKEFID } from '@ukef/constants';
+import { ALLOWED_DOCUMENT_FILE_TYPE } from '@ukef/constants/allowed-document-file-type.constant';
 import { UkefId } from '@ukef/helpers';
 import { Chance } from 'chance';
 
@@ -107,7 +108,13 @@ export class RandomValueGenerator {
   fileName(options?: { length?: number }) {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
     const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
-    return `${this.chance.string({ length, pool })}.txt`;
+    const randomFileExtension = this.arrayElement(Object.values(ALLOWED_DOCUMENT_FILE_TYPE));
+    return `${this.chance.string({ length, pool })}.${randomFileExtension}`;
+  }
+
+  arrayElement(array: any[]) {
+    const randomIndex = this.nonnegativeInteger({ max: array.length - 1});
+    return array[randomIndex];
   }
 
   fileLocationPath(options?: { length?: number }) {
