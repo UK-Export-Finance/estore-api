@@ -1,4 +1,4 @@
-import { UKEFID } from '@ukef/constants';
+import { EXPORTER_NAME, UKEFID } from '@ukef/constants';
 import { ALLOWED_DOCUMENT_FILE_TYPE } from '@ukef/constants/allowed-document-file-type.constant';
 import { UkefId } from '@ukef/helpers';
 import { Chance } from 'chance';
@@ -29,10 +29,15 @@ export class RandomValueGenerator {
     return this.chance.string({ length, pool: '0123456789' });
   }
 
+  // TODO apim-474 This has the potential to be flakey. Realistically - We should never get so unlucky as to trigger the loop
   exporterName(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
-    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() ';
-    return this.chance.string({ length, pool });
+    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ';
+    let result = this.chance.string({ length, pool });
+    while (!result.match(EXPORTER_NAME.REGEX)) {
+      result = this.chance.string({ length, pool });
+    }
+    return result;
   }
 
   ukefSiteId(length?: number): string {

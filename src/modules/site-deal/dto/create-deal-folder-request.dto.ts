@@ -1,5 +1,6 @@
 import { EXAMPLES } from '@ukef/constants';
 import { ValidatedDealIdentifierApiProperty } from '@ukef/decorators/validated-deal-identifier-api-property';
+import { ValidatedExporterNameApiProperty } from '@ukef/decorators/validated-exporter-name-api-property';
 import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/validated-sharepoint-resource-name-api-property';
 
 export type CreateDealFolderRequest = CreateDealFolderRequestItem[];
@@ -11,7 +12,8 @@ export class CreateDealFolderRequestItem {
   @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the buyer used in the deal.', example: EXAMPLES.BUYER_NAME })
   buyerName: string;
 
-  @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the exporter used in the deal.', example: EXAMPLES.EXPORTER_NAME })
+  // TODO apim-474 this property is now more restrictive with length
+  @ValidatedExporterNameApiProperty()
   exporterName: string;
 
   @ValidatedSharepointResourceNameApiProperty({

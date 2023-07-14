@@ -58,11 +58,12 @@ paths:
           required: true
           in: query
           description: The name of the exporter used in the deal.
-          example: Example Name Limited
+          example: Example Exporter
           schema:
             minLength: 1
             maxLength: 250
-            pattern: ^[\\w\\-.()\\s]+$
+            pattern: >-
+              ^(?!^(?=\\s|~\\$).*$)(?!(^.*(?<=\\s)$))(?!(^.*["|*|<|>|?|/|\\\\|\\|].*$))(?!(^.*(?=_vti_).*$))(?!((^.lock$)|(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[0-9]$)|(^LPT[0-9]$)))(?!((^forms$))).*$
             type: string
       responses:
         '200':
@@ -394,7 +395,8 @@ components:
           description: The name of the exporter used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: ^[\\w\\-.()\\s]+$
+          pattern: >-
+            ^(?!^(?=\\s|~\\$).*$)(?!(^.*(?<=\\s)$))(?!(^.*["|*|<|>|?|/|\\\\|\\|].*$))(?!(^.*(?=_vti_).*$))(?!((^.lock$)|(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[0-9]$)|(^LPT[0-9]$)))(?!((^forms$))).*$
           example: Example Exporter
         buyerName:
           type: string
@@ -445,7 +447,8 @@ components:
           description: The name of the exporter used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: ^[\\w\\-.()\\s]+$
+          pattern: >-
+            ^(?!^(?=\\s|~\\$).*$)(?!(^.*(?<=\\s)$))(?!(^.*["|*|<|>|?|/|\\\\|\\|].*$))(?!(^.*(?=_vti_).*$))(?!((^.lock$)|(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[0-9]$)|(^LPT[0-9]$)))(?!((^forms$))).*$
           example: Example Exporter
         destinationMarket:
           type: string
@@ -499,7 +502,8 @@ components:
           description: The name of the exporter used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: ^[\\w\\-.()\\s]+$
+          pattern: >-
+            ^(?!^(?=\\s|~\\$).*$)(?!(^.*(?<=\\s)$))(?!(^.*["|*|<|>|?|/|\\\\|\\|].*$))(?!(^.*(?=_vti_).*$))(?!((^.lock$)|(^CON$)|(^PRN$)|(^AUX$)|(^NUL$)|(^COM[0-9]$)|(^LPT[0-9]$)))(?!((^forms$))).*$
           example: Example Exporter
         buyerName:
           type: string
