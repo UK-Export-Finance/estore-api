@@ -122,7 +122,9 @@ export class MockGraphClientService {
     uploadSession: LargeFileUploadSession,
     options?: LargeFileUploadTaskOptions,
   ): MockGraphClientService {
-    when(this.getFileUploadTask).calledWith(expect.any(Readable), fileName, fileSizeInBytes, uploadSession, options).mockReturnValueOnce(this.mockFileUploadTask);
+    when(this.getFileUploadTask)
+      .calledWith(expect.any(Readable), fileName, fileSizeInBytes, uploadSession, options)
+      .mockReturnValueOnce(this.mockFileUploadTask);
     return this;
   }
 
