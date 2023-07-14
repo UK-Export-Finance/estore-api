@@ -113,7 +113,7 @@ export class RandomValueGenerator {
   }
 
   arrayElement(array: any[]) {
-    const randomIndex = this.nonnegativeInteger({ max: array.length - 1});
+    const randomIndex = this.nonnegativeInteger({ max: array.length - 1 });
     return array[randomIndex];
   }
 
