@@ -17,6 +17,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   GRAPH_AUTHENTICATION_CLIENT_ID: valueGenerator.string(),
   GRAPH_AUTHENTICATION_CLIENT_SECRET: valueGenerator.string(),
 
+  SHAREPOINT_BASE_URL: valueGenerator.httpsUrl(),
   SHAREPOINT_MAIN_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_TFIS_SITE_NAME: valueGenerator.word(),
   SHAREPOINT_SC_SITE_NAME: valueGenerator.word(),
@@ -27,6 +28,10 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_TFIS_DEAL_LIST_ID: valueGenerator.word(),
   SHAREPOINT_TFIS_CASE_SITES_LIST_ID: valueGenerator.word(),
   SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID: valueGenerator.word(),
+  SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME: valueGenerator.word(),
+  SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION: valueGenerator.word(),
+  SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT: valueGenerator.word(),
+  SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION: valueGenerator.word(),
 
   APIM_MDM_URL: valueGenerator.httpsUrl(),
   APIM_MDM_KEY: valueGenerator.word(),

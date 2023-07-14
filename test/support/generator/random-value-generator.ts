@@ -2,6 +2,10 @@ import { UKEFID } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { Chance } from 'chance';
 
+interface Enum {
+  [key: number | string]: string | number;
+}
+
 export class RandomValueGenerator {
   private static readonly seed = 0;
   private readonly chance: Chance.Chance;
@@ -87,5 +91,28 @@ export class RandomValueGenerator {
 
   guid(): string {
     return this.chance.guid();
+  }
+
+  enumValue<T = string>(theEnum: Enum): T {
+    const possibleValues = Object.values(theEnum);
+    return possibleValues[this.integer({ min: 0, max: possibleValues.length - 1 })] as T;
+  }
+
+  buyerName(options?: { length?: number }) {
+    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
+    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
+    return this.chance.string({ length, pool });
+  }
+
+  fileName(options?: { length?: number }) {
+    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
+    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
+    return this.chance.string({ length, pool });
+  }
+
+  fileLocationPath(options?: { length?: number }) {
+    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
+    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
+    return this.chance.string({ length, pool });
   }
 }

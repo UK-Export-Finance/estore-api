@@ -33,7 +33,7 @@ export class App extends AppUnderTest {
 
     await nestApp.init();
 
-    return { app, mockGraphClientService, mockMdmService };
+    return { app, mockGraphClientService, mockMdmService, mockDtfsStorageClientService };
   }
 
   getHttpServer(): any {
@@ -49,4 +49,5 @@ export interface MockApp {
   app: App;
   mockGraphClientService: MockGraphClientService;
   mockMdmService: MockMdmService;
+  mockDtfsStorageClientService: MockDtfsStorageClientService;
 }
