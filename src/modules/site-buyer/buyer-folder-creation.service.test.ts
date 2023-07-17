@@ -5,11 +5,11 @@ import { when, WhenMockWithMatchers } from 'jest-when';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
-import { SiteBuyerService } from './site-buyer.service';
 
-describe('SiteBuyerService', () => {
+describe('BuyerFolderCreationService', () => {
   const valueGenerator = new RandomValueGenerator();
 
   const {
@@ -60,7 +60,7 @@ describe('SiteBuyerService', () => {
 
   let findListItems: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
-  let service: SiteBuyerService;
+  let service: BuyerFolderCreationService;
 
   beforeEach(() => {
     findListItems = jest.fn();
@@ -71,7 +71,7 @@ describe('SiteBuyerService', () => {
     const custodianService = new CustodianService(null);
     custodianService.createAndProvision = custodianCreateAndProvision;
 
-    service = new SiteBuyerService(
+    service = new BuyerFolderCreationService(
       {
         scSharepointUrl,
         scCaseSitesListId,

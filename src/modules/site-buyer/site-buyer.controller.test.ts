@@ -3,10 +3,10 @@ import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
+import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
 import { SiteBuyerController } from './site-buyer.controller';
-import { SiteBuyerService } from './site-buyer.service';
 
 describe('SiteBuyerController', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -21,7 +21,7 @@ describe('SiteBuyerController', () => {
 
     beforeEach(() => {
       serviceCreateBuyerFolder = jest.fn();
-      const buyerFolderService = new SiteBuyerService(null, null, null, null);
+      const buyerFolderService = new BuyerFolderCreationService(null, null, null, null);
       buyerFolderService.createBuyerFolder = serviceCreateBuyerFolder;
 
       controller = new SiteBuyerController(buyerFolderService);
