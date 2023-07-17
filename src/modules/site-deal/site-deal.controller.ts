@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
@@ -8,8 +8,8 @@ import { CreateDealFolderRequest, CreateDealFolderRequestItem } from './dto/crea
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
-import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
+import { FolderDependencyExceptionTransformInterceptor } from './interceptor/folder-dependency-exception-transform.interceptor';
 import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './interceptor/site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Controller('sites/:siteId/deals')
@@ -38,6 +38,7 @@ export class SiteDealController {
   }
 
   @Post()
+  @UseInterceptors(FolderDependencyExceptionTransformInterceptor)
   @ApiOperation({ summary: 'Creates a deal folder.' })
   @ApiCreatedResponse({
     description: 'The creation of the deal folder has been scheduled successfully.',
@@ -52,22 +53,14 @@ export class SiteDealController {
     @ValidatedArrayBody({ items: CreateDealFolderRequestItem })
     [{ dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket }]: CreateDealFolderRequest,
   ): Promise<CreateFolderResponseDto> {
-    try {
-      const createdFolderName = await this.dealFolderCreationService.createDealFolder({
-        siteId,
-        dealIdentifier,
-        buyerName,
-        exporterName,
-        destinationMarket,
-        riskMarket,
-      });
-      return { folderName: createdFolderName };
-    } catch (error) {
-      // TODO APIM-136: Should we have an explanatory error message for FolderDependencyInvalidException?
-      if (error instanceof FolderDependencyNotFoundException) {
-        throw new BadRequestException(error.message, { cause: error });
-      }
-      throw error;
-    }
+    const createdFolderName = await this.dealFolderCreationService.createDealFolder({
+      siteId,
+      dealIdentifier,
+      buyerName,
+      exporterName,
+      destinationMarket,
+      riskMarket,
+    });
+    return { folderName: createdFolderName };
   }
 }
