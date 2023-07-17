@@ -1,7 +1,7 @@
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { catchError, Observable, throwError } from 'rxjs';
 
-import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { SiteDealFolderNotFoundException } from '../exception/site-deal-folder-not-found.exception';
 
 @Injectable()
 export class SiteDealNotFoundExceptionToBadRequestTransformInterceptor implements NestInterceptor {

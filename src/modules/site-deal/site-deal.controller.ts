@@ -10,11 +10,14 @@ import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from 
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
-import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './site-deal-not-found-exception-to-bad-request-transform.interceptor';
+import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './interceptor/site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Controller('sites/:siteId/deals')
 export class SiteDealController {
-  constructor(private readonly siteDealService: FacilityFolderCreationService, private readonly dealFolderService: DealFolderCreationService) {}
+  constructor(
+    private readonly facilityFolderCreationService: FacilityFolderCreationService,
+    private readonly dealFolderCreationService: DealFolderCreationService,
+  ) {}
 
   @Post('/:dealId/facilities')
   @UseInterceptors(SiteDealNotFoundExceptionToBadRequestTransformInterceptor)
@@ -28,12 +31,10 @@ export class SiteDealController {
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
   @ApiBadRequestResponse({ description: 'Bad request.' })
   async createFacilityFolder(
-    @Param() params: CreateFacilityFolderParamsDto,
-    @ValidatedArrayBody({ items: CreateFacilityFolderRequestItem }) CreateFacilityFolderRequest: CreateFacilityFolderRequestDto,
+    @Param() { siteId, dealId }: CreateFacilityFolderParamsDto,
+    @ValidatedArrayBody({ items: CreateFacilityFolderRequestItem }) [createFacilityFolderRequestItem]: CreateFacilityFolderRequestDto,
   ): Promise<CreateFolderResponseDto> {
-    const [createFacilityFolderRequestItem] = CreateFacilityFolderRequest;
-
-    return await this.siteDealService.createFacilityFolder(params.siteId, params.dealId, createFacilityFolderRequestItem);
+    return await this.facilityFolderCreationService.createFacilityFolder(siteId, dealId, createFacilityFolderRequestItem);
   }
 
   @Post()
@@ -52,7 +53,7 @@ export class SiteDealController {
     [{ dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket }]: CreateDealFolderRequest,
   ): Promise<CreateFolderResponseDto> {
     try {
-      const createdFolderName = await this.dealFolderService.createDealFolder({
+      const createdFolderName = await this.dealFolderCreationService.createDealFolder({
         siteId,
         dealIdentifier,
         buyerName,
