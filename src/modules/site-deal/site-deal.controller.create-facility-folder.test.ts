@@ -8,16 +8,16 @@ import { SiteDealController } from './site-deal.controller';
 
 describe('SiteDealController', () => {
   const valueGenerator = new RandomValueGenerator();
-  const siteDealService = new FacilityFolderCreationService(null, null, null, null);
+  const facilityFolderCreationService = new FacilityFolderCreationService(null, null, null, null);
 
   let siteDealController: SiteDealController;
 
   const serviceCreateFacilityFolder = jest.fn();
-  siteDealService.createFacilityFolder = serviceCreateFacilityFolder;
+  facilityFolderCreationService.createFacilityFolder = serviceCreateFacilityFolder;
 
   beforeEach(() => {
     serviceCreateFacilityFolder.mockReset();
-    siteDealController = new SiteDealController(siteDealService, new DealFolderCreationService(null, null, null, null));
+    siteDealController = new SiteDealController(facilityFolderCreationService, new DealFolderCreationService(null, null, null, null));
   });
 
   describe('createFacilityFolder', () => {
