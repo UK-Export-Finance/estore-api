@@ -18,7 +18,6 @@ export interface SharepointConfig {
   estoreDocumentTypeIdBusinessInformation: string;
 }
 
-// TODO APIM-139: Check facility list id is named correctly (and not deal id)
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {
     baseUrl: process.env.SHAREPOINT_BASE_URL,
