@@ -112,7 +112,7 @@ export class RandomValueGenerator {
     return `${this.chance.string({ length, pool })}.${randomFileExtension}`;
   }
 
-  arrayElement(array: any[]) {
+  arrayElement<T>(array: T[]): T {
     const randomIndex = this.nonnegativeInteger({ max: array.length - 1 });
     return array[randomIndex];
   }
