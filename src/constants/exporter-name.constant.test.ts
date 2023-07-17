@@ -1,38 +1,53 @@
 import {
+  allowedPrefixTestCases,
   allowedStringTestCases,
   allowedSubstringTestCases,
-  disallowedPrefixeTestCase,
+  allowedSuffixTestCases,
+  disallowedPrefixTestCases,
   disallowedStringTestCases,
   disallowedSubstringTestCases,
-  disallowedSuffixTestCase,
+  disallowedSuffixTestCases,
 } from '@ukef-test/common-test-cases/exporter-name-test-cases';
 
 import { EXPORTER_NAME } from './exporter-name.constant';
 
 describe('ExporterName', () => {
   describe('Regex', () => {
-    it.each(allowedStringTestCases)('"%s" is allowed as a string', (allowedItem) => {
-      expect(allowedItem).toMatch(EXPORTER_NAME.REGEX);
-    });
+    describe('Strings', () => {
+      it.each(allowedStringTestCases)('$testTitle', ({ value }) => {
+        expect(value).toMatch(EXPORTER_NAME.REGEX);
+      });
 
-    it.each(allowedSubstringTestCases)('"%s" is allowed as a substring', (allowedItem) => {
-      expect(allowedItem).toMatch(EXPORTER_NAME.REGEX);
+      it.each(disallowedStringTestCases)('$testTitle', ({ value }) => {
+        expect(value).not.toMatch(EXPORTER_NAME.REGEX);
+      });
     });
+    describe('Substrings', () => {
+      it.each(allowedSubstringTestCases)('$testTitle', ({ value }) => {
+        expect(value).toMatch(EXPORTER_NAME.REGEX);
+      });
 
-    it.each(disallowedStringTestCases)('"%s" is not allowed as a string', (disallowedItem) => {
-      expect(disallowedItem).not.toMatch(EXPORTER_NAME.REGEX);
+      it.each(disallowedSubstringTestCases)('$testTitle', ({ value }) => {
+        expect(value).not.toMatch(EXPORTER_NAME.REGEX);
+      });
     });
+    describe('Prefixes', () => {
+      it.each(allowedPrefixTestCases)('$testTitle', ({ value }) => {
+        expect(value).toMatch(EXPORTER_NAME.REGEX);
+      });
 
-    it.each(disallowedSubstringTestCases)('"%s" is not allowed as a substring', (disallowedItem) => {
-      expect(disallowedItem).not.toMatch(EXPORTER_NAME.REGEX);
+      it.each(disallowedPrefixTestCases)('$testTitle', ({ value }) => {
+        expect(value).not.toMatch(EXPORTER_NAME.REGEX);
+      });
     });
+    describe('Suffixes', () => {
+      it.each(allowedSuffixTestCases)('$testTitle', ({ value }) => {
+        expect(value).toMatch(EXPORTER_NAME.REGEX);
+      });
 
-    it.each(disallowedPrefixeTestCase)('"%s" is not allowed as a prefix', (disallowedItem) => {
-      expect(disallowedItem).not.toMatch(EXPORTER_NAME.REGEX);
-    });
-
-    it.each(disallowedSuffixTestCase)('"%s" is not allowed as a suffix', (disallowedItem) => {
-      expect(disallowedItem).not.toMatch(EXPORTER_NAME.REGEX);
+      it.each(disallowedSuffixTestCases)('$testTitle', ({ value }) => {
+        expect(value).not.toMatch(EXPORTER_NAME.REGEX);
+      });
     });
   });
 });

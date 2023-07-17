@@ -1,11 +1,13 @@
 import { EXPORTER_NAME } from '@ukef/constants';
 import {
+  allowedPrefixTestCases,
   allowedStringTestCases,
   allowedSubstringTestCases,
-  disallowedPrefixeTestCase,
+  allowedSuffixTestCases,
+  disallowedPrefixTestCases,
   disallowedStringTestCases,
   disallowedSubstringTestCases,
-  disallowedSuffixTestCase,
+  disallowedSuffixTestCases,
 } from '@ukef-test/common-test-cases/exporter-name-test-cases';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
@@ -46,10 +48,10 @@ export const withExporterNameQueryValidationApiTests = <RequestQueryItems extend
       givenAnyRequestQueryWouldSucceed();
     });
 
-    it.each([...allowedStringTestCases, ...allowedSubstringTestCases])(
-      `returns a ${successStatusCode} response if exporterName matchs the regular expression ${EXPORTER_NAME.REGEX} (test case "%s")`,
-      async (testCase) => {
-        const requestWithInvalidQuery = { ...validRequestQueries, [queryName]: testCase };
+    it.each([...allowedStringTestCases, ...allowedSubstringTestCases, ...allowedPrefixTestCases, ...allowedSuffixTestCases])(
+      `returns a ${successStatusCode} response if exporterName matchs the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      async ({ value }) => {
+        const requestWithInvalidQuery = { ...validRequestQueries, [queryName]: value };
 
         const { status } = await makeRequestWithQueries(requestWithInvalidQuery);
 
@@ -57,10 +59,10 @@ export const withExporterNameQueryValidationApiTests = <RequestQueryItems extend
       },
     );
 
-    it.each([...disallowedStringTestCases, ...disallowedSubstringTestCases, ...disallowedPrefixeTestCase, ...disallowedSuffixTestCase])(
-      `returns a 400 response if exporterName does not match the regular expression ${EXPORTER_NAME.REGEX} (test case "%s")`,
-      async (testCase) => {
-        const requestWithInvalidQuery = { ...validRequestQueries, [queryName]: testCase };
+    it.each([...disallowedStringTestCases, ...disallowedSubstringTestCases, ...disallowedPrefixTestCases, ...disallowedSuffixTestCases])(
+      `returns a 400 response if exporterName does not match the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      async ({ value }) => {
+        const requestWithInvalidQuery = { ...validRequestQueries, [queryName]: value };
 
         const { status, body } = await makeRequestWithQueries(requestWithInvalidQuery);
 
