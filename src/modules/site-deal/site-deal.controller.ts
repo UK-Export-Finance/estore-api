@@ -2,19 +2,19 @@ import { BadRequestException, Controller, Param, Post, UseInterceptors } from '@
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 
-import { DealFolderService } from './deal-folder.service';
+import { DealFolderCreationService } from './deal-folder-creation.service';
 import { CreateDealFolderParams } from './dto/create-deal-folder-params.dto';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from './dto/create-deal-folder-request.dto';
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
-import { SiteDealService } from './site-deal.service';
+import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Controller('sites/:siteId/deals')
 export class SiteDealController {
-  constructor(private readonly siteDealService: SiteDealService, private readonly dealFolderService: DealFolderService) {}
+  constructor(private readonly siteDealService: FacilityFolderCreationService, private readonly dealFolderService: DealFolderCreationService) {}
 
   @Post('/:dealId/facilities')
   @UseInterceptors(SiteDealNotFoundExceptionToBadRequestTransformInterceptor)

@@ -16,8 +16,9 @@ import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-no
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
+
 @Injectable()
-export class SiteDealService {
+export class FacilityFolderCreationService {
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,

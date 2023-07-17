@@ -20,7 +20,7 @@ type RequiredSharepointConfigKeys =
 type RequiredCustodianConfigKeys = 'dealTemplateId' | 'dealTypeGuid';
 
 @Injectable()
-export class DealFolderService {
+export class DealFolderCreationService {
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,

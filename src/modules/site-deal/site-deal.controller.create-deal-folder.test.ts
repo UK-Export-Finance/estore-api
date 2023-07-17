@@ -3,11 +3,11 @@ import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-d
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { DealFolderService } from './deal-folder.service';
+import { DealFolderCreationService } from './deal-folder-creation.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
+import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { SiteDealController } from './site-deal.controller';
-import { SiteDealService } from './site-deal.service';
 
 describe('SiteDealController', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -26,10 +26,10 @@ describe('SiteDealController', () => {
 
     beforeEach(() => {
       serviceCreateDealFolder = jest.fn();
-      const dealFolderService = new DealFolderService(null, null, null, null);
+      const dealFolderService = new DealFolderCreationService(null, null, null, null);
       dealFolderService.createDealFolder = serviceCreateDealFolder;
 
-      controller = new SiteDealController(new SiteDealService(null, null, null, null), dealFolderService);
+      controller = new SiteDealController(new FacilityFolderCreationService(null, null, null, null), dealFolderService);
     });
 
     it('returns the name of the deal folder that was created', async () => {
