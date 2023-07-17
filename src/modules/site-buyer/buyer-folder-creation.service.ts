@@ -15,7 +15,7 @@ type RequiredSharepointConfigKeys = 'scSharepointUrl' | 'scCaseSitesListId' | 't
 type RequiredCustodianConfigKeys = 'buyerTemplateId' | 'buyerTypeGuid';
 
 @Injectable()
-export class SiteBuyerService {
+export class BuyerFolderCreationService {
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,

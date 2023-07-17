@@ -1,13 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { DealFolderService } from './deal-folder.service';
+import { DealFolderCreationService } from './deal-folder-creation.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
+import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { SiteDealController } from './site-deal.controller';
-import { SiteDealService } from './site-deal.service';
 
 describe('SiteDealController', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -26,10 +25,10 @@ describe('SiteDealController', () => {
 
     beforeEach(() => {
       serviceCreateDealFolder = jest.fn();
-      const dealFolderService = new DealFolderService(null, null, null, null);
+      const dealFolderService = new DealFolderCreationService(null, null, null, null);
       dealFolderService.createDealFolder = serviceCreateDealFolder;
 
-      controller = new SiteDealController(new SiteDealService(null, null, null, null), dealFolderService);
+      controller = new SiteDealController(new FacilityFolderCreationService(null, null, null, null), dealFolderService);
     });
 
     it('returns the name of the deal folder that was created', async () => {
@@ -42,7 +41,7 @@ describe('SiteDealController', () => {
       expect(response).toStrictEqual({ folderName: createdFolderName });
     });
 
-    it('throws a BadRequestException that exposes the error message if creating the deal folder throws a FolderDependencyNotFoundException', async () => {
+    it('throws the original error if creating the deal folder throws a FolderDependencyNotFoundException', async () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyNotFound = new FolderDependencyNotFoundException(errorMessage);
       when(serviceCreateDealFolder)
@@ -51,12 +50,12 @@ describe('SiteDealController', () => {
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest);
 
-      await expect(createDealFolderPromise).rejects.toBeInstanceOf(BadRequestException);
+      await expect(createDealFolderPromise).rejects.toBeInstanceOf(FolderDependencyNotFoundException);
       await expect(createDealFolderPromise).rejects.toThrow(errorMessage);
-      await expect(createDealFolderPromise).rejects.toHaveProperty('cause', folderDependencyNotFound);
+      await expect(createDealFolderPromise).rejects.toBe(folderDependencyNotFound);
     });
 
-    it('throws the original error if creating the deal folder throws an a FolderDependencyInvalidException', async () => {
+    it('throws the original error if creating the deal folder throws a FolderDependencyInvalidException', async () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyInvalidException = new FolderDependencyInvalidException(errorMessage);
       when(serviceCreateDealFolder)

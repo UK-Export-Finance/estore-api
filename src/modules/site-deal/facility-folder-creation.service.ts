@@ -16,8 +16,9 @@ import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-no
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
+
 @Injectable()
-export class SiteDealService {
+export class FacilityFolderCreationService {
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
@@ -35,8 +36,8 @@ export class SiteDealService {
     const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
 
     const parentFolderName = this.getParentFolderName(buyerName, dealId);
-
     const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
+
     const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;

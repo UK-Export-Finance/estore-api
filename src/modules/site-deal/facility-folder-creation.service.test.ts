@@ -8,9 +8,9 @@ import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
 import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
-import { SiteDealService } from './site-deal.service';
+import { FacilityFolderCreationService } from './facility-folder-creation.service';
 
-describe('SiteDealService', () => {
+describe('FacilityFolderCreationService', () => {
   const valueGenerator = new RandomValueGenerator();
 
   const {
@@ -62,7 +62,7 @@ describe('SiteDealService', () => {
 
   let findListItems: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
-  let service: SiteDealService;
+  let service: FacilityFolderCreationService;
 
   beforeEach(() => {
     findListItems = jest.fn();
@@ -73,7 +73,7 @@ describe('SiteDealService', () => {
     const custodianService = new CustodianService(null);
     custodianService.createAndProvision = custodianCreateAndProvision;
 
-    service = new SiteDealService(
+    service = new FacilityFolderCreationService(
       {
         tfisSharepointUrl,
         scSharepointUrl,
@@ -91,7 +91,7 @@ describe('SiteDealService', () => {
     );
   });
 
-  it('sends a request to Custodian to create and provision the deal folder', async () => {
+  it('sends a request to Custodian to create and provision the facility folder', async () => {
     whenFindingListItemsThatMatchTheBuyerDealFolder().mockResolvedValueOnce([buyerDealFolderListItem]);
     whenFindingListItemsMatchingTheFacilityTerm().mockResolvedValueOnce([facilityTermListItem]);
     whenCreatingTheFacilityFolderWithCustodian().mockResolvedValueOnce(undefined);

@@ -1,12 +1,11 @@
-import { BadRequestException } from '@nestjs/common';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
+import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
 import { SiteBuyerController } from './site-buyer.controller';
-import { SiteBuyerService } from './site-buyer.service';
 
 describe('SiteBuyerController', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -21,7 +20,7 @@ describe('SiteBuyerController', () => {
 
     beforeEach(() => {
       serviceCreateBuyerFolder = jest.fn();
-      const buyerFolderService = new SiteBuyerService(null, null, null, null);
+      const buyerFolderService = new BuyerFolderCreationService(null, null, null, null);
       buyerFolderService.createBuyerFolder = serviceCreateBuyerFolder;
 
       controller = new SiteBuyerController(buyerFolderService);
@@ -35,16 +34,16 @@ describe('SiteBuyerController', () => {
       expect(response).toStrictEqual({ buyerName: buyerName });
     });
 
-    it('throws a BadRequestException that exposes the error message if creating the buyer folder throws a SiteExporterNotFoundException', async () => {
+    it('throws the original error if creating the buyer folder throws a SiteExporterNotFoundException', async () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyNotFound = new SiteExporterNotFoundException(errorMessage);
       when(serviceCreateBuyerFolder).calledWith(siteId, createBuyerFolderRequestItem).mockRejectedValueOnce(folderDependencyNotFound);
 
       const createBuyerFolderPromise = controller.createBuyerFolder({ siteId }, createBuyerFolderRequest);
 
-      await expect(createBuyerFolderPromise).rejects.toBeInstanceOf(BadRequestException);
+      await expect(createBuyerFolderPromise).rejects.toBeInstanceOf(SiteExporterNotFoundException);
       await expect(createBuyerFolderPromise).rejects.toThrow(errorMessage);
-      await expect(createBuyerFolderPromise).rejects.toHaveProperty('cause', folderDependencyNotFound);
+      await expect(createBuyerFolderPromise).rejects.toBe(folderDependencyNotFound);
     });
 
     it('throws the original error if creating the buyer folder throws an a SiteExporterInvalidException', async () => {
