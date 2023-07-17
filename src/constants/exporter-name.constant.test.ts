@@ -22,6 +22,7 @@ describe('ExporterName', () => {
         expect(value).not.toMatch(EXPORTER_NAME.REGEX);
       });
     });
+
     describe('Substrings', () => {
       it.each(allowedSubstringTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
@@ -31,6 +32,7 @@ describe('ExporterName', () => {
         expect(value).not.toMatch(EXPORTER_NAME.REGEX);
       });
     });
+
     describe('Prefixes', () => {
       it.each(allowedPrefixTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
@@ -40,6 +42,7 @@ describe('ExporterName', () => {
         expect(value).not.toMatch(EXPORTER_NAME.REGEX);
       });
     });
+
     describe('Suffixes', () => {
       it.each(allowedSuffixTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
