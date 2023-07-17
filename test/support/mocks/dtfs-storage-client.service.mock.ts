@@ -3,8 +3,10 @@ import { when } from 'jest-when';
 
 class MockFileShareClient {
   getProperties: jest.Mock;
+  download: jest.Mock;
   constructor() {
     this.getProperties = jest.fn();
+    this.download = jest.fn();
   }
 }
 
@@ -19,17 +21,25 @@ export class MockDtfsStorageClientService {
     this.getShareFileClient = jest.fn();
   }
 
-  mockSuccessfulGetShareFileClientCall(fileName: string, fileLocationPath: string): void {
+  mockSuccessfulGetShareFileClientCall(fileName: string, fileLocationPath: string): MockDtfsStorageClientService {
     when(this.getShareFileClient).calledWith(fileName, fileLocationPath).mockReturnValueOnce(this.fileShareClient);
+    return this;
   }
 
-  mockSuccessfulGetPropertiesCall(fileSizeInBytes: number): void {
+  mockSuccessfulGetPropertiesCall(fileSizeInBytes: number): MockDtfsStorageClientService {
     when(this.fileShareClient.getProperties)
       .calledWith()
       .mockResolvedValueOnce({ contentLength: fileSizeInBytes } as FileGetPropertiesResponse);
+    return this;
   }
 
-  mockUnsuccessfulGetPropertiesCall(error: RestError): void {
+  mockUnsuccessfulGetPropertiesCall(error: RestError): MockDtfsStorageClientService {
     when(this.fileShareClient.getProperties).calledWith().mockRejectedValueOnce(error);
+    return this;
+  }
+
+  mockSuccessfulDownloadCall(file: { readableStreamBody: NodeJS.ReadableStream; _response: any }): MockDtfsStorageClientService {
+    when(this.fileShareClient.download).calledWith().mockResolvedValueOnce(file);
+    return this;
   }
 }

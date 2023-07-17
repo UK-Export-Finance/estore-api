@@ -141,9 +141,7 @@ export class DealFolderService {
     const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
     const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
-    const urlToUpdateFileInfo = `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
-
-    return urlToUpdateFileInfo;
+    return `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
   }
 
   private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
@@ -158,9 +156,8 @@ export class DealFolderService {
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
     return (
       this.graphService
-        .get<{ value: { webUrl: string; id: string; fields: { FileLeafRef: string } }[] }>({
+        .get<{ value: { webUrl: string; id: string }[] }>({
           path: `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items`,
-          expand: 'fields',
         })
         .then((response) => response.value)
         .then((list) => list.find((item) => item.webUrl === webUrl))

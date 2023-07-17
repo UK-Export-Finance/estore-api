@@ -1,12 +1,4 @@
-import {
-  Client,
-  GraphRequest,
-  LargeFileUploadSession,
-  LargeFileUploadTask,
-  LargeFileUploadTaskOptions,
-  StreamUpload,
-  UploadResult,
-} from '@microsoft/microsoft-graph-client';
+import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, UploadResult } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
@@ -18,7 +10,7 @@ import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownErro
 export class GraphService {
   private readonly client: Client;
 
-  constructor(graphClientService: GraphClientService) {
+  constructor(private readonly graphClientService: GraphClientService) {
     this.client = graphClientService.client;
   }
 
@@ -99,16 +91,11 @@ export class GraphService {
 
   async uploadFile(file: NodeJS.ReadableStream, fileSizeInBytes: number, fileName: string, urlToCreateUploadSession: string): Promise<UploadResult> {
     try {
-      const uploadSession: LargeFileUploadSession = await LargeFileUploadTask.createUploadSession(this.client, urlToCreateUploadSession, {
-        item: {
-          '@microsoft.graph.conflictBehavior': 'fail',
-        },
-      });
+      const uploadSessionHeaders = { item: { '@microsoft.graph.conflictBehavior': 'fail' } };
+      const uploadSession: LargeFileUploadSession = await this.graphClientService.getFileUploadSession(urlToCreateUploadSession, uploadSessionHeaders);
       const fileAsReadable = new Readable().wrap(file);
-      const options: LargeFileUploadTaskOptions = {
-        rangeSize: fileSizeInBytes,
-      };
-      const uploadTask = new LargeFileUploadTask(this.client, new StreamUpload(fileAsReadable, fileName, fileSizeInBytes), uploadSession, options);
+      const uploadTaskOptions: LargeFileUploadTaskOptions = { rangeSize: fileSizeInBytes };
+      const uploadTask = this.graphClientService.getFileUploadTask(fileAsReadable, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
       return await uploadTask.upload();
     } catch (error) {
       createGraphError({
