@@ -12,7 +12,8 @@ import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
-import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
+import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
@@ -73,15 +74,21 @@ export class FacilityFolderCreationService {
       filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
     });
 
-    if (!parentFolderListItems.length || !parentFolderListItems[0].fields.id) {
-      throw new SiteDealFolderNotFoundException(
+    if (!parentFolderListItems.length) {
+      throw new FolderDependencyNotFoundException(
+        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      );
+    }
+
+    if (!parentFolderListItems[0].fields.id) {
+      throw new FolderDependencyInvalidException(
         `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
       );
     }
 
     const parentFolderId = parseInt(parentFolderListItems[0].fields.id);
     if (isNaN(parentFolderId)) {
-      throw new SiteDealFolderNotFoundException(
+      throw new FolderDependencyInvalidException(
         `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
       );
     }
@@ -100,8 +107,12 @@ export class FacilityFolderCreationService {
       ),
     });
 
-    if (!facilityTermListItems.length || !facilityTermListItems[0].fields.FacilityGUID) {
-      throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
+    if (!facilityTermListItems.length) {
+      throw new FolderDependencyNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
+    }
+
+    if (!facilityTermListItems[0].fields.FacilityGUID) {
+      throw new FolderDependencyInvalidException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
     }
 
     return facilityTermListItems[0].fields.FacilityGUID;

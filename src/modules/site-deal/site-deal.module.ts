@@ -4,12 +4,11 @@ import { SharepointModule } from '@ukef/modules/sharepoint/sharepoint.module';
 
 import { DealFolderCreationService } from './deal-folder-creation.service';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
-import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './interceptor/site-deal-not-found-exception-to-bad-request-transform.interceptor';
 import { SiteDealController } from './site-deal.controller';
 
 @Module({
   imports: [CustodianModule, SharepointModule],
   controllers: [SiteDealController],
-  providers: [FacilityFolderCreationService, SiteDealNotFoundExceptionToBadRequestTransformInterceptor, DealFolderCreationService],
+  providers: [FacilityFolderCreationService, DealFolderCreationService],
 })
 export class SiteDealModule {}
