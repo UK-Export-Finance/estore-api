@@ -1,4 +1,4 @@
-import { ENUMS, SHAREPOINT } from '@ukef/constants';
+import { BUYER_NAME, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
@@ -10,7 +10,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The name of the buyer used in the deal.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^(?!\s)[\w\-.()\s]+(?<![\s.])$/,
+    pattern: BUYER_NAME.REGEX,
     example: EXAMPLES.BUYER_NAME,
   })
   buyerName: string;
@@ -24,7 +24,7 @@ export class UploadFileInDealFolderRequestItem {
 
   @ValidatedStringApiProperty({
     description: 'The file name with the file extension.',
-    minLength: 1,
+    minLength: 5,
     maxLength: 250,
     pattern: SHAREPOINT.DOCUMENT_FILE_NAME.REGEX,
     example: EXAMPLES.FILE_NAME,
@@ -35,7 +35,7 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The path of the location/folder in Azure storage from which the file needs to be loaded.',
     minLength: 1,
     maxLength: 250,
-    pattern: /^[\w\-:/\\()\s]+$/,
+    pattern: FILE_LOCATION_PATH.REGEX,
     example: EXAMPLES.FILE_LOCATION_PATH,
   })
   fileLocationPath: string;

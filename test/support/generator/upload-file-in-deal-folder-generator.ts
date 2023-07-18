@@ -118,12 +118,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const getItemIdPath = `${getSharepointSiteIdPath}:/lists/${values.listId}/items`;
 
-    const encodedBuyerName = encodeURIComponent(values.buyerName);
-    const encodedDealId = encodeURIComponent(values.dealId);
-    const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
-    const encodedFileName = encodeURIComponent(values.fileName);
-
-    const itemWebUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${values.ukefSiteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
+    const itemWebUrl = this.constructWebUrlForItem(values.ukefSiteId, values.dealId, values.buyerName, values.fileName);
 
     const getItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
 
@@ -165,6 +160,15 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       updateFileInfoPath,
       updateFileInfoRequest,
     };
+  }
+
+  constructWebUrlForItem(siteId: string, dealId: string, buyerName: string, fileName: string): string {
+    const encodedBuyerName = encodeURIComponent(buyerName);
+    const encodedDealId = encodeURIComponent(dealId);
+    const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
+    const encodedFileName = encodeURIComponent(fileName);
+
+    return `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${siteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 }
 

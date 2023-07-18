@@ -138,13 +138,13 @@ export class DealFolderService {
   private async constructUrlToUpdateFileInfo(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
-    const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
+    const webUrlForFile = this.constructWebUrlForItem(fileName, dealId, buyerName, ukefSiteId);
     const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
     return `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
   }
 
-  private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
+  private constructWebUrlForItem(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;

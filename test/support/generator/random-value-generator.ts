@@ -109,11 +109,13 @@ export class RandomValueGenerator {
     return this.chance.string({ length, pool });
   }
 
-  fileName(options?: { length?: number }) {
-    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
+  fileName(options?: { length?: number; lengthOfExtension?: number }) {
+    const totalLength = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 5, max: 250 });
+    const lengthOfExtension = totalLength < 6 ? 3 : this.chance.integer({ min: 3, max: 4 });
+    const possibleExtensions = Object.values(ALLOWED_DOCUMENT_FILE_TYPE).filter((extension) => extension.length === lengthOfExtension);
+    const randomExtension = this.arrayElement(possibleExtensions);
     const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
-    const randomFileExtension = this.arrayElement(Object.values(ALLOWED_DOCUMENT_FILE_TYPE));
-    return `${this.chance.string({ length, pool })}.${randomFileExtension}`;
+    return `${this.chance.string({ length: totalLength - lengthOfExtension - 1, pool })}.${randomExtension}`;
   }
 
   arrayElement<T>(array: T[]): T {
