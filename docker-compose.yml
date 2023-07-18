@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: .
-    image: api
+    image: estore-api
     container_name: estore-api
     restart: always
     command: npm run start:prod
