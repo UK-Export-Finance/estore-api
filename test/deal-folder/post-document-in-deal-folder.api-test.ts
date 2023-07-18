@@ -80,20 +80,25 @@ describe('postDocumentInDealFolder', () => {
     mockGraphClientService
       // request to get sharepoint site id
       .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
-      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse)
+      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+    mockGraphClientService
       // request to get drive id
       .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
-      .mockSuccessfulGraphGetCall(getDriveIdResponse)
+      .mockSuccessfulGraphGetCall(getDriveIdResponse);
+    mockGraphClientService
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
       .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
-      .mockSuccessfulUploadCall()
+      .mockSuccessfulUploadCall();
+    mockGraphClientService
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(getListIdPath)
-      .mockSuccessfulGraphGetCall(getListIdResponse)
+      .mockSuccessfulGraphGetCall(getListIdResponse);
+    mockGraphClientService
       // request to get item id
       .mockSuccessfulGraphApiCallWithPath(getItemIdPath)
-      .mockSuccessfulGraphGetCall(getItemIdResponse)
+      .mockSuccessfulGraphGetCall(getItemIdResponse);
+    mockGraphClientService
       // request to update file information
       .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath)
       .mockSuccessfulGraphPatchCallWithRequestBody(updateFileInfoRequest);

@@ -49,14 +49,13 @@ describe('getSiteStatusByExporterName', () => {
   });
 
   withSharedGraphExceptionHandlingTests({
-    givenRequestWouldOtherwiseSucceed: () => {
+    givenRequestWouldOtherwiseSucceed: () => {},
+    givenGraphServiceCallWillThrowError: (error: Error) => {
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCallWithExpandString(expand)
-        .mockSuccessfulFilterCallWithFilterString(filter);
-    },
-    givenGraphServiceCallWillThrowError: (error: Error) => {
-      mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockUnsuccessfulGraphGetCall(error);
     },
     makeRequest: () => makeRequest(),
   });
@@ -116,7 +115,7 @@ describe('getSiteStatusByExporterName', () => {
     makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
     givenAnyRequestQueryWouldSucceed: () => {
       mockGraphClientService
-        .mockSuccessfulGraphApiCall()
+        .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCall()
         .mockSuccessfulFilterCall()
         .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
