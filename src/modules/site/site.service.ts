@@ -13,13 +13,10 @@ import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
-type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId';
 
 @Injectable()
 export class SiteService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
     private readonly graphService: GraphService,
     private readonly mdmService: MdmService,
   ) {}
@@ -52,18 +49,7 @@ export class SiteService {
 
   private async createSite(exporterName: string): Promise<CreateSiteResponse> {
     const newSiteId = await this.createSiteId();
-    const data = await this.graphService.post<GraphCreateSiteResponseDto>({
-      path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
-      requestBody: {
-        fields: {
-          Title: exporterName,
-          URL: newSiteId,
-          HomePage: exporterName,
-          Description: exporterName,
-        },
-      },
-    });
-
+    const data = await this.graphService.createSite({ exporterName, newSiteId });
     const { URL: siteId, Sitestatus: siteStatus } = data.fields;
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
@@ -72,13 +58,9 @@ export class SiteService {
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
-    const sharepointService = new SharepointService(this.graphService); // TODO APIM-136: inject sharepoint service instead
-    const listItems = await sharepointService.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
-      siteUrl: this.sharepointConfig.tfisSharepointUrl,
-      listId: this.sharepointConfig.tfisCaseSitesListId,
-      fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
-    });
+    const listItems = await this.graphService.getSiteFromSiteListByExporterName(exporterName);
+
+    // TODO apim-472 update error handling around here
     if (!listItems.length) {
       return ifNotFound();
     }

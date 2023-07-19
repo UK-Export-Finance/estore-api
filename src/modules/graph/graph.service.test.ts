@@ -11,6 +11,9 @@ describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
   let graphService: GraphService;
 
+  const tfisSharepointUrl = valueGenerator.word();
+  const tfisCaseSitesListId = valueGenerator.word();
+
   const path = valueGenerator.string();
   const filterStr = valueGenerator.string();
   const expandStr = valueGenerator.string();
@@ -24,7 +27,7 @@ describe('GraphService', () => {
   const expectedPostResponse = valueGenerator.string();
 
   beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService);
+    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId });
     jest.resetAllMocks();
     resetAllWhenMocks();
   });
@@ -46,6 +49,7 @@ describe('GraphService', () => {
         expandCalled: false,
         getCalled: true,
       });
+
       expectations.forEach((expectation) => expectation());
 
       expect(result).toEqual(expectedResponse);

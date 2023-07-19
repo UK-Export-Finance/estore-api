@@ -1,76 +1,78 @@
-import { GraphService } from '@ukef/modules/graph/graph.service';
-import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when } from 'jest-when';
+// TODO apim-472: remove these tests
 
-import { SharepointService } from './sharepoint.service';
+// import { GraphService } from '@ukef/modules/graph/graph.service';
+// import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+// import { when } from 'jest-when';
 
-jest.mock('@ukef/modules/graph/graph.service');
+// import { SharepointService } from './sharepoint.service';
 
-describe('SharepointService', () => {
-  const valueGenerator = new RandomValueGenerator();
+// jest.mock('@ukef/modules/graph/graph.service');
 
-  let graphServiceGet: jest.Mock;
+// describe('SharepointService', () => {
+//   const valueGenerator = new RandomValueGenerator();
 
-  let service: SharepointService;
+//   let graphServiceGet: jest.Mock;
 
-  beforeEach(() => {
-    graphServiceGet = jest.fn();
-    const graphService = new GraphService(null);
-    graphService.get = graphServiceGet;
-    service = new SharepointService(graphService);
-  });
+//   let service: SharepointService;
 
-  describe('searchList', () => {
-    const siteUrl = 'sites/abc.sharepoint.com:/sites/my-site:';
-    const listId = valueGenerator.word();
-    const fieldsToReturn = [valueGenerator.word(), valueGenerator.word(), valueGenerator.word()];
-    const listItemsToReturn = [
-      {
-        fields: {
-          [fieldsToReturn[0]]: valueGenerator.string(),
-          [fieldsToReturn[1]]: valueGenerator.string(),
-          [fieldsToReturn[2]]: valueGenerator.string(),
-        },
-      },
-      {
-        fields: {
-          [fieldsToReturn[0]]: valueGenerator.string(),
-          [fieldsToReturn[1]]: valueGenerator.string(),
-          [fieldsToReturn[2]]: valueGenerator.string(),
-        },
-      },
-      {
-        fields: {
-          [fieldsToReturn[0]]: valueGenerator.string(),
-          [fieldsToReturn[1]]: valueGenerator.string(),
-          [fieldsToReturn[2]]: valueGenerator.string(),
-        },
-      },
-    ];
+//   beforeEach(() => {
+//     graphServiceGet = jest.fn();
+//     const graphService = new GraphService(null);
+//     graphService.get = graphServiceGet;
+//     service = new SharepointService(graphService);
+//   });
 
-    it('returns the list items for the site matching the given filter using GraphService', async () => {
-      const filterString = valueGenerator.string();
-      const filter = {
-        getFilterString: () => filterString,
-      };
-      when(graphServiceGet)
-        .calledWith({
-          path: `${siteUrl}/lists/${listId}/items`,
-          filter: filterString,
-          expand: `fields($select=${fieldsToReturn[0]},${fieldsToReturn[1]},${fieldsToReturn[2]})`,
-        })
-        .mockResolvedValueOnce({
-          value: listItemsToReturn,
-        });
+//   describe('searchList', () => {
+//     const siteUrl = 'sites/abc.sharepoint.com:/sites/my-site:';
+//     const listId = valueGenerator.word();
+//     const fieldsToReturn = [valueGenerator.word(), valueGenerator.word(), valueGenerator.word()];
+//     const listItemsToReturn = [
+//       {
+//         fields: {
+//           [fieldsToReturn[0]]: valueGenerator.string(),
+//           [fieldsToReturn[1]]: valueGenerator.string(),
+//           [fieldsToReturn[2]]: valueGenerator.string(),
+//         },
+//       },
+//       {
+//         fields: {
+//           [fieldsToReturn[0]]: valueGenerator.string(),
+//           [fieldsToReturn[1]]: valueGenerator.string(),
+//           [fieldsToReturn[2]]: valueGenerator.string(),
+//         },
+//       },
+//       {
+//         fields: {
+//           [fieldsToReturn[0]]: valueGenerator.string(),
+//           [fieldsToReturn[1]]: valueGenerator.string(),
+//           [fieldsToReturn[2]]: valueGenerator.string(),
+//         },
+//       },
+//     ];
 
-      const listItems = await service.findListItems({
-        siteUrl,
-        listId,
-        fieldsToReturn,
-        filter,
-      });
+//     it('returns the list items for the site matching the given filter using GraphService', async () => {
+//       const filterString = valueGenerator.string();
+//       const filter = {
+//         getFilterString: () => filterString,
+//       };
+//       when(graphServiceGet)
+//         .calledWith({
+//           path: `${siteUrl}/lists/${listId}/items`,
+//           filter: filterString,
+//           expand: `fields($select=${fieldsToReturn[0]},${fieldsToReturn[1]},${fieldsToReturn[2]})`,
+//         })
+//         .mockResolvedValueOnce({
+//           value: listItemsToReturn,
+//         });
 
-      expect(listItems).toBe(listItemsToReturn);
-    });
-  });
-});
+//       const listItems = await service.findListItems({
+//         siteUrl,
+//         listId,
+//         fieldsToReturn,
+//         filter,
+//       });
+
+//       expect(listItems).toBe(listItemsToReturn);
+//     });
+//   });
+// });

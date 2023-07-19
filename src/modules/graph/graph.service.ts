@@ -1,17 +1,74 @@
 import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, UploadResult } from '@microsoft/microsoft-graph-client';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
 
 import { createGraphError } from './create-graph-error';
 import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
+import SharepointConfig from '@ukef/config/sharepoint.config';
+import { ConfigType } from '@nestjs/config';
+import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
+import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { ListItemFilter } from '../sharepoint/list-item-filter/list-item-filter.interface';
+import { ListItem } from '../sharepoint/list-item.interface';
+
+type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId';
 
 @Injectable()
 export class GraphService {
   private readonly client: Client;
 
-  constructor(private readonly graphClientService: GraphClientService) {
+  constructor(
+    private readonly graphClientService: GraphClientService,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
+  ) {
     this.client = graphClientService.client;
+  }
+
+  async createSite({ exporterName, newSiteId }) {
+    return await this.post<GraphCreateSiteResponseDto>({
+      path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
+      requestBody: {
+        fields: {
+          Title: exporterName,
+          URL: newSiteId,
+          HomePage: exporterName,
+          Description: exporterName,
+        },
+      },
+    });
+  }
+
+async getSiteFromSiteListByExporterName(exporterName) {
+    return await this.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
+      siteUrl: this.sharepointConfig.tfisSharepointUrl,
+      listId: this.sharepointConfig.tfisCaseSitesListId,
+      fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
+    });
+  }
+
+    // TODO apim-472: tests (commonise existing)
+  private async findListItems<Fields>({
+    siteUrl,
+    listId,
+    fieldsToReturn,
+    filter,
+  }: {
+    siteUrl: string;
+    listId: string;
+    fieldsToReturn: (keyof Fields)[];
+    filter: ListItemFilter;
+  }): Promise<ListItem<Fields>[]> {
+    const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
+    const { value: listItemsMatchingFilter } = await this.get<{ value: ListItem<Fields>[] }>({
+      path: `${siteUrl}/lists/${listId}/items`,
+      filter: filter.getFilterString(),
+      expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
+    });
+
+    return listItemsMatchingFilter;
   }
 
   async get<T>({ path, filter, expand, knownErrors }: GraphGetParams): Promise<T> {

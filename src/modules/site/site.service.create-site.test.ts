@@ -20,20 +20,28 @@ describe('SiteService', () => {
   let siteService: SiteService;
   let graphServiceGetRequest: jest.Mock;
   let graphServicePostRequest: jest.Mock;
+  let graphServiceCreateSiteRequest: jest.Mock;
+  let graphServiceGetSiteFromSiteListByExporterNameRequest: jest.Mock;
   let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
-    const graphService = new GraphService(null);
+    const graphService = new GraphService(null, null);
     graphServiceGetRequest = jest.fn();
     graphService.get = graphServiceGetRequest;
     graphServicePostRequest = jest.fn();
     graphService.post = graphServicePostRequest;
+    graphServiceCreateSiteRequest = jest.fn();
+    graphService.createSite = graphServiceCreateSiteRequest;
+    graphServiceGetSiteFromSiteListByExporterNameRequest = jest.fn();
+    graphService.getSiteFromSiteListByExporterName = graphServiceGetSiteFromSiteListByExporterNameRequest;
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
+    siteService = new SiteService(graphService, mdmService);
     resetAllWhenMocks();
   });
+
+  // TODO apim-472: update these tests to use correct genreator
 
   describe('createSite', () => {
     it('creates site and returns new site id and status from the service', async () => {
