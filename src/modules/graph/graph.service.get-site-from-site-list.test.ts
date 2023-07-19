@@ -4,6 +4,7 @@ import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
 import { getCallExpectations } from './graph.test-parts/call-expectations-test-parts';
+import { withGetMethodTests } from './graph.test-parts/with-get-method-tests';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -15,6 +16,9 @@ describe('GraphService', () => {
 
   const mockGraphClientService = new MockGraphClientService();
 
+  const exporterName = valueGenerator.exporterName();
+  const response = valueGenerator.string();
+
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId, tfisFacilityHiddenListTermStoreId });
     jest.resetAllMocks();
@@ -23,32 +27,14 @@ describe('GraphService', () => {
 
   // TODO apim-472 can these tests hitting list be combined?
   describe('getSiteFromSiteListByExporterName', () => {
-    it('returns the list items for the site matching the given filter using GraphService', async () => {
-      const exporterName = valueGenerator.exporterName();
-      const expectedPath = `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`;
-      const expectedFilterString = `fields/Title eq '${exporterName}'`;
-      const expectedExpandString = `fields($select=Title,URL,Sitestatus)`;
-
-      const expectedResponse = valueGenerator.string();
-
-      mockGraphClientService
-        .mockSuccessfulGraphApiCallWithPath(`${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`)
-        .mockSuccessfulFilterCallWithFilterString(`fields/Title eq '${exporterName}'`)
-        .mockSuccessfulExpandCallWithExpandString(`fields($select=Title,URL,Sitestatus)`)
-        .mockSuccessfulGraphGetCall({ value: expectedResponse });
-
-      const result = await graphService.getSiteFromSiteListByExporterName(exporterName);
-
-      const expectations = getCallExpectations({
-        mockGraphClientService,
-        apiCalledWith: expectedPath,
-        filterCalledWith: expectedFilterString,
-        expandCalledWith: expectedExpandString,
-        getCalled: true,
-      });
-      expectations.forEach((expectation) => expectation());
-
-      expect(result).toEqual(expectedResponse);
-    });
+    withGetMethodTests({
+      mockGraphClientService,
+      path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
+      filterString: `fields/Title eq '${exporterName}'`,
+      expandString: `fields($select=Title,URL,Sitestatus)`,
+      getResponse: {value: response},
+      methodResponse: response,
+      makeRequest: () => graphService.getSiteFromSiteListByExporterName(exporterName),
+    })
   });
 });
