@@ -1,8 +1,6 @@
-import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, LargeFileUploadSession, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
+import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
 import { when } from 'jest-when';
 import { Readable } from 'stream';
-import { Readable } from 'stream';
-
 class MockClient {
   api: jest.Mock;
   constructor() {
@@ -13,7 +11,6 @@ class MockClient {
 class MockRequest {
   get: jest.Mock<any, any, any>;
   post: jest.Mock<any, any, any>;
-  patch: jest.Mock<any, any, any>;
   patch: jest.Mock<any, any, any>;
   filter: jest.Mock<any, any, any>;
   expand: jest.Mock<any, any, any>;
@@ -35,19 +32,9 @@ class MockFileUploadTask {
   }
 }
 
-class MockFileUploadTask {
-  upload: jest.Mock;
-  constructor() {
-    this.upload = jest.fn();
-  }
-}
-
 export class MockGraphClientService {
   client: Client;
   request: GraphRequest;
-  mockFileUploadTask: MockFileUploadTask;
-  getFileUploadSession: jest.Mock;
-  getFileUploadTask: jest.Mock;
   mockFileUploadTask: MockFileUploadTask;
   getFileUploadSession: jest.Mock;
   getFileUploadTask: jest.Mock;
@@ -70,28 +57,24 @@ export class MockGraphClientService {
   mockSuccessfulGraphGetCall<T>(response: T): MockGraphClientService {
     when(this.request.get).calledWith().mockResolvedValueOnce(response);
     return this;
-    return this;
   }
 
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphClientService {
     when(this.request.get).calledWith().mockRejectedValueOnce(error);
     return this;
-    return this;
   }
 
-  mockSuccessfulGraphPostCall<T>(response?: T): MockGraphClientService: MockGraphClientService {
+  mockSuccessfulGraphPostCall<T>(response?: T): MockGraphClientService {
     when(this.request.post).calledWith(expect.anything()).mockResolvedValueOnce(response);
     return this;
-    return this;
   }
 
-  mockSuccessfulGraphPostCallWithRequestBody<T, U>(requestBody: T, response?: U): MockGraphClientService: MockGraphClientService {
+  mockSuccessfulGraphPostCallWithRequestBody<T, U>(requestBody: T, response?: U): MockGraphClientService {
     when(this.request.post).calledWith(requestBody).mockResolvedValueOnce(response);
     return this;
-    return this;
   }
 
-  mockUnsuccessfulGraphPostCallWithRequestBody(requestBody, error: unknown): MockGraphClientService: MockGraphClientService {
+  mockUnsuccessfulGraphPostCallWithRequestBody(requestBody, error: unknown): MockGraphClientService {
     when(this.request.post).calledWith(requestBody).mockRejectedValueOnce(error);
     return this;
   }

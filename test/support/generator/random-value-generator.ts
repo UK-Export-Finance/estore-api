@@ -7,10 +7,6 @@ interface Enum {
   [key: number | string]: string | number;
 }
 
-interface Enum {
-  [key: number | string]: string | number;
-}
-
 export class RandomValueGenerator {
   private static readonly seed = 0;
   private readonly chance: Chance.Chance;
