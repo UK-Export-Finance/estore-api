@@ -16,8 +16,8 @@ const disallowedPrefixesRegex = new RegExp(`(?!(${disallowedPrefixes.join(`)|(`)
 const disallowedSuffixesRegex = new RegExp(`(?!.*(${disallowedSuffixes.join(')|(')})$)`);
 const disallowedCharactersRegex = new RegExp(`(?!.*[${disallowedCharacters.join('')}])`);
 const disallowedSubstringsRegex = new RegExp(`(?!.*(${disallowedSubstrings.join(')|(')}))`);
-const disallowedStringsRegex = new RegExp(`(?!^(${disallowedStrings.join('|')})$)`);
-const disallowedStringsOnRootRegex = new RegExp(`(?!^(${disallowedStringsOnRoot.join('|')})$)`);
+const disallowedStringsRegex = new RegExp(`(?!(${disallowedStrings.join('|')})$)`);
+const disallowedStringsOnRootRegex = new RegExp(`(?!(${disallowedStringsOnRoot.join('|')})$)`);
 
 const assembledRegexExpression = new RegExp(
   '^' +
