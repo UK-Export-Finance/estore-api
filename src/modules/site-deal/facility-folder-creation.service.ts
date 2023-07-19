@@ -36,14 +36,14 @@ export class FacilityFolderCreationService {
   ): Promise<CreateFolderResponseDto> {
     const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
 
-    const parentFolderName = this.getParentFolderName(buyerName, dealId);
+    const dealFolderName = this.getDealFolderName(buyerName, dealId);
     const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
 
-    const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
+    const dealFolderId = await this.getDealFolderId(siteId, dealFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
-    const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, parentFolderId, termGuid, termTitle);
+    const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, dealFolderId, termGuid, termTitle);
 
     await this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);
 
@@ -56,12 +56,12 @@ export class FacilityFolderCreationService {
     return `F ${facilityIdentifier}`;
   }
 
-  private getParentFolderName(buyerName: string, dealId: string): string {
+  private getDealFolderName(buyerName: string, dealId: string): string {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getParentFolderId(siteId: string, parentFolderName: string): Promise<number> {
-    const parentFolderListItems = await this.sharepointService.findListItems<{
+  private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
+    const dealFolderListItems = await this.sharepointService.findListItems<{
       Title: string;
       ServerRelativeUrl: string;
       Code: string;
@@ -71,29 +71,28 @@ export class FacilityFolderCreationService {
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityListId,
       fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
+      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${dealFolderName}` }),
     });
 
-    if (!parentFolderListItems.length) {
+    if (!dealFolderListItems.length) {
       throw new FolderDependencyNotFoundException(
-        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+        `Site deal folder not found: ${dealFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
       );
     }
 
-    if (!parentFolderListItems[0].fields.id) {
+    const dealFolderIdString = dealFolderListItems[0].fields.id;
+    if (!dealFolderIdString) {
+      throw new FolderDependencyInvalidException(`Missing id for the deal folder ${dealFolderName} in site ${siteId}.`);
+    }
+
+    const dealFolderId = parseInt(dealFolderIdString);
+    if (isNaN(dealFolderId)) {
       throw new FolderDependencyInvalidException(
-        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+        `The id for the deal folder ${dealFolderName} in site ${siteId} is not a number (the value is ${dealFolderIdString}).`,
       );
     }
 
-    const parentFolderId = parseInt(parentFolderListItems[0].fields.id);
-    if (isNaN(parentFolderId)) {
-      throw new FolderDependencyInvalidException(
-        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
-      );
-    }
-
-    return parentFolderId;
+    return dealFolderId;
   }
 
   private async getTermGuid(facilityIdentifier: string) {
@@ -108,19 +107,20 @@ export class FacilityFolderCreationService {
     });
 
     if (!facilityTermListItems.length) {
-      throw new FolderDependencyNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
+      throw new FolderDependencyNotFoundException(`Facility term not found: ${facilityIdentifier}. To create this resource, call POST /terms/facilities.`);
     }
 
-    if (!facilityTermListItems[0].fields.FacilityGUID) {
-      throw new FolderDependencyInvalidException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
+    const facilityGuid = facilityTermListItems[0].fields.FacilityGUID;
+    if (!facilityGuid) {
+      throw new FolderDependencyInvalidException(`Missing FacilityGUID for facility term ${facilityIdentifier}.`);
     }
 
-    return facilityTermListItems[0].fields.FacilityGUID;
+    return facilityGuid;
   }
 
   private createCustodianCreateAndProvisionRequest(
     facilityFolderName: string,
-    parentFolderId: number,
+    dealFolderId: number,
     termGuid: string,
     termTitle: string,
   ): CustodianCreateAndProvisionRequest {
@@ -129,7 +129,7 @@ export class FacilityFolderCreationService {
       Id: 0,
       Code: '',
       TemplateId: this.custodianConfig.facilityTemplateId,
-      ParentId: parentFolderId,
+      ParentId: dealFolderId,
       InterestedParties: '',
       Secure: false,
       DoNotSubscribeInterestedParties: false,
