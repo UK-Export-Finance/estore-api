@@ -1,4 +1,6 @@
-import { BUYER_NAME, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
+import { RestError } from '@azure/storage-file-share';
+import { GraphError } from '@microsoft/microsoft-graph-client';
+import { BUYER_NAME, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
@@ -7,6 +9,7 @@ import { withStringFieldValidationApiTests } from '@ukef-test/common-tests/reque
 import { withDealIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/deal-id-param-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { Api } from '@ukef-test/support/api';
+import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { MockDtfsStorageClientService } from '@ukef-test/support/mocks/dtfs-storage-client.service.mock';
@@ -35,7 +38,6 @@ describe('postDocumentInDealFolder', () => {
     getItemIdPath,
     getItemIdResponse,
     updateFileInfoPath,
-    updateFileInfoRequest,
   } = uploadFileInDealFolderGenerator.generate({ numberToGenerate: 1 });
   const [{ buyerName, fileName, fileLocationPath }] = uploadFileInDealFolderRequest;
   const { siteId, dealId } = uploadFileInDealFolderParams;
@@ -65,20 +67,163 @@ describe('postDocumentInDealFolder', () => {
       api.postWithoutAuth(getPostDocumentUrl(siteId, dealId), uploadFileInDealFolderRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  describe('happy path', () => {
-    it('returns the path to the uploaded file with status code 201 when successful', async () => {
-      mockSuccessfulCompleteRequest();
+  describe('happy paths', () => {
+    const estoreDocumentTypeIdApplication = ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION;
+    const estoreDocumentTypeIdFinancialStatement = ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT;
+    const estoreDocumentTypeIdBusinessInformation = ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION;
 
-      const { status, body } = await makeRequest();
+    const documentTypeTestInputs = [
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.EXPORTER_QUESTIONNAIRE,
+        documentTitle: 'Supplementary Questionnaire',
+        documentTypeId: estoreDocumentTypeIdApplication,
+      },
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.AUDITED_FINANCIAL_STATEMENTS,
+        documentTitle: 'Annual Report',
+        documentTypeId: estoreDocumentTypeIdFinancialStatement,
+      },
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.YEAR_TO_DATE_MANAGEMENT,
+        documentTitle: 'Financial Statement',
+        documentTypeId: estoreDocumentTypeIdFinancialStatement,
+      },
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.FINANCIAL_FORECASTS,
+        documentTitle: 'Financial Forecast',
+        documentTypeId: estoreDocumentTypeIdFinancialStatement,
+      },
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.FINANCIAL_INFORMATION_COMMENTARY,
+        documentTitle: 'Financial Commentary',
+        documentTypeId: estoreDocumentTypeIdFinancialStatement,
+      },
+      {
+        documentType: ENUMS.DOCUMENT_TYPES.CORPORATE_STRUCTURE,
+        documentTitle: 'Corporate Structure Diagram',
+        documentTypeId: estoreDocumentTypeIdBusinessInformation,
+      },
+    ];
 
-      expect(status).toBe(201);
-      expect(body).toEqual(uploadFileInDealFolderResponse);
-    });
+    it.each(documentTypeTestInputs)(
+      'returns the path to the uploaded file with status code 201 if it is successfully uploaded when the document type is $documentType',
+      async ({ documentType, documentTitle, documentTypeId }) => {
+        mockSuccessfulCompleteRequest();
+
+        const uploadFileInDealFolderRequestWithModifiedDocumentTypeField: UploadFileInDealFolderRequestDto = [
+          { ...uploadFileInDealFolderRequest[0], documentType },
+        ];
+
+        const updateFileInfoRequest = {
+          Title: documentTitle,
+          Document_x0020_Status: DOCUMENT_X0020_STATUS,
+          [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
+        };
+
+        const { status, body } = await makeRequestWithBody(uploadFileInDealFolderRequestWithModifiedDocumentTypeField);
+
+        expect(mockGraphClientService.request.patch).toHaveBeenCalledWith(updateFileInfoRequest);
+        expect(mockGraphClientService.mockFileUploadTask.upload).toHaveBeenCalledTimes(1);
+        expect(status).toBe(201);
+        expect(body).toEqual(uploadFileInDealFolderResponse);
+      },
+    );
   });
 
-  // describe('unhappy paths', () => {
+  describe('unhappy paths', () => {
+    describe('error cases when getting the file size', () => {
+      it('returns a 400 if the file is not found in DTFS', async () => {
+        mockDtfsStorageClientService
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockUnsuccessfulGetPropertiesCall(new RestError('', '', 404));
 
-  // });
+        const { status, body } = await makeRequest();
+
+        expect(status).toBe(400);
+        expect(body).toEqual({
+          error: `File ${fileLocationPath}/${fileName} was not found in DTFS.`,
+          message: 'Bad request',
+          statusCode: 400,
+        });
+      });
+
+      it('returns a 400 if the file size exceeds the maximum allowed in DTFS', async () => {
+        mockDtfsStorageClientService
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockSuccessfulGetPropertiesCall(DTFS_MAX_FILE_SIZE_BYTES + 1);
+
+        const { status, body } = await makeRequest();
+
+        expect(status).toBe(400);
+        expect(body).toEqual({
+          error: `The file exceeds the maximum allowed size of ${DTFS_MAX_FILE_SIZE_BYTES} bytes.`,
+          message: 'Bad request',
+          statusCode: 400,
+        });
+      });
+    });
+
+    describe('error cases when getting the SharePoint site id', () => {
+      it('returns a 400 if the site is not found in SharePoint', async () => {
+        const error = new GraphError(404, 'Requested site could not be found');
+        error.code = 'itemNotFound';
+        mockDtfsStorageClientService
+          // request to get file size
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
+          // request to download file
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockSuccessfulDownloadCall(downloadFileResponse);
+        mockGraphClientService
+          // request to get sharepoint site id
+          .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
+          .mockUnsuccessfulGraphGetCall(error);
+
+        const { status, body } = await makeRequest();
+
+        expect(status).toBe(400);
+        expect(body).toEqual({
+          error: `The site ID did not match any site in SharePoint.`,
+          message: 'Bad request',
+          statusCode: 400,
+        });
+      });
+    });
+
+    describe('error cases when uploading the file', () => {
+      it('returns a 400 if a file with the same name already exists in the destination location in SharePoint', async () => {
+        const error = new GraphError(409, 'The specified item name already exists');
+        error.code = 'nameAlreadyExists';
+        mockDtfsStorageClientService
+          // request to get file size
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
+          // request to download file
+          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
+          .mockSuccessfulDownloadCall(downloadFileResponse);
+        mockGraphClientService
+          // request to get sharepoint site id
+          .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
+          .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse)
+          // request to get drive id
+          .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
+          .mockSuccessfulGraphGetCall(getDriveIdResponse)
+          // request to upload file
+          .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
+          .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
+          .mockUnsuccessfulUploadCall(error);
+
+        const { status, body } = await makeRequest();
+
+        expect(status).toBe(400);
+        expect(body).toEqual({
+          error: `A file with the name ${fileName} already exists for the buyer name and deal ID specified.`,
+          message: 'Bad request',
+          statusCode: 400,
+        });
+      });
+    });
+  });
 
   describe('param validation', () => {
     withSiteIdParamValidationApiTests({
@@ -99,6 +244,65 @@ describe('postDocumentInDealFolder', () => {
   });
 
   describe('field validation', () => {
+    it('returns a 400 with validation rules if request does not meet validation rules', async () => {
+      const { status, body } = await api.post(getPostDocumentUrl(siteId, dealId), [{}]);
+
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: [
+          'buyerName must be a string',
+          'buyerName must be longer than or equal to 1 characters',
+          'buyerName must match /^(?!\\s)[\\w\\-.()\\s]+(?<![\\s.])$/ regular expression',
+          'documentType must be a string',
+          'documentType must be longer than or equal to 0 characters',
+          'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',
+          'fileName must be a string',
+          'fileName must be longer than or equal to 5 characters',
+          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
+          'fileLocationPath must be a string',
+          'fileLocationPath must be longer than or equal to 1 characters',
+          'fileLocationPath must match /^[\\w\\-:/\\\\()\\s]+$/ regular expression',
+        ],
+        statusCode: 400,
+      });
+    });
+
+    it('returns a 400 with validation rules if request does not meet validation rules, ignores extra field', async () => {
+      const { status, body } = await api.post(getPostDocumentUrl(siteId, dealId), [{ incorrectFieldName: valueGenerator.word() }]);
+
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: [
+          'buyerName must be a string',
+          'buyerName must be longer than or equal to 1 characters',
+          'buyerName must match /^(?!\\s)[\\w\\-.()\\s]+(?<![\\s.])$/ regular expression',
+          'documentType must be a string',
+          'documentType must be longer than or equal to 0 characters',
+          'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',
+          'fileName must be a string',
+          'fileName must be longer than or equal to 5 characters',
+          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
+          'fileLocationPath must be a string',
+          'fileLocationPath must be longer than or equal to 1 characters',
+          'fileLocationPath must match /^[\\w\\-:/\\\\()\\s]+$/ regular expression',
+        ],
+        statusCode: 400,
+      });
+    });
+
+    it('returns a 400 with validation error if request is empty', async () => {
+      const { status, body } = await api.post(getPostDocumentUrl(siteId, dealId), '');
+
+      expect(status).toBe(400);
+      expect(body).toStrictEqual({
+        error: 'Bad Request',
+        message: 'Validation failed (parsable array expected)',
+        statusCode: 400,
+      });
+    });
+
     withStringFieldValidationApiTests({
       fieldName: 'buyerName',
       minLength: 1,
@@ -183,7 +387,7 @@ describe('postDocumentInDealFolder', () => {
 
   const mockSuccessfulCompleteRequest = () => {
     mockDtfsStorageClientService
-      // request to get file properties
+      // request to get file size
       .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
       .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
       // request to download file
@@ -199,7 +403,6 @@ describe('postDocumentInDealFolder', () => {
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
       .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
-      .mockSuccessfulUploadCall()
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(getListIdPath)
       .mockSuccessfulGraphGetCall(getListIdResponse)
@@ -207,13 +410,12 @@ describe('postDocumentInDealFolder', () => {
       .mockSuccessfulGraphApiCallWithPath(getItemIdPath)
       .mockSuccessfulGraphGetCall(getItemIdResponse)
       // request to update file information
-      .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath)
-      .mockSuccessfulGraphPatchCallWithRequestBody(updateFileInfoRequest);
+      .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath);
   };
 
   const givenAnyRequestWouldSucceedUpToReturningItem = () => {
     mockDtfsStorageClientService
-      // request to get file properties
+      // request to get file size
       .mockSuccessfulGetShareFileClientCall(expect.any(String), expect.any(String))
       .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
       // request to download file
@@ -229,7 +431,6 @@ describe('postDocumentInDealFolder', () => {
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(expect.any(String), expect.any(Object), uploadSession)
       .mockSuccessfulGetFileUploadTaskCall(expect.any(String), getUploadTaskArgs[1], getUploadTaskArgs[2], getUploadTaskArgs[3])
-      .mockSuccessfulUploadCall()
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
       .mockSuccessfulGraphGetCall(getListIdResponse)
@@ -246,7 +447,6 @@ describe('postDocumentInDealFolder', () => {
       // returning item
       .mockSuccessfulGraphGetCall({ value: [{ webUrl: itemWebUrl, id: itemId }] })
       // request to update file information
-      .mockSuccessfulGraphApiCallWithPath(expect.anything())
-      .mockSuccessfulGraphPatchCallWithRequestBody(expect.any(Object));
+      .mockSuccessfulGraphApiCallWithPath(expect.anything());
   };
 });

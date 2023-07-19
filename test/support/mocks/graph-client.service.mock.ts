@@ -96,17 +96,6 @@ export class MockGraphClientService {
     return this;
   }
 
-  mockSuccessfulGraphPatchCallWithRequestBody<T, U>(requestBody: T, response?: U): MockGraphClientService {
-    when(this.request.patch).calledWith(requestBody).mockResolvedValueOnce(response);
-    return this;
-    return this;
-  }
-
-  mockSuccessfulGraphPatchCallWithRequestBody<T, U>(requestBody: T, response?: U): MockGraphClientService {
-    when(this.request.patch).calledWith(requestBody).mockResolvedValueOnce(response);
-    return this;
-  }
-
   mockSuccessfulGraphApiCall(): MockGraphClientService {
     when(this.client.api).calledWith(expect.anything()).mockReturnValueOnce(this.request);
     return this;
@@ -154,8 +143,8 @@ export class MockGraphClientService {
     return this;
   }
 
-  mockSuccessfulUploadCall(): MockGraphClientService {
-    when(this.mockFileUploadTask.upload).calledWith().mockResolvedValueOnce({});
+  mockUnsuccessfulUploadCall(error: unknown): MockGraphClientService {
+    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValueOnce(error);
     return this;
   }
 }
