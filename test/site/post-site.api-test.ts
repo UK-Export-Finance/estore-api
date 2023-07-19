@@ -176,7 +176,11 @@ describe('createSite', () => {
 
       mockMdmService.mockSuccessfulReturnValue(siteId);
 
-      mockGraphClientService.mockSuccessfulGraphApiCall().mockSuccessfulGraphPostCall(graphCreateSiteResponseDto[0]);
+      mockGraphClientService
+        .mockSuccessfulGraphApiCall()
+        .mockSuccessfulExpandCall()
+        .mockSuccessfulFilterCall()
+        .mockSuccessfulGraphPostCall(graphCreateSiteResponseDto[0]);
     };
 
     withExporterNameFieldValidationApiTests({

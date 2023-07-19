@@ -54,7 +54,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
     const fieldNameToUpdate = fieldName.toString();
 
     it.each([...allowedStringTestCases, ...allowedSubstringTestCases, ...allowedPrefixTestCases, ...allowedSuffixTestCases])(
-      `returns a ${successStatusCode} response if exporterName matchs the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      `returns a ${successStatusCode} response if exporterName matches the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
       async ({ value }) => {
         const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
         const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);

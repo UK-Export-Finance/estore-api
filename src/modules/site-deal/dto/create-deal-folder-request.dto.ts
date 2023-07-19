@@ -12,7 +12,6 @@ export class CreateDealFolderRequestItem {
   @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the buyer used in the deal.', example: EXAMPLES.BUYER_NAME })
   buyerName: string;
 
-  // TODO apim-474 this property is now more restrictive with length
   @ValidatedExporterNameApiProperty()
   exporterName: string;
 

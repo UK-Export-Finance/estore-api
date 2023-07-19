@@ -1,4 +1,4 @@
-interface exporterNameRegexTestCase {
+interface ExporterNameRegexTestCase {
   value: string;
   testTitle: string;
 }
@@ -18,10 +18,10 @@ const allowedStrings = [
 ];
 
 export const allowedStringTestCases = [...allowedStrings].map((testCaseValue) => {
-  return { value: testCaseValue, testTitle: `Allowed as a string: '${testCaseValue}'` };
+  return { value: testCaseValue, testTitle: `'${testCaseValue}' is allowed as a string (testing string ${testCaseValue}) ` };
 });
 
-export const disallowedStringTestCases: exporterNameRegexTestCase[] = [
+export const disallowedStringTestCases: ExporterNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedCharacters,
@@ -29,44 +29,50 @@ export const disallowedStringTestCases: exporterNameRegexTestCase[] = [
   ...disallowedStrings,
   ...disallowedStringsOnRoot,
 ].map((testCaseValue) => {
-  return { value: testCaseValue, testTitle: `Disallowed as a string: '${testCaseValue}'` };
+  return { value: testCaseValue, testTitle: `'${testCaseValue}' is disallowed as a string (testing string ${testCaseValue}) ` };
 });
 
-export const allowedSubstringTestCases: exporterNameRegexTestCase[] = [
+export const allowedSubstringTestCases: ExporterNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedStrings,
   ...disallowedStringsOnRoot,
   ...allowedStrings,
 ].map((testCaseValue) => {
-  return { value: `${validSubstring}${testCaseValue}${validSubstring}`, testTitle: `Allowed as a substring: '${testCaseValue}'` };
+  const testString = `${validSubstring}${testCaseValue}${validSubstring}`
+  return { value: testString, testTitle: `'${testCaseValue}' is allowed as a substring (testing string '${testString}') ` };
 });
 
-export const disallowedSubstringTestCases: exporterNameRegexTestCase[] = [...disallowedSubstrings, ...disallowedCharacters].map((testCaseValue) => {
-  return { value: `${validSubstring}${testCaseValue}${validSubstring}`, testTitle: `Disallowed substring: '${testCaseValue}'` };
+export const disallowedSubstringTestCases: ExporterNameRegexTestCase[] = [...disallowedSubstrings, ...disallowedCharacters].map((testCaseValue) => {
+  const testString = `${validSubstring}${testCaseValue}${validSubstring}`
+  return { value: testString, testTitle:`'${testCaseValue}' is disallowed as a substring (testing string '${testString}')` };
 });
 
-export const allowedPrefixTestCases: exporterNameRegexTestCase[] = [...disallowedStrings, ...disallowedStringsOnRoot].map((testCaseValue) => {
-  return { value: `${testCaseValue}${validSubstring}`, testTitle: `Allowed as a prefix: '${testCaseValue}'` };
+export const allowedPrefixTestCases: ExporterNameRegexTestCase[] = [...disallowedStrings, ...disallowedStringsOnRoot].map((testCaseValue) => {
+  const testString = `${testCaseValue}${validSubstring}`
+  return { value: testString, testTitle: `'${testCaseValue}' is allowed as a prefix (testing string '${testString}') ` };
 });
 
-export const disallowedPrefixTestCases: exporterNameRegexTestCase[] = [
+export const disallowedPrefixTestCases: ExporterNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedCharacters,
   ...disallowedSubstrings,
 ].map((testCaseValue) => {
-  return { value: `${testCaseValue}${validSubstring}`, testTitle: `Disallowed as a prefix: '${testCaseValue}'` };
+  const testString = `${testCaseValue}${validSubstring}`
+  return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a prefix (testing string '${testString}') ` };
 });
 
-export const allowedSuffixTestCases: exporterNameRegexTestCase[] = [...disallowedPrefixes, ...disallowedStrings, ...disallowedStringsOnRoot].map(
+export const allowedSuffixTestCases: ExporterNameRegexTestCase[] = [...disallowedPrefixes, ...disallowedStrings, ...disallowedStringsOnRoot].map(
   (testCaseValue) => {
-    return { value: `${validSubstring}${testCaseValue}`, testTitle: `Allowed as a suffix: '${testCaseValue}'` };
+    const testString = `${validSubstring}${testCaseValue}`
+    return { value: testString, testTitle: `'${testCaseValue}' is allowed as a suffix (testing string '${testString}') ` };
   },
 );
 
-export const disallowedSuffixTestCases: exporterNameRegexTestCase[] = [...disallowedPrefixesAndSuffixes, ...disallowedCharacters, ...disallowedSubstrings].map(
+export const disallowedSuffixTestCases: ExporterNameRegexTestCase[] = [...disallowedPrefixesAndSuffixes, ...disallowedCharacters, ...disallowedSubstrings].map(
   (testCaseValue) => {
-    return { value: `${validSubstring}${testCaseValue}`, testTitle: `Disallowed as a suffix: '${testCaseValue}'` };
+    const testString = `${validSubstring}${testCaseValue}`
+    return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a suffix (testing string '${testString}') ` };
   },
 );

@@ -5,7 +5,6 @@ import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/val
 export type CreateBuyerFolderRequestDto = CreateBuyerFolderRequestItem[];
 
 export class CreateBuyerFolderRequestItem {
-  // TODO apim-474 this property is now more restrictive with length
   @ValidatedExporterNameApiProperty()
   exporterName: string;
 

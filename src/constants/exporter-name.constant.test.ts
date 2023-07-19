@@ -11,9 +11,9 @@ import {
 
 import { EXPORTER_NAME } from './exporter-name.constant';
 
-describe('ExporterName', () => {
-  describe('Regex', () => {
-    describe('Strings', () => {
+describe('exporterName', () => {
+  describe('regex validation', () => {
+    describe('string validation tests', () => {
       it.each(allowedStringTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
       });
@@ -23,7 +23,7 @@ describe('ExporterName', () => {
       });
     });
 
-    describe('Substrings', () => {
+    describe('substring validation tests', () => {
       it.each(allowedSubstringTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
       });
@@ -33,7 +33,7 @@ describe('ExporterName', () => {
       });
     });
 
-    describe('Prefixes', () => {
+    describe('prefix validation tests', () => {
       it.each(allowedPrefixTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
       });
@@ -43,7 +43,7 @@ describe('ExporterName', () => {
       });
     });
 
-    describe('Suffixes', () => {
+    describe('suffix validation tests', () => {
       it.each(allowedSuffixTestCases)('$testTitle', ({ value }) => {
         expect(value).toMatch(EXPORTER_NAME.REGEX);
       });
