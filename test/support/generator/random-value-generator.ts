@@ -1,4 +1,4 @@
-import { EXPORTER_NAME, UKEFID } from '@ukef/constants';
+import { UKEFID } from '@ukef/constants';
 import { ALLOWED_DOCUMENT_FILE_TYPE } from '@ukef/constants/allowed-document-file-type.constant';
 import { UkefId } from '@ukef/helpers';
 import { Chance } from 'chance';
@@ -31,7 +31,7 @@ export class RandomValueGenerator {
 
   /*
    * The pool of characters for exporter name is modified to ensure a valid value.
-   * 'o', 'i', 'N' and ' ' have been removed. Restrictions are taken from: 
+   * 'o', 'i', 'N' and ' ' have been removed. Restrictions are taken from:
    * https://support.microsoft.com/en-gb/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
    */
   exporterName(options?: { length?: number; minLength?: number; maxLength?: number }): string {
