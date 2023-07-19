@@ -12,12 +12,12 @@ const disallowedSubstrings = ['_vti_'];
 const disallowedStrings = ['.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM\\d', 'LPT\\d'];
 const disallowedStringsOnRoot = ['forms'];
 
-const disallowedPrefixesRegex = new RegExp(`(?!(?=(${disallowedPrefixes.join(`)|(`)}).*$))`);
+const disallowedPrefixesRegex = new RegExp(`(?!(${disallowedPrefixes.join(`)|(`)}))`);
 const disallowedSuffixesRegex = new RegExp(`(?!.*(${disallowedSuffixes.join(')|(')})$)`);
 const disallowedCharactersRegex = new RegExp(`(?!.*[${disallowedCharacters.join('')}])`);
 const disallowedSubstringsRegex = new RegExp(`(?!.*(${disallowedSubstrings.join(')|(')}))`);
 const disallowedStringsRegex = new RegExp(`(?!^(${disallowedStrings.join('|')})$)`);
-const disallowedStringsOnRootRegex = new RegExp(`(?!(${disallowedStringsOnRoot.join(')|(')})$)`);
+const disallowedStringsOnRootRegex = new RegExp(`(?!^(${disallowedStringsOnRoot.join('|')})$)`);
 
 const assembledRegexExpression = new RegExp(
   '^' +
