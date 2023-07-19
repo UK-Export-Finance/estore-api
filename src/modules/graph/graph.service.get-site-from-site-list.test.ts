@@ -3,7 +3,6 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { getCallExpectations } from './graph.test-parts/call-expectations-test-parts';
 import { withGetMethodTests } from './graph.test-parts/with-get-method-tests';
 
 describe('GraphService', () => {
@@ -32,9 +31,9 @@ describe('GraphService', () => {
       path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       filterString: `fields/Title eq '${exporterName}'`,
       expandString: `fields($select=Title,URL,Sitestatus)`,
-      getResponse: {value: response},
+      getResponse: { value: response },
       methodResponse: response,
       makeRequest: () => graphService.getSiteFromSiteListByExporterName(exporterName),
-    })
+    });
   });
 });
