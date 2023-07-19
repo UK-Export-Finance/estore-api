@@ -1,13 +1,9 @@
-import { GraphError } from '@microsoft/microsoft-graph-client';
-import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { withSharedGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
 import { getCallExpectations } from './graph.test-parts/get-call-expectations-test-parts';
-import exp from 'constants';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -29,8 +25,8 @@ describe('GraphService', () => {
     it('returns the list items for the site matching the given filter using GraphService', async () => {
       const exporterName = valueGenerator.exporterName();
       const expectedPath = `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`;
-        const expectedFilterString = `fields/Title eq '${exporterName}'`;
-        const expectedExpandString = `fields($select=Title,URL,Sitestatus)`;
+      const expectedFilterString = `fields/Title eq '${exporterName}'`;
+      const expectedExpandString = `fields($select=Title,URL,Sitestatus)`;
 
       const expectedResponse = valueGenerator.string();
 

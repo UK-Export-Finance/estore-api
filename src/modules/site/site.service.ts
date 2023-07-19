@@ -1,25 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { Injectable } from '@nestjs/common';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
-import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
 
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 
 @Injectable()
 export class SiteService {
-  constructor(
-    private readonly graphService: GraphService,
-    private readonly mdmService: MdmService,
-  ) {}
+  constructor(private readonly graphService: GraphService, private readonly mdmService: MdmService) {}
 
   async getSiteStatusByExporterName(exporterName: string): Promise<GetSiteStatusByExporterNameResponse> {
     const { siteId, status } = await this.getSiteFromSitesList({

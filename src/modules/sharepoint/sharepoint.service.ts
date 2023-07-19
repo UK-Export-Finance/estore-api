@@ -7,7 +7,7 @@ import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 @Injectable()
 export class SharepointService {
   constructor(private readonly graphService: GraphService) {}
-// TODO APIM-472 delete this file
+  // TODO APIM-472 delete this file
   async findListItems<Fields>({
     siteUrl,
     listId,

@@ -1,16 +1,16 @@
 import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, UploadResult } from '@microsoft/microsoft-graph-client';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
 
-import { createGraphError } from './create-graph-error';
-import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
-import SharepointConfig from '@ukef/config/sharepoint.config';
-import { ConfigType } from '@nestjs/config';
-import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
+import { ListItem } from '../sharepoint/list-item.interface';
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { ListItemFilter } from '../sharepoint/list-item-filter/list-item-filter.interface';
-import { ListItem } from '../sharepoint/list-item.interface';
+import { createGraphError } from './create-graph-error';
+import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
+import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
 
 type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId';
 
@@ -40,7 +40,7 @@ export class GraphService {
     });
   }
 
-async getSiteFromSiteListByExporterName(exporterName) {
+  async getSiteFromSiteListByExporterName(exporterName) {
     return await this.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
@@ -49,7 +49,7 @@ async getSiteFromSiteListByExporterName(exporterName) {
     });
   }
 
-    // TODO apim-472: tests (commonise existing)
+  // TODO apim-472: tests (commonise existing)
   private async findListItems<Fields>({
     siteUrl,
     listId,
