@@ -16,32 +16,26 @@ describe('GraphService', () => {
 
   const mockGraphClientService = new MockGraphClientService();
 
-  const response = valueGenerator.string();
-
-  const exporterName = valueGenerator.exporterName();
-  const newSiteId = valueGenerator.ukefSiteId();
+  const id = valueGenerator.string();
+  const postResponse = valueGenerator.string();
 
   beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId, tfisFacilityHiddenListTermStoreId });
+    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId , tfisFacilityHiddenListTermStoreId});
     jest.resetAllMocks();
     resetAllWhenMocks();
   });
 
-  describe('createSite', () => {
+  describe('postFacilityToTermStore', () => {
     withPostMethodTests({
-      mockGraphClientService,
-      path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
-      requestBody: {
-        fields: {
-          Title: exporterName,
-          URL: newSiteId,
-          HomePage: exporterName,
-          Description: exporterName,
+        mockGraphClientService,
+        path: `${tfisSharepointUrl}/lists/${tfisFacilityHiddenListTermStoreId}/items`,
+        requestBody: {
+          fields: {
+            Title: id,
+          },
         },
-      },
-      postResponse: response,
-      methodResponse: response,
-      makeRequest: () => graphService.createSite({ exporterName, newSiteId }),
-    });
-  });
+        postResponse,
+        makeRequest: () => graphService.postFacilityToTermStore(id),
+      });
+      });
 });

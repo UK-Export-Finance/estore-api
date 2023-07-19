@@ -3,7 +3,7 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { getCallExpectations } from './graph.test-parts/get-call-expectations-test-parts';
+import { getCallExpectations } from './graph.test-parts/call-expectations-test-parts';
 
 describe('GraphService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -11,11 +11,12 @@ describe('GraphService', () => {
 
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
+  const tfisFacilityHiddenListTermStoreId = valueGenerator.word();
 
   const mockGraphClientService = new MockGraphClientService();
 
   beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId });
+    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId, tfisFacilityHiddenListTermStoreId });
     jest.resetAllMocks();
     resetAllWhenMocks();
   });

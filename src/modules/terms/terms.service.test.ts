@@ -46,6 +46,7 @@ describe('TermsService', () => {
     expect(service).toBeDefined();
   });
 
+  // TODO apim-472: update these tests
   describe('postFacilityToTermStore', () => {
     it('should call the graphService post method and return a success message', async () => {
       when(mockGraphServicePost).calledWith(expect.any(Object)).mockResolvedValue(undefined);

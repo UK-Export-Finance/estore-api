@@ -13,6 +13,7 @@ describe('GraphService', () => {
 
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
+  const tfisFacilityHiddenListTermStoreId = valueGenerator.word();
 
   const path = valueGenerator.string();
   const filterStr = valueGenerator.string();
@@ -27,7 +28,7 @@ describe('GraphService', () => {
   const expectedPostResponse = valueGenerator.string();
 
   beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId });
+    graphService = new GraphService(mockGraphClientService, { tfisSharepointUrl, tfisCaseSitesListId, tfisFacilityHiddenListTermStoreId });
     jest.resetAllMocks();
     resetAllWhenMocks();
   });

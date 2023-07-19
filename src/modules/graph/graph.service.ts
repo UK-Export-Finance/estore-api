@@ -12,7 +12,7 @@ import { createGraphError } from './create-graph-error';
 import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
 import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
 
-type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId';
+type RequiredConfigKeys = 'tfisSharepointUrl' | 'tfisCaseSitesListId' | 'tfisFacilityHiddenListTermStoreId';
 
 @Injectable()
 export class GraphService {
@@ -26,6 +26,16 @@ export class GraphService {
     this.client = graphClientService.client;
   }
 
+  async postFacilityToTermStore(id: string): Promise<void> {
+    await this.post<any>({
+      path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
+      requestBody: {
+        fields: {
+          Title: id,
+        },
+      },
+    });
+  }
   async createSite({ exporterName, newSiteId }) {
     return await this.post<GraphCreateSiteResponseDto>({
       path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
