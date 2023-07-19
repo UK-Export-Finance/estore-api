@@ -3,7 +3,6 @@ import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.se
 import { resetAllWhenMocks } from 'jest-when';
 
 import GraphService from './graph.service';
-import { getCallExpectations } from './graph.test-parts/call-expectations-test-parts';
 import { withPostMethodTests } from './graph.test-parts/with-post-method-tests';
 
 describe('GraphService', () => {

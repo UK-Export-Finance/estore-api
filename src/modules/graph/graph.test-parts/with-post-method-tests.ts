@@ -1,4 +1,5 @@
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+
 import { getCallExpectations } from './call-expectations-test-parts';
 
 export const withPostMethodTests = ({
@@ -22,12 +23,12 @@ export const withPostMethodTests = ({
     const result = await makeRequest();
 
     const expectations = getCallExpectations({
-        mockGraphClientService,
-        apiCalledWith: path,
-        postCalledWith: requestBody,
-      });
-      expectations.forEach((expectation) => expectation());
+      mockGraphClientService,
+      apiCalledWith: path,
+      postCalledWith: requestBody,
+    });
+    expectations.forEach((expectation) => expectation());
 
-      expect(result).toEqual(methodResponse);
+    expect(result).toEqual(methodResponse);
   });
 };
