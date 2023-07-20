@@ -1,6 +1,7 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withDealIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/deal-identifier-validation-api-tests';
+import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -85,13 +86,13 @@ describe('POST /sites/{siteId}/deals', () => {
         mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
         mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisDealListBuyerRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisDealListBuyerRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisDealListBuyerRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisDealListBuyerRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -101,13 +102,13 @@ describe('POST /sites/{siteId}/deals', () => {
         mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
         mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -117,13 +118,13 @@ describe('POST /sites/{siteId}/deals', () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
         mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -133,13 +134,13 @@ describe('POST /sites/{siteId}/deals', () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
         mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
@@ -343,8 +344,7 @@ describe('POST /sites/{siteId}/deals', () => {
       successStatusCode,
     });
 
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'exporterName',
+    withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createDealFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),

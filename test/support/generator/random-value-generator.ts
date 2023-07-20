@@ -29,9 +29,15 @@ export class RandomValueGenerator {
     return this.chance.string({ length, pool: '0123456789' });
   }
 
+  /*
+   * The pool of characters for exporter name is modified to ensure a valid value.
+   * 'o', 'i', 'N' and ' ' have been removed. Restrictions are taken from:
+   * https://support.microsoft.com/en-gb/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
+   */
   exporterName(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
-    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() ';
+    // cspell:disable-next-line
+    const pool = 'abcdefghijklmnpqrstuwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789-._()áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ';
     return this.chance.string({ length, pool });
   }
 

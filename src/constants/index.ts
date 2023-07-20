@@ -9,8 +9,9 @@
  * 5. DTFS_MAX_FILE_SIZE_BYTES
  * 6. ENUMS
  * 7. EXAMPLES
- * 8. SHAREPOINT
- * 9. UKEF_ID
+ * 8. EXPORTER_NAME
+ * 9. SHAREPOINT
+ * 10. UKEF_ID
  */
 
 export * from './allowed-document-file-type.constant';
@@ -20,5 +21,6 @@ export * from './document-x0020-status.constant';
 export * from './dtfs-max-file-size-bytes.constant';
 export * from './enum.constant';
 export * from './examples.constant';
+export * from './exporter-name.constant';
 export * from './sharepoint.constant';
 export * from './ukef-id.constant';

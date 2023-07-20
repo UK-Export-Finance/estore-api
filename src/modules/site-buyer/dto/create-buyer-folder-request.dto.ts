@@ -1,10 +1,11 @@
 import { EXAMPLES } from '@ukef/constants';
+import { ValidatedExporterNameApiProperty } from '@ukef/decorators/validated-exporter-name-api-property';
 import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/validated-sharepoint-resource-name-api-property';
 
 export type CreateBuyerFolderRequestDto = CreateBuyerFolderRequestItem[];
 
 export class CreateBuyerFolderRequestItem {
-  @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the exporter used in the deal.', example: EXAMPLES.EXPORTER_NAME })
+  @ValidatedExporterNameApiProperty()
   exporterName: string;
 
   @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the buyer used in the deal.', example: EXAMPLES.BUYER_NAME })

@@ -1,5 +1,6 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -74,13 +75,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
           .mockSuccessfulExpandCallWithExpandString(scCaseSitesListSiteRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -88,13 +89,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulScCaseSitesListSiteRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
@@ -226,8 +227,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       successStatusCode,
     });
 
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'exporterName',
+    withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createBuyerFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
