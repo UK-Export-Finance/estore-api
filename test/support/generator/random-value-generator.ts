@@ -128,10 +128,10 @@ export class RandomValueGenerator {
     const poolForHex = `abcdefABCDEF0123456789`;
     const poolForRestOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
     if (length < 25) {
-      return this.chance.string({ length, pool: poolForHex })
+      return this.chance.string({ length, pool: poolForHex });
     }
     const hex = this.chance.string({ length: 24, pool: poolForHex });
-    const restOfPath = this.chance.string({ length: length - 24, pool: poolForRestOfPath})
-    return `${hex}${restOfPath}`
+    const restOfPath = this.chance.string({ length: length - 24, pool: poolForRestOfPath });
+    return `${hex}${restOfPath}`;
   }
 }

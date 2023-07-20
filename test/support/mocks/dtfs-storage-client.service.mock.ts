@@ -18,7 +18,10 @@ export class MockDtfsStorageClientService {
   getShareFileClient: jest.Mock;
 
   constructor() {
-    (this.baseUrl = null), (this.dealDocumentsFolderPath = null), (this.storageSharedKeyCredential = null), (this.fileShareClient = new MockFileShareClient() as unknown as ShareFileClient);
+    (this.baseUrl = null),
+      (this.dealDocumentsFolderPath = null),
+      (this.storageSharedKeyCredential = null),
+      (this.fileShareClient = new MockFileShareClient() as unknown as ShareFileClient);
     this.getShareFileClient = jest.fn();
   }
 
