@@ -4,11 +4,9 @@ import { sharedGraphExceptionTestCases } from '@ukef-test/common-test-cases/shar
 import { resetAllWhenMocks } from 'jest-when';
 
 export const withSharedGraphExceptionHandlingTests = ({
-  mockSuccessfulGraphApiCall,
   mockGraphEndpointToErrorWith,
   makeRequest,
 }: {
-  mockSuccessfulGraphApiCall: () => void;
   mockGraphEndpointToErrorWith: (error: unknown) => void;
   makeRequest: () => Promise<unknown>;
 }) => {
@@ -25,7 +23,6 @@ export const withSharedGraphExceptionHandlingTests = ({
       const graphError = new GraphError(statusCode, errorMessage);
       graphError.code = graphErrorCode;
       it(`throws a ${expectedError.name}`, async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(graphError);
 
         const errorPromise = makeRequest();
@@ -34,7 +31,6 @@ export const withSharedGraphExceptionHandlingTests = ({
       });
 
       it(`passes the error message to the ${expectedError.name}`, async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(graphError);
 
         const errorPromise = makeRequest();
@@ -46,7 +42,6 @@ export const withSharedGraphExceptionHandlingTests = ({
     describe('When a non GraphError is thrown', () => {
       const error = new Error(errorMessage);
       it('throws a GraphException', async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
@@ -55,7 +50,6 @@ export const withSharedGraphExceptionHandlingTests = ({
       });
 
       it('passes the error message to the GraphException', async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
@@ -67,7 +61,6 @@ export const withSharedGraphExceptionHandlingTests = ({
     describe('When the error is not an instance of Error', () => {
       const error = { notAnError: 'Not an error' };
       it('throws a GraphException', async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();
@@ -76,7 +69,6 @@ export const withSharedGraphExceptionHandlingTests = ({
       });
 
       it('throws a GraphException with message "An unexpected error occurred."', async () => {
-        mockSuccessfulGraphApiCall();
         mockGraphEndpointToErrorWith(error);
 
         const errorPromise = makeRequest();

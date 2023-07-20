@@ -75,13 +75,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
           .mockSuccessfulExpandCallWithExpandString(scCaseSitesListSiteRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -89,13 +89,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulScCaseSitesListSiteRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {

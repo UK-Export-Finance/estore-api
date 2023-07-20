@@ -85,13 +85,13 @@ describe('Create Site Deal Facility Folder', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisFacilityListParentFolderRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -99,13 +99,13 @@ describe('Create Site Deal Facility Folder', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
