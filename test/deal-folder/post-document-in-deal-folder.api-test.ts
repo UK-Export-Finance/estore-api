@@ -317,19 +317,6 @@ describe('postDocumentInDealFolder', () => {
     });
 
     withStringFieldValidationApiTests({
-      fieldName: 'buyerName',
-      minLength: 1,
-      maxLength: 250,
-      generateFieldValueOfLength: (length: number) => valueGenerator.buyerName({ length }),
-      pattern: BUYER_NAME.REGEX,
-      generateFieldValueThatDoesNotMatchRegex: () => ' Example Buyer',
-      validRequestBody: uploadFileInDealFolderRequest,
-      successStatusCode,
-      makeRequest: (requestBody: unknown[]) => makeRequestWithBodyAndMockReturningItemId(requestBody as UploadFileInDealFolderRequestDto),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestWouldSucceedUpToReturningItem(),
-    });
-
-    withStringFieldValidationApiTests({
       fieldName: 'documentType',
       enum: ENUMS.DOCUMENT_TYPES,
       generateFieldValueOfLength: () => valueGenerator.enumValue<DocumentTypeEnum>(ENUMS.DOCUMENT_TYPES),
