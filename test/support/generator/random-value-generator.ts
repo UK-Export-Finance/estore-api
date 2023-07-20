@@ -124,8 +124,14 @@ export class RandomValueGenerator {
   }
 
   fileLocationPath(options?: { length?: number }) {
-    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
-    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
-    return this.chance.string({ length, pool });
+    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 24, max: 250 });
+    const poolForHex = `abcdefABCDEF0123456789`;
+    const poolForRestOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
+    if (length < 25) {
+      return this.chance.string({ length, pool: poolForHex })
+    }
+    const hex = this.chance.string({ length: 24, pool: poolForHex });
+    const restOfPath = this.chance.string({ length: length - 24, pool: poolForRestOfPath})
+    return `${hex}${restOfPath}`
   }
 }

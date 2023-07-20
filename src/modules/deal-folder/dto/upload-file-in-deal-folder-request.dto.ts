@@ -33,9 +33,9 @@ export class UploadFileInDealFolderRequestItem {
 
   @ValidatedStringApiProperty({
     description: 'The path of the location/folder in Azure storage from which the file needs to be loaded.',
-    minLength: 1,
+    minLength: 24,
     maxLength: 250,
-    pattern: /^[\w\-:/\\()\s]+$/,
+    pattern: /^[a-fA-F\d]{24}[\w\-:/\\()\s]*$/,
     example: EXAMPLES.FILE_LOCATION_PATH,
   })
   fileLocationPath: string;
