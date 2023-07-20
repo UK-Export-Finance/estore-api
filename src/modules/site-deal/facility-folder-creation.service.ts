@@ -6,6 +6,7 @@ import { UkefId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
+import GraphService from '../graph/graph.service';
 import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
@@ -15,17 +16,14 @@ import { CreateFolderResponseDto } from './dto/create-facility-folder-response.d
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
-type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
 
 @Injectable()
 export class FacilityFolderCreationService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
-    private readonly sharepointService: SharepointService,
+    private readonly graphServive: GraphService,
     private readonly custodianService: CustodianService,
   ) {}
 
@@ -118,6 +116,7 @@ export class FacilityFolderCreationService {
     return facilityGuid;
   }
 
+  // TODO apim-472 rework this so there is no sharepointConfig call
   private createCustodianCreateAndProvisionRequest(
     facilityFolderName: string,
     dealFolderId: number,

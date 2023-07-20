@@ -9,13 +9,10 @@ import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-
 import GraphService from '@ukef/modules/graph/graph.service';
 
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
-type RequiredConfigKeys = 'baseUrl' | 'ukefSharepointName' | 'estoreDocumentTypeIdFieldName';
 
 @Injectable()
 export class DealFolderService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly config: Pick<ConfigType<typeof SharepointConfig>, RequiredConfigKeys>,
     private readonly documentTypeMapper: DocumentTypeMapper,
     private readonly dtfsStorageFileService: DtfsStorageFileService,
     private readonly graphService: GraphService,
@@ -76,18 +73,10 @@ export class DealFolderService {
     const urlToUpdateFileInfo = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
     const requestBodyToUpdateFileInfo = this.constructRequestBodyToUpdateFileInfo(documentType);
 
-    await this.graphService.patch<
-      {
-        Title: string;
-        Document_x0020_Status: string;
-      },
-      unknown
-    >({
-      path: urlToUpdateFileInfo,
-      requestBody: requestBodyToUpdateFileInfo,
-    });
+    await this.graphService.uploadFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
   }
 
+  // TODO apim-472 - remove reliance on sharepoint config
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const sharepointSiteId = await this.getSharepointSiteIdByUkefSiteId(ukefSiteId);
     const driveId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.DRIVE_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.DRIVE);
@@ -99,19 +88,13 @@ export class DealFolderService {
   }
 
   private getSharepointSiteIdByUkefSiteId(ukefSiteId: string): Promise<string> {
-    return this.graphService
-      .get<{ id: string }>({
-        path: `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}`,
-      })
-      .then((site) => site.id);
+    return this.graphService.getSiteByUkefSiteId(ukefSiteId).then((site) => site.id);
   }
 
   private getResourceIdByName(ukefSiteId: string, resourceName: string, sharepointResourceType: SharepointResourceTypeEnum): Promise<string> {
     return (
       this.graphService
-        .get<{ value: { name: string; id: string }[] }>({
-          path: `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/${sharepointResourceType}s`,
-        })
+        .getResources({ ukefSiteId, sharepointResourceType })
         .then((response) => response.value)
         .then((resources) => resources.find((resource) => resource.name === resourceName))
         /* The line above is necessary because the 'filter' query parameter does not currently support the 'name' field on lists/list items 
@@ -122,6 +105,7 @@ export class DealFolderService {
     );
   }
 
+  // TODO apim-472 - remove reliance on sharepoint config
   private constructRequestBodyToUpdateFileInfo(documentType: DocumentTypeEnum): {
     Title: string;
     Document_x0020_Status: string;
@@ -135,6 +119,7 @@ export class DealFolderService {
     };
   }
 
+  // TODO apim-472 - remove reliance on sharepoint config
   private async constructUrlToUpdateFileInfo(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 
@@ -156,9 +141,7 @@ export class DealFolderService {
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
     return (
       this.graphService
-        .get<{ value: { webUrl: string; id: string }[] }>({
-          path: `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items`,
-        })
+        .getItems({ ukefSiteId, listId })
         .then((response) => response.value)
         .then((list) => list.find((item) => item.webUrl === webUrl))
         /* The line above is necessary because the 'filter' query parameter does not currently support the 'webUrl' field on lists/list items 
