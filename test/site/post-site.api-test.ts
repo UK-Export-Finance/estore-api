@@ -63,11 +63,9 @@ describe('createSite', () => {
   });
 
   withSharedGraphExceptionHandlingTests({
-    givenRequestWouldOtherwiseSucceed: () => {
-      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path);
-    },
+    givenRequestWouldOtherwiseSucceed: () => {},
     givenGraphServiceCallWillThrowError: (error: Error) => {
-      mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path).mockUnsuccessfulGraphGetCall(error);
     },
     makeRequest: () => api.post(`/api/v1/sites`, createSiteRequest),
   });
