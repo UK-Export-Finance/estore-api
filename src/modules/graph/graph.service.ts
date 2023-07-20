@@ -2,19 +2,18 @@ import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOption
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
 
 import { ListItem } from '../sharepoint/list-item.interface';
+import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
 import { ListItemFilter } from '../sharepoint/list-item-filter/list-item-filter.interface';
 import { createGraphError } from './create-graph-error';
 import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
 import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
-import { UkefId } from '@ukef/helpers';
-import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
-import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
-import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 
 // Todo apim-472 We can probably remove the need for this
 type RequiredConfigKeys =
