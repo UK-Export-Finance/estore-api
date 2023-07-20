@@ -1,6 +1,6 @@
-import { ENUMS, SHAREPOINT } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withStringFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/string-field-validation-api-tests';
+import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
@@ -9,7 +9,6 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { MockMdmService } from '@ukef-test/support/mocks/mdm.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
-import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 
 describe('createSite', () => {
   const valueGenerator = new RandomValueGenerator();
