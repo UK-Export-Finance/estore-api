@@ -1,6 +1,6 @@
-import { ENUMS } from '@ukef/constants';
+import { ENUMS, SHAREPOINT } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
+import { withStringFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/string-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
@@ -9,6 +9,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { MockMdmService } from '@ukef-test/support/mocks/mdm.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
+import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 
 describe('createSite', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -168,17 +169,29 @@ describe('createSite', () => {
     const makeRequest = (body: unknown[]) => api.post('/api/v1/sites', body);
 
     const givenAnyRequestBodyWouldSucceed = () => {
+      const { graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+        numberToGenerate: 1,
+      });
+
+      const { createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
+        numberToGenerate: 1,
+        status: ENUMS.SITE_STATUSES.PROVISIONING,
+        exporterName,
+      });
+
       const { siteId } = createSiteResponse[0];
 
-      mockGraphClientService.mockSuccessfulGraphApiCall().mockSuccessfulExpandCall().mockSuccessfulFilterCall().mockSuccessfulGraphGetCall({ value: [] });
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+        .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+        .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+        .mockSuccessfulGraphGetCall({ value: [] });
 
       mockMdmService.mockSuccessfulReturnValue(siteId);
 
       mockGraphClientService
-        .mockSuccessfulGraphApiCall()
-        .mockSuccessfulExpandCall()
-        .mockSuccessfulFilterCall()
-        .mockSuccessfulGraphPostCall(graphCreateSiteResponseDto[0]);
+        .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
+        .mockSuccessfulGraphPostCallWithRequestBody(expect.anything(), graphCreateSiteResponseDto[0]);
     };
 
     withExporterNameFieldValidationApiTests({
