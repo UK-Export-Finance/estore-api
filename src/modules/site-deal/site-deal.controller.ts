@@ -10,7 +10,6 @@ import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from 
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { FolderDependencyExceptionTransformInterceptor } from './interceptor/folder-dependency-exception-transform.interceptor';
-import { SiteDealNotFoundExceptionToBadRequestTransformInterceptor } from './interceptor/site-deal-not-found-exception-to-bad-request-transform.interceptor';
 
 @Controller('sites/:siteId/deals')
 export class SiteDealController {
@@ -20,7 +19,7 @@ export class SiteDealController {
   ) {}
 
   @Post('/:dealId/facilities')
-  @UseInterceptors(SiteDealNotFoundExceptionToBadRequestTransformInterceptor)
+  @UseInterceptors(FolderDependencyExceptionTransformInterceptor)
   @ApiOperation({ summary: 'Creates a facility folder for a deal' })
   @ApiCreatedResponse({
     description: 'The creation of the facility folder has been scheduled successfully.',

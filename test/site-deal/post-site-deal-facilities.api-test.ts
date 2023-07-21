@@ -140,7 +140,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
       statusCode: 400,
     });
   });
@@ -161,14 +161,14 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: getParentFolderNotFoundErrorMessage(createFacilityFolderRequestItem.buyerName, createFacilityFolderParamsDto.dealId),
+      message: `Missing id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId}.`,
       statusCode: 400,
     });
   });
 
-  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest id field is not a number', async () => {
+  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest has an empty string id field', async () => {
     const modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
-    modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = 'not a number';
+    modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = '';
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
@@ -182,7 +182,29 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: getParentFolderNotFoundErrorMessage(createFacilityFolderRequestItem.buyerName, createFacilityFolderParamsDto.dealId),
+      message: `Missing id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId}.`,
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest id field is not a number', async () => {
+    const modifiedTfisFacilityListParentFolderResponse = JSON.parse(JSON.stringify(tfisFacilityListParentFolderResponse));
+    const notANumber = 'not a number';
+    modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = notANumber;
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
+      .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulCreateAndProvision();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: `The id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId} is not a number (the value is ${notANumber}).`,
       statusCode: 400,
     });
   });
@@ -200,12 +222,12 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: getFacilityTermDateRequestNotFoundErrorMessage(createFacilityFolderRequestItem.facilityIdentifier),
+      message: `Facility term not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /terms/facilities.`,
       statusCode: 400,
     });
   });
 
-  it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest has no facilityGUID field', async () => {
+  it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest has no FacilityGUID field', async () => {
     const modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
     delete modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID;
 
@@ -221,7 +243,28 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
-      message: getFacilityTermDateRequestNotFoundErrorMessage(createFacilityFolderRequestItem.facilityIdentifier),
+      message: `Missing FacilityGUID for facility term ${createFacilityFolderRequestItem.facilityIdentifier}.`,
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest has an empty string FacilityGUID field', async () => {
+    const modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
+    modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID = '';
+
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulCreateAndProvision();
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.filter)
+      .mockSuccessfulGraphGetCall(modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse);
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: `Missing FacilityGUID for facility term ${createFacilityFolderRequestItem.facilityIdentifier}.`,
       statusCode: 400,
     });
   });
@@ -326,12 +369,5 @@ describe('Create Site Deal Facility Folder', () => {
   const getPostSiteDealFacilitiesUrl = (params: { siteId: string; dealId: string }) => {
     const { siteId, dealId } = params;
     return `/api/v1/sites/${siteId}/deals/${dealId}/facilities`;
-  };
-  const getFacilityTermDateRequestNotFoundErrorMessage = (facilityIdentifier: string): string => {
-    return `Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`;
-  };
-
-  const getParentFolderNotFoundErrorMessage = (buyerName: string, dealId: string): string => {
-    return `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`;
   };
 });
