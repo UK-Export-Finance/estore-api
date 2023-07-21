@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
-import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
 import { SiteNotFoundException } from './exception/site-not-found.exception';

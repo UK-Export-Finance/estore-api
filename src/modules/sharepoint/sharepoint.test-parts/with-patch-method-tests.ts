@@ -1,12 +1,8 @@
-import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import GraphService from '@ukef/modules/graph/graph.service';
 import { resetAllWhenMocks, when } from 'jest-when';
 
-import { getCallExpectations } from '../../graph/graph.test-parts/call-expectations-test-parts';
 import { SharepointService } from '../sharepoint.service';
-import { getMockSharepointConfig } from './mock-sharepoint-config.helper';
 
 export const withPatchMethodTests = ({
   sharepointConfig,

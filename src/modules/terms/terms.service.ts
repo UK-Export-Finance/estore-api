@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ENUMS } from '@ukef/constants';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 import { TermsFacilityExistsException } from './exception/terms-facility-exists.exception';
 

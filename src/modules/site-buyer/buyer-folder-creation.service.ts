@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
@@ -8,7 +9,6 @@ import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
-import SharepointConfig from '@ukef/config/sharepoint.config';
 
 type RequiredCustodianConfigKeys = 'buyerTemplateId' | 'buyerTypeGuid';
 type RequiredSharepointConfigKeys = 'scSiteFullUrl';

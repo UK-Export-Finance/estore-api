@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 import { UkefId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import GraphService from '../graph/graph.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';

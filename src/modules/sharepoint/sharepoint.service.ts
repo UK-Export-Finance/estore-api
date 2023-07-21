@@ -1,16 +1,16 @@
+import { UploadResult } from '@microsoft/microsoft-graph-client';
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import GraphService from '@ukef/modules/graph/graph.service';
 
-import { ListItem } from './list-item.interface';
-import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
-import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { GraphCreateSiteResponseDto } from '../graph/dto/graph-create-site-response.dto';
+import { ListItem } from './list-item.interface';
 import { AndListItemFilter } from './list-item-filter/and.list-item-filter';
 import { FieldEqualsListItemFilter } from './list-item-filter/field-equals.list-item-filter';
 import { FieldNotNullListItemFilter } from './list-item-filter/field-not-null.list-item-filter';
-import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
-import { UploadResult } from '@microsoft/microsoft-graph-client';
+import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 
 @Injectable()
 export class SharepointService {

@@ -1,15 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { DocumentTypeMapper } from '@ukef/modules/deal-folder/document-type-mapper';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
-import GraphService from '@ukef/modules/graph/graph.service';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
-import SharepointConfig from '@ukef/config/sharepoint.config';
 
 type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName';
 @Injectable()
@@ -64,7 +63,7 @@ export class DealFolderService {
     ukefSiteId: string,
   ): Promise<void> {
     const urlToCreateUploadSession = await this.constructUrlToCreateUploadSession(fileName, dealId, buyerName, ukefSiteId);
-    await this.sharepointService.uploadFile({file, fileSizeInBytes, fileName, urlToCreateUploadSession});
+    await this.sharepointService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
   }
 
   private async updateFileInformationInSharepoint(

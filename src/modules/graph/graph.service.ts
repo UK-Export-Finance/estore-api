@@ -1,17 +1,9 @@
 import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, UploadResult } from '@microsoft/microsoft-graph-client';
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
+import { Injectable } from '@nestjs/common';
 import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
 
-import { ListItem } from '../sharepoint/list-item.interface';
-import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
-import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
-import { ListItemFilter } from '../sharepoint/list-item-filter/list-item-filter.interface';
 import { createGraphError } from './create-graph-error';
-import { GraphCreateSiteResponseDto } from './dto/graph-create-site-response.dto';
 import { KnownError, postFacilityTermExistsKnownError, uploadFileExistsKnownError, uploadFileSiteNotFoundKnownError } from './known-errors';
 
 @Injectable()

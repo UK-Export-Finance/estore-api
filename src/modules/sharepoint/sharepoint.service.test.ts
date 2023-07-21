@@ -1,8 +1,6 @@
-import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
-import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
-import { isTemplateMiddleOrTemplateTail } from 'typescript';
+import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+
 import { SharepointService } from './sharepoint.service';
 import { getMockSharepointConfig } from './sharepoint.test-parts/mock-sharepoint-config.helper';
 import { withGetMethodTests } from './sharepoint.test-parts/with-get-method-tests';
@@ -217,6 +215,7 @@ describe('SharepointService', () => {
         makeRequest: (sharepointService: SharepointService) => sharepointService.uploadFile(uploadFileRequest),
       },
     ];
+
     describe.each(graphServiceUploadFileTestCases)('$method', ({ requestBody, graphServiceResponse, makeRequest }) => {
       withUploadFileMethodTests({
         sharepointConfig,
