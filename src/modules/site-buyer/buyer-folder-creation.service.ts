@@ -4,19 +4,22 @@ import CustodianConfig from '@ukef/config/custodian.config';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import GraphService from '../graph/graph.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 
 type RequiredCustodianConfigKeys = 'buyerTemplateId' | 'buyerTypeGuid';
-
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 @Injectable()
 export class BuyerFolderCreationService {
   constructor(
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
-    private readonly graphService: GraphService,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
+    private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
 
@@ -32,7 +35,7 @@ export class BuyerFolderCreationService {
   }
 
   private async getCaseSiteId(siteId: string) {
-    const searchResults = await this.graphService.getCaseSite(siteId);
+    const searchResults = await this.sharepointService.getCaseSite(siteId);
 
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site ${siteId} in the scCaseSitesList.`);
@@ -56,7 +59,7 @@ export class BuyerFolderCreationService {
   }
 
   private async getBuyerTermFromList(siteId: string, exporterName: string) {
-    const searchResults = await this.graphService.getExporter(exporterName);
+    const searchResults = await this.sharepointService.getExporter(exporterName);
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
     }

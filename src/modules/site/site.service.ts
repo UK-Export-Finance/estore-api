@@ -4,6 +4,7 @@ import { convertToEnum } from '@ukef/helpers';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';
@@ -11,7 +12,7 @@ import { SiteNotFoundException } from './exception/site-not-found.exception';
 
 @Injectable()
 export class SiteService {
-  constructor(private readonly graphService: GraphService, private readonly mdmService: MdmService) {}
+  constructor(private readonly sharepointService: SharepointService, private readonly mdmService: MdmService) {}
 
   async getSiteStatusByExporterName(exporterName: string): Promise<GetSiteStatusByExporterNameResponse> {
     const { siteId, status } = await this.getSiteFromSitesList({
@@ -41,7 +42,7 @@ export class SiteService {
 
   private async createSite(exporterName: string): Promise<CreateSiteResponse> {
     const newSiteId = await this.createSiteId();
-    const data = await this.graphService.createSite({ exporterName, newSiteId });
+    const data = await this.sharepointService.createSite({ exporterName, newSiteId });
     const { URL: siteId, Sitestatus: siteStatus } = data.fields;
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);
@@ -50,7 +51,7 @@ export class SiteService {
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
-    const listItems = await this.graphService.getSiteFromSiteListByExporterName(exporterName);
+    const listItems = await this.sharepointService.getSiteFromSiteListByExporterName(exporterName);
 
     // TODO apim-472 update error handling around here
     if (!listItems.length) {

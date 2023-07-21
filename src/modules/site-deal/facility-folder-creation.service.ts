@@ -12,13 +12,16 @@ import { FolderDependencyInvalidException } from './exception/folder-dependency-
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 
 @Injectable()
 export class FacilityFolderCreationService {
   constructor(
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
-    private readonly graphServive: GraphService,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
+    private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
 

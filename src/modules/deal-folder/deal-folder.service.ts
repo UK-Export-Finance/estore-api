@@ -1,19 +1,25 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { DocumentTypeMapper } from '@ukef/modules/deal-folder/document-type-mapper';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
 import GraphService from '@ukef/modules/graph/graph.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 
+type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName';
 @Injectable()
 export class DealFolderService {
   constructor(
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     private readonly documentTypeMapper: DocumentTypeMapper,
     private readonly dtfsStorageFileService: DtfsStorageFileService,
-    private readonly graphService: GraphService,
+    private readonly sharepointService: SharepointService,
   ) {}
 
   async uploadFileInDealFolder(
@@ -58,7 +64,7 @@ export class DealFolderService {
     ukefSiteId: string,
   ): Promise<void> {
     const urlToCreateUploadSession = await this.constructUrlToCreateUploadSession(fileName, dealId, buyerName, ukefSiteId);
-    await this.graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
+    await this.sharepointService.uploadFile({file, fileSizeInBytes, fileName, urlToCreateUploadSession});
   }
 
   private async updateFileInformationInSharepoint(
@@ -71,7 +77,7 @@ export class DealFolderService {
     const urlToUpdateFileInfo = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
     const requestBodyToUpdateFileInfo = this.constructRequestBodyToUpdateFileInfo(documentType);
 
-    await this.graphService.uploadFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
+    await this.sharepointService.uploadFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
   }
 
   // TODO apim-472 - remove reliance on sharepoint config
@@ -82,16 +88,16 @@ export class DealFolderService {
     and driveId appears to necessary because using the ukefSiteId and drive name only appears to work when accessing drives, not items *within* drives. */
     const fileDestinationPath = `${buyerName}/D ${dealId}`;
 
-    return `${this.config.baseUrl}/sites/${sharepointSiteId}/drives/${driveId}/root:/${fileDestinationPath}/${fileName}:/createUploadSession`;
+    return `${this.sharepointConfig.baseUrl}/sites/${sharepointSiteId}/drives/${driveId}/root:/${fileDestinationPath}/${fileName}:/createUploadSession`;
   }
 
   private getSharepointSiteIdByUkefSiteId(ukefSiteId: string): Promise<string> {
-    return this.graphService.getSiteByUkefSiteId(ukefSiteId).then((site) => site.id);
+    return this.sharepointService.getSiteByUkefSiteId(ukefSiteId).then((site) => site.id);
   }
 
   private getResourceIdByName(ukefSiteId: string, resourceName: string, sharepointResourceType: SharepointResourceTypeEnum): Promise<string> {
     return (
-      this.graphService
+      this.sharepointService
         .getResources({ ukefSiteId, sharepointResourceType })
         .then((response) => response.value)
         .then((resources) => resources.find((resource) => resource.name === resourceName))
@@ -113,7 +119,7 @@ export class DealFolderService {
     return {
       Title: documentTitle,
       Document_x0020_Status: DOCUMENT_X0020_STATUS,
-      [this.config.estoreDocumentTypeIdFieldName]: documentTypeId,
+      [this.sharepointConfig.estoreDocumentTypeIdFieldName]: documentTypeId,
     };
   }
 
@@ -124,7 +130,7 @@ export class DealFolderService {
     const webUrlForFile = this.constructWebUrlForFile(fileName, dealId, buyerName, ukefSiteId);
     const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
-    return `sites/${this.config.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
+    return `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
   }
 
   private constructWebUrlForFile(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
@@ -133,12 +139,12 @@ export class DealFolderService {
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
 
-    return `https://${this.config.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
+    return `https://${this.sharepointConfig.ukefSharepointName}/sites/${ukefSiteId}/${CASE_LIBRARY.LIST_NAME}/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
     return (
-      this.graphService
+      this.sharepointService
         .getItems({ ukefSiteId, listId })
         .then((response) => response.value)
         .then((list) => list.find((item) => item.webUrl === webUrl))

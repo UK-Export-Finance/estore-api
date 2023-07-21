@@ -1,22 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
-import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import GraphService from '../graph/graph.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
+import SharepointConfig from '@ukef/config/sharepoint.config';
 
 type RequiredCustodianConfigKeys = 'dealTemplateId' | 'dealTypeGuid';
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 
 @Injectable()
 export class DealFolderCreationService {
   constructor(
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
-    private readonly graphService: GraphService,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
@@ -57,7 +59,7 @@ export class DealFolderCreationService {
   }
 
   private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
-    const buyerFolderSearchResults = await this.graphService.getBuyerFolder({ siteId, buyerName });
+    const buyerFolderSearchResults = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
     if (buyerFolderSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find a folder for buyer ${buyerName} in site ${siteId}.`);
     }
@@ -85,7 +87,7 @@ export class DealFolderCreationService {
     siteId: string;
     exporterName: string;
   }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
-    const exporterTermSearchResults = await this.graphService.getExporter(exporterName);
+    const exporterTermSearchResults = await this.sharepointService.getExporter(exporterName);
     if (exporterTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`);
     }
@@ -104,7 +106,7 @@ export class DealFolderCreationService {
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {
-    const marketTermSearchResults = await this.graphService.getMarketTerm(marketName);
+    const marketTermSearchResults = await this.sharepointService.getMarketTerm(marketName);
     if (marketTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the market ${marketName} in the taxonomyHiddenListTermStore.`);
     }

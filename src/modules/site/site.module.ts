@@ -6,9 +6,11 @@ import { MdmModule } from '@ukef/modules/mdm/mdm.module';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
 import { SiteExceptionTransformInterceptor } from './site-exception-transform.interceptor';
+import { SharepointService } from '../sharepoint/sharepoint.service';
+import { SharepointModule } from '../sharepoint/sharepoint.module';
 
 @Module({
-  imports: [GraphModule, MdmModule],
+  imports: [SharepointModule, MdmModule],
   controllers: [SiteController],
   providers: [
     SiteService,
