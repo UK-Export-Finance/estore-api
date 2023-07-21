@@ -1,6 +1,5 @@
-import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-
+import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { SharepointService } from './sharepoint.service';
 import { getMockSharepointConfig } from './sharepoint.test-parts/mock-sharepoint-config.helper';
 import { withGetMethodTests } from './sharepoint.test-parts/with-get-method-tests';
