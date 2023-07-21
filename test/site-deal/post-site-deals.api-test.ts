@@ -173,16 +173,16 @@ describe('POST /sites/{siteId}/deals', () => {
         message: `Did not find a folder for buyer ${buyerName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the buyerName in the tfisDealList does not have an id field',
+        description: 'returns a 400 if the list item matching the buyerName in the tfisDealList does not have an id field',
         buyerNameListItems: [{ fields: { notId: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing id for the folder found for ${buyerName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the buyerName in the tfisDealList has an id field that is not a number',
-        buyerNameListItems: [{ fields: { id: 'this is not a number' } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        description: 'returns a 400 if the list item matching the buyerName in the tfisDealList has an id field that is not a number',
+        buyerNameListItems: [{ fields: { id: 'this-is-not-a-number' } }],
+        statusCode: 400,
+        message: `The id for the folder found for ${buyerName} in site ${siteId} is not a number (the value is this-is-not-a-number).`,
       },
     ])('$description', async ({ buyerNameListItems, statusCode, message }) => {
       mockGraphClientService
@@ -214,16 +214,16 @@ describe('POST /sites/{siteId}/deals', () => {
         message: `Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
         exporterNameListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
         exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
     ])('$description', async ({ exporterNameListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
@@ -255,10 +255,10 @@ describe('POST /sites/{siteId}/deals', () => {
         message: `Did not find the market ${destinationMarket} in the taxonomyHiddenListTermStore.`,
       },
       {
-        description: 'returns a 500 if the list item matching the destinationMarket in the taxonomyHiddenListTermStore does not have a TermGuid field',
+        description: 'returns a 400 if the list item matching the destinationMarket in the taxonomyHiddenListTermStore does not have a TermGuid field',
         destinationMarketListItems: [{ fields: { notTermGuid: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing TermGuid for the market list item found for ${destinationMarket}.`,
       },
     ])('$description', async ({ destinationMarketListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
@@ -290,10 +290,10 @@ describe('POST /sites/{siteId}/deals', () => {
         message: `Did not find the market ${riskMarket} in the taxonomyHiddenListTermStore.`,
       },
       {
-        description: 'returns a 500 if the list item matching the riskMarket in the taxonomyHiddenListTermStore does not have a TermGuid field',
+        description: 'returns a 400 if the list item matching the riskMarket in the taxonomyHiddenListTermStore does not have a TermGuid field',
         riskMarketListItems: [{ fields: { notTermGuid: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing TermGuid for the market list item found for ${riskMarket}.`,
       },
     ])('$description', async ({ riskMarketListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();

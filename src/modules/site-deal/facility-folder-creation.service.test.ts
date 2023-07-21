@@ -7,7 +7,8 @@ import { CustodianService } from '../custodian/custodian.service';
 import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
 import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
-import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
+import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
 
 describe('FacilityFolderCreationService', () => {
@@ -108,54 +109,54 @@ describe('FacilityFolderCreationService', () => {
 
   it.each([
     {
-      description: 'throws a SiteDealFolderNotFoundException if the buyer deal folder list item is not found',
+      description: 'throws a FolderDependencyNotFoundException if the buyer deal folder list item is not found',
       listItemsMatchingBuyerDealFolder: [],
       listItemsMatchingFacilityTerm: [facilityTermListItem],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      expectedErrorClass: FolderDependencyNotFoundException,
+      expectedErrorMessage: `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
     },
     {
-      description: 'throws a SiteDealFolderNotFoundException if the found buyer deal folder list item does not have an id field',
+      description: 'throws a FolderDependencyInvalidException if the found buyer deal folder list item does not have an id field',
       listItemsMatchingBuyerDealFolder: [{ fields: { notId: buyerDealFolderIdAsString } }],
       listItemsMatchingFacilityTerm: [facilityTermListItem],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      expectedErrorClass: FolderDependencyInvalidException,
+      expectedErrorMessage: `Missing id for the deal folder ${buyerName}/D ${dealId} in site ${siteId}.`,
     },
     {
-      description: 'throws a SiteDealFolderNotFoundException if the found buyer deal folder list item has an empty string id field',
+      description: 'throws a FolderDependencyInvalidException if the found buyer deal folder list item has an empty string id field',
       listItemsMatchingBuyerDealFolder: [{ fields: { id: '' } }],
       listItemsMatchingFacilityTerm: [facilityTermListItem],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      expectedErrorClass: FolderDependencyInvalidException,
+      expectedErrorMessage: `Missing id for the deal folder ${buyerName}/D ${dealId} in site ${siteId}.`,
     },
     {
       description:
-        'throws a SiteDealFolderNotFoundException if the found buyer deal folder list item has an id field that cannot be parsed as a base-10 number',
+        'throws a FolderDependencyInvalidException if the found buyer deal folder list item has an id field that cannot be parsed as a base-10 number',
       listItemsMatchingBuyerDealFolder: [{ fields: { id: nonNumberId } }],
       listItemsMatchingFacilityTerm: [facilityTermListItem],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Site deal folder not found: ${buyerName}/D ${dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+      expectedErrorClass: FolderDependencyInvalidException,
+      expectedErrorMessage: `The id for the deal folder ${buyerName}/D ${dealId} in site ${siteId} is not a number (the value is ${nonNumberId}).`,
     },
     {
-      description: 'throws a SiteDealFolderNotFoundException if the facilityIdentifier is not found in the tfisFacilityHiddenListTermStoreId',
+      description: 'throws a FolderDependencyNotFoundException if the facilityIdentifier is not found in the tfisFacilityHiddenListTermStoreId',
       listItemsMatchingBuyerDealFolder: [buyerDealFolderListItem],
       listItemsMatchingFacilityTerm: [],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`,
+      expectedErrorClass: FolderDependencyNotFoundException,
+      expectedErrorMessage: `Facility term not found: ${facilityIdentifier}. To create this resource, call POST /terms/facilities.`,
     },
     {
-      description: 'throws a SiteDealFolderNotFoundException if the found facility term list item does not have a FacilityGUID field',
+      description: 'throws a FolderDependencyInvalidException if the found facility term list item does not have a FacilityGUID field',
       listItemsMatchingBuyerDealFolder: [buyerDealFolderListItem],
       listItemsMatchingFacilityTerm: [{ fields: { notFacilityGUID: facilityTermGuid, Title: facilityIdentifier } }],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`,
+      expectedErrorClass: FolderDependencyInvalidException,
+      expectedErrorMessage: `Missing FacilityGUID for facility term ${facilityIdentifier}.`,
     },
     {
-      description: 'throws a SiteDealFolderNotFoundException if the found facility term list item has an empty string FacilityGUID field',
+      description: 'throws a FolderDependencyInvalidException if the found facility term list item has an empty string FacilityGUID field',
       listItemsMatchingBuyerDealFolder: [buyerDealFolderListItem],
       listItemsMatchingFacilityTerm: [{ fields: { FacilityGUID: '', Title: facilityIdentifier } }],
-      expectedErrorClass: SiteDealFolderNotFoundException,
-      expectedErrorMessage: `Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`,
+      expectedErrorClass: FolderDependencyInvalidException,
+      expectedErrorMessage: `Missing FacilityGUID for facility term ${facilityIdentifier}.`,
     },
   ])('$description', async ({ listItemsMatchingBuyerDealFolder, listItemsMatchingFacilityTerm, expectedErrorClass, expectedErrorMessage }) => {
     whenFindingListItemsThatMatchTheBuyerDealFolder().mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
