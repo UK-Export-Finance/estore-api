@@ -22,7 +22,7 @@ import { LoggerModule } from 'nestjs-pino';
           transport: {
             target: 'pino-pretty',
             options: {
-              singleLine: true,
+              singleLine: config.get<string>('app.singleLineLogFormat'),
             },
           },
         },
