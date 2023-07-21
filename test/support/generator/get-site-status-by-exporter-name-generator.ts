@@ -1,7 +1,10 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
-import { GraphGetSiteStatusByExporterNameResponseDto } from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
+import {
+  GraphGetSiteStatusByExporterNameResponseDto,
+  GraphGetSiteStatusByExporterNameResponseItem,
+} from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
@@ -56,6 +59,23 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
     const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
+    const sharepointServiceGetSiteFromSiteListByExporterNameParams: string = siteValues.exporterName;
+
+    const sharepointServiceGetSiteStatusByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[] = [
+      {
+        createdDateTime: siteValues.graphCreatedDateTime,
+        eTag: siteValues.graphETag,
+        id: siteValues.graphId,
+        lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
+        webUrl: siteValues.graphWebUrl,
+        createdBy: { user: graphCreatedByUser },
+        lastModifiedBy: { user: graphLastModifiedByUser },
+        parentReference: graphParentReference,
+        contentType: graphContentType,
+        fields: graphSiteFields,
+      },
+    ];
+
     const graphServiceGetParams: GraphGetParams = {
       path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
@@ -63,20 +83,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     };
 
     const graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {
-      value: [
-        {
-          createdDateTime: siteValues.graphCreatedDateTime,
-          eTag: siteValues.graphETag,
-          id: siteValues.graphId,
-          lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
-          webUrl: siteValues.graphWebUrl,
-          createdBy: { user: graphCreatedByUser },
-          lastModifiedBy: { user: graphLastModifiedByUser },
-          parentReference: graphParentReference,
-          contentType: graphContentType,
-          fields: graphSiteFields,
-        },
-      ],
+      value: sharepointServiceGetSiteStatusByExporterNameResponse,
     };
 
     const siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
@@ -87,6 +94,8 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     return {
       siteControllerGetSiteStatusByExporterNameQueryDto,
       siteServiceGetSiteStatusByExporterNameRequest,
+      sharepointServiceGetSiteFromSiteListByExporterNameParams,
+      sharepointServiceGetSiteStatusByExporterNameResponse,
       graphServiceGetParams,
       graphServiceGetSiteStatusByExporterNameResponseDto,
       siteStatusByExporterNameResponse,
@@ -107,6 +116,8 @@ interface GenerateValues {
 interface GenerateResult {
   siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
   siteServiceGetSiteStatusByExporterNameRequest: string;
+  sharepointServiceGetSiteFromSiteListByExporterNameParams: string;
+  sharepointServiceGetSiteStatusByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[]; // todo apim-472 update this type?
   graphServiceGetParams: GraphGetParams;
   graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;

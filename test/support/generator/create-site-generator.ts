@@ -7,6 +7,7 @@ import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables'
 
 import { AbstractGenerator } from './abstract-generator';
 import { RandomValueGenerator } from './random-value-generator';
+import { SharepointCreateSiteParams } from '@ukef/modules/sharepoint/sharepoint.service';
 
 export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
@@ -42,6 +43,11 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       status: status,
     }));
 
+    const sharepointServiceCreateSiteParams: SharepointCreateSiteParams[] = values.map((value) => ({
+      exporterName: options.exporterName ?? value.exporterName,
+      newSiteId: value.siteId,
+    }));
+
     const graphServicePostParams = values.map((value) => ({
       path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       requestBody: {
@@ -68,6 +74,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       graphServicePostParams,
       graphCreateSiteResponseDto,
       createSiteResponse,
+      sharepointServiceCreateSiteParams,
       requestToCreateSiteId,
     };
   }
@@ -82,6 +89,7 @@ interface GenerateResult {
   createSiteRequest: CreateSiteRequest;
   graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[];
   createSiteResponse: CreateSiteResponse[];
+  sharepointServiceCreateSiteParams: SharepointCreateSiteParams[];
   graphServicePostParams;
   requestToCreateSiteId;
 }

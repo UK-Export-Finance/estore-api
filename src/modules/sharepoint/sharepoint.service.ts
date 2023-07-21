@@ -12,6 +12,11 @@ import { FieldEqualsListItemFilter } from './list-item-filter/field-equals.list-
 import { FieldNotNullListItemFilter } from './list-item-filter/field-not-null.list-item-filter';
 import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 
+export interface SharepointCreateSiteParams {
+  exporterName: string;
+  newSiteId: string;
+}
+
 @Injectable()
 export class SharepointService {
   constructor(
@@ -133,7 +138,7 @@ export class SharepointService {
     });
   }
 
-  async createSite({ exporterName, newSiteId }) {
+  async createSite({ exporterName, newSiteId }: SharepointCreateSiteParams) {
     return await this.graphService.post<GraphCreateSiteResponseDto>({
       path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
       requestBody: {
