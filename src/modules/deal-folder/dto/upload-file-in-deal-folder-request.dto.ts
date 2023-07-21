@@ -35,7 +35,8 @@ export class UploadFileInDealFolderRequestItem {
     description: 'The path of the location/folder in Azure storage from which the file needs to be loaded.',
     minLength: 24,
     maxLength: 250,
-    pattern: /^[a-fA-F\d]{24}[\w\-:/\\()\s]*$/,
+    pattern: /^[a-fA-F\d]{24}(\/[\w\-:/\\()\s]*)*$/,
+    // [a-fA-F\d]{24} matches a MongoDB hex, which will be the name of the first folder in the path.
     example: EXAMPLES.FILE_LOCATION_PATH,
   })
   fileLocationPath: string;

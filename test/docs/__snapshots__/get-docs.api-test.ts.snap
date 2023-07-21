@@ -327,7 +327,7 @@ components:
             needs to be loaded.
           minLength: 24
           maxLength: 250
-          pattern: ^[a-fA-F\\d]{24}[\\w\\-:/\\\\()\\s]*$
+          pattern: ^[a-fA-F\\d]{24}(\\/[\\w\\-:/\\\\()\\s]*)*$
       required:
         - buyerName
         - documentType

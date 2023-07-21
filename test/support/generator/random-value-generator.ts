@@ -131,7 +131,7 @@ export class RandomValueGenerator {
       return this.chance.string({ length, pool: poolForHex });
     }
     const hex = this.chance.string({ length: 24, pool: poolForHex });
-    const restOfPath = this.chance.string({ length: length - 24, pool: poolForRestOfPath });
-    return `${hex}${restOfPath}`;
+    const restOfPath = this.chance.string({ length: length - 25, pool: poolForRestOfPath });
+    return `${hex}/${restOfPath}`;
   }
 }
