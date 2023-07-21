@@ -124,14 +124,30 @@ export class RandomValueGenerator {
   }
 
   fileLocationPath(options?: { length?: number }) {
-    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 24, max: 250 });
+    let length: number;
+    if (options && (options.length || options.length === 0)) {
+      length = options.length;
+      if (length === 25) {
+        throw new Error(`fileLocationPath cannot have length 25 as this means it ends in a '/'.`);
+      }
+    } else {
+      length = this.chance.integer({ min: 25, max: 250 });
+      // length cannot be 25 as this would mean the string would end in a '/',
+      // so we map this value to 24 instead.
+      if (length === 25) {
+        length = 24;
+      }
+    }
     const poolForHex = `abcdefABCDEF0123456789`;
-    const poolForRestOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
+    const poolForMiddleOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
+    // The last character cannot be a '/'.
+    const poolForLastCharacter = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():\\ ';
     if (length < 25) {
       return this.chance.string({ length, pool: poolForHex });
     }
     const hex = this.chance.string({ length: 24, pool: poolForHex });
-    const restOfPath = this.chance.string({ length: length - 25, pool: poolForRestOfPath });
-    return `${hex}/${restOfPath}`;
+    const middleOfPath = this.chance.string({ length: length - 26, pool: poolForMiddleOfPath });
+    const lastCharacter = this.chance.string({ length: 1, pool: poolForLastCharacter });
+    return `${hex}/${middleOfPath}${lastCharacter}`;
   }
 }
