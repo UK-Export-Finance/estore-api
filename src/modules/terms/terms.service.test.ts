@@ -4,9 +4,9 @@ import { ENUMS } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { TermsFacilityExistsException } from './exception/terms-facility-exists.exception';
 import { TermsService } from './terms.service';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 
 describe('TermsService', () => {
   let service: TermsService;
