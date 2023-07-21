@@ -7,4 +7,7 @@ export const SHAREPOINT = {
   DOCUMENT_FILE_NAME: {
     REGEX: new RegExp(`^(?!\\s)[\\w\\-.()\\s]+\.(${Object.values(ALLOWED_DOCUMENT_FILE_TYPE).join('|')})(?<![\\s.])$`),
   },
+  CASE_SITE_URL: {
+    REGEX: /^[^,&!@~#$%*:;()+./\\[\]\-]+$/,
+  },
 };
