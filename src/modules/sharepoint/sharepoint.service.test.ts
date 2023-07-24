@@ -62,13 +62,13 @@ describe('SharepointService', () => {
         makeRequest: (sharepointService: SharepointService) => sharepointService.getItems({ ukefSiteId: siteId, listId }),
       },
       {
-        method: 'getSiteByExporterName',
+        method: 'getExporterSite',
         path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
-        expandString: `fields($select=Title,URL,Sitestatus)`,
+        expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
         filterString: `fields/Title eq '${exporterName}'`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getSiteByExporterName(exporterName),
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(exporterName),
       },
       {
         method: 'getBuyerFolder',
@@ -78,15 +78,6 @@ describe('SharepointService', () => {
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getBuyerFolder({ siteId, buyerName }),
-      },
-      {
-        method: 'getExporter',
-        path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
-        expandString: 'fields($select=TermGuid,URL,Title,SiteURL)',
-        filterString: `fields/Title eq '${exporterName}'`,
-        graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporter(exporterName),
       },
       {
         method: 'getMarketTerm',

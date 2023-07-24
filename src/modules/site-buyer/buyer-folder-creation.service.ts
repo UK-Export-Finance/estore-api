@@ -59,7 +59,7 @@ export class BuyerFolderCreationService {
   }
 
   private async getBuyerTermFromList(siteId: string, exporterName: string) {
-    const searchResults = await this.sharepointService.getExporter(exporterName);
+    const searchResults = await this.sharepointService.getExporterSite(exporterName);
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
     }

@@ -59,9 +59,9 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
     const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
-    const sharepointServiceGetSiteByExporterNameParams: string = siteValues.exporterName;
+    const sharepointServiceGetExporterSiteParams: string = siteValues.exporterName;
 
-    const sharepointServiceGetSiteByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[] = [
+    const sharepointServiceGetExporterSiteResponse: GraphGetSiteStatusByExporterNameResponseItem[] = [
       {
         createdDateTime: siteValues.graphCreatedDateTime,
         eTag: siteValues.graphETag,
@@ -83,7 +83,7 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     };
 
     const graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {
-      value: sharepointServiceGetSiteByExporterNameResponse,
+      value: sharepointServiceGetExporterSiteResponse,
     };
 
     const siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
@@ -94,8 +94,8 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     return {
       siteControllerGetSiteStatusByExporterNameQueryDto,
       siteServiceGetSiteStatusByExporterNameRequest,
-      sharepointServiceGetSiteByExporterNameParams,
-      sharepointServiceGetSiteByExporterNameResponse,
+      sharepointServiceGetExporterSiteParams,
+      sharepointServiceGetExporterSiteResponse,
       graphServiceGetParams,
       graphServiceGetSiteStatusByExporterNameResponseDto,
       siteStatusByExporterNameResponse,
@@ -116,8 +116,8 @@ interface GenerateValues {
 interface GenerateResult {
   siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
   siteServiceGetSiteStatusByExporterNameRequest: string;
-  sharepointServiceGetSiteByExporterNameParams: string;
-  sharepointServiceGetSiteByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[];
+  sharepointServiceGetExporterSiteParams: string;
+  sharepointServiceGetExporterSiteResponse: GraphGetSiteStatusByExporterNameResponseItem[];
   graphServiceGetParams: GraphGetParams;
   graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;

@@ -19,7 +19,7 @@ describe('SiteService', () => {
 
   let siteService: SiteService;
   let sharepointServiceCreateSiteRequest: jest.Mock;
-  let sharepointServiceGetSiteFromSiteListRequest: jest.Mock;
+  let sharepointServiceGetExportSiteRequest: jest.Mock;
   let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
@@ -27,8 +27,8 @@ describe('SiteService', () => {
     sharepointServiceCreateSiteRequest = jest.fn();
     sharepointService.createSite = sharepointServiceCreateSiteRequest;
 
-    sharepointServiceGetSiteFromSiteListRequest = jest.fn();
-    sharepointService.getSiteByExporterName = sharepointServiceGetSiteFromSiteListRequest;
+    sharepointServiceGetExportSiteRequest = jest.fn();
+    sharepointService.getExporterSite = sharepointServiceGetExportSiteRequest;
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
@@ -38,7 +38,7 @@ describe('SiteService', () => {
 
   describe('createSite', () => {
     it('calls sharepoint.createSite and returns new site id and status from the service', async () => {
-      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetSiteByExporterNameParams } = new getSiteStatusByExporterNameGenerator(
+      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetExporterSiteParams } = new getSiteStatusByExporterNameGenerator(
         valueGenerator,
       ).generate({
         numberToGenerate: 1,
@@ -58,7 +58,7 @@ describe('SiteService', () => {
       });
 
       const siteId = createSiteResponse[0].siteId;
-      when(sharepointServiceGetSiteFromSiteListRequest).calledWith(sharepointServiceGetSiteByExporterNameParams).mockResolvedValueOnce([]);
+      when(sharepointServiceGetExportSiteRequest).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
       when(mdmServiceCreateNumbers)
         .calledWith(requestToCreateSiteId)
         .mockResolvedValueOnce([{ maskedId: siteId }]);
@@ -84,8 +84,8 @@ describe('SiteService', () => {
     ])('returns expected status and siteId if site status is "$status"', async ({ status }) => {
       const {
         siteServiceGetSiteStatusByExporterNameRequest: exporterName,
-        sharepointServiceGetSiteByExporterNameParams,
-        sharepointServiceGetSiteByExporterNameResponse,
+        sharepointServiceGetExporterSiteParams,
+        sharepointServiceGetExporterSiteResponse,
         siteStatusByExporterNameResponse,
       } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
@@ -93,9 +93,9 @@ describe('SiteService', () => {
         tfisCaseSitesListId,
         status,
       });
-      when(sharepointServiceGetSiteFromSiteListRequest)
-        .calledWith(sharepointServiceGetSiteByExporterNameParams)
-        .mockResolvedValueOnce(sharepointServiceGetSiteByExporterNameResponse);
+      when(sharepointServiceGetExportSiteRequest)
+        .calledWith(sharepointServiceGetExporterSiteParams)
+        .mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response: CreateSiteResponse = await siteService.createSiteIfDoesNotExist(exporterName);
 

@@ -53,12 +53,11 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 this can be combined with getExporter?
-  async getSiteByExporterName(exporterName: string) {
-    return await this.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
+  async getExporterSite(exporterName: string) {
+    return await this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
-      fieldsToReturn: ['Title', 'URL', 'Sitestatus'],
+      fieldsToReturn: ['Title', 'URL', 'Sitestatus', 'TermGuid', 'SiteURL'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
     });
   }
@@ -69,15 +68,6 @@ export class SharepointService {
       listId: this.sharepointConfig.tfisDealListId,
       fieldsToReturn: ['id'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}` }),
-    });
-  }
-
-  async getExporter(exporterName: string) {
-    return await this.findListItems<{ TermGuid: string; URL: string; Title: string; SiteURL: { Url: string } }>({
-      siteUrl: this.sharepointConfig.tfisSharepointUrl,
-      listId: this.sharepointConfig.tfisCaseSitesListId,
-      fieldsToReturn: ['TermGuid', 'URL', 'Title', `SiteURL`],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
     });
   }
 

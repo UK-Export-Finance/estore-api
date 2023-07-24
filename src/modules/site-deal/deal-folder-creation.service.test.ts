@@ -15,7 +15,7 @@ describe('DealFolderCreationService', () => {
     siteId,
     createDealFolderRequestItem: { dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket },
     sharepointServiceGetBuyerDealFolderParams,
-    sharepointServiceGetExporterParams,
+    sharepointServiceGetExporterSiteParams,
     sharepointServiceGetDestinationMarketParams,
     sharepointServiceGetRiskMarketParams,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
@@ -69,7 +69,7 @@ describe('DealFolderCreationService', () => {
   };
 
   let getBuyerFolder: jest.Mock;
-  let getExporter: jest.Mock;
+  let getExporterSite: jest.Mock;
   let getMarketTerm: jest.Mock;
 
   let custodianCreateAndProvision: jest.Mock;
@@ -77,12 +77,12 @@ describe('DealFolderCreationService', () => {
 
   beforeEach(() => {
     getBuyerFolder = jest.fn();
-    getExporter = jest.fn();
+    getExporterSite = jest.fn();
     getMarketTerm = jest.fn();
 
     const sharepointService = new SharepointService(null, null);
     sharepointService.getBuyerFolder = getBuyerFolder;
-    sharepointService.getExporter = getExporter;
+    sharepointService.getExporterSite = getExporterSite;
     sharepointService.getMarketTerm = getMarketTerm;
 
     custodianCreateAndProvision = jest.fn();
@@ -111,7 +111,7 @@ describe('DealFolderCreationService', () => {
   describe('createDealFolder', () => {
     it('sends a request to Custodian to create and provision the deal folder', async () => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
-      when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
@@ -131,7 +131,7 @@ describe('DealFolderCreationService', () => {
 
     it('returns the name of the created deal folder', async () => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
-      when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
@@ -296,7 +296,7 @@ describe('DealFolderCreationService', () => {
       expectedErrorMessage,
     }) => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerName);
-      when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce(listItemsMatchingDestinationMarket);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce(listItemsMatchingRiskMarket);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);

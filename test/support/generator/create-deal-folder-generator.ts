@@ -95,7 +95,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       siteId,
       buyerName,
     };
-    const sharepointServiceGetExporterParams = exporterName;
+    const sharepointServiceGetExporterSiteParams = exporterName;
     const sharepointServiceGetDestinationMarketParams = destinationMarket;
     const sharepointServiceGetRiskMarketParams = riskMarket;
 
@@ -184,7 +184,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       createDealFolderResponse,
 
       sharepointServiceGetBuyerDealFolderParams,
-      sharepointServiceGetExporterParams,
+      sharepointServiceGetExporterSiteParams,
       sharepointServiceGetDestinationMarketParams,
       sharepointServiceGetRiskMarketParams,
 
@@ -232,7 +232,7 @@ interface GenerateResult {
   createDealFolderResponse: CreateFolderResponseDto;
 
   sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams;
-  sharepointServiceGetExporterParams: string;
+  sharepointServiceGetExporterSiteParams: string;
   sharepointServiceGetDestinationMarketParams: string;
   sharepointServiceGetRiskMarketParams: string;
 

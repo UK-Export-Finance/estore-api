@@ -15,14 +15,14 @@ describe('SiteService', () => {
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
 
-  let getSiteByExporterName: jest.Mock;
+  let getExporterSite: jest.Mock;
 
   let siteService: SiteService;
 
   beforeEach(() => {
-    getSiteByExporterName = jest.fn();
+    getExporterSite = jest.fn();
     const sharepointService = new SharepointService(null, null);
-    sharepointService.getSiteByExporterName = getSiteByExporterName;
+    sharepointService.getExporterSite = getExporterSite;
 
     const mdmService = new MdmService(null);
     siteService = new SiteService(sharepointService, mdmService);
@@ -33,14 +33,14 @@ describe('SiteService', () => {
     const {
       siteServiceGetSiteStatusByExporterNameRequest,
       siteStatusByExporterNameResponse,
-      sharepointServiceGetSiteByExporterNameParams,
-      sharepointServiceGetSiteByExporterNameResponse,
+      sharepointServiceGetExporterSiteParams,
+      sharepointServiceGetExporterSiteResponse,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
 
     it('returns the site id and status from the service', async () => {
-      when(getSiteByExporterName)
-        .calledWith(sharepointServiceGetSiteByExporterNameParams)
-        .mockResolvedValueOnce(sharepointServiceGetSiteByExporterNameResponse);
+      when(getExporterSite)
+        .calledWith(sharepointServiceGetExporterSiteParams)
+        .mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response = await siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest);
 
@@ -48,7 +48,7 @@ describe('SiteService', () => {
     });
 
     it('throws a SiteNotFoundException if the site does not exist', async () => {
-      when(getSiteByExporterName).calledWith(sharepointServiceGetSiteByExporterNameParams).mockResolvedValueOnce([]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
 
       await expect(siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest)).rejects.toThrow(
         new SiteNotFoundException(`Site not found for exporter name: ${siteServiceGetSiteStatusByExporterNameRequest}`),

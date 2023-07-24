@@ -15,7 +15,7 @@ describe('BuyerFolderCreationService', () => {
     siteId,
     createBuyerFolderRequestItem: { exporterName, buyerName },
     sharepointServiceGetCaseSiteParams,
-    sharepointServiceGetExporterParams,
+    sharepointServiceGetExporterSiteParams,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const scSiteFullUrl = valueGenerator.httpsUrl();
@@ -55,16 +55,16 @@ describe('BuyerFolderCreationService', () => {
   };
 
   let getCaseSite: jest.Mock;
-  let getExporter: jest.Mock;
+  let getExporterSite: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
   let service: BuyerFolderCreationService;
 
   beforeEach(() => {
     getCaseSite = jest.fn();
-    getExporter = jest.fn();
+    getExporterSite = jest.fn();
     const sharepointService = new SharepointService(null, null);
     sharepointService.getCaseSite = getCaseSite;
-    sharepointService.getExporter = getExporter;
+    sharepointService.getExporterSite = getExporterSite;
 
     custodianCreateAndProvision = jest.fn();
     const custodianService = new CustodianService(null);
@@ -90,7 +90,7 @@ describe('BuyerFolderCreationService', () => {
   describe('createBuyerFolder', () => {
     it('sends a request to Custodian to create and provision the buyer folder', async () => {
       when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
-      when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       await service.createBuyerFolder(siteId, { exporterName, buyerName });
@@ -101,7 +101,7 @@ describe('BuyerFolderCreationService', () => {
 
     it('returns the buyer name', async () => {
       when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
-      when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       const response = await service.createBuyerFolder(siteId, { exporterName, buyerName });
@@ -197,7 +197,7 @@ describe('BuyerFolderCreationService', () => {
     },
   ])('$description', async ({ listItemsMatchingSiteId, listItemsMatchingExporterName, expectedErrorClass, expectedErrorMessage }) => {
     when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce(listItemsMatchingSiteId);
-    when(getExporter).calledWith(sharepointServiceGetExporterParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+    when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
     when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
     const createBuyerFolderPromise = service.createBuyerFolder(siteId, { exporterName, buyerName });

@@ -87,7 +87,7 @@ export class DealFolderCreationService {
     siteId: string;
     exporterName: string;
   }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
-    const exporterTermSearchResults = await this.sharepointService.getExporter(exporterName);
+    const exporterTermSearchResults = await this.sharepointService.getExporterSite(exporterName);
     if (exporterTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`);
     }
@@ -125,7 +125,6 @@ export class DealFolderCreationService {
     return `D ${dealIdentifier}`;
   }
 
-  // TODO apim-472 rework this so there is no sharepointConfig call
   private async sendCreateAndProvisionRequestForDealFolder({
     dealIdentifier,
     dealFolderName,

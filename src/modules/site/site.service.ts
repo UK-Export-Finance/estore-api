@@ -50,7 +50,7 @@ export class SiteService {
   }
 
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
-    const listItems = await this.sharepointService.getSiteByExporterName(exporterName);
+    const listItems = await this.sharepointService.getExporterSite(exporterName);
 
     if (!listItems.length) {
       return ifNotFound();
