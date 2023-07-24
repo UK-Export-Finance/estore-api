@@ -1,7 +1,7 @@
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when, WhenMockWithMatchers } from 'jest-when';
+import { when } from 'jest-when';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
