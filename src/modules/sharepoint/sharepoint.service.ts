@@ -22,6 +22,11 @@ export interface SharepointGetParentFolderParams {
   parentFolderName: string;
 }
 
+export interface SharepointGetBuyerFolderParams {
+  siteId: string;
+  buyerName: string;
+}
+
 @Injectable()
 export class SharepointService {
   constructor(
@@ -61,7 +66,7 @@ export class SharepointService {
   // be expanded with different fields in the future.
 
   // TODO apim-472 tests (both graph service and originator service)
-  async getBuyerFolder({ siteId, buyerName }: { siteId: string; buyerName: string }) {
+  async getBuyerFolder({ siteId, buyerName }: SharepointGetBuyerFolderParams) {
     return await this.findListItems<{ id: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisDealListId,

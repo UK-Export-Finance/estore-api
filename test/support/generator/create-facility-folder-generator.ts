@@ -115,10 +115,8 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     });
 
     const sharepointServiceGetParentFolderParams = { siteId, parentFolderName: parentFolderName };
-    const sharepointServiceGetParentFolderResponse = tfisFacilityListParentFolderResponse.value;
 
     const sharepointServiceGetFacilityTermParams = facilityIdentifier;
-    const sharepointServiceGetFacilityTermResponse = tfisFacilityHiddenListTermStoreFacilityTermDataResponse.value;
 
     const custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest = {
       Title: facilityFolderName,
@@ -150,10 +148,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       createFacilityFolderResponseDto,
 
       sharepointServiceGetParentFolderParams,
-      sharepointServiceGetParentFolderResponse,
-
       sharepointServiceGetFacilityTermParams,
-      sharepointServiceGetFacilityTermResponse,
 
       tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
       tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
@@ -198,10 +193,7 @@ interface GenerateResult {
   createFacilityFolderResponseDto: CreateFolderResponseDto;
 
   sharepointServiceGetParentFolderParams: SharepointGetParentFolderParams;
-  sharepointServiceGetParentFolderResponse: GraphGetListItemsResponseItem<TfisFacilityListParentFolderResponseFields>[];
-
   sharepointServiceGetFacilityTermParams: UkefId;
-  sharepointServiceGetFacilityTermResponse: GraphGetListItemsResponseItem<TfisFacilityHiddenListTermStoreFields>[];
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
   tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto<TfisFacilityHiddenListTermStoreFields>;
