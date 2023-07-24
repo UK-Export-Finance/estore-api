@@ -13,19 +13,19 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - '.github/workflows/test.yml'
-      - 'src/**'
-      - 'test/**'
-      - 'Dockerfile'
-      - 'docker-compose.yml'
-      - 'package*'
-      - 'tsconfig*'
-      - 'jest.config.ts'
-      - 'nest.cli.json'
+      - ".github/workflows/test.yml"
+      - "src/**"
+      - "test/**"
+      - "Dockerfile"
+      - "docker-compose.yml"
+      - "package*"
+      - "tsconfig*"
+      - "jest.config.ts"
+      - "nest.cli.json"
 
 env:
-  environment: 'qa'
-  timezone: 'Europe/London'
+  environment: "qa"
+  timezone: "Europe/London"
   node: ${{ vars.NODE_VERSION }}
 
 jobs:
