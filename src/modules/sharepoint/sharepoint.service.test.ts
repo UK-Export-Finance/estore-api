@@ -31,7 +31,7 @@ describe('SharepointService', () => {
     fileName: valueGenerator.string(),
     urlToCreateUploadSession: valueGenerator.httpsUrl(),
   };
-  
+
   const sharepointConfig = getMockSharepointConfig();
 
   const methodResponseFromListItem = valueGenerator.string();
