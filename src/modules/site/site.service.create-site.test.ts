@@ -38,12 +38,13 @@ describe('SiteService', () => {
 
   describe('createSite', () => {
     it('calls sharepoint.createSite and returns new site id and status from the service', async () => {
-      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetSiteByExporterNameParams } =
-        new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
-          numberToGenerate: 1,
-          tfisSharepointUrl,
-          tfisCaseSitesListId,
-        });
+      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetSiteByExporterNameParams } = new getSiteStatusByExporterNameGenerator(
+        valueGenerator,
+      ).generate({
+        numberToGenerate: 1,
+        tfisSharepointUrl,
+        tfisCaseSitesListId,
+      });
 
       const exporterName = siteServiceGetSiteStatusByExporterNameRequest;
 
