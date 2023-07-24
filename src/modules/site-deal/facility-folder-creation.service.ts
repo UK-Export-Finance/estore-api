@@ -58,7 +58,7 @@ export class FacilityFolderCreationService {
   }
 
   private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
-    const dealFolderListItems = await this.sharepointService.getDealFolder({siteId, dealFolderName});
+    const dealFolderListItems = await this.sharepointService.getDealFolder({ siteId, dealFolderName });
     if (!dealFolderListItems.length) {
       throw new FolderDependencyNotFoundException(
         `Site deal folder not found: ${dealFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
@@ -81,7 +81,7 @@ export class FacilityFolderCreationService {
   }
 
   private async getTermGuid(facilityIdentifier: string) {
-    const facilityTermListItems = await this.sharepointService.getFacilityTerm(facilityIdentifier)
+    const facilityTermListItems = await this.sharepointService.getFacilityTerm(facilityIdentifier);
 
     if (!facilityTermListItems.length) {
       throw new FolderDependencyNotFoundException(`Facility term not found: ${facilityIdentifier}. To create this resource, call POST /terms/facilities.`);

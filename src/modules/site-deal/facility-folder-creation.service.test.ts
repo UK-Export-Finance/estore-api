@@ -4,9 +4,6 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { when } from 'jest-when';
 
 import { CustodianService } from '../custodian/custodian.service';
-import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
-import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
