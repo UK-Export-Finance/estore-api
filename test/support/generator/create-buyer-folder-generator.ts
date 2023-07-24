@@ -71,6 +71,9 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       buyerName: buyerName,
     };
 
+    const sharepointServiceGetCaseSiteParams = siteId;
+    const sharepointServiceGetExporterParams = exporterName;
+
     const scCaseSitesListSiteRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigScCaseSitesListId}/items`,
       filter: `fields/CustodianSiteURL eq '${siteId}'`,
@@ -124,6 +127,9 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       createBuyerFolderRequest,
       createBuyerFolderResponse,
 
+      sharepointServiceGetCaseSiteParams,
+      sharepointServiceGetExporterParams,
+
       scCaseSitesListSiteRequest,
       scCaseSitesListSiteResponse,
 
@@ -161,6 +167,9 @@ interface GenerateResult {
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;
+
+  sharepointServiceGetCaseSiteParams: string;
+  sharepointServiceGetExporterParams: string;
 
   scCaseSitesListSiteRequest: GraphGetParams;
   scCaseSitesListSiteResponse: GraphGetListItemsResponseDto<ScCaseSitesListFields>;
