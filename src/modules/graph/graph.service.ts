@@ -16,8 +16,7 @@ export class GraphService {
 
   async get<T>({ path, filter, expand, knownErrors }: GraphGetParams): Promise<T> {
     const request = this.createGetRequest({ path, filter, expand });
-    const result = await this.makeGetRequest({ request, knownErrors });
-    return result;
+    return await this.makeGetRequest({ request, knownErrors });
   }
 
   private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
@@ -52,9 +51,7 @@ export class GraphService {
   }
 
   private createPostRequest({ path }): GraphRequest {
-    const request = this.client.api(path);
-
-    return request;
+    return this.client.api(path);
   }
 
   private async makePostRequest({ request, requestBody }: { request: GraphRequest; requestBody: any }) {
