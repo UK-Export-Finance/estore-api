@@ -29,18 +29,18 @@ on:
       - production
 
     paths:
-      - 'src/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'Dockerfile'
-      - 'tsconfig.json'
-      - 'tsconfig.build.json'
-      - '.github/workflows/deployment.yml'
+      - "src/**"
+      - "package.json"
+      - "package-lock.json"
+      - "Dockerfile"
+      - "tsconfig.json"
+      - "tsconfig.build.json"
+      - ".github/workflows/deployment.yml"
 
 env:
   PRODUCT: apim
   ENVIRONMENT: ${{ github.ref_name }}
-  TIMEZONE: 'Europe/London'
+  TIMEZONE: "Europe/London"
   # Base artifact
   FROM: latest
 
@@ -168,8 +168,7 @@ jobs:
             "CUSTODIAN_DEAL_TEMPLATE_ID=${{ secrets.CUSTODIAN_DEAL_TEMPLATE_ID }}" \
             "CUSTODIAN_DEAL_TYPE_GUID=${{ secrets.CUSTODIAN_DEAL_TYPE_GUID }}" \
             "CUSTODIAN_FACILITY_TEMPLATE_ID=${{ secrets.CUSTODIAN_FACILITY_TEMPLATE_ID }}" \
-            "CUSTODIAN_FACILITY_TYPE_GUID=${{ secrets.CUSTODIAN_FACILITY_TYPE_GUID }}" 
-
+            "CUSTODIAN_FACILITY_TYPE_GUID=${{ secrets.CUSTODIAN_FACILITY_TYPE_GUID }}"
 
       - name: Import ⬇️
         if: ${{ '' != env.API_ID }}
