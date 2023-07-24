@@ -54,7 +54,7 @@ export class SharepointService {
   }
 
   // TODO apim-472 this can be combined with getExporter?
-  async getSiteFromSiteListByExporterName(exporterName:string) {
+  async getSiteFromSiteListByExporterName(exporterName: string) {
     return await this.findListItems<{ Title: string; URL: string; Sitestatus: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
