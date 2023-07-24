@@ -114,7 +114,7 @@ describe('SharepointService', () => {
         filterString: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getTerm(facilityIdentifier),
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityTerm(facilityIdentifier),
       },
       {
         method: 'getCaseSite',

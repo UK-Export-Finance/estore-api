@@ -17,6 +17,11 @@ export interface SharepointCreateSiteParams {
   newSiteId: string;
 }
 
+export interface SharepointGetParentFolderParams {
+  siteId: string;
+  parentFolderName: string;
+}
+
 @Injectable()
 export class SharepointService {
   constructor(
@@ -86,7 +91,7 @@ export class SharepointService {
   }
 
   // TODO apim-472 tests (both graph service and originator service)
-  async getParentFolder({ siteId, parentFolderName }: { siteId: string; parentFolderName: string }) {
+  async getParentFolder({ siteId, parentFolderName }: SharepointGetParentFolderParams) {
     return await this.findListItems<{
       Title: string;
       ServerRelativeUrl: string;
@@ -102,7 +107,7 @@ export class SharepointService {
   }
 
   // TODO apim-472 tests (both graph service and originator service)
-  async getTerm(facilityIdentifier: string) {
+  async getFacilityTerm(facilityIdentifier: string) {
     return await this.findListItems<{ FacilityGUID: string; Title: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityHiddenListTermStoreId,
@@ -201,11 +206,11 @@ export class SharepointService {
     filter: ListItemFilter;
   }): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
-    const test = await this.graphService.get<{ value: ListItem<Fields>[] }>({
+    const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
-    return test.value;
+    return listItemsMatchingFilter;
   }
 }
