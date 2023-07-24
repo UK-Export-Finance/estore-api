@@ -17,9 +17,9 @@ export interface SharepointCreateSiteParams {
   newSiteId: string;
 }
 
-export interface SharepointGetParentFolderParams {
+export interface SharepointGetDealFolderParams {
   siteId: string;
-  parentFolderName: string;
+  dealFolderName: string;
 }
 
 export interface SharepointGetBuyerFolderParams {
@@ -97,7 +97,7 @@ export class SharepointService {
   }
 
   // TODO apim-472 tests (both graph service and originator service)
-  async getParentFolder({ siteId, parentFolderName }: SharepointGetParentFolderParams) {
+  async getDealFolder({ siteId, dealFolderName }: SharepointGetDealFolderParams) {
     return await this.findListItems<{
       Title: string;
       ServerRelativeUrl: string;
@@ -108,7 +108,7 @@ export class SharepointService {
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityListId,
       fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
+      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${dealFolderName}` }),
     });
   }
 

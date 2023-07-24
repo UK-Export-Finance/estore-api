@@ -17,7 +17,7 @@ describe('FacilityFolderCreationService', () => {
   const {
     createFacilityFolderParamsDto: { siteId, dealId },
     createFacilityFolderRequestItem: { facilityIdentifier, buyerName, exporterName },
-    sharepointServiceGetParentFolderParams,
+    sharepointServiceGetDealFolderParams,
     sharepointServiceGetFacilityTermParams,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
@@ -58,16 +58,16 @@ describe('FacilityFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let getParentFolder: jest.Mock;
+  let getDealFolder: jest.Mock;
   let getFacilityTerm: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
   let service: FacilityFolderCreationService;
 
   beforeEach(() => {
-    getParentFolder = jest.fn();
+    getDealFolder = jest.fn();
     getFacilityTerm = jest.fn();
     const sharepointService = new SharepointService(null, null);
-    sharepointService.getParentFolder = getParentFolder;
+    sharepointService.getDealFolder = getDealFolder;
     sharepointService.getFacilityTerm = getFacilityTerm;
 
     custodianCreateAndProvision = jest.fn();
@@ -88,7 +88,7 @@ describe('FacilityFolderCreationService', () => {
   });
 
   it('sends a request to Custodian to create and provision the facility folder', async () => {
-    when(getParentFolder).calledWith(sharepointServiceGetParentFolderParams).mockResolvedValueOnce([buyerDealFolderListItem]);
+    when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([buyerDealFolderListItem]);
     when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce([facilityTermListItem]);
     when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder).mockResolvedValueOnce(undefined);
 
@@ -154,7 +154,7 @@ describe('FacilityFolderCreationService', () => {
       expectedErrorMessage: `Missing FacilityGUID for facility term ${facilityIdentifier}.`,
     },
   ])('$description', async ({ listItemsMatchingBuyerDealFolder, listItemsMatchingFacilityTerm, expectedErrorClass, expectedErrorMessage }) => {
-    when(getParentFolder).calledWith(sharepointServiceGetParentFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
+    when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
     when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce(listItemsMatchingFacilityTerm);
     when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder).mockResolvedValueOnce(undefined);
 

@@ -18,7 +18,7 @@ describe('SharepointService', () => {
   const buyerName = valueGenerator.buyerName();
   const exporterName = valueGenerator.exporterName();
   const marketName = valueGenerator.string();
-  const parentFolderName = valueGenerator.string();
+  const dealFolderName = valueGenerator.string();
   const facilityIdentifier = valueGenerator.facilityId();
   const sharepointResourceType = valueGenerator.enumValue(SharepointResourceTypeEnum) as SharepointResourceTypeEnum;
   const listId = valueGenerator.string();
@@ -99,13 +99,13 @@ describe('SharepointService', () => {
         makeRequest: (sharepointService: SharepointService) => sharepointService.getMarketTerm(marketName),
       },
       {
-        method: 'getParentFolder',
+        method: 'getDealFolder',
         path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.tfisFacilityListId}/items`,
         expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
-        filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${parentFolderName}'`,
+        filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}'`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getParentFolder({ siteId, parentFolderName }),
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getDealFolder({ siteId, dealFolderName }),
       },
       {
         method: 'getTerm',
