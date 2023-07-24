@@ -38,9 +38,7 @@ describe('SiteService', () => {
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
 
     it('returns the site id and status from the service', async () => {
-      when(getExporterSite)
-        .calledWith(sharepointServiceGetExporterSiteParams)
-        .mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response = await siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest);
 
