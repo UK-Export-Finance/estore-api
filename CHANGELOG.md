@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.3.1](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.0...v1.3.1) (2023-07-24)
+
+
+### Bug Fixes
+
+* **acr:** rectified repo name ([d75aabd](https://github.com/UK-Export-Finance/estore-api/commit/d75aabdf1aa3101f1a7c3cbd741ad298eb873ebb))
+* **dockerfile:** updated dockerfile version to 20.50.0 ([cb86661](https://github.com/UK-Export-Finance/estore-api/commit/cb8666159ca65d21db810e9d6f3bd3c75bc09223))
+* **iac:** ACR ([#150](https://github.com/UK-Export-Finance/estore-api/issues/150)) ([e8b1aa1](https://github.com/UK-Export-Finance/estore-api/commit/e8b1aa1baeddb4f7b89f09cacda3247ad3dfe4f7))
+* **iac:** added environment variable ([e1435e0](https://github.com/UK-Export-Finance/estore-api/commit/e1435e057ab1bc191b28da839b31a9ef6e3ab34a))
+* **iac:** added environment variable ([#148](https://github.com/UK-Export-Finance/estore-api/issues/148)) ([3381f2e](https://github.com/UK-Export-Finance/estore-api/commit/3381f2ed56d6804b7f2aba5d0538215bf5089e1e))
+* **iac:** formatting issue ([ea7e8cc](https://github.com/UK-Export-Finance/estore-api/commit/ea7e8cc6754c280bec1a2014b1cd6667e54e1510))
+* **iac:** formatting issue ([f0adc60](https://github.com/UK-Export-Finance/estore-api/commit/f0adc6062fe3a948f99b1e85543a86780a2de1e6))
+* **iac:** formatting issue ([#151](https://github.com/UK-Export-Finance/estore-api/issues/151)) ([ca0411f](https://github.com/UK-Export-Finance/estore-api/commit/ca0411f30b9b76ba67328c8a59a4ac0e105ff6b5))
+* **iac:** formatting issues ([#152](https://github.com/UK-Export-Finance/estore-api/issues/152)) ([9802b73](https://github.com/UK-Export-Finance/estore-api/commit/9802b7368fa623260b8fbc2f7b3210f4bd86cc11))
+* **iac:** yaml formatting issues ([58e3cfe](https://github.com/UK-Export-Finance/estore-api/commit/58e3cfe1e592d9c765fc36b33ac9b8757c95ff1e))
+
+
+### Miscellaneous
+
+* **deps:** dependencies updates ([93054b7](https://github.com/UK-Export-Finance/estore-api/commit/93054b7cf3197d76320292b6d9f157e9c8b1a8da))
+
 ## [1.3.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.2.0...v1.3.0) (2023-07-21)
 
 
