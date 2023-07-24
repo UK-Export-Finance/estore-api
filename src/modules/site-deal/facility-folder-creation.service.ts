@@ -12,7 +12,8 @@ import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
-import { SiteDealFolderNotFoundException } from './exception/site-deal-folder-not-found.exception';
+import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
+import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
 type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
@@ -35,14 +36,14 @@ export class FacilityFolderCreationService {
   ): Promise<CreateFolderResponseDto> {
     const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
 
-    const parentFolderName = this.getParentFolderName(buyerName, dealId);
+    const dealFolderName = this.getDealFolderName(buyerName, dealId);
     const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
 
-    const parentFolderId = await this.getParentFolderId(siteId, parentFolderName);
+    const dealFolderId = await this.getDealFolderId(siteId, dealFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
-    const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, parentFolderId, termGuid, termTitle);
+    const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, dealFolderId, termGuid, termTitle);
 
     await this.custodianService.createAndProvision(custodianCreateAndProvisionRequest);
 
@@ -55,12 +56,12 @@ export class FacilityFolderCreationService {
     return `F ${facilityIdentifier}`;
   }
 
-  private getParentFolderName(buyerName: string, dealId: string): string {
+  private getDealFolderName(buyerName: string, dealId: string): string {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getParentFolderId(siteId: string, parentFolderName: string): Promise<number> {
-    const parentFolderListItems = await this.sharepointService.findListItems<{
+  private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
+    const dealFolderListItems = await this.sharepointService.findListItems<{
       Title: string;
       ServerRelativeUrl: string;
       Code: string;
@@ -70,23 +71,28 @@ export class FacilityFolderCreationService {
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityListId,
       fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${parentFolderName}` }),
+      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${dealFolderName}` }),
     });
 
-    if (!parentFolderListItems.length || !parentFolderListItems[0].fields.id) {
-      throw new SiteDealFolderNotFoundException(
-        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+    if (!dealFolderListItems.length) {
+      throw new FolderDependencyNotFoundException(
+        `Site deal folder not found: ${dealFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
       );
     }
 
-    const parentFolderId = parseInt(parentFolderListItems[0].fields.id);
-    if (isNaN(parentFolderId)) {
-      throw new SiteDealFolderNotFoundException(
-        `Site deal folder not found: ${parentFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder`,
+    const dealFolderIdString = dealFolderListItems[0].fields.id;
+    if (!dealFolderIdString) {
+      throw new FolderDependencyInvalidException(`Missing id for the deal folder ${dealFolderName} in site ${siteId}.`);
+    }
+
+    const dealFolderId = parseInt(dealFolderIdString);
+    if (isNaN(dealFolderId)) {
+      throw new FolderDependencyInvalidException(
+        `The id for the deal folder ${dealFolderName} in site ${siteId} is not a number (the value is ${dealFolderIdString}).`,
       );
     }
 
-    return parentFolderId;
+    return dealFolderId;
   }
 
   private async getTermGuid(facilityIdentifier: string) {
@@ -100,16 +106,21 @@ export class FacilityFolderCreationService {
       ),
     });
 
-    if (!facilityTermListItems.length || !facilityTermListItems[0].fields.FacilityGUID) {
-      throw new SiteDealFolderNotFoundException(`Facility term folder not found: ${facilityIdentifier}. To create this resource, call POST /terms/facility`);
+    if (!facilityTermListItems.length) {
+      throw new FolderDependencyNotFoundException(`Facility term not found: ${facilityIdentifier}. To create this resource, call POST /terms/facilities.`);
     }
 
-    return facilityTermListItems[0].fields.FacilityGUID;
+    const facilityGuid = facilityTermListItems[0].fields.FacilityGUID;
+    if (!facilityGuid) {
+      throw new FolderDependencyInvalidException(`Missing FacilityGUID for facility term ${facilityIdentifier}.`);
+    }
+
+    return facilityGuid;
   }
 
   private createCustodianCreateAndProvisionRequest(
     facilityFolderName: string,
-    parentFolderId: number,
+    dealFolderId: number,
     termGuid: string,
     termTitle: string,
   ): CustodianCreateAndProvisionRequest {
@@ -118,7 +129,7 @@ export class FacilityFolderCreationService {
       Id: 0,
       Code: '',
       TemplateId: this.custodianConfig.facilityTemplateId,
-      ParentId: parentFolderId,
+      ParentId: dealFolderId,
       InterestedParties: '',
       Secure: false,
       DoNotSubscribeInterestedParties: false,

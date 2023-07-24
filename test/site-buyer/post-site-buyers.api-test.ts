@@ -1,5 +1,6 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -74,13 +75,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
           .mockSuccessfulExpandCallWithExpandString(scCaseSitesListSiteRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
     {
@@ -88,13 +89,13 @@ describe('POST /sites/{siteId}/buyers', () => {
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulScCaseSitesListSiteRequest();
         mockSuccessfulCreateAndProvision();
+      },
+      givenGraphServiceCallWillThrowError: (error: Error) => {
         mockGraphClientService
           .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
           .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
-          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter);
-      },
-      givenGraphServiceCallWillThrowError: (error: Error) => {
-        mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+          .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
+          .mockUnsuccessfulGraphGetCall(error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
@@ -125,16 +126,16 @@ describe('POST /sites/{siteId}/buyers', () => {
         message: `Did not find the site ${siteId} in the scCaseSitesList.`,
       },
       {
-        description: 'returns a 500 if the list item matching the siteId in the scCaseSitesList does not have an id field',
+        description: 'returns a 400 if the list item matching the siteId in the scCaseSitesList does not have an id field',
         siteIdListItems: [{ fields: { notId: valueGenerator.string() } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing ID for the site found with id ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the siteId in the scCaseSitesList has an id field that is not a number',
-        siteIdListItems: [{ fields: { id: 'this is not a number' } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        description: 'returns a 400 if the list item matching the siteId in the scCaseSitesList has an id field that is not a number',
+        siteIdListItems: [{ fields: { id: 'this-is-not-a-number' } }],
+        statusCode: 400,
+        message: `The ID for the site found for site ${siteId} is not a number (the value is this-is-not-a-number).`,
       },
     ])('$description', async ({ siteIdListItems, statusCode, message }) => {
       mockGraphClientService
@@ -164,28 +165,28 @@ describe('POST /sites/{siteId}/buyers', () => {
         message: `Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
         exporterNameListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
         exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a SiteURL field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a SiteURL field',
         exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), notSiteURL: { Url: valueGenerator.string() } } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
-        description: 'returns a 500 if the list item matching the exporterName in the tfisCaseSitesList does not have a Url field on the SiteURL field',
+        description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a Url field on the SiteURL field',
         exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { notUrl: valueGenerator.string() } } }],
-        statusCode: 500,
-        message: 'Internal server error',
+        statusCode: 400,
+        message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
     ])('$description', async ({ exporterNameListItems, statusCode, message }) => {
       mockSuccessfulScCaseSitesListSiteRequest();
@@ -226,8 +227,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       successStatusCode,
     });
 
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'exporterName',
+    withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createBuyerFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),

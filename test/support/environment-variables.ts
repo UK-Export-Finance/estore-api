@@ -41,6 +41,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
 
   DTFS_STORAGE_ACCOUNT_NAME: valueGenerator.word(),
   DTFS_STORAGE_ACCOUNT_KEY: valueGenerator.word(),
+  DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH: valueGenerator.word(),
   DTFS_STORAGE_EXAMPLE_FILE_NAME: valueGenerator.word(),
   DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH: valueGenerator.word(),
 

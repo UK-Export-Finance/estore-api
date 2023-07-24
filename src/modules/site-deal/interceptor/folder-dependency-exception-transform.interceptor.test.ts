@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { lastValueFrom, throwError } from 'rxjs';
 
+import { FolderDependencyInvalidException } from '../exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from '../exception/folder-dependency-not-found.exception';
 import { FolderDependencyExceptionTransformInterceptor } from './folder-dependency-exception-transform.interceptor';
 
@@ -26,7 +27,18 @@ describe('FolderDependencyExceptionTransformInterceptor', () => {
     await expect(interceptPromise).rejects.toHaveProperty('cause', folderDependencyNotFoundException);
   });
 
-  it('does NOT convert thrown exceptions that are NOT FolderDependencyNotFoundException', async () => {
+  it('converts thrown FolderDependencyInvalidException to BadRequestException', async () => {
+    const message = valueGenerator.string();
+    const folderDependencyInvalidException = new FolderDependencyInvalidException(message);
+
+    const interceptPromise = lastValueFrom(interceptor.intercept(null, { handle: () => throwError(() => folderDependencyInvalidException) }));
+
+    await expect(interceptPromise).rejects.toBeInstanceOf(BadRequestException);
+    await expect(interceptPromise).rejects.toHaveProperty('message', message);
+    await expect(interceptPromise).rejects.toHaveProperty('cause', folderDependencyInvalidException);
+  });
+
+  it('does NOT convert thrown exceptions that are NOT FolderDependencyNotFoundException or FolderDependencyInvalidException', async () => {
     const exceptionThatShouldNotBeTransformed = new Error('Test exception');
 
     const interceptPromise = lastValueFrom(interceptor.intercept(null, { handle: () => throwError(() => exceptionThatShouldNotBeTransformed) }));

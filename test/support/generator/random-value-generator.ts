@@ -29,9 +29,15 @@ export class RandomValueGenerator {
     return this.chance.string({ length, pool: '0123456789' });
   }
 
+  /*
+   * The pool of characters for exporter name is modified to ensure a valid value.
+   * 'o', 'i', 'N' and ' ' have been removed. Restrictions are taken from:
+   * https://support.microsoft.com/en-gb/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
+   */
   exporterName(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
-    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._() ';
+    // cspell:disable-next-line
+    const pool = 'abcdefghijklmnpqrstuwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789-._()áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ';
     return this.chance.string({ length, pool });
   }
 
@@ -120,8 +126,30 @@ export class RandomValueGenerator {
   }
 
   fileLocationPath(options?: { length?: number }) {
-    const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
-    const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
-    return this.chance.string({ length, pool });
+    let length: number;
+    if (options && (options.length || options.length === 0)) {
+      length = options.length;
+      if (length === 25) {
+        throw new Error(`fileLocationPath cannot have length 25 as this means it ends in a '/'.`);
+      }
+    } else {
+      length = this.chance.integer({ min: 25, max: 250 });
+      // length cannot be 25 as this would mean the string would end in a '/',
+      // so we map this value to 24 instead.
+      if (length === 25) {
+        length = 24;
+      }
+    }
+    const poolForHex = `abcdefABCDEF0123456789`;
+    const poolForMiddleOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
+    // The last character cannot be a '/'.
+    const poolForLastCharacter = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():\\ ';
+    if (length < 25) {
+      return this.chance.string({ length, pool: poolForHex });
+    }
+    const hex = this.chance.string({ length: 24, pool: poolForHex });
+    const middleOfPath = this.chance.string({ length: length - 26, pool: poolForMiddleOfPath });
+    const lastCharacter = this.chance.string({ length: 1, pool: poolForLastCharacter });
+    return `${hex}/${middleOfPath}${lastCharacter}`;
   }
 }

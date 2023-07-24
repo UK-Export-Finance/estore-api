@@ -13,7 +13,7 @@ import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables'
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { MockDtfsStorageClientService } from '@ukef-test/support/mocks/dtfs-storage-client.service.mock';
-import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { MockGraphClientService, MockGraphRequest } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('postDocumentInDealFolder', () => {
@@ -108,7 +108,7 @@ describe('postDocumentInDealFolder', () => {
     it.each(documentTypeTestInputs)(
       'returns the path to the uploaded file with status code 201 if it is successfully uploaded when the document type is $documentType',
       async ({ documentType, documentTitle, documentTypeId }) => {
-        mockSuccessfulCompleteRequest();
+        const mockGraphRequest = mockSuccessfulCompleteRequest();
 
         const uploadFileInDealFolderRequestWithModifiedDocumentTypeField: UploadFileInDealFolderRequestDto = [
           { ...uploadFileInDealFolderRequest[0], documentType },
@@ -122,7 +122,7 @@ describe('postDocumentInDealFolder', () => {
 
         const { status, body } = await makeRequestWithBody(uploadFileInDealFolderRequestWithModifiedDocumentTypeField);
 
-        expect(mockGraphClientService.request.patch).toHaveBeenCalledWith(updateFileInfoRequest);
+        expect(mockGraphRequest.patch).toHaveBeenCalledWith(updateFileInfoRequest);
         expect(mockGraphClientService.mockFileUploadTask.upload).toHaveBeenCalledTimes(1);
         expect(status).toBe(201);
         expect(body).toEqual(uploadFileInDealFolderResponse);
@@ -204,10 +204,12 @@ describe('postDocumentInDealFolder', () => {
         mockGraphClientService
           // request to get sharepoint site id
           .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
-          .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse)
+          .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+        mockGraphClientService
           // request to get drive id
           .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
-          .mockSuccessfulGraphGetCall(getDriveIdResponse)
+          .mockSuccessfulGraphGetCall(getDriveIdResponse);
+        mockGraphClientService
           // request to upload file
           .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
           .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
@@ -261,8 +263,8 @@ describe('postDocumentInDealFolder', () => {
           'fileName must be longer than or equal to 5 characters',
           'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
           'fileLocationPath must be a string',
-          'fileLocationPath must be longer than or equal to 1 characters',
-          'fileLocationPath must match /^[\\w\\-:/\\\\()\\s]+$/ regular expression',
+          'fileLocationPath must be longer than or equal to 24 characters',
+          'fileLocationPath must match /^[a-fA-F\\d]{24}(\\/[\\w\\-:\\\\()\\s]+)*$/ regular expression',
         ],
         statusCode: 400,
       });
@@ -285,8 +287,8 @@ describe('postDocumentInDealFolder', () => {
           'fileName must be longer than or equal to 5 characters',
           'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
           'fileLocationPath must be a string',
-          'fileLocationPath must be longer than or equal to 1 characters',
-          'fileLocationPath must match /^[\\w\\-:/\\\\()\\s]+$/ regular expression',
+          'fileLocationPath must be longer than or equal to 24 characters',
+          'fileLocationPath must match /^[a-fA-F\\d]{24}(\\/[\\w\\-:\\\\()\\s]+)*$/ regular expression',
         ],
         statusCode: 400,
       });
@@ -342,7 +344,7 @@ describe('postDocumentInDealFolder', () => {
 
     withStringFieldValidationApiTests({
       fieldName: 'fileLocationPath',
-      minLength: 1,
+      minLength: 24,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.fileLocationPath({ length }),
       pattern: FILE_LOCATION_PATH.REGEX,
@@ -372,7 +374,7 @@ describe('postDocumentInDealFolder', () => {
     return api.post(getPostDocumentUrl(siteId, dealId), uploadFileInDealFolderRequest);
   };
 
-  const mockSuccessfulCompleteRequest = () => {
+  const mockSuccessfulCompleteRequest = (): MockGraphRequest => {
     mockDtfsStorageClientService
       // request to get file size
       .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
@@ -383,21 +385,29 @@ describe('postDocumentInDealFolder', () => {
     mockGraphClientService
       // request to get sharepoint site id
       .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
-      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse)
+      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+    mockGraphClientService
       // request to get drive id
       .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
-      .mockSuccessfulGraphGetCall(getDriveIdResponse)
+      .mockSuccessfulGraphGetCall(getDriveIdResponse);
+    mockGraphClientService
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
       .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
+      .mockSuccessfulUploadCall();
+    mockGraphClientService
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(getListIdPath)
-      .mockSuccessfulGraphGetCall(getListIdResponse)
+      .mockSuccessfulGraphGetCall(getListIdResponse);
+    mockGraphClientService
       // request to get item id
       .mockSuccessfulGraphApiCallWithPath(getItemIdPath)
-      .mockSuccessfulGraphGetCall(getItemIdResponse)
-      // request to update file information
-      .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath);
+      .mockSuccessfulGraphGetCall(getItemIdResponse);
+    return (
+      mockGraphClientService
+        // request to update file information
+        .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath)
+    );
   };
 
   const givenAnyRequestWouldSucceedUpToReturningItem = () => {
@@ -411,18 +421,18 @@ describe('postDocumentInDealFolder', () => {
     mockGraphClientService
       // request to get sharepoint site id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse)
+      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+    mockGraphClientService
       // request to get drive id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getDriveIdResponse)
+      .mockSuccessfulGraphGetCall(getDriveIdResponse);
+    mockGraphClientService
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(expect.any(String), expect.any(Object), uploadSession)
       .mockSuccessfulGetFileUploadTaskCall(expect.any(String), getUploadTaskArgs[1], getUploadTaskArgs[2], getUploadTaskArgs[3])
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getListIdResponse)
-      // first part of request to get item id (does not return item)
-      .mockSuccessfulGraphApiCallWithPath(expect.any(String));
+      .mockSuccessfulGraphGetCall(getListIdResponse);
   };
 
   const mockReturningItem = (siteId: string, dealId: string, buyerName: string, fileName: string): void => {
@@ -431,8 +441,11 @@ describe('postDocumentInDealFolder', () => {
     const itemId = getItemIdResponse.value[0].id;
 
     mockGraphClientService
+      // first part of request to get item id (does not return item)
+      .mockSuccessfulGraphApiCallWithPath(expect.any(String))
       // returning item
-      .mockSuccessfulGraphGetCall({ value: [{ webUrl: itemWebUrl, id: itemId }] })
+      .mockSuccessfulGraphGetCall({ value: [{ webUrl: itemWebUrl, id: itemId }] });
+    mockGraphClientService
       // request to update file information
       .mockSuccessfulGraphApiCallWithPath(expect.anything());
   };

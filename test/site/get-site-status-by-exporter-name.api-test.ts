@@ -1,7 +1,7 @@
 import { ENUMS } from '@ukef/constants';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withSharepointResourceNameQueryValidationApiTests } from '@ukef-test/common-tests/request-query-validation-api-tests/sharepoint-resource-name-query-validation-api-tests';
+import { withExporterNameQueryValidationApiTests } from '@ukef-test/common-tests/request-query-validation-api-tests/exporter-name-query-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
@@ -49,14 +49,13 @@ describe('getSiteStatusByExporterName', () => {
   });
 
   withSharedGraphExceptionHandlingTests({
-    givenRequestWouldOtherwiseSucceed: () => {
+    givenRequestWouldOtherwiseSucceed: () => {},
+    givenGraphServiceCallWillThrowError: (error: Error) => {
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCallWithExpandString(expand)
-        .mockSuccessfulFilterCallWithFilterString(filter);
-    },
-    givenGraphServiceCallWillThrowError: (error: Error) => {
-      mockGraphClientService.mockUnsuccessfulGraphGetCall(error);
+        .mockSuccessfulFilterCallWithFilterString(filter)
+        .mockUnsuccessfulGraphGetCall(error);
     },
     makeRequest: () => makeRequest(),
   });
@@ -108,15 +107,14 @@ describe('getSiteStatusByExporterName', () => {
     expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
   });
 
-  withSharepointResourceNameQueryValidationApiTests({
-    queryName: 'exporterName',
+  withExporterNameQueryValidationApiTests({
     valueGenerator,
     validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
     successStatusCode: 202,
     makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
     givenAnyRequestQueryWouldSucceed: () => {
       mockGraphClientService
-        .mockSuccessfulGraphApiCall()
+        .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCall()
         .mockSuccessfulFilterCall()
         .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
