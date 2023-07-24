@@ -52,7 +52,6 @@ export class SiteService {
   private async getSiteFromSitesList({ exporterName, ifNotFound }): Promise<GetSiteStatusByExporterNameResponse | CreateSiteResponse> {
     const listItems = await this.sharepointService.getSiteByExporterName(exporterName);
 
-    // TODO apim-472 update error handling around here
     if (!listItems.length) {
       return ifNotFound();
     }

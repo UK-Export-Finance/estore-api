@@ -117,7 +117,7 @@ interface GenerateResult {
   siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
   siteServiceGetSiteStatusByExporterNameRequest: string;
   sharepointServiceGetSiteByExporterNameParams: string;
-  sharepointServiceGetSiteByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[]; // todo apim-472 update this type?
+  sharepointServiceGetSiteByExporterNameResponse: GraphGetSiteStatusByExporterNameResponseItem[];
   graphServiceGetParams: GraphGetParams;
   graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;

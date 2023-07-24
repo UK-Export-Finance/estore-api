@@ -46,7 +46,6 @@ describe('TermsService', () => {
     expect(service).toBeDefined();
   });
 
-  // TODO apim-472: update these tests
   describe('postFacilityToTermStore', () => {
     it('should call the sharepointService post method and return a success message', async () => {
       when(mockSharepointPostFacilityToTermStore).calledWith(expect.any(String)).mockResolvedValue(undefined);

@@ -63,10 +63,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 - There is a question here about how specific we want these to be named. I've used generic naming with the idea it can
-  // be expanded with different fields in the future.
-
-  // TODO apim-472 tests (both graph service and originator service)
   async getBuyerFolder({ siteId, buyerName }: SharepointGetBuyerFolderParams) {
     return await this.findListItems<{ id: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
@@ -76,7 +72,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 tests (both graph service and originator service)
   async getExporter(exporterName: string) {
     return await this.findListItems<{ TermGuid: string; URL: string; Title: string; SiteURL: { Url: string } }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
@@ -86,7 +81,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 tests (both graph service and originator service)
   async getMarketTerm(marketName: string) {
     return await this.findListItems<{ TermGuid: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
@@ -96,7 +90,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 tests (both graph service and originator service)
   async getDealFolder({ siteId, dealFolderName }: SharepointGetDealFolderParams) {
     return await this.findListItems<{
       Title: string;
@@ -112,7 +105,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 tests (both graph service and originator service)
   async getFacilityTerm(facilityIdentifier: string) {
     return await this.findListItems<{ FacilityGUID: string; Title: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
@@ -125,7 +117,6 @@ export class SharepointService {
     });
   }
 
-  // TODO apim-472 tests (both graph service and originator service)
   async getCaseSite(siteId: string) {
     return await this.findListItems<{
       id: string;
@@ -199,7 +190,6 @@ export class SharepointService {
     return await this.graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
   }
 
-  // TODO apim-472: tests (commonise existing)
   private async findListItems<Fields>({
     siteUrl,
     listId,

@@ -95,7 +95,6 @@ export class FacilityFolderCreationService {
     return facilityGuid;
   }
 
-  // TODO apim-472 rework this so there is no sharepointConfig call
   private createCustodianCreateAndProvisionRequest(
     facilityFolderName: string,
     dealFolderId: number,

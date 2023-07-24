@@ -83,7 +83,6 @@ export class BuyerFolderCreationService {
     return { buyerTermGuid, buyerUrl };
   }
 
-  // TODO apim-472 rework this so there is no sharepointConfig call
   private async sendCreateAndProvisionRequestForBuyerFolder(buyerName: string, scListResponseId: number, termGuid: string, termUrl: string): Promise<void> {
     const createFolderRequest: CustodianCreateAndProvisionRequest = {
       Title: buyerName,

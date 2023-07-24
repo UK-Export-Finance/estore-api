@@ -13,7 +13,6 @@ jest.mock('@ukef/modules/graph/graph.service');
 describe('SharepointService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  // TODO apim-472: update generator
   const siteId = valueGenerator.ukefSiteId();
   const buyerName = valueGenerator.buyerName();
   const exporterName = valueGenerator.exporterName();
@@ -32,7 +31,7 @@ describe('SharepointService', () => {
     fileName: valueGenerator.string(),
     urlToCreateUploadSession: valueGenerator.httpsUrl(),
   };
-  // TODO apim-472: look at moving sharepoint config into test part
+  
   const sharepointConfig = getMockSharepointConfig();
 
   const methodResponseFromListItem = valueGenerator.string();
