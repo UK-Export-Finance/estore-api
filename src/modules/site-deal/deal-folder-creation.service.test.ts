@@ -1,9 +1,8 @@
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
-import { FieldEqualsListItemFilter } from '@ukef/modules/sharepoint/list-item-filter/field-equals.list-item-filter';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when, WhenMockWithMatchers } from 'jest-when';
+import { when } from 'jest-when';
 
 import { DealFolderCreationService } from './deal-folder-creation.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
