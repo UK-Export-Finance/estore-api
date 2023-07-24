@@ -142,6 +142,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 }
 
 type ScCaseSitesListFields = { id: string };
+
 type TfisCaseSitesListFields = {
   TermGuid: string;
   URL: string;

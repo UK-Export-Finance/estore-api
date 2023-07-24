@@ -1,21 +1,15 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
-import {
-  GraphGetSiteStatusByExporterNameResponseDto,
-  GraphGetSiteStatusByExporterNameResponseItem,
-} from '@ukef/modules/graph/dto/graph-get-site-status-by-exporter-name-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { GetSiteStatusByExporterNameQueryDto } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from '@ukef/modules/site/dto/get-site-status-by-exporter-name-response.dto';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 
 import { AbstractGenerator } from './abstract-generator';
-import { graphContentTypeGenerator } from './common/graph-content-type-generator';
-import { graphParentReferenceGenerator } from './common/graph-parent-reference-generator';
-import { graphSiteFieldsGenerator } from './common/graph-site-fields-generator';
-import { graphUserGenerator } from './common/graph-user-generator';
 import { RandomValueGenerator } from './random-value-generator';
+import { GraphListItemsGenerator } from './common/graph-list-items-generator';
+import { GraphGetListItemsResponseItem, GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 
 export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
@@ -42,16 +36,11 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
     const tfisCaseSitesListId = options.tfisCaseSitesListId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
     const status = options.status ?? ENUMS.SITE_STATUSES.PROVISIONING;
 
-    const graphCreatedByUser = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const graphContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const graphLastModifiedByUser = { ...graphCreatedByUser };
-    const graphParentReference = new graphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const graphSiteFields = new graphSiteFieldsGenerator(this.valueGenerator).generate({
-      numberToGenerate: 1,
-      title: siteValues.exporterName,
-      url: siteValues.siteId,
-      siteStatus: status,
-    });
+    const getExporterSiteResponseFields = {
+      Title: siteValues.exporterName,
+      URL: siteValues.siteId,
+      Sitestatus: status,
+    };
 
     const siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto = {
       exporterName: siteValues.exporterName,
@@ -59,32 +48,22 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
 
     const siteServiceGetSiteStatusByExporterNameRequest: string = siteValues.exporterName;
 
-    const sharepointServiceGetExporterSiteParams: string = siteValues.exporterName;
-
-    const sharepointServiceGetExporterSiteResponse: GraphGetSiteStatusByExporterNameResponseItem[] = [
-      {
-        createdDateTime: siteValues.graphCreatedDateTime,
-        eTag: siteValues.graphETag,
-        id: siteValues.graphId,
-        lastModifiedDateTime: siteValues.graphLastModifiedDateTime,
-        webUrl: siteValues.graphWebUrl,
-        createdBy: { user: graphCreatedByUser },
-        lastModifiedBy: { user: graphLastModifiedByUser },
-        parentReference: graphParentReference,
-        contentType: graphContentType,
-        fields: graphSiteFields,
-      },
-    ];
-
     const graphServiceGetParams: GraphGetParams = {
       path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       filter: `fields/Title eq '${siteValues.exporterName}'`,
       expand: 'fields($select=Title,URL,Sitestatus)',
     };
 
-    const graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto = {
-      value: sharepointServiceGetExporterSiteResponse,
-    };
+    const graphServiceGetResponse: GraphGetListItemsResponseDto<GetExporterSiteResponseFields> = new GraphListItemsGenerator<GetExporterSiteResponseFields>(
+      this.valueGenerator,
+    ).generate({
+      numberToGenerate: 1,
+      graphListItemsFields: getExporterSiteResponseFields,
+    });
+
+    const sharepointServiceGetExporterSiteParams: string = siteValues.exporterName;
+
+    const sharepointServiceGetExporterSiteResponse: GraphGetListItemsResponseItem<GetExporterSiteResponseFields>[] = graphServiceGetResponse.value;
 
     const siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse = {
       siteId: siteValues.siteId,
@@ -97,11 +76,17 @@ export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<Gene
       sharepointServiceGetExporterSiteParams,
       sharepointServiceGetExporterSiteResponse,
       graphServiceGetParams,
-      graphServiceGetSiteStatusByExporterNameResponseDto,
+      graphServiceGetResponse,
       siteStatusByExporterNameResponse,
     };
   }
 }
+
+type GetExporterSiteResponseFields = {
+  Title: string;
+  URL: string;
+  Sitestatus: string;
+};
 
 interface GenerateValues {
   exporterName: string;
@@ -117,9 +102,9 @@ interface GenerateResult {
   siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
   siteServiceGetSiteStatusByExporterNameRequest: string;
   sharepointServiceGetExporterSiteParams: string;
-  sharepointServiceGetExporterSiteResponse: GraphGetSiteStatusByExporterNameResponseItem[];
+  sharepointServiceGetExporterSiteResponse: GraphGetListItemsResponseItem<GetExporterSiteResponseFields>[];
   graphServiceGetParams: GraphGetParams;
-  graphServiceGetSiteStatusByExporterNameResponseDto: GraphGetSiteStatusByExporterNameResponseDto;
+  graphServiceGetResponse: GraphGetListItemsResponseDto<GetExporterSiteResponseFields>;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;
 }
 

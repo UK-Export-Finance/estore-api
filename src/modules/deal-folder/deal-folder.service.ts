@@ -79,7 +79,6 @@ export class DealFolderService {
     await this.sharepointService.uploadFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
   }
 
-  // TODO apim-472 - remove reliance on sharepoint config
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const sharepointSiteId = await this.getSharepointSiteIdByUkefSiteId(ukefSiteId);
     const driveId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.DRIVE_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.DRIVE);
@@ -108,7 +107,6 @@ export class DealFolderService {
     );
   }
 
-  // TODO apim-472 - remove reliance on sharepoint config
   private constructRequestBodyToUpdateFileInfo(documentType: DocumentTypeEnum): {
     Title: string;
     Document_x0020_Status: string;
@@ -122,7 +120,6 @@ export class DealFolderService {
     };
   }
 
-  // TODO apim-472 - remove reliance on sharepoint config
   private async constructUrlToUpdateFileInfo(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const listId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.LIST_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST);
 

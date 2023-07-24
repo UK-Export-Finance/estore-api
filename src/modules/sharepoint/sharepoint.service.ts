@@ -35,25 +35,41 @@ export class SharepointService {
     private readonly sharepointConfig: ConfigType<typeof SharepointConfig>,
   ) {}
 
-  async getSiteByUkefSiteId(ukefSiteId: string) {
+  async getSiteByUkefSiteId(ukefSiteId: string): Promise<{ id: string }> {
     return await this.graphService.get<{ id: string }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}`,
     });
   }
 
-  async getResources({ ukefSiteId, sharepointResourceType }: { ukefSiteId: string; sharepointResourceType: SharepointResourceTypeEnum }) {
+  async getResources({
+    ukefSiteId,
+    sharepointResourceType,
+  }: {
+    ukefSiteId: string;
+    sharepointResourceType: SharepointResourceTypeEnum;
+  }): Promise<{ value: { name: string; id: string }[] }> {
     return await this.graphService.get<{ value: { name: string; id: string }[] }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/${sharepointResourceType}s`,
     });
   }
 
-  async getItems({ ukefSiteId, listId }: { ukefSiteId: string; listId: string }) {
+  async getItems({ ukefSiteId, listId }: { ukefSiteId: string; listId: string }): Promise<{ value: { webUrl: string; id: string }[] }> {
     return await this.graphService.get<{ value: { webUrl: string; id: string }[] }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items`,
     });
   }
 
-  async getExporterSite(exporterName: string) {
+  async getExporterSite(exporterName: string): Promise<
+    ListItem<{
+      Title: string;
+      URL: string;
+      Sitestatus: string;
+      TermGuid: string;
+      SiteURL: {
+        Url: string;
+      };
+    }>[]
+  > {
     return await this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
@@ -62,7 +78,7 @@ export class SharepointService {
     });
   }
 
-  async getBuyerFolder({ siteId, buyerName }: SharepointGetBuyerFolderParams) {
+  async getBuyerFolder({ siteId, buyerName }: SharepointGetBuyerFolderParams): Promise<ListItem<{ id: string }>[]> {
     return await this.findListItems<{ id: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.tfisDealListId,
@@ -71,7 +87,7 @@ export class SharepointService {
     });
   }
 
-  async getMarketTerm(marketName: string) {
+  async getMarketTerm(marketName: string): Promise<ListItem<{ TermGuid: string }>[]> {
     return await this.findListItems<{ TermGuid: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.taxonomyHiddenListTermStoreListId,
@@ -80,7 +96,10 @@ export class SharepointService {
     });
   }
 
-  async getDealFolder({ siteId, dealFolderName }: SharepointGetDealFolderParams) {
+  async getDealFolder({
+    siteId,
+    dealFolderName,
+  }: SharepointGetDealFolderParams): Promise<ListItem<{ Title: string; ServerRelativeUrl: string; Code: string; id: string; ParentCode: string }>[]> {
     return await this.findListItems<{
       Title: string;
       ServerRelativeUrl: string;
@@ -95,7 +114,7 @@ export class SharepointService {
     });
   }
 
-  async getFacilityTerm(facilityIdentifier: string) {
+  async getFacilityTerm(facilityIdentifier: string): Promise<ListItem<{ FacilityGUID: string; Title: string }>[]> {
     return await this.findListItems<{ FacilityGUID: string; Title: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisFacilityHiddenListTermStoreId,
@@ -107,7 +126,7 @@ export class SharepointService {
     });
   }
 
-  async getCaseSite(siteId: string) {
+  async getCaseSite(siteId: string): Promise<ListItem<{ id: string; CustodianSiteURL: string }>[]> {
     return await this.findListItems<{
       id: string;
       CustodianSiteURL: string;
@@ -130,7 +149,7 @@ export class SharepointService {
     });
   }
 
-  async createSite({ exporterName, newSiteId }: SharepointCreateSiteParams) {
+  async createSite({ exporterName, newSiteId }: SharepointCreateSiteParams): Promise<GraphCreateSiteResponseDto> {
     return await this.graphService.post<GraphCreateSiteResponseDto>({
       path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisCaseSitesListId}/items`,
       requestBody: {
@@ -153,7 +172,7 @@ export class SharepointService {
       Title: string;
       Document_x0020_Status: string;
     };
-  }) {
+  }): Promise<void> {
     await this.graphService.patch<
       {
         Title: string;
