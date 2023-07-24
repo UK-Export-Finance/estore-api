@@ -63,13 +63,13 @@ describe('SharepointService', () => {
         makeRequest: (sharepointService: SharepointService) => sharepointService.getItems({ ukefSiteId: siteId, listId }),
       },
       {
-        method: 'getSiteFromSiteListByExporterName',
+        method: 'getSiteByExporterName',
         path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
         expandString: `fields($select=Title,URL,Sitestatus)`,
         filterString: `fields/Title eq '${exporterName}'`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getSiteFromSiteListByExporterName(exporterName),
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getSiteByExporterName(exporterName),
       },
       {
         method: 'getBuyerFolder',

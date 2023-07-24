@@ -28,7 +28,7 @@ describe('SiteService', () => {
     sharepointService.createSite = sharepointServiceCreateSiteRequest;
 
     sharepointServiceGetSiteFromSiteListRequest = jest.fn();
-    sharepointService.getSiteFromSiteListByExporterName = sharepointServiceGetSiteFromSiteListRequest;
+    sharepointService.getSiteByExporterName = sharepointServiceGetSiteFromSiteListRequest;
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
@@ -38,7 +38,7 @@ describe('SiteService', () => {
 
   describe('createSite', () => {
     it('calls sharepoint.createSite and returns new site id and status from the service', async () => {
-      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetSiteFromSiteListByExporterNameParams } =
+      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetSiteByExporterNameParams } =
         new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
           numberToGenerate: 1,
           tfisSharepointUrl,
@@ -57,7 +57,7 @@ describe('SiteService', () => {
       });
 
       const siteId = createSiteResponse[0].siteId;
-      when(sharepointServiceGetSiteFromSiteListRequest).calledWith(sharepointServiceGetSiteFromSiteListByExporterNameParams).mockResolvedValueOnce([]);
+      when(sharepointServiceGetSiteFromSiteListRequest).calledWith(sharepointServiceGetSiteByExporterNameParams).mockResolvedValueOnce([]);
       when(mdmServiceCreateNumbers)
         .calledWith(requestToCreateSiteId)
         .mockResolvedValueOnce([{ maskedId: siteId }]);
@@ -83,8 +83,8 @@ describe('SiteService', () => {
     ])('returns expected status and siteId if site status is "$status"', async ({ status }) => {
       const {
         siteServiceGetSiteStatusByExporterNameRequest: exporterName,
-        sharepointServiceGetSiteFromSiteListByExporterNameParams,
-        sharepointServiceGetSiteStatusByExporterNameResponse,
+        sharepointServiceGetSiteByExporterNameParams,
+        sharepointServiceGetSiteByExporterNameResponse,
         siteStatusByExporterNameResponse,
       } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
@@ -93,8 +93,8 @@ describe('SiteService', () => {
         status,
       });
       when(sharepointServiceGetSiteFromSiteListRequest)
-        .calledWith(sharepointServiceGetSiteFromSiteListByExporterNameParams)
-        .mockResolvedValueOnce(sharepointServiceGetSiteStatusByExporterNameResponse);
+        .calledWith(sharepointServiceGetSiteByExporterNameParams)
+        .mockResolvedValueOnce(sharepointServiceGetSiteByExporterNameResponse);
 
       const response: CreateSiteResponse = await siteService.createSiteIfDoesNotExist(exporterName);
 
