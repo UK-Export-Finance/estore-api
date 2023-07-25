@@ -8,7 +8,7 @@ const disallowedPrefixesAndSuffixes = [' '];
 const disallowedPrefixes = ['~$'];
 const disallowedCharacters = ['"', '*', '<', '>', '?', '/', '\\', '|'];
 const disallowedSubstrings = ['_vti_'];
-const disallowedStrings = ['.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM0', 'COM5', 'COM9', 'LPT0', 'LPT5', 'LPT9'];
+const disallowedStrings = ['.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM0', 'COM5', 'COM9', 'LPT0', 'LPT5', 'LPT9', 'desktop.ini'];
 const disallowedStringsOnRoot = ['forms'];
 const allowedStrings = [
   'testString',
@@ -17,6 +17,10 @@ const allowedStrings = [
   'commonAccentedCharacters áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ',
   '.loc',
   'COMA',
+  // cspell:disable-next-line
+  'alock',
+  // cspell:disable-next-line
+  'desktopaini',
 ];
 
 export const allowedStringTestCases = [...allowedStrings].map((testCaseValue) => {
