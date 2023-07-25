@@ -17,6 +17,10 @@ const allowedStrings = [
   'commonAccentedCharacters áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ',
   '.loc',
   'COMA',
+  // cspell:disable-next-line
+  'alock',
+  // cspell:disable-next-line
+  'desktopaini',
 ];
 
 export const allowedStringTestCases = [...allowedStrings].map((testCaseValue) => {
