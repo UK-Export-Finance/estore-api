@@ -1,7 +1,7 @@
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
-import { SharepointService } from './sharepoint.service';
+import { SharepointService, SharepointUploadFileParams } from './sharepoint.service';
 import { getMockSharepointConfig } from './sharepoint.test-parts/mock-sharepoint-config.helper';
 import { withGetMethodTests } from './sharepoint.test-parts/with-get-method-tests';
 import { withPatchMethodTests } from './sharepoint.test-parts/with-patch-method-tests';
@@ -25,7 +25,7 @@ describe('SharepointService', () => {
   const documentTitle = valueGenerator.string();
   const documentStatus = valueGenerator.string();
 
-  const uploadFileRequest = {
+  const uploadFileRequest: SharepointUploadFileParams = {
     file: valueGenerator.string() as unknown as NodeJS.ReadableStream,
     fileSizeInBytes: valueGenerator.integer(),
     fileName: valueGenerator.string(),

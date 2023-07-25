@@ -12,6 +12,16 @@ import { FieldEqualsListItemFilter } from './list-item-filter/field-equals.list-
 import { FieldNotNullListItemFilter } from './list-item-filter/field-not-null.list-item-filter';
 import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 
+export interface SharepointGetResourcesParams {
+  ukefSiteId: string;
+  sharepointResourceType: SharepointResourceTypeEnum;
+}
+
+export interface SharepointGetItemsParams {
+  ukefSiteId: string;
+  listId: string;
+}
+
 export interface SharepointCreateSiteParams {
   exporterName: string;
   newSiteId: string;
@@ -25,6 +35,20 @@ export interface SharepointGetDealFolderParams {
 export interface SharepointGetBuyerFolderParams {
   siteId: string;
   buyerName: string;
+}
+
+export interface SharepointUploadFileParams {
+  file: NodeJS.ReadableStream;
+  fileSizeInBytes: number;
+  fileName: string;
+  urlToCreateUploadSession: string;
+}
+
+export interface SharepointFindListItems<Fields> {
+  siteUrl: string;
+  listId: string;
+  fieldsToReturn: (keyof Fields)[];
+  filter: ListItemFilter;
 }
 
 @Injectable()
@@ -41,19 +65,13 @@ export class SharepointService {
     });
   }
 
-  async getResources({
-    ukefSiteId,
-    sharepointResourceType,
-  }: {
-    ukefSiteId: string;
-    sharepointResourceType: SharepointResourceTypeEnum;
-  }): Promise<{ value: { name: string; id: string }[] }> {
+  async getResources({ ukefSiteId, sharepointResourceType }: SharepointGetResourcesParams): Promise<{ value: { name: string; id: string }[] }> {
     return await this.graphService.get<{ value: { name: string; id: string }[] }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/${sharepointResourceType}s`,
     });
   }
 
-  async getItems({ ukefSiteId, listId }: { ukefSiteId: string; listId: string }): Promise<{ value: { webUrl: string; id: string }[] }> {
+  async getItems({ ukefSiteId, listId }: SharepointGetItemsParams): Promise<{ value: { webUrl: string; id: string }[] }> {
     return await this.graphService.get<{ value: { webUrl: string; id: string }[] }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items`,
     });
@@ -185,31 +203,11 @@ export class SharepointService {
     });
   }
 
-  async uploadFile({
-    file,
-    fileSizeInBytes,
-    fileName,
-    urlToCreateUploadSession,
-  }: {
-    file: NodeJS.ReadableStream;
-    fileSizeInBytes: number;
-    fileName: string;
-    urlToCreateUploadSession: string;
-  }): Promise<UploadResult> {
+  async uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession }: SharepointUploadFileParams): Promise<UploadResult> {
     return await this.graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
   }
 
-  private async findListItems<Fields>({
-    siteUrl,
-    listId,
-    fieldsToReturn,
-    filter,
-  }: {
-    siteUrl: string;
-    listId: string;
-    fieldsToReturn: (keyof Fields)[];
-    filter: ListItemFilter;
-  }): Promise<ListItem<Fields>[]> {
+  private async findListItems<Fields>({ siteUrl, listId, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
     const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId}/items`,
