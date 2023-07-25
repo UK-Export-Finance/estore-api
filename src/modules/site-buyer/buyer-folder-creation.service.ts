@@ -12,6 +12,7 @@ import { SiteExporterNotFoundException } from './exception/site-exporter-not-fou
 
 type RequiredCustodianConfigKeys = 'buyerTemplateId' | 'buyerTypeGuid';
 type RequiredSharepointConfigKeys = 'scSiteFullUrl';
+
 @Injectable()
 export class BuyerFolderCreationService {
   constructor(
