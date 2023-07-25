@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.2](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.1...v1.3.2) (2023-07-25)
+
+
+### Miscellaneous
+
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([0adb0be](https://github.com/UK-Export-Finance/estore-api/commit/0adb0be94ad2620addb20cd4ce6f5b99a5677e4f))
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([#155](https://github.com/UK-Export-Finance/estore-api/issues/155)) ([0a61e80](https://github.com/UK-Export-Finance/estore-api/commit/0a61e80baced1a89484ab44f4b4fec5fd45a2297))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([833452f](https://github.com/UK-Export-Finance/estore-api/commit/833452f48a241eab064e283160a629ce2ba40e17))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([#153](https://github.com/UK-Export-Finance/estore-api/issues/153)) ([6b78c0d](https://github.com/UK-Export-Finance/estore-api/commit/6b78c0d51128a89abea70a1166166f06462c646c))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([a50253e](https://github.com/UK-Export-Finance/estore-api/commit/a50253e727b002127d187bb88bb5d300877b6fcc))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([#157](https://github.com/UK-Export-Finance/estore-api/issues/157)) ([9e6abd6](https://github.com/UK-Export-Finance/estore-api/commit/9e6abd67a0f76acbbe00dbe96fad766ccc2f3ad0))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([1b40a09](https://github.com/UK-Export-Finance/estore-api/commit/1b40a093dde0120003cdb1cca0ed4322a53b282b))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([#156](https://github.com/UK-Export-Finance/estore-api/issues/156)) ([7746763](https://github.com/UK-Export-Finance/estore-api/commit/774676368aa05a4c55c79822e6a64764561eccb9))
+
 ## [1.3.1](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.0...v1.3.1) (2023-07-24)
 
 
