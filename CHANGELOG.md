@@ -127,8 +127,8 @@
 * **deployment:** removed syntax error ([#105](https://github.com/UK-Export-Finance/estore-api/issues/105)) ([f0880e7](https://github.com/UK-Export-Finance/estore-api/commit/f0880e7f482e61f4aa3d24f00677803723e91afa))
 * **deployment:** syntax error ([b7ba79b](https://github.com/UK-Export-Finance/estore-api/commit/b7ba79b63789d6ef89cb54595bc5e9055e8e5698))
 * **deployment:** syntax error ([#106](https://github.com/UK-Export-Finance/estore-api/issues/106)) ([a014385](https://github.com/UK-Export-Finance/estore-api/commit/a014385f3572cd706db37f9b1b7dd6052e05e469))
-* **env-variable:** updated envrionment variables ([3f39eb5](https://github.com/UK-Export-Finance/estore-api/commit/3f39eb5ea054c508d5fb9d52c0b33c6b74d747e8))
-* **env-variable:** updated envrionment variables ([#104](https://github.com/UK-Export-Finance/estore-api/issues/104)) ([fe0183f](https://github.com/UK-Export-Finance/estore-api/commit/fe0183f5b8e2919b6ab6ca72dd98cc66f5a00be0))
+* **env-variable:** updated environment variables ([3f39eb5](https://github.com/UK-Export-Finance/estore-api/commit/3f39eb5ea054c508d5fb9d52c0b33c6b74d747e8))
+* **env-variable:** updated environment variables ([#104](https://github.com/UK-Export-Finance/estore-api/issues/104)) ([fe0183f](https://github.com/UK-Export-Finance/estore-api/commit/fe0183f5b8e2919b6ab6ca72dd98cc66f5a00be0))
 
 
 ### Miscellaneous
