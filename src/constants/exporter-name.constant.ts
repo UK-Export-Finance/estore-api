@@ -9,7 +9,7 @@ const disallowedPrefixes = ['\\s', '~\\$'];
 const disallowedSuffixes = ['\\s'];
 const disallowedCharacters = ['"', '*', '<', '>', '?', '/', '\\\\', '\\|'];
 const disallowedSubstrings = ['_vti_'];
-const disallowedStrings = ['.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM\\d', 'LPT\\d'];
+const disallowedStrings = ['.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM\\d', 'LPT\\d', 'desktop.ini'];
 const disallowedStringsOnRoot = ['forms'];
 
 const disallowedPrefixesRegex = new RegExp(`(?!(${disallowedPrefixes.join(`)|(`)}))`);
