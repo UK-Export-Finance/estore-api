@@ -9,12 +9,12 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'src/**'
-      - 'test/**'
+      - "src/**"
+      - "test/**"
 
 env:
-  environment: 'qa'
-  timezone: 'Europe/London'
+  environment: "qa"
+  timezone: "Europe/London"
   node: ${{ vars.NODE_VERSION }}
 
 jobs:

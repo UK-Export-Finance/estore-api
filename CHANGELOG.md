@@ -1,5 +1,108 @@
 # Changelog
 
+## [1.3.2](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.1...v1.3.2) (2023-07-25)
+
+
+### Bug Fixes
+
+* **iac:** deployment ([91f9e48](https://github.com/UK-Export-Finance/estore-api/commit/91f9e489cfabb5fb199f581f398d5292d4f42f49))
+* **iac:** deployment ([#159](https://github.com/UK-Export-Finance/estore-api/issues/159)) ([fc2b2c6](https://github.com/UK-Export-Finance/estore-api/commit/fc2b2c6556c64b5eee28656e902ffb631d16eff6))
+
+
+### Miscellaneous
+
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([0adb0be](https://github.com/UK-Export-Finance/estore-api/commit/0adb0be94ad2620addb20cd4ce6f5b99a5677e4f))
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([#155](https://github.com/UK-Export-Finance/estore-api/issues/155)) ([0a61e80](https://github.com/UK-Export-Finance/estore-api/commit/0a61e80baced1a89484ab44f4b4fec5fd45a2297))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([833452f](https://github.com/UK-Export-Finance/estore-api/commit/833452f48a241eab064e283160a629ce2ba40e17))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([#153](https://github.com/UK-Export-Finance/estore-api/issues/153)) ([6b78c0d](https://github.com/UK-Export-Finance/estore-api/commit/6b78c0d51128a89abea70a1166166f06462c646c))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([a50253e](https://github.com/UK-Export-Finance/estore-api/commit/a50253e727b002127d187bb88bb5d300877b6fcc))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([#157](https://github.com/UK-Export-Finance/estore-api/issues/157)) ([9e6abd6](https://github.com/UK-Export-Finance/estore-api/commit/9e6abd67a0f76acbbe00dbe96fad766ccc2f3ad0))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([1b40a09](https://github.com/UK-Export-Finance/estore-api/commit/1b40a093dde0120003cdb1cca0ed4322a53b282b))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([#156](https://github.com/UK-Export-Finance/estore-api/issues/156)) ([7746763](https://github.com/UK-Export-Finance/estore-api/commit/774676368aa05a4c55c79822e6a64764561eccb9))
+
+## [1.3.2](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.1...v1.3.2) (2023-07-25)
+
+
+### Miscellaneous
+
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([0adb0be](https://github.com/UK-Export-Finance/estore-api/commit/0adb0be94ad2620addb20cd4ce6f5b99a5677e4f))
+* **deps-dev:** bump @nestjs/testing from 10.1.0 to 10.1.1 ([#155](https://github.com/UK-Export-Finance/estore-api/issues/155)) ([0a61e80](https://github.com/UK-Export-Finance/estore-api/commit/0a61e80baced1a89484ab44f4b4fec5fd45a2297))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([833452f](https://github.com/UK-Export-Finance/estore-api/commit/833452f48a241eab064e283160a629ce2ba40e17))
+* **deps:** bump @nestjs/common from 10.1.0 to 10.1.1 ([#153](https://github.com/UK-Export-Finance/estore-api/issues/153)) ([6b78c0d](https://github.com/UK-Export-Finance/estore-api/commit/6b78c0d51128a89abea70a1166166f06462c646c))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([a50253e](https://github.com/UK-Export-Finance/estore-api/commit/a50253e727b002127d187bb88bb5d300877b6fcc))
+* **deps:** bump @nestjs/core from 10.1.0 to 10.1.1 ([#157](https://github.com/UK-Export-Finance/estore-api/issues/157)) ([9e6abd6](https://github.com/UK-Export-Finance/estore-api/commit/9e6abd67a0f76acbbe00dbe96fad766ccc2f3ad0))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([1b40a09](https://github.com/UK-Export-Finance/estore-api/commit/1b40a093dde0120003cdb1cca0ed4322a53b282b))
+* **deps:** bump @nestjs/platform-express from 10.1.0 to 10.1.1 ([#156](https://github.com/UK-Export-Finance/estore-api/issues/156)) ([7746763](https://github.com/UK-Export-Finance/estore-api/commit/774676368aa05a4c55c79822e6a64764561eccb9))
+
+## [1.3.1](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.0...v1.3.1) (2023-07-24)
+
+
+### Bug Fixes
+
+* **acr:** rectified repo name ([d75aabd](https://github.com/UK-Export-Finance/estore-api/commit/d75aabdf1aa3101f1a7c3cbd741ad298eb873ebb))
+* **dockerfile:** updated dockerfile version to 20.50.0 ([cb86661](https://github.com/UK-Export-Finance/estore-api/commit/cb8666159ca65d21db810e9d6f3bd3c75bc09223))
+* **iac:** ACR ([#150](https://github.com/UK-Export-Finance/estore-api/issues/150)) ([e8b1aa1](https://github.com/UK-Export-Finance/estore-api/commit/e8b1aa1baeddb4f7b89f09cacda3247ad3dfe4f7))
+* **iac:** added environment variable ([e1435e0](https://github.com/UK-Export-Finance/estore-api/commit/e1435e057ab1bc191b28da839b31a9ef6e3ab34a))
+* **iac:** added environment variable ([#148](https://github.com/UK-Export-Finance/estore-api/issues/148)) ([3381f2e](https://github.com/UK-Export-Finance/estore-api/commit/3381f2ed56d6804b7f2aba5d0538215bf5089e1e))
+* **iac:** formatting issue ([ea7e8cc](https://github.com/UK-Export-Finance/estore-api/commit/ea7e8cc6754c280bec1a2014b1cd6667e54e1510))
+* **iac:** formatting issue ([f0adc60](https://github.com/UK-Export-Finance/estore-api/commit/f0adc6062fe3a948f99b1e85543a86780a2de1e6))
+* **iac:** formatting issue ([#151](https://github.com/UK-Export-Finance/estore-api/issues/151)) ([ca0411f](https://github.com/UK-Export-Finance/estore-api/commit/ca0411f30b9b76ba67328c8a59a4ac0e105ff6b5))
+* **iac:** formatting issues ([#152](https://github.com/UK-Export-Finance/estore-api/issues/152)) ([9802b73](https://github.com/UK-Export-Finance/estore-api/commit/9802b7368fa623260b8fbc2f7b3210f4bd86cc11))
+* **iac:** yaml formatting issues ([58e3cfe](https://github.com/UK-Export-Finance/estore-api/commit/58e3cfe1e592d9c765fc36b33ac9b8757c95ff1e))
+
+
+### Miscellaneous
+
+* **deps:** dependencies updates ([93054b7](https://github.com/UK-Export-Finance/estore-api/commit/93054b7cf3197d76320292b6d9f157e9c8b1a8da))
+
+## [1.3.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.2.0...v1.3.0) (2023-07-21)
+
+
+### Features
+
+* **APIM-474:** update exporterName handling ([#124](https://github.com/UK-Export-Finance/estore-api/issues/124)) ([4141c7c](https://github.com/UK-Export-Finance/estore-api/commit/4141c7c2bbae37232c559855b7a30e2298283e4c))
+* **APIM-528:** add happy path api tests for upload file in deal folder endpoint ([#125](https://github.com/UK-Export-Finance/estore-api/issues/125)) ([10ad2c3](https://github.com/UK-Export-Finance/estore-api/commit/10ad2c398a6edf13733523fa865c1f6c642e3ed8))
+* **APIM-538:** add environment variable for log format ([#145](https://github.com/UK-Export-Finance/estore-api/issues/145)) ([e86b213](https://github.com/UK-Export-Finance/estore-api/commit/e86b213c421478dab1496e9356ab91bcc395a5fb))
+* **APIM-555:** improve error messaging for folder creation endpoints ([#137](https://github.com/UK-Export-Finance/estore-api/issues/137)) ([b3b9974](https://github.com/UK-Export-Finance/estore-api/commit/b3b997476b2c853fcacc1d866b522854eb8578c9))
+* **APIM-561:** restrict upload file in deal folder endpoint to only use files from dtfs deal folder ([#142](https://github.com/UK-Export-Finance/estore-api/issues/142)) ([fd55274](https://github.com/UK-Export-Finance/estore-api/commit/fd55274e962468a2c6ac13b5862cb1f4075dba98))
+
+
+### Bug Fixes
+
+* **APIM-559:** validate site id does not include invalid characters ([#143](https://github.com/UK-Export-Finance/estore-api/issues/143)) ([7511497](https://github.com/UK-Export-Finance/estore-api/commit/75114971ce8a4abee08293b1b2f8d4ce29046c39))
+* **syntax:** iac ([633dcab](https://github.com/UK-Export-Finance/estore-api/commit/633dcaba2299950276a93f4f079e360b720009f8))
+* **syntax:** iac ([#131](https://github.com/UK-Export-Finance/estore-api/issues/131)) ([7dca14d](https://github.com/UK-Export-Finance/estore-api/commit/7dca14d1c95a9161c39babc7e044400e49c3f52f))
+
+
+### Miscellaneous
+
+* **deps-dev:** bump @commitlint/cli from 17.6.6 to 17.6.7 ([30060b9](https://github.com/UK-Export-Finance/estore-api/commit/30060b9c6fbbf4eebbdd5a9dc01a72f5bc3a42ff))
+* **deps-dev:** bump @commitlint/cli from 17.6.6 to 17.6.7 ([#140](https://github.com/UK-Export-Finance/estore-api/issues/140)) ([6e6bc49](https://github.com/UK-Export-Finance/estore-api/commit/6e6bc492f371d5506c4d617fc5a08726004c0bab))
+* **deps-dev:** bump @commitlint/config-conventional ([fdd016b](https://github.com/UK-Export-Finance/estore-api/commit/fdd016b6dbc4cdd3056ded7b72f4106fb40e9a37))
+* **deps-dev:** bump @commitlint/config-conventional from 17.6.6 to 17.6.7 ([#139](https://github.com/UK-Export-Finance/estore-api/issues/139)) ([d295c83](https://github.com/UK-Export-Finance/estore-api/commit/d295c830ee007780f28d33443a912738582c63d0))
+* **deps-dev:** bump @nestjs/cli from 10.1.9 to 10.1.10 ([5d1b0c3](https://github.com/UK-Export-Finance/estore-api/commit/5d1b0c340559e3850ff585b24e56eda51e400dc3))
+* **deps-dev:** bump @nestjs/cli from 10.1.9 to 10.1.10 ([#141](https://github.com/UK-Export-Finance/estore-api/issues/141)) ([ebc4366](https://github.com/UK-Export-Finance/estore-api/commit/ebc43661d4f0dc36551111e09b99a459c7fada63))
+* **deps-dev:** bump @tsconfig/node20 from 1.0.2 to 20.1.0 ([5b5a4f9](https://github.com/UK-Export-Finance/estore-api/commit/5b5a4f98a54ab78ffa6ca37a09e7e175f957093b))
+* **deps-dev:** bump @tsconfig/node20 from 1.0.2 to 20.1.0 ([#133](https://github.com/UK-Export-Finance/estore-api/issues/133)) ([3cc286f](https://github.com/UK-Export-Finance/estore-api/commit/3cc286f0c6477c6d98b6806d7b0ee1ad9a292ed5))
+* **deps-dev:** bump @types/node from 20.4.1 to 20.4.2 ([c0d945e](https://github.com/UK-Export-Finance/estore-api/commit/c0d945e12c2ccd8de945c064f19a7e8bb4c59010))
+* **deps-dev:** bump @types/node from 20.4.1 to 20.4.2 ([#122](https://github.com/UK-Export-Finance/estore-api/issues/122)) ([450ebac](https://github.com/UK-Export-Finance/estore-api/commit/450ebacbaca8518322c4994c8ce7fa64ab28c551))
+* **deps-dev:** bump eslint-config-airbnb-typescript ([e3d0260](https://github.com/UK-Export-Finance/estore-api/commit/e3d0260e0251b7a081545193fc7e7f0b0fcb15cc))
+* **deps-dev:** bump eslint-config-airbnb-typescript from 17.0.0 to 17.1.0 ([#123](https://github.com/UK-Export-Finance/estore-api/issues/123)) ([c175028](https://github.com/UK-Export-Finance/estore-api/commit/c175028fdd3f5be0be84295e33ee387c6677b4ad))
+* **deps-dev:** bump eslint-plugin-jest from 27.2.2 to 27.2.3 ([ff5a4d1](https://github.com/UK-Export-Finance/estore-api/commit/ff5a4d104be332f31f243a2b14570bb6a18e7a92))
+* **deps-dev:** bump eslint-plugin-jest from 27.2.2 to 27.2.3 ([#121](https://github.com/UK-Export-Finance/estore-api/issues/121)) ([a874560](https://github.com/UK-Export-Finance/estore-api/commit/a8745603030f70e43051ae302182413b457b922a))
+* **deps-dev:** bump nock from 13.3.1 to 13.3.2 ([2b02135](https://github.com/UK-Export-Finance/estore-api/commit/2b02135936434adf6146a6837e1dd65037e94dea))
+* **deps-dev:** bump nock from 13.3.1 to 13.3.2 ([#127](https://github.com/UK-Export-Finance/estore-api/issues/127)) ([9c8fd77](https://github.com/UK-Export-Finance/estore-api/commit/9c8fd77b6cbf13e8b889dff37b441b2c2893f787))
+* **deps:** bump @azure/storage-file-share from 12.14.0 to 12.15.0 ([b0a25d7](https://github.com/UK-Export-Finance/estore-api/commit/b0a25d7b453c7ea2705e5f84939c6d87d3d1bf90))
+* **deps:** bump @azure/storage-file-share from 12.14.0 to 12.15.0 ([#126](https://github.com/UK-Export-Finance/estore-api/issues/126)) ([f381857](https://github.com/UK-Export-Finance/estore-api/commit/f3818579c3f377e47c0cb1f63d3d3ffa51220aa3))
+* **deps:** bump @nestjs/swagger from 7.1.1 to 7.1.2 ([11d6a7b](https://github.com/UK-Export-Finance/estore-api/commit/11d6a7b744690ea6b5257467352a939f819432f8))
+* **deps:** bump @nestjs/swagger from 7.1.1 to 7.1.2 ([#144](https://github.com/UK-Export-Finance/estore-api/issues/144)) ([32455d0](https://github.com/UK-Export-Finance/estore-api/commit/32455d072da5760e26ae68d76928b4fb96e426b3))
+* **deps:** deps updates ([a40d01c](https://github.com/UK-Export-Finance/estore-api/commit/a40d01c9930c47b5b00102318643c34dd043e912))
+* **deps:** deps updates ([#134](https://github.com/UK-Export-Finance/estore-api/issues/134)) ([653036c](https://github.com/UK-Export-Finance/estore-api/commit/653036c1d2c5ee2e08625e21a8e1551de52be6e1))
+* **deps:** updates && git push ([5b9ce99](https://github.com/UK-Export-Finance/estore-api/commit/5b9ce990e4ce951e90233a9ac18fec8f87c074bf))
+* **deps:** updates && git push ([#130](https://github.com/UK-Export-Finance/estore-api/issues/130)) ([eea158c](https://github.com/UK-Export-Finance/estore-api/commit/eea158c02592b9606649dafd0c9d80f28a4542e1))
+* **dockerfile:** version updates ([3dbbafc](https://github.com/UK-Export-Finance/estore-api/commit/3dbbafcc281206ea124d02a1121b39cf027bff0f))
+* **dockerfile:** version updates ([#135](https://github.com/UK-Export-Finance/estore-api/issues/135)) ([45a5fac](https://github.com/UK-Export-Finance/estore-api/commit/45a5fac76935d9ae3c33a1813b6ca5a77baa079d))
+
 ## [1.2.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.1.0...v1.2.0) (2023-07-13)
 
 
@@ -24,8 +127,8 @@
 * **deployment:** removed syntax error ([#105](https://github.com/UK-Export-Finance/estore-api/issues/105)) ([f0880e7](https://github.com/UK-Export-Finance/estore-api/commit/f0880e7f482e61f4aa3d24f00677803723e91afa))
 * **deployment:** syntax error ([b7ba79b](https://github.com/UK-Export-Finance/estore-api/commit/b7ba79b63789d6ef89cb54595bc5e9055e8e5698))
 * **deployment:** syntax error ([#106](https://github.com/UK-Export-Finance/estore-api/issues/106)) ([a014385](https://github.com/UK-Export-Finance/estore-api/commit/a014385f3572cd706db37f9b1b7dd6052e05e469))
-* **env-variable:** updated envrionment variables ([3f39eb5](https://github.com/UK-Export-Finance/estore-api/commit/3f39eb5ea054c508d5fb9d52c0b33c6b74d747e8))
-* **env-variable:** updated envrionment variables ([#104](https://github.com/UK-Export-Finance/estore-api/issues/104)) ([fe0183f](https://github.com/UK-Export-Finance/estore-api/commit/fe0183f5b8e2919b6ab6ca72dd98cc66f5a00be0))
+* **env-variable:** updated environment variables ([3f39eb5](https://github.com/UK-Export-Finance/estore-api/commit/3f39eb5ea054c508d5fb9d52c0b33c6b74d747e8))
+* **env-variable:** updated environment variables ([#104](https://github.com/UK-Export-Finance/estore-api/issues/104)) ([fe0183f](https://github.com/UK-Export-Finance/estore-api/commit/fe0183f5b8e2919b6ab6ca72dd98cc66f5a00be0))
 
 
 ### Miscellaneous
