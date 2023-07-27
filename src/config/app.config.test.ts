@@ -1,11 +1,9 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
-import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import appConfig, { AppConfig } from './app.config';
 import { InvalidConfigException } from './invalid-config.exception';
 
 describe('appConfig', () => {
-  const valueGenerator = new RandomValueGenerator();
   let originalProcessEnv: NodeJS.ProcessEnv;
 
   beforeEach(() => {
@@ -79,13 +77,17 @@ describe('appConfig', () => {
     });
   });
 
-  describe('parsing REDACT_LOGS', () => {
-    it('sets redactLogs to true if REDACT_LOGS is true', () => {
+  describe('parsing SINGLE_LINE_LOG_FORMAT', () => {
+    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is true', () => {
       replaceEnvironmentVariables({
-        REDACT_LOGS: 'true',
+        SINGLE_LINE_LOG_FORMAT: 'true',
       });
 
-      const config = appConfig();
+  const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
+    configPropertyName: keyof AppConfig;
+    environmentVariableName: string;
+    defaultConfigValue: boolean;
+  }[] = [{ configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false }];
 
       expect(config.redactLogs).toBe(true);
     });
@@ -129,56 +131,32 @@ describe('appConfig', () => {
     });
   });
 
-  describe('parsing SINGLE_LINE_LOG_FORMAT', () => {
-    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is true', () => {
-      replaceEnvironmentVariables({
-        SINGLE_LINE_LOG_FORMAT: 'true',
-      });
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof AppConfig; environmentVariableName: string; defaultConfigValue?: string }[] = [
+    {
+      configPropertyName: 'name',
+      environmentVariableName: 'APP_NAME',
+      defaultConfigValue: 'estore',
+    },
+    {
+      configPropertyName: 'env',
+      environmentVariableName: 'NODE_ENV',
+      defaultConfigValue: 'development',
+    },
+    { configPropertyName: 'apiKey', environmentVariableName: 'API_KEY' },
+    // { configPropertyName: 'logLevel', environmentVariableName: 'LOG_LEVEL', defaultConfigValue: 'info' },
+  ];
 
-      const config = appConfig();
+  const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
+    configPropertyName: keyof AppConfig;
+    environmentVariableName: string;
+    defaultConfigValue: boolean;
+  }[] = [{ configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false }];
 
-      expect(config.singleLineLogFormat).toBe(true);
-    });
-
-    it('sets singleLineLogFormat to false if SINGLE_LINE_LOG_FORMAT is false', () => {
-      replaceEnvironmentVariables({
-        SINGLE_LINE_LOG_FORMAT: 'false',
-      });
-
-      const config = appConfig();
-
-      expect(config.singleLineLogFormat).toBe(false);
-    });
-
-    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is not specified', () => {
-      replaceEnvironmentVariables({});
-
-      const config = appConfig();
-
-      expect(config.singleLineLogFormat).toBe(true);
-    });
-
-    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is the empty string', () => {
-      replaceEnvironmentVariables({
-        SINGLE_LINE_LOG_FORMAT: '',
-      });
-
-      const config = appConfig();
-
-      expect(config.singleLineLogFormat).toBe(true);
-    });
-
-    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is any string other than true or false', () => {
-      replaceEnvironmentVariables({
-        SINGLE_LINE_LOG_FORMAT: valueGenerator.string(),
-      });
-
-      const config = appConfig();
-
-      expect(config.singleLineLogFormat).toBe(true);
-    });
+  withEnvironmentVariableParsingUnitTests({
+    configDirectlyFromEnvironmentVariables,
+    configParsedAsBooleanFromEnvironmentVariablesWithDefault,
+    getConfig: () => appConfig(),
   });
-
   const replaceEnvironmentVariables = (newEnvVariables: Record<string, string>): void => {
     process.env = newEnvVariables;
   };
