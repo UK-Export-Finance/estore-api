@@ -2,9 +2,6 @@ import { InvalidConfigException } from '@ukef/config/invalid-config.exception';
 
 export const getBooleanConfig = (environmentVariable: string, defaultValue: boolean): boolean => {
   if (typeof environmentVariable === 'undefined') {
-    if (typeof defaultValue === 'undefined') {
-      throw new InvalidConfigException(`Environment variable is missing and doesn't have default value.`);
-    }
     return defaultValue;
   }
 

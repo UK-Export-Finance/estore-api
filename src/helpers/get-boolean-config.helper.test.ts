@@ -34,12 +34,5 @@ describe('GetBooleanConfig helper test', () => {
         expect(gettingTheConfig).toThrow(`Input environment variable type for ${value} should be string.`);
       },
     );
-
-    it('throws InvalidConfigException if environment variable and default value is missing', () => {
-      const gettingTheConfig = () => getBooleanConfig(undefined, false);
-
-      expect(gettingTheConfig).toThrow(InvalidConfigException);
-      expect(gettingTheConfig).toThrow("Environment variable is missing and doesn't have default value.");
-    });
   });
 });
