@@ -77,57 +77,61 @@ describe('appConfig', () => {
     });
   });
 
-  describe('parsing SINGLE_LINE_LOG_FORMAT', () => {
-    it('sets singleLineLogFormat to true if SINGLE_LINE_LOG_FORMAT is true', () => {
-      replaceEnvironmentVariables({
-        SINGLE_LINE_LOG_FORMAT: 'true',
-      });
-
-  const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof AppConfig;
-    environmentVariableName: string;
-    defaultConfigValue: boolean;
-  }[] = [{ configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false }];
-
-      expect(config.redactLogs).toBe(true);
-    });
-
-    it('sets redactLogs to false if REDACT_LOGS is false', () => {
-      replaceEnvironmentVariables({
-        REDACT_LOGS: 'false',
-      });
-
-      const config = appConfig();
-
-      expect(config.redactLogs).toBe(false);
-    });
-
-    it('sets redactLogs to true if REDACT_LOGS is not specified', () => {
+  describe('parsing HTTP_VERSIONING_ENABLE', () => {
+    it('uses false as the versioning.enable if HTTP_VERSIONING_ENABLE is not specified', () => {
       replaceEnvironmentVariables({});
 
       const config = appConfig();
 
-      expect(config.redactLogs).toBe(true);
+      expect(config.versioning.enable).toBe(false);
     });
 
-    it('sets redactLogs to true if REDACT_LOGS is the empty string', () => {
+    it.each([
+      {
+        HTTP_VERSIONING_ENABLE: 'TRUE',
+      },
+      {
+        HTTP_VERSIONING_ENABLE: 'True',
+      },
+      {
+        HTTP_VERSIONING_ENABLE: 'True',
+      },
+      {
+        HTTP_VERSIONING_ENABLE: 'FALSE',
+      },
+      {
+        HTTP_VERSIONING_ENABLE: 'False',
+      },
+      {
+        HTTP_VERSIONING_ENABLE: 'false',
+      },
+    ])('uses HTTP_VERSIONING_ENABLE as the versioning.enable if HTTP_VERSIONING_ENABLE is valid ($HTTP_VERSIONING_ENABLE)', ({ HTTP_VERSIONING_ENABLE }) => {
       replaceEnvironmentVariables({
-        REDACT_LOGS: '',
+        HTTP_VERSIONING_ENABLE,
       });
 
       const config = appConfig();
 
-      expect(config.redactLogs).toBe(true);
+      expect(config.versioning.enable).toBe(HTTP_VERSIONING_ENABLE === 'TRUE' || HTTP_VERSIONING_ENABLE === 'True' || HTTP_VERSIONING_ENABLE === 'True');
+    });
+  });
+
+  describe('parsing HTTP_VERSION', () => {
+    it('uses 1 as the versioning.version if HTTP_VERSION is not specified', () => {
+      replaceEnvironmentVariables({});
+      const config = appConfig();
+
+      expect(config.versioning.version).toBe('1');
     });
 
-    it('sets redactLogs to true if REDACT_LOGS is any string other than true or false', () => {
+    it('uses HTTP_VERSION as the versioning.version if HTTP_VERSION is present', () => {
       replaceEnvironmentVariables({
-        REDACT_LOGS: valueGenerator.string(),
+        HTTP_VERSION: '2',
       });
 
       const config = appConfig();
 
-      expect(config.redactLogs).toBe(true);
+      expect(config.versioning.version).toBe('2');
     });
   });
 
@@ -143,7 +147,18 @@ describe('appConfig', () => {
       defaultConfigValue: 'development',
     },
     { configPropertyName: 'apiKey', environmentVariableName: 'API_KEY' },
-    // { configPropertyName: 'logLevel', environmentVariableName: 'LOG_LEVEL', defaultConfigValue: 'info' },
+  ];
+
+  const configParsedAsIntFromEnvironmentVariablesWithDefault: {
+    configPropertyName: keyof AppConfig;
+    environmentVariableName: string;
+    defaultConfigValue: number;
+  }[] = [
+    {
+      configPropertyName: 'port',
+      environmentVariableName: 'HTTP_PORT',
+      defaultConfigValue: 3001,
+    },
   ];
 
   const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
@@ -154,6 +169,7 @@ describe('appConfig', () => {
 
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
+    configParsedAsIntFromEnvironmentVariablesWithDefault,
     configParsedAsBooleanFromEnvironmentVariablesWithDefault,
     getConfig: () => appConfig(),
   });
