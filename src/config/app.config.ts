@@ -45,6 +45,6 @@ export default registerAs('app', (): Record<string, any> => {
     apiKey: process.env.API_KEY,
     logLevel: process.env.LOG_LEVEL || 'info',
     redactLogs: getBooleanConfig(process.env.REDACT_LOGS, true),
-    singleLineLogFormat: getBooleanConfig(process.env.SINGLE_LINE_LOG_FORMAT, false),
+    singleLineLogFormat: getBooleanConfig(process.env.SINGLE_LINE_LOG_FORMAT, true),
   };
 });

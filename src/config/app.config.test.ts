@@ -176,7 +176,7 @@ describe('appConfig', () => {
     defaultConfigValue: boolean;
   }[] = [
     { configPropertyName: 'redactLogs', environmentVariableName: 'REDACT_LOGS', defaultConfigValue: true },
-    { configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false },
+    { configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: true },
   ];
 
   withEnvironmentVariableParsingUnitTests({
