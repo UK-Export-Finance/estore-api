@@ -117,9 +117,12 @@ describe('postDocumentInDealFolder', () => {
 
         const modifiedUpdateFileInfoRequest = {
           ...updateFileInfoRequest,
+          fields: {
+            ...updateFileInfoRequest.fields,
+            Title: documentTitle,
+            [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId, 
+          },
         };
-        modifiedUpdateFileInfoRequest.fields.Title = documentTitle;
-        modifiedUpdateFileInfoRequest.fields[ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME] = documentTypeId;
 
         const { status, body } = await makeRequestWithBody(uploadFileInDealFolderRequestWithModifiedDocumentTypeField);
 
