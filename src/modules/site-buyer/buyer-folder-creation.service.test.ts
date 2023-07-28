@@ -1,10 +1,9 @@
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when, WhenMockWithMatchers } from 'jest-when';
+import { when } from 'jest-when';
 
 import { CustodianService } from '../custodian/custodian.service';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
@@ -15,14 +14,11 @@ describe('BuyerFolderCreationService', () => {
   const {
     siteId,
     createBuyerFolderRequestItem: { exporterName, buyerName },
+    sharepointServiceGetCaseSiteParams,
+    sharepointServiceGetExporterSiteParams,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
-  const tfisSharepointUrl = valueGenerator.word();
-  const scSharepointUrl = valueGenerator.word();
   const scSiteFullUrl = valueGenerator.httpsUrl();
-
-  const tfisCaseSitesListId = valueGenerator.string();
-  const scCaseSitesListId = valueGenerator.string();
 
   const exporterSiteIdAsNumber = valueGenerator.nonnegativeInteger();
   const exporterSiteId = exporterSiteIdAsNumber.toString();
@@ -58,14 +54,17 @@ describe('BuyerFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let findListItems: jest.Mock;
+  let getCaseSite: jest.Mock;
+  let getExporterSite: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
   let service: BuyerFolderCreationService;
 
   beforeEach(() => {
-    findListItems = jest.fn();
-    const sharepointService = new SharepointService(null);
-    sharepointService.findListItems = findListItems;
+    getCaseSite = jest.fn();
+    getExporterSite = jest.fn();
+    const sharepointService = new SharepointService(null, null);
+    sharepointService.getCaseSite = getCaseSite;
+    sharepointService.getExporterSite = getExporterSite;
 
     custodianCreateAndProvision = jest.fn();
     const custodianService = new CustodianService(null);
@@ -73,15 +72,11 @@ describe('BuyerFolderCreationService', () => {
 
     service = new BuyerFolderCreationService(
       {
-        scSharepointUrl,
-        scCaseSitesListId,
-        tfisSharepointUrl,
-        tfisCaseSitesListId,
-        scSiteFullUrl,
-      },
-      {
         buyerTemplateId,
         buyerTypeGuid,
+      },
+      {
+        scSiteFullUrl,
       },
       sharepointService,
       custodianService,
@@ -94,9 +89,9 @@ describe('BuyerFolderCreationService', () => {
 
   describe('createBuyerFolder', () => {
     it('sends a request to Custodian to create and provision the buyer folder', async () => {
-      whenFindingListItemsMatchingTheSiteId().mockResolvedValueOnce([siteIdListItem]);
-      whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce([exporterNameListItem]);
-      whenCreatingTheBuyerFolderWithCustodian().mockResolvedValueOnce(undefined);
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       await service.createBuyerFolder(siteId, { exporterName, buyerName });
 
@@ -105,9 +100,9 @@ describe('BuyerFolderCreationService', () => {
     });
 
     it('returns the buyer name', async () => {
-      whenFindingListItemsMatchingTheSiteId().mockResolvedValueOnce([siteIdListItem]);
-      whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce([exporterNameListItem]);
-      whenCreatingTheBuyerFolderWithCustodian().mockResolvedValueOnce(undefined);
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       const response = await service.createBuyerFolder(siteId, { exporterName, buyerName });
 
@@ -201,32 +196,13 @@ describe('BuyerFolderCreationService', () => {
       expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
     },
   ])('$description', async ({ listItemsMatchingSiteId, listItemsMatchingExporterName, expectedErrorClass, expectedErrorMessage }) => {
-    whenFindingListItemsMatchingTheSiteId().mockResolvedValueOnce(listItemsMatchingSiteId);
-    whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce(listItemsMatchingExporterName);
-    whenCreatingTheBuyerFolderWithCustodian().mockResolvedValueOnce(undefined);
+    when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce(listItemsMatchingSiteId);
+    when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
     const createBuyerFolderPromise = service.createBuyerFolder(siteId, { exporterName, buyerName });
 
     await expect(createBuyerFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
     await expect(createBuyerFolderPromise).rejects.toThrow(expectedErrorMessage);
   });
-
-  const whenFindingListItemsMatchingTheSiteId = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: scSharepointUrl,
-      listId: scCaseSitesListId,
-      fieldsToReturn: ['id', 'CustodianSiteURL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'CustodianSiteURL', targetValue: siteId }),
-    });
-
-  const whenFindingListItemsMatchingTheExporterName = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: tfisSharepointUrl,
-      listId: tfisCaseSitesListId,
-      fieldsToReturn: ['TermGuid', 'Title', 'URL', 'SiteURL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
-    });
-
-  const whenCreatingTheBuyerFolderWithCustodian = (): WhenMockWithMatchers =>
-    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder);
 });

@@ -15,7 +15,7 @@ describe('getSiteStatusByExporterName', () => {
   const {
     siteControllerGetSiteStatusByExporterNameQueryDto,
     graphServiceGetParams: { path, expand, filter },
-    graphServiceGetSiteStatusByExporterNameResponseDto,
+    graphServiceGetResponse,
   } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
@@ -42,7 +42,7 @@ describe('getSiteStatusByExporterName', () => {
         .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCallWithExpandString(expand)
         .mockSuccessfulFilterCallWithFilterString(filter)
-        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
+        .mockSuccessfulGraphGetCall(graphServiceGetResponse);
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
       api.getWithoutAuth(endpoint_url, incorrectAuth?.headerName, incorrectAuth?.headerValue).query(siteControllerGetSiteStatusByExporterNameQueryDto),
@@ -79,14 +79,14 @@ describe('getSiteStatusByExporterName', () => {
       siteControllerGetSiteStatusByExporterNameQueryDto: modifiedSiteControllerGetSiteStatusByExporterNameQueryDto,
       siteStatusByExporterNameResponse: modifiedSiteStatusByExporterNameResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
-      graphServiceGetSiteStatusByExporterNameResponseDto: modifiedGraphServiceGetSiteStatusByExporterNameResponseDto,
+      graphServiceGetResponse: modifiedgraphServiceGetResponse,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)
       .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
       .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
-      .mockSuccessfulGraphGetCall(modifiedGraphServiceGetSiteStatusByExporterNameResponseDto);
+      .mockSuccessfulGraphGetCall(modifiedgraphServiceGetResponse);
 
     const { status, body } = await api.get(`/api/v1/sites?exporterName=${modifiedSiteControllerGetSiteStatusByExporterNameQueryDto.exporterName}`);
 
@@ -117,7 +117,7 @@ describe('getSiteStatusByExporterName', () => {
         .mockSuccessfulGraphApiCallWithPath(path)
         .mockSuccessfulExpandCall()
         .mockSuccessfulFilterCall()
-        .mockSuccessfulGraphGetCall(graphServiceGetSiteStatusByExporterNameResponseDto);
+        .mockSuccessfulGraphGetCall(graphServiceGetResponse);
     },
   });
 

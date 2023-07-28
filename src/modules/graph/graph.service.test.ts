@@ -46,6 +46,7 @@ describe('GraphService', () => {
         expandCalled: false,
         getCalled: true,
       });
+
       expectations.forEach((expectation) => expectation());
 
       expect(result).toEqual(expectedResponse);

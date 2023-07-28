@@ -2,30 +2,23 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
-type RequiredSharepointConfigKeys =
-  | 'tfisSharepointUrl'
-  | 'scSharepointUrl'
-  | 'scSiteFullUrl'
-  | 'tfisDealListId'
-  | 'tfisCaseSitesListId'
-  | 'taxonomyHiddenListTermStoreListId';
 type RequiredCustodianConfigKeys = 'dealTemplateId' | 'dealTypeGuid';
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 
 @Injectable()
 export class DealFolderCreationService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
@@ -66,12 +59,7 @@ export class DealFolderCreationService {
   }
 
   private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
-    const buyerFolderSearchResults = await this.sharepointService.findListItems<{ id: string }>({
-      siteUrl: this.sharepointConfig.scSharepointUrl,
-      listId: this.sharepointConfig.tfisDealListId,
-      fieldsToReturn: ['id'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}` }),
-    });
+    const buyerFolderSearchResults = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
     if (buyerFolderSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find a folder for buyer ${buyerName} in site ${siteId}.`);
     }
@@ -99,12 +87,7 @@ export class DealFolderCreationService {
     siteId: string;
     exporterName: string;
   }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
-    const exporterTermSearchResults = await this.sharepointService.findListItems<{ TermGuid: string; URL: string }>({
-      siteUrl: this.sharepointConfig.tfisSharepointUrl,
-      listId: this.sharepointConfig.tfisCaseSitesListId,
-      fieldsToReturn: ['TermGuid', 'URL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
-    });
+    const exporterTermSearchResults = await this.sharepointService.getExporterSite(exporterName);
     if (exporterTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`);
     }
@@ -123,12 +106,7 @@ export class DealFolderCreationService {
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {
-    const marketTermSearchResults = await this.sharepointService.findListItems<{ TermGuid: string }>({
-      siteUrl: this.sharepointConfig.scSharepointUrl,
-      listId: this.sharepointConfig.taxonomyHiddenListTermStoreListId,
-      fieldsToReturn: ['TermGuid'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: marketName }),
-    });
+    const marketTermSearchResults = await this.sharepointService.getMarketTerm(marketName);
     if (marketTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the market ${marketName} in the taxonomyHiddenListTermStore.`);
     }

@@ -1,8 +1,8 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { GraphService } from '../graph/graph.service';
 import { MdmService } from '../mdm/mdm.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { SiteService } from './site.service';
 
 jest.mock('../graph/graph.service');
@@ -10,23 +10,18 @@ jest.mock('../graph/graph.service');
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  const tfisSharepointUrl = valueGenerator.string();
-  const tfisCaseSitesListId = valueGenerator.string();
   const maskedId = valueGenerator.stringOfNumericCharacters();
 
   let siteService: SiteService;
-  let graphServiceGetRequest: jest.Mock;
   let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
-    graphServiceGetRequest = jest.fn();
-    const graphService = new GraphService(null);
-    graphService.get = graphServiceGetRequest;
+    const sharepointService = new SharepointService(null, null);
 
     mdmServiceCreateNumbers = jest.fn();
     const mdmService = new MdmService(null);
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
+    siteService = new SiteService(sharepointService, mdmService);
   });
 
   describe('createSiteId', () => {

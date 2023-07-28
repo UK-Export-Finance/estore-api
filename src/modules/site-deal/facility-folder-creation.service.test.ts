@@ -1,12 +1,9 @@
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when, WhenMockWithMatchers } from 'jest-when';
+import { when } from 'jest-when';
 
 import { CustodianService } from '../custodian/custodian.service';
-import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
-import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
@@ -17,18 +14,15 @@ describe('FacilityFolderCreationService', () => {
   const {
     createFacilityFolderParamsDto: { siteId, dealId },
     createFacilityFolderRequestItem: { facilityIdentifier, buyerName, exporterName },
+    sharepointServiceGetDealFolderParams,
+    sharepointServiceGetFacilityTermParams,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
-  const tfisSharepointUrl = valueGenerator.word();
-  const scSharepointUrl = valueGenerator.word();
   const scSiteFullUrl = valueGenerator.httpsUrl();
 
   const buyerDealFolderIdAsNumber = valueGenerator.nonnegativeInteger();
   const buyerDealFolderIdAsString = buyerDealFolderIdAsNumber.toString();
   const facilityTermGuid = valueGenerator.guid();
-
-  const tfisFacilityListId = valueGenerator.string();
-  const tfisFacilityHiddenListTermStoreId = valueGenerator.string();
 
   const facilityTemplateId = valueGenerator.string();
   const facilityTypeGuid = valueGenerator.guid();
@@ -61,14 +55,17 @@ describe('FacilityFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let findListItems: jest.Mock;
+  let getDealFolder: jest.Mock;
+  let getFacilityTerm: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
   let service: FacilityFolderCreationService;
 
   beforeEach(() => {
-    findListItems = jest.fn();
-    const sharepointService = new SharepointService(null);
-    sharepointService.findListItems = findListItems;
+    getDealFolder = jest.fn();
+    getFacilityTerm = jest.fn();
+    const sharepointService = new SharepointService(null, null);
+    sharepointService.getDealFolder = getDealFolder;
+    sharepointService.getFacilityTerm = getFacilityTerm;
 
     custodianCreateAndProvision = jest.fn();
     const custodianService = new CustodianService(null);
@@ -76,16 +73,11 @@ describe('FacilityFolderCreationService', () => {
 
     service = new FacilityFolderCreationService(
       {
-        tfisSharepointUrl,
-        scSharepointUrl,
-        scSiteFullUrl,
-
-        tfisFacilityListId,
-        tfisFacilityHiddenListTermStoreId,
-      },
-      {
         facilityTemplateId,
         facilityTypeGuid,
+      },
+      {
+        scSiteFullUrl,
       },
       sharepointService,
       custodianService,
@@ -93,9 +85,9 @@ describe('FacilityFolderCreationService', () => {
   });
 
   it('sends a request to Custodian to create and provision the facility folder', async () => {
-    whenFindingListItemsThatMatchTheBuyerDealFolder().mockResolvedValueOnce([buyerDealFolderListItem]);
-    whenFindingListItemsMatchingTheFacilityTerm().mockResolvedValueOnce([facilityTermListItem]);
-    whenCreatingTheFacilityFolderWithCustodian().mockResolvedValueOnce(undefined);
+    when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([buyerDealFolderListItem]);
+    when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce([facilityTermListItem]);
+    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder).mockResolvedValueOnce(undefined);
 
     await service.createFacilityFolder(siteId, dealId, {
       facilityIdentifier,
@@ -159,9 +151,9 @@ describe('FacilityFolderCreationService', () => {
       expectedErrorMessage: `Missing FacilityGUID for facility term ${facilityIdentifier}.`,
     },
   ])('$description', async ({ listItemsMatchingBuyerDealFolder, listItemsMatchingFacilityTerm, expectedErrorClass, expectedErrorMessage }) => {
-    whenFindingListItemsThatMatchTheBuyerDealFolder().mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
-    whenFindingListItemsMatchingTheFacilityTerm().mockResolvedValueOnce(listItemsMatchingFacilityTerm);
-    whenCreatingTheFacilityFolderWithCustodian().mockResolvedValueOnce(undefined);
+    when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
+    when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce(listItemsMatchingFacilityTerm);
+    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder).mockResolvedValueOnce(undefined);
 
     const createFacilityFolderPromise = service.createFacilityFolder(siteId, dealId, {
       facilityIdentifier,
@@ -172,26 +164,4 @@ describe('FacilityFolderCreationService', () => {
     await expect(createFacilityFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
     await expect(createFacilityFolderPromise).rejects.toThrow(expectedErrorMessage);
   });
-
-  const whenFindingListItemsThatMatchTheBuyerDealFolder = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: scSharepointUrl,
-      listId: tfisFacilityListId,
-      fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}/D ${dealId}` }),
-    });
-
-  const whenFindingListItemsMatchingTheFacilityTerm = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: tfisSharepointUrl,
-      listId: tfisFacilityHiddenListTermStoreId,
-      fieldsToReturn: ['FacilityGUID', 'Title'],
-      filter: new AndListItemFilter(
-        new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: facilityIdentifier }),
-        new FieldNotNullListItemFilter({ fieldName: 'FacilityGUID' }),
-      ),
-    });
-
-  const whenCreatingTheFacilityFolderWithCustodian = (): WhenMockWithMatchers =>
-    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder);
 });

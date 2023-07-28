@@ -1,9 +1,9 @@
-import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 
@@ -15,30 +15,30 @@ describe('SiteService', () => {
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
 
+  let getExporterSite: jest.Mock;
+
   let siteService: SiteService;
-  let graphServiceGetRequest: jest.Mock;
 
   beforeEach(() => {
-    graphServiceGetRequest = jest.fn();
-    const graphService = new GraphService(null);
-    graphService.get = graphServiceGetRequest;
-    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, null);
-    resetAllWhenMocks();
+    getExporterSite = jest.fn();
+    const sharepointService = new SharepointService(null, null);
+    sharepointService.getExporterSite = getExporterSite;
 
     const mdmService = new MdmService(null);
-    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
+    siteService = new SiteService(sharepointService, mdmService);
+    resetAllWhenMocks();
   });
 
   describe('getSiteStatusByExporterName', () => {
     const {
       siteServiceGetSiteStatusByExporterNameRequest,
       siteStatusByExporterNameResponse,
-      graphServiceGetParams,
-      graphServiceGetSiteStatusByExporterNameResponseDto,
+      sharepointServiceGetExporterSiteParams,
+      sharepointServiceGetExporterSiteResponse,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
 
     it('returns the site id and status from the service', async () => {
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphServiceGetSiteStatusByExporterNameResponseDto);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response = await siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest);
 
@@ -46,7 +46,7 @@ describe('SiteService', () => {
     });
 
     it('throws a SiteNotFoundException if the site does not exist', async () => {
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce({ value: [] });
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
 
       await expect(siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest)).rejects.toThrow(
         new SiteNotFoundException(`Site not found for exporter name: ${siteServiceGetSiteStatusByExporterNameRequest}`),

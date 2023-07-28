@@ -2,6 +2,7 @@ import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
+import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from '@ukef/modules/site-deal/dto/create-deal-folder-request.dto';
 import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
@@ -90,6 +91,14 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       folderName: dealFolderName,
     };
 
+    const sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams = {
+      siteId,
+      buyerName,
+    };
+    const sharepointServiceGetExporterSiteParams = exporterName;
+    const sharepointServiceGetDestinationMarketParams = destinationMarket;
+    const sharepointServiceGetRiskMarketParams = riskMarket;
+
     const tfisDealListBuyerRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisDealListId}/items`,
       filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
@@ -174,6 +183,11 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       createDealFolderRequest,
       createDealFolderResponse,
 
+      sharepointServiceGetBuyerDealFolderParams,
+      sharepointServiceGetExporterSiteParams,
+      sharepointServiceGetDestinationMarketParams,
+      sharepointServiceGetRiskMarketParams,
+
       tfisDealListBuyerRequest,
       tfisDealListBuyerResponse,
 
@@ -216,6 +230,11 @@ interface GenerateResult {
   createDealFolderRequestItem: CreateDealFolderRequestItem;
   createDealFolderRequest: CreateDealFolderRequest;
   createDealFolderResponse: CreateFolderResponseDto;
+
+  sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams;
+  sharepointServiceGetExporterSiteParams: string;
+  sharepointServiceGetDestinationMarketParams: string;
+  sharepointServiceGetRiskMarketParams: string;
 
   tfisDealListBuyerRequest: GraphGetParams;
   tfisDealListBuyerResponse: GraphGetListItemsResponseDto<TfisDealListFields>;

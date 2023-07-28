@@ -89,14 +89,14 @@ describe('createSite', () => {
       siteControllerGetSiteStatusByExporterNameQueryDto: createSiteRequestItem,
       siteStatusByExporterNameResponse: createSiteResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
-      graphServiceGetSiteStatusByExporterNameResponseDto: modifiedGraphServiceGetSiteStatusByExporterNameResponseDto,
+      graphServiceGetResponse: modifiedGraphServiceGetResponse,
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)
       .mockSuccessfulExpandCallWithExpandString(modifiedExpand)
       .mockSuccessfulFilterCallWithFilterString(modifiedFilter)
-      .mockSuccessfulGraphGetCall(modifiedGraphServiceGetSiteStatusByExporterNameResponseDto);
+      .mockSuccessfulGraphGetCall(modifiedGraphServiceGetResponse);
 
     const { status, body } = await api.post('/api/v1/sites', [createSiteRequestItem]);
     expect(status).toBe(expectedStatusCode);

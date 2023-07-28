@@ -5,22 +5,21 @@ import SharepointConfig from '@ukef/config/sharepoint.config';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
 
-type RequiredSharepointConfigKeys = 'scSharepointUrl' | 'scCaseSitesListId' | 'tfisSharepointUrl' | 'tfisCaseSitesListId' | 'scSiteFullUrl';
 type RequiredCustodianConfigKeys = 'buyerTemplateId' | 'buyerTypeGuid';
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 
 @Injectable()
 export class BuyerFolderCreationService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
@@ -37,15 +36,7 @@ export class BuyerFolderCreationService {
   }
 
   private async getCaseSiteId(siteId: string) {
-    const searchResults = await this.sharepointService.findListItems<{
-      id: string;
-      CustodianSiteURL: string;
-    }>({
-      siteUrl: this.sharepointConfig.scSharepointUrl,
-      listId: this.sharepointConfig.scCaseSitesListId,
-      fieldsToReturn: ['id', 'CustodianSiteURL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'CustodianSiteURL', targetValue: siteId }),
-    });
+    const searchResults = await this.sharepointService.getCaseSite(siteId);
 
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site ${siteId} in the scCaseSitesList.`);
@@ -69,13 +60,7 @@ export class BuyerFolderCreationService {
   }
 
   private async getBuyerTermFromList(siteId: string, exporterName: string) {
-    const searchResults = await this.sharepointService.findListItems<{ TermGuid: string; Title: string; URL: string; SiteURL: { Url: string } }>({
-      siteUrl: this.sharepointConfig.tfisSharepointUrl,
-      listId: this.sharepointConfig.tfisCaseSitesListId,
-      fieldsToReturn: ['TermGuid', 'Title', 'URL', 'SiteURL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
-    });
-
+    const searchResults = await this.sharepointService.getExporterSite(exporterName);
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
     }
