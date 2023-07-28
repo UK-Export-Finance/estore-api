@@ -16,6 +16,7 @@ export interface SharepointConfig {
   estoreDocumentTypeIdApplication: string;
   estoreDocumentTypeIdFinancialStatement: string;
   estoreDocumentTypeIdBusinessInformation: string;
+  ecmsDocumentContentTypeId: string;
 }
 
 export default registerAs('sharepoint', (): SharepointConfig => {
@@ -35,5 +36,6 @@ export default registerAs('sharepoint', (): SharepointConfig => {
     estoreDocumentTypeIdApplication: process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
     estoreDocumentTypeIdFinancialStatement: process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT,
     estoreDocumentTypeIdBusinessInformation: process.env.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION,
+    ecmsDocumentContentTypeId: process.env.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID,
   };
 });

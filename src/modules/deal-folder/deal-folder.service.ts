@@ -10,7 +10,7 @@ import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
 
-type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName';
+type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName' | 'ecmsDocumentContentTypeId';
 
 @Injectable()
 export class DealFolderService {
@@ -109,15 +109,26 @@ export class DealFolderService {
   }
 
   private constructRequestBodyToUpdateFileInfo(documentType: DocumentTypeEnum): {
-    Title: string;
-    Document_x0020_Status: string;
+    contentType: {
+      id: string;
+    };
+    fields: {
+      Title: string;
+      Document_x0020_Status: string;
+      [documentTypeIdFieldName: string]: string;
+    };
   } {
     const { documentTitle, documentTypeId } = this.documentTypeMapper.mapDocumentTypeToTitleAndTypeId(documentType);
 
     return {
-      Title: documentTitle,
-      Document_x0020_Status: DOCUMENT_X0020_STATUS,
-      [this.sharepointConfig.estoreDocumentTypeIdFieldName]: documentTypeId,
+      contentType: {
+        id: this.config.ecmsDocumentContentTypeId,
+      },
+      fields: {
+        Title: documentTitle,
+        Document_x0020_Status: DOCUMENT_X0020_STATUS,
+        [this.config.estoreDocumentTypeIdFieldName]: documentTypeId,
+      },
     };
   }
 
@@ -127,7 +138,7 @@ export class DealFolderService {
     const webUrlForFile = this.constructWebUrlForItem(fileName, dealId, buyerName, ukefSiteId);
     const itemId = await this.getItemIdByWebUrl(ukefSiteId, listId, webUrlForFile);
 
-    return `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}/fields`;
+    return `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items/${itemId}`;
   }
 
   private constructWebUrlForItem(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): string {
