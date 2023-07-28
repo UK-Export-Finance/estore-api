@@ -5,11 +5,7 @@ interface Options<ConfigUnderTest> {
   configDirectlyFromEnvironmentVariables?: {
     configPropertyName: keyof ConfigUnderTest;
     environmentVariableName: string;
-  }[];
-  configParsedBooleanFromEnvironmentVariablesWithDefault?: {
-    configPropertyName: keyof ConfigUnderTest;
-    environmentVariableName: string;
-    defaultConfigValue: boolean;
+    defaultConfigValue?: string;
   }[];
   configParsedAsIntFromEnvironmentVariablesWithDefault?: {
     configPropertyName: keyof ConfigUnderTest;
@@ -21,14 +17,19 @@ interface Options<ConfigUnderTest> {
     environmentVariableNames: string[];
     getExpectedResult: (environmentVariableValues: string[]) => string;
   }[];
+  configParsedAsBooleanFromEnvironmentVariablesWithDefault?: {
+    configPropertyName: keyof ConfigUnderTest;
+    environmentVariableName: string;
+    defaultConfigValue: boolean;
+  }[];
   getConfig: () => ConfigUnderTest;
 }
 
 export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
   configDirectlyFromEnvironmentVariables,
-  configParsedBooleanFromEnvironmentVariablesWithDefault,
   configParsedAsIntFromEnvironmentVariablesWithDefault,
   configModifiedFromEnvironmentVariables,
+  configParsedAsBooleanFromEnvironmentVariablesWithDefault,
   getConfig,
 }: Options<ConfigUnderTest>): void => {
   const valueGenerator = new RandomValueGenerator();
@@ -44,7 +45,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
   });
 
   if (configDirectlyFromEnvironmentVariables) {
-    describe.each(configDirectlyFromEnvironmentVariables)('$configPropertyName', ({ configPropertyName, environmentVariableName }) => {
+    describe.each(configDirectlyFromEnvironmentVariables)('$configPropertyName', ({ configPropertyName, environmentVariableName, defaultConfigValue }) => {
       it(`is the env variable ${environmentVariableName}`, () => {
         const environmentVariableValue = valueGenerator.string();
         process.env = {
@@ -55,6 +56,15 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
 
         expect(configPropertyValue).toBe(environmentVariableValue);
       });
+
+      if (defaultConfigValue !== undefined)
+        it(`is the default value '${defaultConfigValue}' if ${environmentVariableName} is not specified`, () => {
+          process.env = {};
+
+          const { [configPropertyName]: configPropertyValue } = getConfig();
+
+          expect(configPropertyValue).toBe(defaultConfigValue);
+        });
     });
   }
 
@@ -74,7 +84,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
           expect(configPropertyValue).toBe(expectedConfigValue);
         });
 
-        it(`is the default value ${defaultConfigValue} if ${environmentVariableName} is not specified`, () => {
+        it(`is the default value '${defaultConfigValue}' if ${environmentVariableName} is not specified`, () => {
           process.env = {};
 
           const { [configPropertyName]: configPropertyValue } = getConfig();
@@ -82,7 +92,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
           expect(configPropertyValue).toBe(defaultConfigValue);
         });
 
-        it(`throws InvalidConfigException if ${environmentVariableName} is not parseable as an integer`, () => {
+        it(`throws InvalidConfigException if '${environmentVariableName}' is not parseable as an integer`, () => {
           const environmentVariableValue = 'abc';
           process.env = {
             [environmentVariableName]: environmentVariableValue,
@@ -152,12 +162,19 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
       });
     });
 
-  if (configParsedBooleanFromEnvironmentVariablesWithDefault) {
-    describe.each(configParsedBooleanFromEnvironmentVariablesWithDefault)(
+  if (configParsedAsBooleanFromEnvironmentVariablesWithDefault) {
+    describe.each(configParsedAsBooleanFromEnvironmentVariablesWithDefault)(
       '$configPropertyName',
       ({ configPropertyName, environmentVariableName, defaultConfigValue }) => {
-        it(`is true if environment variable ${environmentVariableName} is true`, () => {
-          const expectedConfigValue = true;
+        it.each([
+          { testBoolString: 'TRUE', expectedBoolean: true },
+          { testBoolString: 'True', expectedBoolean: true },
+          { testBoolString: 'True', expectedBoolean: true },
+          { testBoolString: 'FALSE', expectedBoolean: false },
+          { testBoolString: 'False', expectedBoolean: false },
+          { testBoolString: 'false', expectedBoolean: false },
+        ])(`is the env variable ${environmentVariableName} parsed as a $expectedBoolean boolean if ${environmentVariableName} is $testBoolString`, () => {
+          const expectedConfigValue = valueGenerator.boolean();
           const environmentVariableValue = expectedConfigValue.toString();
           process.env = {
             [environmentVariableName]: environmentVariableValue,
@@ -168,40 +185,8 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
           expect(configPropertyValue).toBe(expectedConfigValue);
         });
 
-        it(`is false if environment variable ${environmentVariableName} is false`, () => {
-          const expectedConfigValue = false;
-          const environmentVariableValue = expectedConfigValue.toString();
-          process.env = {
-            [environmentVariableName]: environmentVariableValue,
-          };
-
-          const { [configPropertyName]: configPropertyValue } = getConfig();
-
-          expect(configPropertyValue).toBe(expectedConfigValue);
-        });
-
-        it(`is the default value if ${environmentVariableName} is any string other than true or false`, () => {
-          process.env = {
-            [environmentVariableName]: valueGenerator.string(),
-          };
-
-          const { [configPropertyName]: configPropertyValue } = getConfig();
-
-          expect(configPropertyValue).toBe(defaultConfigValue);
-        });
-
-        it(`is the default value if ${environmentVariableName} is not specified`, () => {
+        it(`is the default value '${defaultConfigValue}' if ${environmentVariableName} is not specified`, () => {
           process.env = {};
-
-          const { [configPropertyName]: configPropertyValue } = getConfig();
-
-          expect(configPropertyValue).toBe(defaultConfigValue);
-        });
-
-        it(`is the default value if ${environmentVariableName} is empty string`, () => {
-          process.env = {
-            [environmentVariableName]: '',
-          };
 
           const { [configPropertyName]: configPropertyValue } = getConfig();
 
