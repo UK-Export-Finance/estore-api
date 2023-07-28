@@ -88,31 +88,37 @@ describe('appConfig', () => {
 
     it.each([
       {
-        HTTP_VERSIONING_ENABLE: 'TRUE',
+        testBoolString: 'TRUE',
+        expectedBoolean: true,
       },
       {
-        HTTP_VERSIONING_ENABLE: 'True',
+        testBoolString: 'True',
+        expectedBoolean: true,
       },
       {
-        HTTP_VERSIONING_ENABLE: 'True',
+        testBoolString: 'True',
+        expectedBoolean: true,
       },
       {
-        HTTP_VERSIONING_ENABLE: 'FALSE',
+        testBoolString: 'FALSE',
+        expectedBoolean: false,
       },
       {
-        HTTP_VERSIONING_ENABLE: 'False',
+        testBoolString: 'False',
+        expectedBoolean: false,
       },
       {
-        HTTP_VERSIONING_ENABLE: 'false',
+        testBoolString: 'false',
+        expectedBoolean: false,
       },
-    ])('uses HTTP_VERSIONING_ENABLE as the versioning.enable if HTTP_VERSIONING_ENABLE is valid ($HTTP_VERSIONING_ENABLE)', ({ HTTP_VERSIONING_ENABLE }) => {
+    ])('is the env variable HTTP_VERSIONING_ENABLE parsed as a $expectedBoolean boolean if HTTP_VERSIONING_ENABLE is $testBoolString', ({ testBoolString, expectedBoolean }) => {
       replaceEnvironmentVariables({
-        HTTP_VERSIONING_ENABLE,
+        HTTP_VERSIONING_ENABLE: testBoolString,
       });
 
       const config = appConfig();
 
-      expect(config.versioning.enable).toBe(HTTP_VERSIONING_ENABLE === 'TRUE' || HTTP_VERSIONING_ENABLE === 'True' || HTTP_VERSIONING_ENABLE === 'True');
+      expect(config.versioning.enable).toBe(expectedBoolean);
     });
   });
 
