@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { GraphModule } from '@ukef/modules/graph/graph.module';
 
+import { SharepointModule } from '../sharepoint/sharepoint.module';
 import { TermsController } from './terms.controller';
 import { TermsService } from './terms.service';
 
 @Module({
-  imports: [GraphModule],
+  imports: [SharepointModule],
   controllers: [TermsController],
   providers: [TermsService],
 })

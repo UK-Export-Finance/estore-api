@@ -2,6 +2,7 @@ import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
+import { SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
@@ -49,10 +50,11 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     const dealId = options.dealId ?? createFacilityFolderValues.dealId;
 
     const facilityFolderName = `F ${facilityIdentifier}`;
-    const dealFolderName = `D ${dealId}`;
+    const dealName = `D ${dealId}`;
+    const dealFolderName = `${buyerName}/D ${dealId}`;
 
     const tfisFacilityListParentFolderResponseFields: TfisFacilityListParentFolderResponseFields = {
-      Title: dealFolderName,
+      Title: dealName,
       ServerRelativeUrl: parentFolderResponseFieldServerRelativeUrl,
       Code: parentFolderResponseFieldCode,
       ParentCode: parentFolderResponseFieldParentCode,
@@ -103,7 +105,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const tfisFacilityListParentFolderRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisFacilityListId}/items`,
-      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${`${buyerName}/D ${dealId}`}'`,
+      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}`,
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
 
@@ -111,6 +113,10 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       numberToGenerate: 1,
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
+
+    const sharepointServiceGetDealFolderParams = { siteId, dealFolderName };
+
+    const sharepointServiceGetFacilityTermParams = facilityIdentifier;
 
     const custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest = {
       Title: facilityFolderName,
@@ -141,6 +147,9 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       createFacilityFolderRequestDto,
       createFacilityFolderResponseDto,
 
+      sharepointServiceGetDealFolderParams,
+      sharepointServiceGetFacilityTermParams,
+
       tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
       tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
 
@@ -167,7 +176,7 @@ interface GenerateValues {
 
   exporterName: string;
   buyerName: string;
-  facilityIdentifier: string;
+  facilityIdentifier: UkefId;
 
   facilityTermDataResponseFieldFacilityGUID: string;
 
@@ -182,6 +191,9 @@ interface GenerateResult {
 
   createFacilityFolderRequestDto: CreateFacilityFolderRequestDto;
   createFacilityFolderResponseDto: CreateFolderResponseDto;
+
+  sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
+  sharepointServiceGetFacilityTermParams: UkefId;
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
   tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto<TfisFacilityHiddenListTermStoreFields>;

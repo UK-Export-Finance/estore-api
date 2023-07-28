@@ -1,11 +1,11 @@
 import { ENUMS } from '@ukef/constants';
-import { GraphService } from '@ukef/modules/graph/graph.service';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { SiteService } from './site.service';
 
@@ -18,26 +18,29 @@ describe('SiteService', () => {
   const tfisCaseSitesListId = valueGenerator.word();
 
   let siteService: SiteService;
-  let graphServiceGetRequest: jest.Mock;
-  let graphServicePostRequest: jest.Mock;
+  let sharepointServiceCreateSiteRequest: jest.Mock;
+  let sharepointServiceGetExportSiteRequest: jest.Mock;
   let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
-    const graphService = new GraphService(null);
-    graphServiceGetRequest = jest.fn();
-    graphService.get = graphServiceGetRequest;
-    graphServicePostRequest = jest.fn();
-    graphService.post = graphServicePostRequest;
+    const sharepointService = new SharepointService(null, null);
+    sharepointServiceCreateSiteRequest = jest.fn();
+    sharepointService.createSite = sharepointServiceCreateSiteRequest;
+
+    sharepointServiceGetExportSiteRequest = jest.fn();
+    sharepointService.getExporterSite = sharepointServiceGetExportSiteRequest;
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
-    siteService = new SiteService({ tfisSharepointUrl, tfisCaseSitesListId }, graphService, mdmService);
+    siteService = new SiteService(sharepointService, mdmService);
     resetAllWhenMocks();
   });
 
   describe('createSite', () => {
-    it('creates site and returns new site id and status from the service', async () => {
-      const { siteServiceGetSiteStatusByExporterNameRequest, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    it('calls sharepoint.createSite and returns new site id and status from the service', async () => {
+      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetExporterSiteParams } = new getSiteStatusByExporterNameGenerator(
+        valueGenerator,
+      ).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
         tfisCaseSitesListId,
@@ -45,7 +48,7 @@ describe('SiteService', () => {
 
       const exporterName = siteServiceGetSiteStatusByExporterNameRequest;
 
-      const { createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto, requestToCreateSiteId } = new CreateSiteGenerator(
+      const { createSiteResponse, sharepointServiceCreateSiteParams, graphCreateSiteResponseDto, requestToCreateSiteId } = new CreateSiteGenerator(
         valueGenerator,
       ).generate({
         numberToGenerate: 1,
@@ -55,15 +58,15 @@ describe('SiteService', () => {
       });
 
       const siteId = createSiteResponse[0].siteId;
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce({ value: [] });
+      when(sharepointServiceGetExportSiteRequest).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
       when(mdmServiceCreateNumbers)
         .calledWith(requestToCreateSiteId)
         .mockResolvedValueOnce([{ maskedId: siteId }]);
-      when(graphServicePostRequest).calledWith(graphServicePostParams[0]).mockResolvedValueOnce(graphCreateSiteResponseDto[0]);
+      when(sharepointServiceCreateSiteRequest).calledWith(sharepointServiceCreateSiteParams[0]).mockResolvedValueOnce(graphCreateSiteResponseDto[0]);
 
       const response = await siteService.createSiteIfDoesNotExist(exporterName);
 
-      expect(graphServicePostRequest).toHaveBeenCalledTimes(1);
+      expect(sharepointServiceCreateSiteRequest).toHaveBeenCalledTimes(1);
       expect(mdmServiceCreateNumbers).toHaveBeenCalledTimes(1);
       expect(response).toEqual(createSiteResponse[0]);
     });
@@ -81,20 +84,22 @@ describe('SiteService', () => {
     ])('returns expected status and siteId if site status is "$status"', async ({ status }) => {
       const {
         siteServiceGetSiteStatusByExporterNameRequest: exporterName,
-        graphServiceGetSiteStatusByExporterNameResponseDto,
+        sharepointServiceGetExporterSiteParams,
+        sharepointServiceGetExporterSiteResponse,
         siteStatusByExporterNameResponse,
-        graphServiceGetParams,
       } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
         tfisCaseSitesListId,
         status,
       });
-      when(graphServiceGetRequest).calledWith(graphServiceGetParams).mockResolvedValueOnce(graphServiceGetSiteStatusByExporterNameResponseDto);
+      when(sharepointServiceGetExportSiteRequest)
+        .calledWith(sharepointServiceGetExporterSiteParams)
+        .mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response: CreateSiteResponse = await siteService.createSiteIfDoesNotExist(exporterName);
 
-      expect(graphServicePostRequest).toHaveBeenCalledTimes(0);
+      expect(sharepointServiceCreateSiteRequest).toHaveBeenCalledTimes(0);
       expect(mdmServiceCreateNumbers).toHaveBeenCalledTimes(0);
       expect(response).toEqual(siteStatusByExporterNameResponse);
     });

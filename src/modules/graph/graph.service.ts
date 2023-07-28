@@ -51,9 +51,7 @@ export class GraphService {
   }
 
   private createPostRequest({ path }): GraphRequest {
-    const request = this.client.api(path);
-
-    return request;
+    return this.client.api(path);
   }
 
   private async makePostRequest({ request, requestBody }: { request: GraphRequest; requestBody: any }) {
@@ -89,7 +87,17 @@ export class GraphService {
     }
   }
 
-  async uploadFile(file: NodeJS.ReadableStream, fileSizeInBytes: number, fileName: string, urlToCreateUploadSession: string): Promise<UploadResult> {
+  async uploadFile({
+    file,
+    fileSizeInBytes,
+    fileName,
+    urlToCreateUploadSession,
+  }: {
+    file: NodeJS.ReadableStream;
+    fileSizeInBytes: number;
+    fileName: string;
+    urlToCreateUploadSession: string;
+  }): Promise<UploadResult> {
     try {
       const uploadSessionHeaders = { item: { '@microsoft.graph.conflictBehavior': 'fail' } };
       const uploadSession: LargeFileUploadSession = await this.graphClientService.getFileUploadSession(urlToCreateUploadSession, uploadSessionHeaders);
