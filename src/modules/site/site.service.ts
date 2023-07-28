@@ -3,7 +3,6 @@ import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { convertToEnum } from '@ukef/helpers';
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
-import { FieldEqualsListItemFilter } from '@ukef/modules/sharepoint/list-item-filter/field-equals.list-item-filter';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
 import { CreateSiteResponse } from './dto/create-site-response.dto';

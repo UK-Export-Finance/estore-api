@@ -1,5 +1,4 @@
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
-import { FieldEqualsListItemFilter } from '@ukef/modules/sharepoint/list-item-filter/field-equals.list-item-filter';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
