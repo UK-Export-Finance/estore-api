@@ -1,8 +1,6 @@
 import { LargeFileUploadSession, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
-import { DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES } from '@ukef/constants';
-import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
+import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
-import { DocumentTypeMapper } from '@ukef/modules/deal-folder/document-type-mapper';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-response.dto';
@@ -20,7 +18,6 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
   protected generateValues(): GenerateValues {
     return {
       buyerName: this.valueGenerator.buyerName(),
-      documentType: this.valueGenerator.enumValue<DocumentTypeEnum>(DocumentTypeEnum),
       fileName: this.valueGenerator.fileName(),
       fileLocationPath: this.valueGenerator.fileLocationPath(),
       ukefSiteId: this.valueGenerator.ukefSiteId(),
@@ -39,7 +36,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
   protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[]): GenerateResult {
     const uploadFileInDealFolderRequest: UploadFileInDealFolderRequestDto = valuesList.map((values) => ({
       buyerName: values.buyerName,
-      documentType: values.documentType,
+      documentType: ENUMS.DOCUMENT_TYPES.EXPORTER_QUESTIONNAIRE,
       fileName: values.fileName,
       fileLocationPath: values.fileLocationPath,
     }));
@@ -118,32 +115,11 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const getItemIdPath = `${getSharepointSiteIdPath}:/lists/${values.listId}/items`;
 
-    const encodedBuyerName = encodeURIComponent(values.buyerName);
-    const encodedDealId = encodeURIComponent(values.dealId);
-    const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
-    const encodedFileName = encodeURIComponent(values.fileName);
-
-    const itemWebUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${values.ukefSiteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
+    const itemWebUrl = this.constructWebUrlForItem(values.ukefSiteId, values.dealId, values.buyerName, values.fileName);
 
     const getItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
 
     const updateFileInfoPath = `${getItemIdPath}/${values.itemId}/fields`;
-
-    const { documentTitle, documentTypeId } = new DocumentTypeMapper({
-      estoreDocumentTypeIdApplication: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
-      estoreDocumentTypeIdFinancialStatement: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT,
-      estoreDocumentTypeIdBusinessInformation: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION,
-    }).mapDocumentTypeToTitleAndTypeId(values.documentType);
-
-    const updateFileInfoRequest: {
-      [documentTypeIdFieldName: string]: string;
-      Title: string;
-      Document_x0020_Status: string;
-    } = {
-      Title: documentTitle,
-      Document_x0020_Status: DOCUMENT_X0020_STATUS,
-      [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
-    };
 
     return {
       uploadFileInDealFolderRequest,
@@ -163,14 +139,21 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       getItemIdPath,
       getItemIdResponse,
       updateFileInfoPath,
-      updateFileInfoRequest,
     };
+  }
+
+  constructWebUrlForItem(siteId: string, dealId: string, buyerName: string, fileName: string): string {
+    const encodedBuyerName = encodeURIComponent(buyerName);
+    const encodedDealId = encodeURIComponent(dealId);
+    const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
+    const encodedFileName = encodeURIComponent(fileName);
+
+    return `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${siteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 }
 
 interface GenerateValues {
   buyerName: string;
-  documentType: DocumentTypeEnum;
   fileName: string;
   fileLocationPath: string;
   ukefSiteId: string;
@@ -203,11 +186,6 @@ interface GenerateResult {
   getItemIdPath: string;
   getItemIdResponse: { value: { webUrl: string; id: string }[] };
   updateFileInfoPath: string;
-  updateFileInfoRequest: {
-    [documentTypeIdFieldName: string]: string;
-    Title: string;
-    Document_x0020_Status: string;
-  };
 }
 
 type GenerateOptions = unknown;
