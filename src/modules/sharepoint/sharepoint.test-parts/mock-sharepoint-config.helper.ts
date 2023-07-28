@@ -19,5 +19,6 @@ export const getMockSharepointConfig = (): SharepointConfig => {
     estoreDocumentTypeIdApplication: valueGenerator.word(),
     estoreDocumentTypeIdFinancialStatement: valueGenerator.word(),
     estoreDocumentTypeIdBusinessInformation: valueGenerator.word(),
+    ecmsDocumentContentTypeId: valueGenerator.word(),
   };
 };

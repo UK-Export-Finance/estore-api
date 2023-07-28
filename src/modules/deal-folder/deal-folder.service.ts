@@ -122,12 +122,12 @@ export class DealFolderService {
 
     return {
       contentType: {
-        id: this.config.ecmsDocumentContentTypeId,
+        id: this.sharepointConfig.ecmsDocumentContentTypeId,
       },
       fields: {
         Title: documentTitle,
         Document_x0020_Status: DOCUMENT_X0020_STATUS,
-        [this.config.estoreDocumentTypeIdFieldName]: documentTypeId,
+        [this.sharepointConfig.estoreDocumentTypeIdFieldName]: documentTypeId,
       },
     };
   }

@@ -187,14 +187,26 @@ export class SharepointService {
   }: {
     urlToUpdateFileInfo: string;
     requestBodyToUpdateFileInfo: {
-      Title: string;
-      Document_x0020_Status: string;
+      contentType: {
+        id: string;
+      };
+      fields: {
+        Title: string;
+        Document_x0020_Status: string;
+        [documentTypeIdFieldName: string]: string;
+      };
     };
   }): Promise<void> {
     await this.graphService.patch<
       {
-        Title: string;
-        Document_x0020_Status: string;
+        contentType: {
+          id: string;
+        };
+        fields: {
+          Title: string;
+          Document_x0020_Status: string;
+          [documentTypeIdFieldName: string]: string;
+        };
       },
       unknown
     >({
