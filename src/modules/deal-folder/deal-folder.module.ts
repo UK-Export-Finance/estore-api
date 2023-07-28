@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { DtfsStorageModule } from '@ukef/modules/dtfs-storage/dtfs-storage.module';
+import { GraphModule } from '@ukef/modules/graph/graph.module';
 
 import { DtfsStorageModule } from '../dtfs-storage/dtfs-storage.module';
 import { SharepointModule } from '../sharepoint/sharepoint.module';

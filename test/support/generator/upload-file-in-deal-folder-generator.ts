@@ -33,8 +33,13 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     };
   }
 
-  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[], options: GenerateOptions): GenerateResult {
+  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[], options: GenerateOptions, options: GenerateOptions): GenerateResult {
     const ecmsDocumentContentTypeId = options.ecmsDocumentContentTypeId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID;
+
+    const sharepointBaseUrl = options.sharepointBaseUrl ?? ENVIRONMENT_VARIABLES.SHAREPOINT_BASE_URL;
+    const ukefSharepointName = options.ukefSharepointName ?? `${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com`;
+    const estoreDocumentTypeIdFieldName = options.estoreDocumentTypeIdFieldName ?? ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME;
+    const documentTypeId = options.documentTypeId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION;
 
     const uploadFileInDealFolderRequest: UploadFileInDealFolderRequestDto = valuesList.map((values) => ({
       buyerName: values.buyerName,
@@ -56,12 +61,16 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const fileSizeInBytes = values.fileSizeInBytes;
 
+    const getFileSizeResponse = { contentLength: fileSizeInBytes };
+
+    const file = Readable.from([values.fileContents]) as NodeJS.ReadableStream;
+
     const downloadFileResponse = {
-      readableStreamBody: Readable.from([values.fileContents]) as NodeJS.ReadableStream,
+      readableStreamBody: file,
       _response: null,
     };
 
-    const getSharepointSiteIdPath = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${values.ukefSiteId}`;
+    const getSharepointSiteIdPath = `sites/${ukefSharepointName}:/sites/${values.ukefSiteId}`;
 
     const getSharepointSiteIdResponse = {
       id: values.sharepointSiteId,
@@ -80,7 +89,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const fileDestinationPath = `${values.buyerName}/D ${values.dealId}`;
 
-    const urlToCreateUploadSession = `${ENVIRONMENT_VARIABLES.SHAREPOINT_BASE_URL}/sites/${values.sharepointSiteId}/drives/${values.driveId}/root:/${fileDestinationPath}/${values.fileName}:/createUploadSession`;
+    const urlToCreateUploadSession = `${sharepointBaseUrl}/sites/${values.sharepointSiteId}/drives/${values.driveId}/root:/${fileDestinationPath}/${values.fileName}:/createUploadSession`;
 
     const uploadSessionHeaders = {
       item: {
@@ -113,11 +122,13 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const getListIdPath = `${getSharepointSiteIdPath}:/lists`;
 
-    const getListIdResponse = { value: [{ name: 'CaseLibrary', id: values.listId }] };
+    const listId = values.listId;
 
-    const getItemIdPath = `${getSharepointSiteIdPath}:/lists/${values.listId}/items`;
+    const getListIdResponse = { value: [{ name: 'CaseLibrary', id: listId }] };
 
-    const itemWebUrl = this.constructWebUrlForItem(values.ukefSiteId, values.dealId, values.buyerName, values.fileName);
+    const getItemIdPath = `${getSharepointSiteIdPath}:/lists/${listId}/items`;
+
+    const itemWebUrl = this.constructWebUrlForItem(values.ukefSiteId, values.dealId, values.buyerName, values.fileName, ukefSharepointName);
 
     const getItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
 
@@ -148,15 +159,19 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       uploadFileInDealFolderResponse,
       uploadFileInDealFolderParams,
       fileSizeInBytes,
+      getFileSizeResponse,
+      file,
       downloadFileResponse,
       getSharepointSiteIdPath,
       getSharepointSiteIdResponse,
       getDriveIdPath,
       getDriveIdResponse,
+      urlToCreateUploadSession,
       getUploadSessionArgs,
       uploadSession,
       getUploadTaskArgs,
       getListIdPath,
+      listId,
       getListIdResponse,
       getItemIdPath,
       getItemIdResponse,
@@ -165,13 +180,14 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     };
   }
 
-  constructWebUrlForItem(siteId: string, dealId: string, buyerName: string, fileName: string): string {
+  constructWebUrlForItem(siteId: string, dealId: string, buyerName: string, fileName: string, ukefSharepointName?: string): string {
+    const sharepointName = ukefSharepointName ?? `${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com`;
     const encodedBuyerName = encodeURIComponent(buyerName);
     const encodedDealId = encodeURIComponent(dealId);
     const encodedFileDestinationPath = `${encodedBuyerName}/${encodeURIComponent('D ')}${encodedDealId}`;
     const encodedFileName = encodeURIComponent(fileName);
 
-    return `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${siteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
+    return `https://${sharepointName}/sites/${siteId}/CaseLibrary/${encodedFileDestinationPath}/${encodedFileName}`;
   }
 }
 
@@ -196,15 +212,19 @@ interface GenerateResult {
   uploadFileInDealFolderResponse: UploadFileInDealFolderResponseDto;
   uploadFileInDealFolderParams: UploadFileInDealFolderParamsDto;
   fileSizeInBytes: number;
+  getFileSizeResponse: { contentLength: number };
+  file: NodeJS.ReadableStream;
   downloadFileResponse: { readableStreamBody: NodeJS.ReadableStream; _response: any };
   getSharepointSiteIdPath: string;
   getSharepointSiteIdResponse: { id: string };
   getDriveIdPath: string;
   getDriveIdResponse: { value: { name: string; id: string }[] };
+  urlToCreateUploadSession: string;
   getUploadSessionArgs: [string, { item: { '@microsoft.graph.conflictBehavior': string } }];
   uploadSession: LargeFileUploadSession;
   getUploadTaskArgs: [string, number, LargeFileUploadSession, LargeFileUploadTaskOptions];
   getListIdPath: string;
+  listId: string;
   getListIdResponse: { value: { name: string; id: string }[] };
   getItemIdPath: string;
   getItemIdResponse: { value: { webUrl: string; id: string }[] };
@@ -223,4 +243,8 @@ interface GenerateResult {
 
 interface GenerateOptions {
   ecmsDocumentContentTypeId?: string;
+  sharepointBaseUrl?: string;
+  ukefSharepointName?: string;
+  estoreDocumentTypeIdFieldName?: string;
+  documentTypeId?: string;
 }

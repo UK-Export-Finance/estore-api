@@ -77,6 +77,11 @@ export class MockGraphRequest {
     when(this.patch).calledWith(requestBody).mockResolvedValueOnce(response);
     return this;
   }
+
+  mockUnsuccessfulGraphPatchCallWithRequestBody(requestBody, error: unknown): MockGraphRequest {
+    when(this.patch).calledWith(requestBody).mockRejectedValueOnce(error);
+    return this;
+  }
 }
 
 export class MockGraphClientService {
@@ -119,13 +124,13 @@ export class MockGraphClientService {
     return this;
   }
 
-  mockUnsuccessfulUploadCall(error: unknown): MockGraphClientService {
-    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValueOnce(error);
+  mockSuccessfulUploadCall(): MockGraphClientService {
+    when(this.mockFileUploadTask.upload).calledWith().mockResolvedValueOnce({});
     return this;
   }
 
-  mockSuccessfulUploadCall(): MockGraphClientService {
-    when(this.mockFileUploadTask.upload).calledWith().mockResolvedValueOnce({});
+  mockUnsuccessfulUploadCall(error: unknown): MockGraphClientService {
+    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValueOnce(error);
     return this;
   }
 }

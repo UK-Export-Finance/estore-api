@@ -1,13 +1,13 @@
 import { Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
+import { DtfsStorageExceptionTransformInterceptor } from '@ukef/modules/dtfs-storage/interceptor/dtfs-storage-exception-transform.interceptor';
 
-import { DtfsStorageExceptionTransformInterceptor } from '../dtfs-storage/dtfs-storage-exception-transform.interceptor';
 import { DealFolderService } from './deal-folder.service';
-import { DealFolderExceptionTransformInterceptor } from './deal-folder-exception-transform.interceptor';
 import { UploadFileInDealFolderParamsDto } from './dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto, UploadFileInDealFolderRequestItem } from './dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
+import { DealFolderExceptionTransformInterceptor } from './interceptor/deal-folder-exception-transform.interceptor';
 
 @UseInterceptors(DealFolderExceptionTransformInterceptor, DtfsStorageExceptionTransformInterceptor)
 @Controller()

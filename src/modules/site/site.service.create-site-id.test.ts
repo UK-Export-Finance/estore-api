@@ -1,3 +1,5 @@
+import { GraphService } from '@ukef/modules/graph/graph.service';
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
