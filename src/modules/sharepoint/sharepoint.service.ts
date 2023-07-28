@@ -156,8 +156,8 @@ export class SharepointService {
     });
   }
 
-  postFacilityToTermStore(id: string): void {
-   this.graphService.post<any>({
+  async postFacilityToTermStore(id: string): Promise<void> {
+    await this.graphService.post<any>({
       path: `${this.sharepointConfig.tfisSharepointUrl}/lists/${this.sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
       requestBody: {
         fields: {
@@ -181,7 +181,7 @@ export class SharepointService {
     });
   }
 
-  uploadFileInformation({
+  async uploadFileInformation({
     urlToUpdateFileInfo,
     requestBodyToUpdateFileInfo,
   }: {
@@ -190,8 +190,8 @@ export class SharepointService {
       Title: string;
       Document_x0020_Status: string;
     };
-  }): void {
-   this.graphService.patch<
+  }): Promise<void> {
+    await this.graphService.patch<
       {
         Title: string;
         Document_x0020_Status: string;

@@ -17,7 +17,7 @@ export const withPatchMethodTests = ({
   requestBody?: unknown;
   graphServiceResponse: unknown;
   methodResponse?: unknown;
-  makeRequest: (sharepointService: SharepointService) => Promise<unknown> | void;
+  makeRequest: (sharepointService: SharepointService) => Promise<unknown>;
 }) => {
   let graphServicePatch: jest.Mock;
   let sharepointService: SharepointService;

@@ -17,7 +17,7 @@ export const withPostMethodTests = ({
   requestBody?: unknown;
   graphServiceResponse: unknown;
   methodResponse?: unknown;
-  makeRequest: (sharepointService: SharepointService) => Promise<unknown> | void;
+  makeRequest: (sharepointService: SharepointService) => Promise<unknown>;
 }) => {
   let graphServicePost: jest.Mock;
   let sharepointService: SharepointService;
