@@ -1,6 +1,7 @@
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 
-export const getMockSharepointConfig = () => {
+export const getMockSharepointConfig = (): SharepointConfig => {
   const valueGenerator = new RandomValueGenerator();
   return {
     baseUrl: valueGenerator.word(),
