@@ -2,14 +2,13 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 import { ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
-import GraphService from '@ukef/modules/graph/graph.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { when, WhenMockWithMatchers } from 'jest-when';
 
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { DealFolderService } from './deal-folder.service';
 import { DocumentTypeMapper } from './document-type-mapper';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 
 jest.mock('@ukef/modules/graph/graph.service');
 

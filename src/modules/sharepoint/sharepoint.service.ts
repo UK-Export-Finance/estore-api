@@ -194,10 +194,7 @@ export class SharepointService {
     });
   }
 
-  async updateFileInformation({
-    urlToUpdateFileInfo,
-    requestBodyToUpdateFileInfo,
-  }: SharepointupdateFileInformationParams): Promise<void> {
+  async updateFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo }: SharepointupdateFileInformationParams): Promise<void> {
     await this.graphService.patch<
       {
         contentType: {

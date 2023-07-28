@@ -4,12 +4,12 @@ import { UkefId } from '@ukef/helpers';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-response.dto';
+import { SharepointGetItemsParams, SharepointGetResourcesParams, SharepointupdateFileInformationParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { Readable } from 'stream';
 
 import { AbstractGenerator } from './abstract-generator';
 import { RandomValueGenerator } from './random-value-generator';
-import { SharepointGetItemsParams, SharepointGetResourcesParams, SharepointupdateFileInformationParams } from '@ukef/modules/sharepoint/sharepoint.service';
 
 export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
@@ -174,7 +174,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const sharepointServiceUpdateFileInformationParams = {
       urlToUpdateFileInfo: graphClientUpdateFileInfoPath,
-      requestBodyToUpdateFileInfo: graphClientUpdateFileInfoRequest
+      requestBodyToUpdateFileInfo: graphClientUpdateFileInfoRequest,
     };
 
     const sharepointServiceGetSiteByUkefSiteIdResponse = graphClientGetSiteByUkefSiteIdResponse;
