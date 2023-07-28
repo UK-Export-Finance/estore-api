@@ -120,7 +120,7 @@ describe('postDocumentInDealFolder', () => {
           fields: {
             ...updateFileInfoRequest.fields,
             Title: documentTitle,
-            [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId, 
+            [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
           },
         };
 
