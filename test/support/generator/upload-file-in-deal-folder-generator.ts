@@ -123,12 +123,6 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const updateFileInfoPath = `${getItemIdPath}/${values.itemId}`;
 
-    const { documentTitle, documentTypeId } = new DocumentTypeMapper({
-      estoreDocumentTypeIdApplication: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
-      estoreDocumentTypeIdFinancialStatement: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT,
-      estoreDocumentTypeIdBusinessInformation: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION,
-    }).mapDocumentTypeToTitleAndTypeId(values.documentType);
-
     const updateFileInfoRequest: {
       contentType: {
         id: string;
@@ -143,9 +137,9 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
         id: ecmsDocumentContentTypeId,
       },
       fields: {
-        Title: documentTitle,
-        Document_x0020_Status: DOCUMENT_X0020_STATUS,
-        [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
+        Title: 'Supplementary Questionnaire',
+        Document_x0020_Status: 'Original',
+        [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
       },
     };
 
@@ -167,6 +161,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       getItemIdPath,
       getItemIdResponse,
       updateFileInfoPath,
+      updateFileInfoRequest,
     };
   }
 

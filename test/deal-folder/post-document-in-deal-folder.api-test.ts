@@ -1,6 +1,6 @@
 import { RestError } from '@azure/storage-file-share';
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { BUYER_NAME, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
+import { BUYER_NAME, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
@@ -38,6 +38,7 @@ describe('postDocumentInDealFolder', () => {
     getItemIdPath,
     getItemIdResponse,
     updateFileInfoPath,
+    updateFileInfoRequest,
   } = uploadFileInDealFolderGenerator.generate({ numberToGenerate: 1 });
   const [{ buyerName, fileName, fileLocationPath }] = uploadFileInDealFolderRequest;
   const { siteId, dealId } = uploadFileInDealFolderParams;
@@ -114,15 +115,15 @@ describe('postDocumentInDealFolder', () => {
           { ...uploadFileInDealFolderRequest[0], documentType },
         ];
 
-        const updateFileInfoRequest = {
-          Title: documentTitle,
-          Document_x0020_Status: DOCUMENT_X0020_STATUS,
-          [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
+        const modifiedUpdateFileInfoRequest = {
+          ...updateFileInfoRequest,
         };
+        modifiedUpdateFileInfoRequest.fields.Title = documentTitle;
+        modifiedUpdateFileInfoRequest.fields[ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME] = documentTypeId;
 
         const { status, body } = await makeRequestWithBody(uploadFileInDealFolderRequestWithModifiedDocumentTypeField);
 
-        expect(mockGraphRequest.patch).toHaveBeenCalledWith(updateFileInfoRequest);
+        expect(mockGraphRequest.patch).toHaveBeenCalledWith(modifiedUpdateFileInfoRequest);
         expect(mockGraphClientService.mockFileUploadTask.upload).toHaveBeenCalledTimes(1);
         expect(status).toBe(201);
         expect(body).toEqual(uploadFileInDealFolderResponse);
