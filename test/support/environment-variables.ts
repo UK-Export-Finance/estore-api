@@ -6,6 +6,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   NODE_ENV: 'test',
   TZ: 'Europe/London',
   LOG_LEVEL: 'debug',
+  REDACT_LOGS: false,
   SINGLE_LINE_LOG_FORMAT: true,
 
   SWAGGER_USER: valueGenerator.string(),
@@ -61,6 +62,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
   ...ENVIRONMENT_VARIABLES,
+  REDACT_LOGS: ENVIRONMENT_VARIABLES.REDACT_LOGS.toString(),
   SINGLE_LINE_LOG_FORMAT: ENVIRONMENT_VARIABLES.SINGLE_LINE_LOG_FORMAT.toString(),
   APIM_MDM_MAX_REDIRECTS: ENVIRONMENT_VARIABLES.APIM_MDM_MAX_REDIRECTS.toString(),
   APIM_MDM_TIMEOUT: ENVIRONMENT_VARIABLES.APIM_MDM_TIMEOUT.toString(),
