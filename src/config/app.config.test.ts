@@ -111,15 +111,18 @@ describe('appConfig', () => {
         testBoolString: 'false',
         expectedBoolean: false,
       },
-    ])('is the env variable HTTP_VERSIONING_ENABLE parsed as a $expectedBoolean boolean if HTTP_VERSIONING_ENABLE is $testBoolString', ({ testBoolString, expectedBoolean }) => {
-      replaceEnvironmentVariables({
-        HTTP_VERSIONING_ENABLE: testBoolString,
-      });
+    ])(
+      'is the env variable HTTP_VERSIONING_ENABLE parsed as a $expectedBoolean boolean if HTTP_VERSIONING_ENABLE is $testBoolString',
+      ({ testBoolString, expectedBoolean }) => {
+        replaceEnvironmentVariables({
+          HTTP_VERSIONING_ENABLE: testBoolString,
+        });
 
-      const config = appConfig();
+        const config = appConfig();
 
-      expect(config.versioning.enable).toBe(expectedBoolean);
-    });
+        expect(config.versioning.enable).toBe(expectedBoolean);
+      },
+    );
   });
 
   describe('parsing HTTP_VERSION', () => {
