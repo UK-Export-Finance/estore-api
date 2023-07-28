@@ -165,7 +165,10 @@ describe('appConfig', () => {
     configPropertyName: keyof AppConfig;
     environmentVariableName: string;
     defaultConfigValue: boolean;
-  }[] = [{ configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false }];
+  }[] = [
+    { configPropertyName: 'redactLogs', environmentVariableName: 'REDACT_LOGS', defaultConfigValue: true },
+    { configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: false },
+  ];
 
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
@@ -176,21 +179,4 @@ describe('appConfig', () => {
   const replaceEnvironmentVariables = (newEnvVariables: Record<string, string>): void => {
     process.env = newEnvVariables;
   };
-
-  const configParsedBooleanFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof AppConfig;
-    environmentVariableName: string;
-    defaultConfigValue: boolean;
-  }[] = [
-    {
-      configPropertyName: 'singleLineLogFormat',
-      environmentVariableName: 'SINGLE_LINE_LOG_FORMAT',
-      defaultConfigValue: true,
-    },
-  ];
-
-  withEnvironmentVariableParsingUnitTests({
-    configParsedBooleanFromEnvironmentVariablesWithDefault,
-    getConfig: () => appConfig(),
-  });
 });

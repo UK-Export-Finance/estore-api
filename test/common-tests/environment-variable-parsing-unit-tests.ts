@@ -7,16 +7,6 @@ interface Options<ConfigUnderTest> {
     environmentVariableName: string;
     defaultConfigValue?: string;
   }[];
-  configParsedBooleanFromEnvironmentVariablesWithDefault?: {
-    configPropertyName: keyof ConfigUnderTest;
-    environmentVariableName: string;
-    defaultConfigValue: boolean;
-  }[];
-  configParsedBooleanFromEnvironmentVariablesWithDefault?: {
-    configPropertyName: keyof ConfigUnderTest;
-    environmentVariableName: string;
-    defaultConfigValue: boolean;
-  }[];
   configParsedAsIntFromEnvironmentVariablesWithDefault?: {
     configPropertyName: keyof ConfigUnderTest;
     environmentVariableName: string;
@@ -37,7 +27,6 @@ interface Options<ConfigUnderTest> {
 
 export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
   configDirectlyFromEnvironmentVariables,
-  configParsedBooleanFromEnvironmentVariablesWithDefault,
   configParsedAsIntFromEnvironmentVariablesWithDefault,
   configModifiedFromEnvironmentVariables,
   configParsedAsBooleanFromEnvironmentVariablesWithDefault,
