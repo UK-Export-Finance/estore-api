@@ -9,6 +9,7 @@ import { Readable } from 'stream';
 
 import { AbstractGenerator } from './abstract-generator';
 import { RandomValueGenerator } from './random-value-generator';
+import { SharepointGetItemsParams, SharepointGetResourcesParams, SharepointupdateFileInformationParams } from '@ukef/modules/sharepoint/sharepoint.service';
 
 export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
@@ -33,7 +34,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     };
   }
 
-  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[], options: GenerateOptions, options: GenerateOptions): GenerateResult {
+  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[], options: GenerateOptions): GenerateResult {
     const ecmsDocumentContentTypeId = options.ecmsDocumentContentTypeId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID;
 
     const sharepointBaseUrl = options.sharepointBaseUrl ?? ENVIRONMENT_VARIABLES.SHAREPOINT_BASE_URL;
@@ -61,24 +62,24 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const fileSizeInBytes = values.fileSizeInBytes;
 
-    const getFileSizeResponse = { contentLength: fileSizeInBytes };
+    const dtfsStorageFileServiceGetFileSizeResponse = { contentLength: fileSizeInBytes };
 
-    const file = Readable.from([values.fileContents]) as NodeJS.ReadableStream;
+    const dtfsStorageFileServiceGetFileResponse = Readable.from([values.fileContents]) as NodeJS.ReadableStream;
 
-    const downloadFileResponse = {
-      readableStreamBody: file,
+    const dtfsStorageFileClientDownloadFileResponse = {
+      readableStreamBody: dtfsStorageFileServiceGetFileResponse,
       _response: null,
     };
 
-    const getSharepointSiteIdPath = `sites/${ukefSharepointName}:/sites/${values.ukefSiteId}`;
+    const graphClientGetSitePath = `sites/${ukefSharepointName}:/sites/${values.ukefSiteId}`;
 
-    const getSharepointSiteIdResponse = {
+    const graphClientGetSiteByUkefSiteIdResponse = {
       id: values.sharepointSiteId,
     };
 
-    const getDriveIdPath = `${getSharepointSiteIdPath}:/drives`;
+    const graphClientGetDriveIdPath = `${graphClientGetSitePath}:/drives`;
 
-    const getDriveIdResponse = {
+    const graphClientGetResourcesDriveResponse = {
       value: [
         {
           name: 'Case Library',
@@ -89,7 +90,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const fileDestinationPath = `${values.buyerName}/D ${values.dealId}`;
 
-    const urlToCreateUploadSession = `${sharepointBaseUrl}/sites/${values.sharepointSiteId}/drives/${values.driveId}/root:/${fileDestinationPath}/${values.fileName}:/createUploadSession`;
+    const graphClientUrlToCreateUploadSession = `${sharepointBaseUrl}/sites/${values.sharepointSiteId}/drives/${values.driveId}/root:/${fileDestinationPath}/${values.fileName}:/createUploadSession`;
 
     const uploadSessionHeaders = {
       item: {
@@ -97,44 +98,44 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       },
     };
 
-    const getUploadSessionArgs: [
+    const graphClientGetUploadSessionArgs: [
       string,
       {
         item: {
           '@microsoft.graph.conflictBehavior': string;
         };
       },
-    ] = [urlToCreateUploadSession, uploadSessionHeaders];
+    ] = [graphClientUrlToCreateUploadSession, uploadSessionHeaders];
 
-    const uploadSession: LargeFileUploadSession = {
+    const graphClientUploadSession: LargeFileUploadSession = {
       url: values.uploadSessionUrl,
       expiry: values.uploadSessionExpiry,
     };
 
     const uploadTaskOptions: LargeFileUploadTaskOptions = { rangeSize: fileSizeInBytes };
 
-    const getUploadTaskArgs: [string, number, LargeFileUploadSession, LargeFileUploadTaskOptions] = [
+    const graphClientGetUploadTaskArgs: [string, number, LargeFileUploadSession, LargeFileUploadTaskOptions] = [
       values.fileName,
       fileSizeInBytes,
-      uploadSession,
+      graphClientUploadSession,
       uploadTaskOptions,
     ];
 
-    const getListIdPath = `${getSharepointSiteIdPath}:/lists`;
+    const graphClientGetListIdPath = `${graphClientGetSitePath}:/lists`;
 
     const listId = values.listId;
 
-    const getListIdResponse = { value: [{ name: 'CaseLibrary', id: listId }] };
+    const graphClientGetListIdResponse = { value: [{ name: 'CaseLibrary', id: listId }] };
 
-    const getItemIdPath = `${getSharepointSiteIdPath}:/lists/${listId}/items`;
+    const graphClientGetItemIdPath = `${graphClientGetSitePath}:/lists/${listId}/items`;
 
     const itemWebUrl = this.constructWebUrlForItem(values.ukefSiteId, values.dealId, values.buyerName, values.fileName, ukefSharepointName);
 
-    const getItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
+    const graphClientGetItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
 
-    const updateFileInfoPath = `${getItemIdPath}/${values.itemId}`;
+    const graphClientUpdateFileInfoPath = `${graphClientGetItemIdPath}/${values.itemId}`;
 
-    const updateFileInfoRequest: {
+    const graphClientUpdateFileInfoRequest: {
       contentType: {
         id: string;
       };
@@ -150,33 +151,71 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       fields: {
         Title: 'Supplementary Questionnaire',
         Document_x0020_Status: 'Original',
-        [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
+        [estoreDocumentTypeIdFieldName]: documentTypeId,
       },
     };
+
+    const sharepointServiceGetSiteByUkefSiteIdParams = values.ukefSiteId;
+
+    const sharepointServiceGetResourcesDriveParams = {
+      ukefSiteId: values.ukefSiteId,
+      sharepointResourceType: ENUMS.SHAREPOINT_RESOURCE_TYPES.DRIVE,
+    };
+
+    const sharepointServiceGetResourcesListParams = {
+      ukefSiteId: values.ukefSiteId,
+      sharepointResourceType: ENUMS.SHAREPOINT_RESOURCE_TYPES.LIST,
+    };
+
+    const sharepointServiceGetItemsParams = {
+      ukefSiteId: values.ukefSiteId,
+      listId,
+    };
+
+    const sharepointServiceUpdateFileInformationParams = {
+      urlToUpdateFileInfo: graphClientUpdateFileInfoPath,
+      requestBodyToUpdateFileInfo: graphClientUpdateFileInfoRequest
+    };
+
+    const sharepointServiceGetSiteByUkefSiteIdResponse = graphClientGetSiteByUkefSiteIdResponse;
+    const sharepointServiceGetResourcesDriveResponse = graphClientGetResourcesDriveResponse;
+    const sharepointServiceUrlToCreateUploadSession = graphClientUrlToCreateUploadSession;
+    const sharepointServiceGetListIdResponse = graphClientGetListIdResponse;
+    const sharepointServiceGetItemIdResponse = graphClientGetItemIdResponse;
 
     return {
       uploadFileInDealFolderRequest,
       uploadFileInDealFolderResponse,
       uploadFileInDealFolderParams,
       fileSizeInBytes,
-      getFileSizeResponse,
-      file,
-      downloadFileResponse,
-      getSharepointSiteIdPath,
-      getSharepointSiteIdResponse,
-      getDriveIdPath,
-      getDriveIdResponse,
-      urlToCreateUploadSession,
-      getUploadSessionArgs,
-      uploadSession,
-      getUploadTaskArgs,
-      getListIdPath,
+      dtfsStorageFileServiceGetFileSizeResponse,
+      dtfsStorageFileServiceGetFileResponse,
+      dtfsStorageFileClientDownloadFileResponse,
+      graphClientGetSitePath,
+      graphClientGetSiteByUkefSiteIdResponse,
+      graphClientGetDriveIdPath,
+      graphClientGetResourcesDriveResponse,
+      graphClientUrlToCreateUploadSession,
+      graphClientGetUploadSessionArgs,
+      graphClientUploadSession,
+      graphClientGetUploadTaskArgs,
+      graphClientGetListIdPath,
       listId,
-      getListIdResponse,
-      getItemIdPath,
-      getItemIdResponse,
-      updateFileInfoPath,
-      updateFileInfoRequest,
+      graphClientGetListIdResponse,
+      graphClientGetItemIdPath,
+      graphClientGetItemIdResponse,
+      graphClientUpdateFileInfoPath,
+      graphClientUpdateFileInfoRequest,
+      sharepointServiceGetSiteByUkefSiteIdParams,
+      sharepointServiceGetResourcesDriveParams,
+      sharepointServiceGetResourcesListParams,
+      sharepointServiceGetItemsParams,
+      sharepointServiceUpdateFileInformationParams,
+      sharepointServiceGetSiteByUkefSiteIdResponse,
+      sharepointServiceGetResourcesDriveResponse,
+      sharepointServiceUrlToCreateUploadSession,
+      sharepointServiceGetListIdResponse,
+      sharepointServiceGetItemIdResponse,
     };
   }
 
@@ -212,24 +251,24 @@ interface GenerateResult {
   uploadFileInDealFolderResponse: UploadFileInDealFolderResponseDto;
   uploadFileInDealFolderParams: UploadFileInDealFolderParamsDto;
   fileSizeInBytes: number;
-  getFileSizeResponse: { contentLength: number };
-  file: NodeJS.ReadableStream;
-  downloadFileResponse: { readableStreamBody: NodeJS.ReadableStream; _response: any };
-  getSharepointSiteIdPath: string;
-  getSharepointSiteIdResponse: { id: string };
-  getDriveIdPath: string;
-  getDriveIdResponse: { value: { name: string; id: string }[] };
-  urlToCreateUploadSession: string;
-  getUploadSessionArgs: [string, { item: { '@microsoft.graph.conflictBehavior': string } }];
-  uploadSession: LargeFileUploadSession;
-  getUploadTaskArgs: [string, number, LargeFileUploadSession, LargeFileUploadTaskOptions];
-  getListIdPath: string;
+  dtfsStorageFileServiceGetFileSizeResponse: { contentLength: number };
+  dtfsStorageFileServiceGetFileResponse: NodeJS.ReadableStream;
+  dtfsStorageFileClientDownloadFileResponse: { readableStreamBody: NodeJS.ReadableStream; _response: any };
+  graphClientGetSitePath: string;
+  graphClientGetSiteByUkefSiteIdResponse: { id: string };
+  graphClientGetDriveIdPath: string;
+  graphClientGetResourcesDriveResponse: { value: { name: string; id: string }[] };
+  graphClientUrlToCreateUploadSession: string;
+  graphClientGetUploadSessionArgs: [string, { item: { '@microsoft.graph.conflictBehavior': string } }];
+  graphClientUploadSession: LargeFileUploadSession;
+  graphClientGetUploadTaskArgs: [string, number, LargeFileUploadSession, LargeFileUploadTaskOptions];
+  graphClientGetListIdPath: string;
   listId: string;
-  getListIdResponse: { value: { name: string; id: string }[] };
-  getItemIdPath: string;
-  getItemIdResponse: { value: { webUrl: string; id: string }[] };
-  updateFileInfoPath: string;
-  updateFileInfoRequest: {
+  graphClientGetListIdResponse: { value: { name: string; id: string }[] };
+  graphClientGetItemIdPath: string;
+  graphClientGetItemIdResponse: { value: { webUrl: string; id: string }[] };
+  graphClientUpdateFileInfoPath: string;
+  graphClientUpdateFileInfoRequest: {
     contentType: {
       id: string;
     };
@@ -239,6 +278,16 @@ interface GenerateResult {
       [documentTypeIdFieldName: string]: string;
     };
   };
+  sharepointServiceGetSiteByUkefSiteIdParams: string;
+  sharepointServiceGetResourcesDriveParams: SharepointGetResourcesParams;
+  sharepointServiceGetResourcesListParams: SharepointGetResourcesParams;
+  sharepointServiceGetItemsParams: SharepointGetItemsParams;
+  sharepointServiceUpdateFileInformationParams: SharepointupdateFileInformationParams;
+  sharepointServiceGetSiteByUkefSiteIdResponse: { id: string };
+  sharepointServiceGetResourcesDriveResponse: { value: { name: string; id: string }[] };
+  sharepointServiceUrlToCreateUploadSession: string;
+  sharepointServiceGetListIdResponse: { value: { name: string; id: string }[] };
+  sharepointServiceGetItemIdResponse: { value: { webUrl: string; id: string }[] };
 }
 
 interface GenerateOptions {

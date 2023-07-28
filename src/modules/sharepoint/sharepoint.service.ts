@@ -44,6 +44,19 @@ export interface SharepointUploadFileParams {
   urlToCreateUploadSession: string;
 }
 
+export interface SharepointupdateFileInformationParams {
+  urlToUpdateFileInfo: string;
+  requestBodyToUpdateFileInfo: {
+    contentType: {
+      id: string;
+    };
+    fields: {
+      Title: string;
+      Document_x0020_Status: string;
+      [documentTypeIdFieldName: string]: string;
+    };
+  };
+}
 export interface SharepointFindListItems<Fields> {
   siteUrl: string;
   listId: string;
@@ -181,22 +194,10 @@ export class SharepointService {
     });
   }
 
-  async uploadFileInformation({
+  async updateFileInformation({
     urlToUpdateFileInfo,
     requestBodyToUpdateFileInfo,
-  }: {
-    urlToUpdateFileInfo: string;
-    requestBodyToUpdateFileInfo: {
-      contentType: {
-        id: string;
-      };
-      fields: {
-        Title: string;
-        Document_x0020_Status: string;
-        [documentTypeIdFieldName: string]: string;
-      };
-    };
-  }): Promise<void> {
+  }: SharepointupdateFileInformationParams): Promise<void> {
     await this.graphService.patch<
       {
         contentType: {

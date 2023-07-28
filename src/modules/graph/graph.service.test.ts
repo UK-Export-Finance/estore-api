@@ -159,13 +159,13 @@ describe('GraphService', () => {
   describe('uploadFile', () => {
     withSharedGraphExceptionHandlingTests({
       mockGraphEndpointToErrorWith: (error: unknown) => mockUnsuccessfulFileUpload(error),
-      makeRequest: () => graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession),
+      makeRequest: () => graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession }),
     });
 
     it('calls the correct graph client methods on a graph service upload file call and returns the response', async () => {
       mockSuccessfulCompleteGraphUploadFileCall();
 
-      const result = await graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
+      const result = await graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
 
       expect(mockGraphClientService.getFileUploadSession).toHaveBeenCalledTimes(1);
       expect(mockGraphClientService.getFileUploadSession).toHaveBeenCalledWith(urlToCreateUploadSession, expectedUploadSessionHeaders);
@@ -189,7 +189,7 @@ describe('GraphService', () => {
 
       mockUnsuccessfulFileUpload(graphError);
 
-      const graphServicePromise = graphService.uploadFile(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
+      const graphServicePromise = graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
 
       await expect(graphServicePromise).rejects.toBeInstanceOf(UploadFileInDealFolderExistsException);
       await expect(graphServicePromise).rejects.toThrow(`A file with the name ${fileName} already exists for the buyer name and deal ID specified.`);

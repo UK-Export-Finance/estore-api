@@ -9,6 +9,7 @@ import { when, WhenMockWithMatchers } from 'jest-when';
 
 import { DealFolderService } from './deal-folder.service';
 import { DocumentTypeMapper } from './document-type-mapper';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 
 jest.mock('@ukef/modules/graph/graph.service');
 
@@ -18,30 +19,31 @@ describe('UploadFileInDealFolderService', () => {
   const sharepointBaseUrl = valueGenerator.httpsUrl();
   const ukefSharepointName = `${valueGenerator.word()}.sharepoint.com`;
   const estoreDocumentTypeIdFieldName = valueGenerator.string();
+  const ecmsDocumentContentTypeId = valueGenerator.string();
 
   const {
     uploadFileInDealFolderRequest,
     uploadFileInDealFolderResponse,
     uploadFileInDealFolderParams,
     fileSizeInBytes,
-    getFileSizeResponse,
-    file,
-    getSharepointSiteIdPath,
-    getSharepointSiteIdResponse,
-    getDriveIdPath,
-    getDriveIdResponse,
-    urlToCreateUploadSession,
-    getListIdPath,
-    getListIdResponse,
-    getItemIdPath,
-    getItemIdResponse,
-    updateFileInfoPath,
-    requestBodyToUpdateFileInfo,
+    dtfsStorageFileServiceGetFileSizeResponse,
+    dtfsStorageFileServiceGetFileResponse,
+    sharepointServiceGetSiteByUkefSiteIdResponse,
+    sharepointServiceGetResourcesDriveResponse,
+    sharepointServiceUrlToCreateUploadSession,
+    sharepointServiceGetListIdResponse,
+    sharepointServiceGetItemIdResponse,
+    sharepointServiceGetSiteByUkefSiteIdParams,
+    sharepointServiceGetResourcesDriveParams,
+    sharepointServiceGetResourcesListParams,
+    sharepointServiceGetItemsParams,
+    sharepointServiceUpdateFileInformationParams,
   } = new UploadFileInDealFolderGenerator(valueGenerator).generate({
     numberToGenerate: 1,
     sharepointBaseUrl,
     ukefSharepointName,
     estoreDocumentTypeIdFieldName,
+    ecmsDocumentContentTypeId,
   });
 
   const [{ fileName, fileLocationPath, buyerName, documentType }] = uploadFileInDealFolderRequest;
@@ -84,49 +86,55 @@ describe('UploadFileInDealFolderService', () => {
     },
   ];
 
-  let mapDocumentTypeToTitleAndTypeId: jest.Mock;
-  let getFileProperties: jest.Mock;
-  let getFile: jest.Mock;
-  let graphServiceGet: jest.Mock;
-  let uploadFile: jest.Mock;
-  let graphServicePatch: jest.Mock;
+  let documentTypeMapperMapDocumentTypeToTitleAndTypeId: jest.Mock;
+  let dtfsStorageFileServiceGetFileProperties: jest.Mock;
+  let dtfsStorageFileServiceGetFile: jest.Mock;
+  let sharepointServiceGetSiteByUkefSiteId: jest.Mock;
+  let sharepointServiceGetResources: jest.Mock;
+  let sharepointServiceGetItems: jest.Mock;
+  let sharepointServiceUploadFile: jest.Mock;
+  let sharepointServiceUpdateFileInformation: jest.Mock;
   let service: DealFolderService;
 
   beforeEach(() => {
     const documentTypeMapper = new DocumentTypeMapper(null);
-    mapDocumentTypeToTitleAndTypeId = jest.fn();
-    documentTypeMapper.mapDocumentTypeToTitleAndTypeId = mapDocumentTypeToTitleAndTypeId;
+    documentTypeMapperMapDocumentTypeToTitleAndTypeId = jest.fn();
+    documentTypeMapper.mapDocumentTypeToTitleAndTypeId = documentTypeMapperMapDocumentTypeToTitleAndTypeId;
 
     const dtfsStorageFileService = new DtfsStorageFileService(null);
-    getFileProperties = jest.fn();
-    getFile = jest.fn();
-    dtfsStorageFileService.getFileProperties = getFileProperties;
-    dtfsStorageFileService.getFile = getFile;
+    dtfsStorageFileServiceGetFileProperties = jest.fn();
+    dtfsStorageFileServiceGetFile = jest.fn();
+    dtfsStorageFileService.getFileProperties = dtfsStorageFileServiceGetFileProperties;
+    dtfsStorageFileService.getFile = dtfsStorageFileServiceGetFile;
 
-    const graphService = new GraphService(null);
-    graphServiceGet = jest.fn();
-    uploadFile = jest.fn();
-    graphServicePatch = jest.fn();
-    graphService.get = graphServiceGet;
-    graphService.uploadFile = uploadFile;
-    graphService.patch = graphServicePatch;
+    const sharepointService = new SharepointService(null, null);
+    sharepointServiceGetSiteByUkefSiteId = jest.fn();
+    sharepointServiceGetResources = jest.fn();
+    sharepointServiceGetItems = jest.fn();
+    sharepointServiceUploadFile = jest.fn();
+    sharepointServiceUpdateFileInformation = jest.fn();
+    sharepointService.getSiteByUkefSiteId = sharepointServiceGetSiteByUkefSiteId;
+    sharepointService.getResources = sharepointServiceGetResources;
+    sharepointService.getItems = sharepointServiceGetItems;
+    sharepointService.uploadFile = sharepointServiceUploadFile;
+    sharepointService.updateFileInformation = sharepointServiceUpdateFileInformation;
 
     service = new DealFolderService(
-      { baseUrl: sharepointBaseUrl, ukefSharepointName, estoreDocumentTypeIdFieldName },
+      { baseUrl: sharepointBaseUrl, ukefSharepointName, estoreDocumentTypeIdFieldName, ecmsDocumentContentTypeId },
       documentTypeMapper,
       dtfsStorageFileService,
-      graphService,
+      sharepointService,
     );
   });
 
   describe('uploadFileInDealFolder', () => {
-    it('sends a request to the Graph Service to upload the file', async () => {
-      whenGettingTheFileSize().mockResolvedValueOnce(getFileSizeResponse);
-      whenGettingTheFile().mockResolvedValueOnce(file);
-      whenGettingTheSharepointSiteId().mockResolvedValueOnce(getSharepointSiteIdResponse);
-      whenGettingTheDriveId().mockResolvedValueOnce(getDriveIdResponse);
-      whenGettingTheListId().mockResolvedValueOnce(getListIdResponse);
-      whenGettingTheItemId().mockResolvedValueOnce(getItemIdResponse);
+    it('sends a request to the Sharepoint Service to upload the file', async () => {
+      whenGettingTheFileSize().mockResolvedValueOnce(dtfsStorageFileServiceGetFileSizeResponse);
+      whenGettingTheFile().mockResolvedValueOnce(dtfsStorageFileServiceGetFileResponse);
+      whenGettingTheSharepointSiteId().mockResolvedValueOnce(sharepointServiceGetSiteByUkefSiteIdResponse);
+      whenGettingTheDriveId().mockResolvedValueOnce(sharepointServiceGetResourcesDriveResponse);
+      whenGettingTheListId().mockResolvedValueOnce(sharepointServiceGetListIdResponse);
+      whenGettingTheItemId().mockResolvedValueOnce(sharepointServiceGetItemIdResponse);
       whenMappingTheDocumentType(documentType).mockReturnValueOnce({
         documentTitle: 'Supplementary Questionnaire',
         documentTypeId: estoreDocumentTypeIdApplication,
@@ -134,44 +142,53 @@ describe('UploadFileInDealFolderService', () => {
 
       await service.uploadFileInDealFolder(fileName, fileLocationPath, dealId, buyerName, ukefSiteId, documentType);
 
-      expect(uploadFile).toHaveBeenCalledTimes(1);
-      expect(uploadFile).toHaveBeenCalledWith(file, fileSizeInBytes, fileName, urlToCreateUploadSession);
+      expect(sharepointServiceUploadFile).toHaveBeenCalledTimes(1);
+      expect(sharepointServiceUploadFile).toHaveBeenCalledWith({
+        file: dtfsStorageFileServiceGetFileResponse,
+        fileSizeInBytes,
+        fileName,
+        urlToCreateUploadSession: sharepointServiceUrlToCreateUploadSession,
+      });
     });
 
     it.each(updateFileInfoTestInputs)(
-      'sends a request to the Graph Service to update the file information when the documentType is "$documentType"',
+      'sends a request to the Sharepoint Service to update the file information when the documentType is "$documentType"',
       async ({ documentType, documentTitle, documentTypeId }) => {
-        whenGettingTheFileSize().mockResolvedValueOnce(getFileSizeResponse);
-        whenGettingTheFile().mockResolvedValueOnce(file);
-        whenGettingTheSharepointSiteId().mockResolvedValueOnce(getSharepointSiteIdResponse);
-        whenGettingTheDriveId().mockResolvedValueOnce(getDriveIdResponse);
-        whenGettingTheListId().mockResolvedValueOnce(getListIdResponse);
-        whenGettingTheItemId().mockResolvedValueOnce(getItemIdResponse);
+        whenGettingTheFileSize().mockResolvedValueOnce(dtfsStorageFileServiceGetFileSizeResponse);
+        whenGettingTheFile().mockResolvedValueOnce(dtfsStorageFileServiceGetFileResponse);
+        whenGettingTheSharepointSiteId().mockResolvedValueOnce(sharepointServiceGetSiteByUkefSiteIdResponse);
+        whenGettingTheDriveId().mockResolvedValueOnce(sharepointServiceGetResourcesDriveResponse);
+        whenGettingTheListId().mockResolvedValueOnce(sharepointServiceGetListIdResponse);
+        whenGettingTheItemId().mockResolvedValueOnce(sharepointServiceGetItemIdResponse);
         whenMappingTheDocumentType(documentType).mockReturnValueOnce({ documentTitle, documentTypeId });
 
         await service.uploadFileInDealFolder(fileName, fileLocationPath, dealId, buyerName, ukefSiteId, documentType);
 
         const modifiedRequestBodyToUpdateFileInfo = {
-          ...requestBodyToUpdateFileInfo,
-          Title: documentTitle,
-          [estoreDocumentTypeIdFieldName]: documentTypeId,
+          ...sharepointServiceUpdateFileInformationParams,
+
+          requestBodyToUpdateFileInfo: {
+            ...sharepointServiceUpdateFileInformationParams.requestBodyToUpdateFileInfo,
+            fields: {
+              ...sharepointServiceUpdateFileInformationParams.requestBodyToUpdateFileInfo.fields,
+              Title: documentTitle,
+              [estoreDocumentTypeIdFieldName]: documentTypeId,
+            },
+          },
         };
 
-        expect(graphServicePatch).toHaveBeenCalledTimes(1);
-        expect(graphServicePatch).toHaveBeenCalledWith({
-          path: updateFileInfoPath,
-          requestBody: modifiedRequestBodyToUpdateFileInfo,
-        });
+        expect(sharepointServiceUpdateFileInformation).toHaveBeenCalledTimes(1);
+        expect(sharepointServiceUpdateFileInformation).toHaveBeenCalledWith(modifiedRequestBodyToUpdateFileInfo);
       },
     );
 
     it('returns the path to the uploaded file', async () => {
-      whenGettingTheFileSize().mockResolvedValueOnce(getFileSizeResponse);
-      whenGettingTheFile().mockResolvedValueOnce(file);
-      whenGettingTheSharepointSiteId().mockResolvedValueOnce(getSharepointSiteIdResponse);
-      whenGettingTheDriveId().mockResolvedValueOnce(getDriveIdResponse);
-      whenGettingTheListId().mockResolvedValueOnce(getListIdResponse);
-      whenGettingTheItemId().mockResolvedValueOnce(getItemIdResponse);
+      whenGettingTheFileSize().mockResolvedValueOnce(dtfsStorageFileServiceGetFileSizeResponse);
+      whenGettingTheFile().mockResolvedValueOnce(dtfsStorageFileServiceGetFileResponse);
+      whenGettingTheSharepointSiteId().mockResolvedValueOnce(sharepointServiceGetSiteByUkefSiteIdResponse);
+      whenGettingTheDriveId().mockResolvedValueOnce(sharepointServiceGetResourcesDriveResponse);
+      whenGettingTheListId().mockResolvedValueOnce(sharepointServiceGetListIdResponse);
+      whenGettingTheItemId().mockResolvedValueOnce(sharepointServiceGetItemIdResponse);
       whenMappingTheDocumentType(documentType).mockReturnValueOnce({
         documentTitle: 'Supplementary Questionnaire',
         documentTypeId: estoreDocumentTypeIdApplication,
@@ -186,11 +203,11 @@ describe('UploadFileInDealFolderService', () => {
       const fileSizeExceedingMax = 12582913;
 
       whenGettingTheFileSize().mockResolvedValueOnce({ contentLength: fileSizeExceedingMax });
-      whenGettingTheFile().mockResolvedValueOnce(file);
-      whenGettingTheSharepointSiteId().mockResolvedValueOnce(getSharepointSiteIdResponse);
-      whenGettingTheDriveId().mockResolvedValueOnce(getDriveIdResponse);
-      whenGettingTheListId().mockResolvedValueOnce(getListIdResponse);
-      whenGettingTheItemId().mockResolvedValueOnce(getItemIdResponse);
+      whenGettingTheFile().mockResolvedValueOnce(dtfsStorageFileServiceGetFileResponse);
+      whenGettingTheSharepointSiteId().mockResolvedValueOnce(sharepointServiceGetSiteByUkefSiteIdResponse);
+      whenGettingTheDriveId().mockResolvedValueOnce(sharepointServiceGetResourcesDriveResponse);
+      whenGettingTheListId().mockResolvedValueOnce(sharepointServiceGetListIdResponse);
+      whenGettingTheItemId().mockResolvedValueOnce(sharepointServiceGetItemIdResponse);
       whenMappingTheDocumentType(documentType).mockReturnValueOnce({
         documentTitle: 'Supplementary Questionnaire',
         documentTypeId: estoreDocumentTypeIdApplication,
@@ -203,29 +220,19 @@ describe('UploadFileInDealFolderService', () => {
     });
   });
 
-  const whenGettingTheFileSize = (): WhenMockWithMatchers => when(getFileProperties).calledWith(fileName, fileLocationPath);
+  const whenGettingTheFileSize = (): WhenMockWithMatchers => when(dtfsStorageFileServiceGetFileProperties).calledWith(fileName, fileLocationPath);
 
-  const whenGettingTheFile = (): WhenMockWithMatchers => when(getFile).calledWith(fileName, fileLocationPath);
+  const whenGettingTheFile = (): WhenMockWithMatchers => when(dtfsStorageFileServiceGetFile).calledWith(fileName, fileLocationPath);
 
   const whenGettingTheSharepointSiteId = (): WhenMockWithMatchers =>
-    when(graphServiceGet).calledWith({
-      path: getSharepointSiteIdPath,
-    });
+    when(sharepointServiceGetSiteByUkefSiteId).calledWith(sharepointServiceGetSiteByUkefSiteIdParams);
 
-  const whenGettingTheDriveId = (): WhenMockWithMatchers =>
-    when(graphServiceGet).calledWith({
-      path: getDriveIdPath,
-    });
+  const whenGettingTheDriveId = (): WhenMockWithMatchers => when(sharepointServiceGetResources).calledWith(sharepointServiceGetResourcesDriveParams);
 
-  const whenGettingTheListId = (): WhenMockWithMatchers =>
-    when(graphServiceGet).calledWith({
-      path: getListIdPath,
-    });
+  const whenGettingTheListId = (): WhenMockWithMatchers => when(sharepointServiceGetResources).calledWith(sharepointServiceGetResourcesListParams);
 
-  const whenGettingTheItemId = (): WhenMockWithMatchers =>
-    when(graphServiceGet).calledWith({
-      path: getItemIdPath,
-    });
+  const whenGettingTheItemId = (): WhenMockWithMatchers => when(sharepointServiceGetItems).calledWith(sharepointServiceGetItemsParams);
 
-  const whenMappingTheDocumentType = (documentType: DocumentTypeEnum): WhenMockWithMatchers => when(mapDocumentTypeToTitleAndTypeId).calledWith(documentType);
+  const whenMappingTheDocumentType = (documentType: DocumentTypeEnum): WhenMockWithMatchers =>
+    when(documentTypeMapperMapDocumentTypeToTitleAndTypeId).calledWith(documentType);
 });

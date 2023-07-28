@@ -77,7 +77,7 @@ export class DealFolderService {
     const urlToUpdateFileInfo = await this.constructUrlToUpdateFileInfo(fileName, dealId, buyerName, ukefSiteId);
     const requestBodyToUpdateFileInfo = this.constructRequestBodyToUpdateFileInfo(documentType);
 
-    await this.sharepointService.uploadFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
+    await this.sharepointService.updateFileInformation({ urlToUpdateFileInfo, requestBodyToUpdateFileInfo });
   }
 
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
