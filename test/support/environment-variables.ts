@@ -34,6 +34,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION: valueGenerator.word(),
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT: valueGenerator.word(),
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION: valueGenerator.word(),
+  SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID: valueGenerator.word(),
 
   APIM_MDM_URL: valueGenerator.httpsUrl(),
   APIM_MDM_KEY: valueGenerator.word(),

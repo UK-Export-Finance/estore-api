@@ -33,7 +33,9 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     };
   }
 
-  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[]): GenerateResult {
+  protected transformRawValuesToGeneratedValues(valuesList: GenerateValues[], options: GenerateOptions): GenerateResult {
+    const ecmsDocumentContentTypeId = options.ecmsDocumentContentTypeId ?? ENVIRONMENT_VARIABLES.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID;
+
     const uploadFileInDealFolderRequest: UploadFileInDealFolderRequestDto = valuesList.map((values) => ({
       buyerName: values.buyerName,
       documentType: ENUMS.DOCUMENT_TYPES.EXPORTER_QUESTIONNAIRE,
@@ -119,7 +121,27 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const getItemIdResponse = { value: [{ webUrl: itemWebUrl, id: values.itemId }] };
 
-    const updateFileInfoPath = `${getItemIdPath}/${values.itemId}/fields`;
+    const updateFileInfoPath = `${getItemIdPath}/${values.itemId}`;
+
+    const updateFileInfoRequest: {
+      contentType: {
+        id: string;
+      };
+      fields: {
+        Title: string;
+        Document_x0020_Status: string;
+        [documentTypeIdFieldName: string]: string;
+      };
+    } = {
+      contentType: {
+        id: ecmsDocumentContentTypeId,
+      },
+      fields: {
+        Title: 'Supplementary Questionnaire',
+        Document_x0020_Status: 'Original',
+        [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION,
+      },
+    };
 
     return {
       uploadFileInDealFolderRequest,
@@ -139,6 +161,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       getItemIdPath,
       getItemIdResponse,
       updateFileInfoPath,
+      updateFileInfoRequest,
     };
   }
 
@@ -186,6 +209,18 @@ interface GenerateResult {
   getItemIdPath: string;
   getItemIdResponse: { value: { webUrl: string; id: string }[] };
   updateFileInfoPath: string;
+  updateFileInfoRequest: {
+    contentType: {
+      id: string;
+    };
+    fields: {
+      Title: string;
+      Document_x0020_Status: string;
+      [documentTypeIdFieldName: string]: string;
+    };
+  };
 }
 
-type GenerateOptions = unknown;
+interface GenerateOptions {
+  ecmsDocumentContentTypeId?: string;
+}

@@ -22,8 +22,11 @@ describe('SharepointService', () => {
   const sharepointResourceType = valueGenerator.enumValue<SharepointResourceTypeEnum>(SharepointResourceTypeEnum);
   const listId = valueGenerator.string();
   const url = valueGenerator.httpsUrl();
+  const ecmsDocumentContentTypeId = valueGenerator.string();
   const documentTitle = valueGenerator.string();
   const documentStatus = valueGenerator.string();
+  const estoreDocumentTypeIdFieldName = valueGenerator.string();
+  const documentTypeId = valueGenerator.string();
 
   const uploadFileRequest: SharepointUploadFileParams = {
     file: valueGenerator.string() as unknown as NodeJS.ReadableStream,
@@ -175,12 +178,30 @@ describe('SharepointService', () => {
       {
         method: 'uploadFileInformation',
         path: url,
-        requestBody: { Title: documentTitle, Document_x0020_Status: documentStatus },
+        requestBody: {
+          contentType: {
+            id: ecmsDocumentContentTypeId,
+          },
+          fields: {
+            Title: documentTitle,
+            Document_x0020_Status: documentStatus,
+            [estoreDocumentTypeIdFieldName]: documentTypeId,
+          },
+        },
         graphServiceResponse,
         makeRequest: (sharepointService: SharepointService) =>
           sharepointService.uploadFileInformation({
             urlToUpdateFileInfo: url,
-            requestBodyToUpdateFileInfo: { Title: documentTitle, Document_x0020_Status: documentStatus },
+            requestBodyToUpdateFileInfo: {
+              contentType: {
+                id: ecmsDocumentContentTypeId,
+              },
+              fields: {
+                Title: documentTitle,
+                Document_x0020_Status: documentStatus,
+                [estoreDocumentTypeIdFieldName]: documentTypeId,
+              },
+            },
           }),
       },
     ];
