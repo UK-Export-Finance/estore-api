@@ -1,9 +1,9 @@
+import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { CustodianService } from '../custodian/custodian.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';

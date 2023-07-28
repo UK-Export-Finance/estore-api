@@ -46,4 +46,9 @@ export class MockDtfsStorageClientService {
     when(this.fileShareClient.download).calledWith().mockResolvedValueOnce(file);
     return this;
   }
+
+  mockUnsuccessfulDownloadCall(error: RestError): MockDtfsStorageClientService {
+    when(this.fileShareClient.download).calledWith().mockRejectedValueOnce(error);
+    return this;
+  }
 }

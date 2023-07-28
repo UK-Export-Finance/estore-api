@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
+import { DtfsStorageFileNotFoundException } from '@ukef/modules/dtfs-storage/exception/dtfs-storage-file-not-found.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { lastValueFrom, throwError } from 'rxjs';
 
 import { DtfsStorageExceptionTransformInterceptor } from './dtfs-storage-exception-transform.interceptor';
-import { DtfsStorageFileNotFoundException } from './exception/dtfs-storage-file-not-found.exception';
 
 describe('DtfsStorageExceptionTransformInterceptor', () => {
   const valueGenerator = new RandomValueGenerator();

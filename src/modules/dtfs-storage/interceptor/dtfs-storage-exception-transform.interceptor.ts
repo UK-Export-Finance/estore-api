@@ -1,18 +1,17 @@
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { DtfsStorageFileNotFoundException } from '@ukef/modules/dtfs-storage/exception/dtfs-storage-file-not-found.exception';
 import { catchError, Observable, throwError } from 'rxjs';
 
-import { UploadFileInDealFolderExistsException } from './exception/upload-file-in-deal-folder-exists.exception';
-import { UploadFileInDealFolderSiteNotFoundException } from './exception/upload-file-in-deal-folder-site-not-found.exception';
-
 @Injectable()
-export class DealFolderExceptionTransformInterceptor implements NestInterceptor {
+export class DtfsStorageExceptionTransformInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((err) =>
         throwError(() => {
-          if (err instanceof UploadFileInDealFolderExistsException || err instanceof UploadFileInDealFolderSiteNotFoundException) {
+          if (err instanceof DtfsStorageFileNotFoundException) {
             return new BadRequestException('Bad request', { cause: err, description: err.message });
           }
+
           return err;
         }),
       ),

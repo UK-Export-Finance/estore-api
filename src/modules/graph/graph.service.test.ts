@@ -1,8 +1,10 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
+import { UploadFileInDealFolderExistsException } from '@ukef/modules/deal-folder/exception/upload-file-in-deal-folder-exists.exception';
 import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService, MockGraphRequest } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
+import { Readable } from 'stream';
 
 import GraphService from './graph.service';
 import { withSharedGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
@@ -22,6 +24,18 @@ describe('GraphService', () => {
     exporterName: valueGenerator.string(),
   };
   const expectedPostResponse = valueGenerator.string();
+  const expectedPatchResponse = valueGenerator.string();
+
+  const file = Readable.from([valueGenerator.string()]) as NodeJS.ReadableStream;
+  const fileSizeInBytes = valueGenerator.nonnegativeInteger();
+  const fileName = valueGenerator.fileName();
+  const urlToCreateUploadSession = valueGenerator.httpsUrl();
+  const expectedUploadSessionHeaders = { item: { '@microsoft.graph.conflictBehavior': 'fail' } };
+  const uploadSession = {
+    url: valueGenerator.httpsUrl(),
+    expiry: valueGenerator.date(),
+  };
+  const expectedUploadTaskOptions = { rangeSize: fileSizeInBytes };
 
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService);
@@ -120,6 +134,69 @@ describe('GraphService', () => {
     });
   });
 
+  describe('patch', () => {
+    withSharedGraphExceptionHandlingTests({
+      mockGraphEndpointToErrorWith: (error: unknown) =>
+        mockGraphClientService.mockSuccessfulGraphApiCallWithPath(path).mockUnsuccessfulGraphPatchCallWithRequestBody(requestBody, error),
+      makeRequest: () => graphService.patch({ path, requestBody }),
+    });
+
+    it('calls the correct graph client methods on a graph service patch request with no additional parameters and returns the response', async () => {
+      const request = mockSuccessfulCompleteGraphPatchRequest();
+
+      const result = await graphService.patch<unknown, string>({ path, requestBody });
+
+      const expectations = getCallExpectations(request, {
+        apiCalled: true,
+        patchCalled: true,
+      });
+      expectations.forEach((expectation) => expectation(requestBody));
+
+      expect(result).toEqual(expectedPatchResponse);
+    });
+  });
+
+  describe('uploadFile', () => {
+    withSharedGraphExceptionHandlingTests({
+      mockGraphEndpointToErrorWith: (error: unknown) => mockUnsuccessfulFileUpload(error),
+      makeRequest: () => graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession }),
+    });
+
+    it('calls the correct graph client methods on a graph service upload file call and returns the response', async () => {
+      mockSuccessfulCompleteGraphUploadFileCall();
+
+      const result = await graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
+
+      expect(mockGraphClientService.getFileUploadSession).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.getFileUploadSession).toHaveBeenCalledWith(urlToCreateUploadSession, expectedUploadSessionHeaders);
+      expect(mockGraphClientService.getFileUploadTask).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.getFileUploadTask).toHaveBeenCalledWith(
+        expect.any(Readable),
+        fileName,
+        fileSizeInBytes,
+        uploadSession,
+        expectedUploadTaskOptions,
+      );
+      expect(mockGraphClientService.mockFileUploadTask.upload).toHaveBeenCalledTimes(1);
+      expect(mockGraphClientService.mockFileUploadTask.upload).toHaveBeenCalledWith();
+
+      expect(result).toEqual({});
+    });
+
+    it(`throws an UploadFileInDealFolderExistsException if SharePoint responds with a 409 response containing 'The specified item name already exists'`, async () => {
+      const graphError = new GraphError(409, 'The specified item name already exists');
+      graphError.code = 'nameAlreadyExists';
+
+      mockUnsuccessfulFileUpload(graphError);
+
+      const graphServicePromise = graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
+
+      await expect(graphServicePromise).rejects.toBeInstanceOf(UploadFileInDealFolderExistsException);
+      await expect(graphServicePromise).rejects.toThrow(`A file with the name ${fileName} already exists for the buyer name and deal ID specified.`);
+      await expect(graphServicePromise).rejects.toHaveProperty('innerError', graphError);
+    });
+  });
+
   const mockSuccessfulCompleteGraphRequest = () =>
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(path)
@@ -134,6 +211,25 @@ describe('GraphService', () => {
       .mockSuccessfulFilterCallWithFilterString(filterStr)
       .mockSuccessfulGraphPostCallWithRequestBody(requestBody, expectedPostResponse);
 
+  const mockSuccessfulCompleteGraphPatchRequest = () =>
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(path)
+      .mockSuccessfulExpandCallWithExpandString(expandStr)
+      .mockSuccessfulFilterCallWithFilterString(filterStr)
+      .mockSuccessfulGraphPatchCallWithRequestBody(requestBody, expectedPatchResponse);
+
+  const mockSuccessfulCompleteGraphUploadFileCall = () =>
+    mockGraphClientService
+      .mockSuccessfulGetFileUploadSessionCall(urlToCreateUploadSession, expectedUploadSessionHeaders, uploadSession)
+      .mockSuccessfulGetFileUploadTaskCall(fileName, fileSizeInBytes, uploadSession, expectedUploadTaskOptions)
+      .mockSuccessfulUploadCall();
+
+  const mockUnsuccessfulFileUpload = (error: unknown) =>
+    mockGraphClientService
+      .mockSuccessfulGetFileUploadSessionCall(urlToCreateUploadSession, expectedUploadSessionHeaders, uploadSession)
+      .mockSuccessfulGetFileUploadTaskCall(fileName, fileSizeInBytes, uploadSession, expectedUploadTaskOptions)
+      .mockUnsuccessfulUploadCall(error);
+
   const getCallExpectations = (
     request: MockGraphRequest,
     {
@@ -142,12 +238,14 @@ describe('GraphService', () => {
       expandCalled = false,
       getCalled = false,
       postCalled = false,
+      patchCalled = false,
     }: {
       apiCalled?: boolean;
       filterCalled?: boolean;
       expandCalled?: boolean;
       getCalled?: boolean;
       postCalled?: boolean;
+      patchCalled?: boolean;
     },
   ) => {
     const apiCallExpectations = apiCalled
@@ -170,6 +268,17 @@ describe('GraphService', () => {
       ? [() => expect(request.post).toHaveBeenCalledTimes(1), (requestBody?) => expect(request.post).toHaveBeenCalledWith(requestBody)]
       : [() => expect(request.post).toHaveBeenCalledTimes(0)];
 
-    return [...apiCallExpectations, ...filterCallExpectations, ...expandCallExpectations, ...getCallExpectations, ...postCallExpectations];
+    const patchCallExpectations = patchCalled
+      ? [() => expect(request.patch).toHaveBeenCalledTimes(1), (requestBody?) => expect(request.patch).toHaveBeenCalledWith(requestBody)]
+      : [() => expect(request.patch).toHaveBeenCalledTimes(0)];
+
+    return [
+      ...apiCallExpectations,
+      ...filterCallExpectations,
+      ...expandCallExpectations,
+      ...getCallExpectations,
+      ...postCallExpectations,
+      ...patchCallExpectations,
+    ];
   };
 });

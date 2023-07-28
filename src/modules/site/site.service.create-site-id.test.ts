@@ -1,8 +1,8 @@
+import { MdmService } from '@ukef/modules/mdm/mdm.service';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { MdmService } from '../mdm/mdm.service';
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { SiteService } from './site.service';
 
 jest.mock('../graph/graph.service');
