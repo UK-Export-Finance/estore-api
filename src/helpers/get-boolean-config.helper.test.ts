@@ -18,7 +18,7 @@ describe('GetBooleanConfig helper test', () => {
       expect(result).toBe(expectedBoolean);
     });
 
-    it.each(['abc', '12.5', '20th', '0xFF', '0b101'])(`throws InvalidConfigException for "%s" because it is not valid boolean`, (value) => {
+    it.each(['', 'abc', '12.5', '20th', '0xFF', '0b101'])(`throws InvalidConfigException for "%s" because it is not valid boolean`, (value) => {
       const gettingTheConfig = () => getBooleanConfig(value as unknown as string, false);
 
       expect(gettingTheConfig).toThrow(InvalidConfigException);
