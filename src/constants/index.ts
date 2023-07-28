@@ -12,6 +12,8 @@
  * 8. EXPORTER_NAME
  * 9. SHAREPOINT
  * 10. UKEF_ID
+ * 11. REDACT_STRINGS
+ * 12. REDACT_STRING_PATHS
  */
 
 export * from './allowed-document-file-type.constant';
@@ -22,5 +24,7 @@ export * from './dtfs-max-file-size-bytes.constant';
 export * from './enum.constant';
 export * from './examples.constant';
 export * from './exporter-name.constant';
+export * from './redact-strings.constant';
+export * from './redact-strings-paths.constant';
 export * from './sharepoint.constant';
 export * from './ukef-id.constant';

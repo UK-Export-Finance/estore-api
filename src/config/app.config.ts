@@ -27,5 +27,6 @@ export default registerAs('app', (): Record<string, any> => {
     apiKey: process.env.API_KEY,
     logLevel: process.env.LOG_LEVEL || 'info',
     singleLineLogFormat: process.env.SINGLE_LINE_LOG_FORMAT !== 'false',
+    redactLogs: process.env.REDACT_LOGS !== 'false',
   };
 });
