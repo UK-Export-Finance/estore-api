@@ -1,6 +1,7 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
+import { SharepointCreateSiteParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
 import { CreateSiteResponse } from '@ukef/modules/site/dto/create-site-response.dto';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
@@ -42,6 +43,11 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       status: status,
     }));
 
+    const sharepointServiceCreateSiteParams: SharepointCreateSiteParams[] = values.map((value) => ({
+      exporterName: options.exporterName ?? value.exporterName,
+      newSiteId: value.siteId,
+    }));
+
     const graphServicePostParams = values.map((value) => ({
       path: `${tfisSharepointUrl}/lists/${tfisCaseSitesListId}/items`,
       requestBody: {
@@ -68,6 +74,7 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       graphServicePostParams,
       graphCreateSiteResponseDto,
       createSiteResponse,
+      sharepointServiceCreateSiteParams,
       requestToCreateSiteId,
     };
   }
@@ -82,6 +89,7 @@ interface GenerateResult {
   createSiteRequest: CreateSiteRequest;
   graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[];
   createSiteResponse: CreateSiteResponse[];
+  sharepointServiceCreateSiteParams: SharepointCreateSiteParams[];
   graphServicePostParams;
   requestToCreateSiteId;
 }

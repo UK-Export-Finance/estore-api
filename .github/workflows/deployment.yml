@@ -124,6 +124,7 @@ jobs:
             "NODE_ENV=${{ secrets.NODE_ENV }}" \
             "TZ=${{ secrets.TZ }}" \
             "LOG_LEVEL=${{ vars.LOG_LEVEL }}" \
+            "REDACT_LOGS=${{ vars.REDACT_LOGS }}" \
             "SINGLE_LINE_LOG_FORMAT=${{ vars.SINGLE_LINE_LOG_FORMAT }}" \
             "REDACT_LOGS=${{ vars.REDACT_LOGS }}" \
             "SWAGGER_USER=${{ secrets.SWAGGER_USER }}" \
@@ -149,6 +150,7 @@ jobs:
             "SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION=${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION }}" \
             "SHAREPOINT_TFIS_CASE_SITES_LIST_ID=${{ secrets.SHAREPOINT_TFIS_CASE_SITES_LIST_ID }}" \
             "SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID=${{ secrets.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID }}" \
+            "SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID=${{ secrets.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID }}" \
             "APIM_MDM_URL=${{ secrets.APIM_MDM_URL }}" \
             "APIM_MDM_KEY=${{ secrets.APIM_MDM_KEY }}" \
             "APIM_MDM_VALUE=${{ secrets.APIM_MDM_VALUE }}" \

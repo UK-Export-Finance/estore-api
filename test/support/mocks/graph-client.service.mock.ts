@@ -81,12 +81,14 @@ export class MockGraphRequest {
 
 export class MockGraphClientService {
   client: Client;
+  request: GraphRequest;
   mockFileUploadTask: MockFileUploadTask;
   getFileUploadSession: jest.Mock;
   getFileUploadTask: jest.Mock;
 
   constructor() {
     this.client = new MockClient() as unknown as Client;
+    this.request = new MockGraphRequest() as unknown as GraphRequest;
     this.mockFileUploadTask = new MockFileUploadTask();
     this.getFileUploadSession = jest.fn();
     this.getFileUploadTask = jest.fn();
@@ -114,6 +116,11 @@ export class MockGraphClientService {
     when(this.getFileUploadTask)
       .calledWith(expect.any(Readable), fileName, fileSizeInBytes, uploadSession, options)
       .mockReturnValueOnce(this.mockFileUploadTask);
+    return this;
+  }
+
+  mockUnsuccessfulUploadCall(error: unknown): MockGraphClientService {
+    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValueOnce(error);
     return this;
   }
 

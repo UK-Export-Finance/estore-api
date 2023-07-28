@@ -6,6 +6,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   NODE_ENV: 'test',
   TZ: 'Europe/London',
   LOG_LEVEL: 'debug',
+  REDACT_LOGS: false,
   SINGLE_LINE_LOG_FORMAT: true,
   REDACT_LOGS: true,
 
@@ -34,6 +35,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION: valueGenerator.word(),
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT: valueGenerator.word(),
   SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION: valueGenerator.word(),
+  SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID: valueGenerator.word(),
 
   APIM_MDM_URL: valueGenerator.httpsUrl(),
   APIM_MDM_KEY: valueGenerator.word(),
@@ -62,6 +64,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
   ...ENVIRONMENT_VARIABLES,
+  REDACT_LOGS: ENVIRONMENT_VARIABLES.REDACT_LOGS.toString(),
   SINGLE_LINE_LOG_FORMAT: ENVIRONMENT_VARIABLES.SINGLE_LINE_LOG_FORMAT.toString(),
   REDACT_LOGS: ENVIRONMENT_VARIABLES.REDACT_LOGS.toString(),
   APIM_MDM_MAX_REDIRECTS: ENVIRONMENT_VARIABLES.APIM_MDM_MAX_REDIRECTS.toString(),

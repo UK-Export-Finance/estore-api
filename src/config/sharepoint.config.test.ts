@@ -28,6 +28,10 @@ describe('sharepointConfig', () => {
       configPropertyName: 'scCaseSitesListId',
       environmentVariableName: 'SHAREPOINT_SC_CASE_SITES_LIST_ID',
     },
+    {
+      configPropertyName: 'ecmsDocumentContentTypeId',
+      environmentVariableName: 'SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID',
+    },
   ];
 
   const configModifiedFromEnvironmentVariables: {

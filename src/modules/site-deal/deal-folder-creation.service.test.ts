@@ -1,9 +1,8 @@
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
-import { FieldEqualsListItemFilter } from '@ukef/modules/sharepoint/list-item-filter/field-equals.list-item-filter';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { when, WhenMockWithMatchers } from 'jest-when';
+import { when } from 'jest-when';
 
 import { DealFolderCreationService } from './deal-folder-creation.service';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
@@ -15,15 +14,13 @@ describe('DealFolderCreationService', () => {
   const {
     siteId,
     createDealFolderRequestItem: { dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket },
+    sharepointServiceGetBuyerDealFolderParams,
+    sharepointServiceGetExporterSiteParams,
+    sharepointServiceGetDestinationMarketParams,
+    sharepointServiceGetRiskMarketParams,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
-  const tfisSharepointUrl = valueGenerator.word();
-  const scSharepointUrl = valueGenerator.word();
   const scSiteFullUrl = valueGenerator.httpsUrl();
-
-  const tfisDealListId = valueGenerator.string();
-  const tfisCaseSitesListId = valueGenerator.string();
-  const taxonomyHiddenListTermStoreListId = valueGenerator.string();
 
   const buyerFolderIdAsNumber = valueGenerator.nonnegativeInteger();
   const buyerFolderId = buyerFolderIdAsNumber.toString();
@@ -71,14 +68,22 @@ describe('DealFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let findListItems: jest.Mock;
+  let getBuyerFolder: jest.Mock;
+  let getExporterSite: jest.Mock;
+  let getMarketTerm: jest.Mock;
+
   let custodianCreateAndProvision: jest.Mock;
   let service: DealFolderCreationService;
 
   beforeEach(() => {
-    findListItems = jest.fn();
-    const sharepointService = new SharepointService(null);
-    sharepointService.findListItems = findListItems;
+    getBuyerFolder = jest.fn();
+    getExporterSite = jest.fn();
+    getMarketTerm = jest.fn();
+
+    const sharepointService = new SharepointService(null, null);
+    sharepointService.getBuyerFolder = getBuyerFolder;
+    sharepointService.getExporterSite = getExporterSite;
+    sharepointService.getMarketTerm = getMarketTerm;
 
     custodianCreateAndProvision = jest.fn();
     const custodianService = new CustodianService(null);
@@ -86,17 +91,11 @@ describe('DealFolderCreationService', () => {
 
     service = new DealFolderCreationService(
       {
-        tfisSharepointUrl,
-        scSharepointUrl,
-        scSiteFullUrl,
-
-        tfisDealListId,
-        tfisCaseSitesListId,
-        taxonomyHiddenListTermStoreListId,
-      },
-      {
         dealTemplateId,
         dealTypeGuid,
+      },
+      {
+        scSiteFullUrl,
       },
       sharepointService,
       custodianService,
@@ -111,11 +110,11 @@ describe('DealFolderCreationService', () => {
 
   describe('createDealFolder', () => {
     it('sends a request to Custodian to create and provision the deal folder', async () => {
-      whenFindingListItemsMatchingTheBuyerName().mockResolvedValueOnce([buyerNameListItem]);
-      whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce([exporterNameListItem]);
-      whenFindingListItemsMatchingTheDestinationMarket().mockResolvedValueOnce([destinationMarketListItem]);
-      whenFindingListItemsMatchingTheRiskMarket().mockResolvedValueOnce([riskMarketListItem]);
-      whenCreatingTheDealFolderWithCustodian().mockResolvedValueOnce(undefined);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
 
       await service.createDealFolder({
         siteId,
@@ -131,11 +130,11 @@ describe('DealFolderCreationService', () => {
     });
 
     it('returns the name of the created deal folder', async () => {
-      whenFindingListItemsMatchingTheBuyerName().mockResolvedValueOnce([buyerNameListItem]);
-      whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce([exporterNameListItem]);
-      whenFindingListItemsMatchingTheDestinationMarket().mockResolvedValueOnce([destinationMarketListItem]);
-      whenFindingListItemsMatchingTheRiskMarket().mockResolvedValueOnce([riskMarketListItem]);
-      whenCreatingTheDealFolderWithCustodian().mockResolvedValueOnce(undefined);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
 
       const createdFolderName = await service.createDealFolder({
         siteId,
@@ -296,11 +295,11 @@ describe('DealFolderCreationService', () => {
       expectedErrorClass,
       expectedErrorMessage,
     }) => {
-      whenFindingListItemsMatchingTheBuyerName().mockResolvedValueOnce(listItemsMatchingBuyerName);
-      whenFindingListItemsMatchingTheExporterName().mockResolvedValueOnce(listItemsMatchingExporterName);
-      whenFindingListItemsMatchingTheDestinationMarket().mockResolvedValueOnce(listItemsMatchingDestinationMarket);
-      whenFindingListItemsMatchingTheRiskMarket().mockResolvedValueOnce(listItemsMatchingRiskMarket);
-      whenCreatingTheDealFolderWithCustodian().mockResolvedValueOnce(undefined);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerName);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce(listItemsMatchingDestinationMarket);
+      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce(listItemsMatchingRiskMarket);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
 
       const createDealFolderPromise = service.createDealFolder({
         siteId,
@@ -315,39 +314,4 @@ describe('DealFolderCreationService', () => {
       await expect(createDealFolderPromise).rejects.toThrow(expectedErrorMessage);
     },
   );
-
-  const whenFindingListItemsMatchingTheBuyerName = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: scSharepointUrl,
-      listId: tfisDealListId,
-      fieldsToReturn: ['id'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${buyerName}` }),
-    });
-
-  const whenFindingListItemsMatchingTheExporterName = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: tfisSharepointUrl,
-      listId: tfisCaseSitesListId,
-      fieldsToReturn: ['TermGuid', 'URL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
-    });
-
-  const whenFindingListItemsMatchingTheDestinationMarket = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: scSharepointUrl,
-      listId: taxonomyHiddenListTermStoreListId,
-      fieldsToReturn: ['TermGuid'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: destinationMarket }),
-    });
-
-  const whenFindingListItemsMatchingTheRiskMarket = (): WhenMockWithMatchers =>
-    when(findListItems).calledWith({
-      siteUrl: scSharepointUrl,
-      listId: taxonomyHiddenListTermStoreListId,
-      fieldsToReturn: ['TermGuid'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: riskMarket }),
-    });
-
-  const whenCreatingTheDealFolderWithCustodian = (): WhenMockWithMatchers =>
-    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder);
 });

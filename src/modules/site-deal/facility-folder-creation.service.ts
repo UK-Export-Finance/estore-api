@@ -6,25 +6,22 @@ import { UkefId } from '@ukef/helpers';
 
 import { CustodianService } from '../custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '../custodian/dto/custodian-create-and-provision-request.dto';
-import { AndListItemFilter } from '../sharepoint/list-item-filter/and.list-item-filter';
-import { FieldEqualsListItemFilter } from '../sharepoint/list-item-filter/field-equals.list-item-filter';
-import { FieldNotNullListItemFilter } from '../sharepoint/list-item-filter/field-not-null.list-item-filter';
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 
-type RequiredSharepointConfigKeys = 'tfisFacilityListId' | 'tfisSharepointUrl' | 'scSharepointUrl' | 'scSiteFullUrl' | 'tfisFacilityHiddenListTermStoreId';
 type RequiredCustodianConfigKeys = 'facilityTemplateId' | 'facilityTypeGuid';
+type RequiredSharepointConfigKeys = 'scSiteFullUrl';
 
 @Injectable()
 export class FacilityFolderCreationService {
   constructor(
-    @Inject(SharepointConfig.KEY)
-    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     @Inject(CustodianConfig.KEY)
     private readonly custodianConfig: Pick<ConfigType<typeof CustodianConfig>, RequiredCustodianConfigKeys>,
+    @Inject(SharepointConfig.KEY)
+    private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,
     private readonly sharepointService: SharepointService,
     private readonly custodianService: CustodianService,
   ) {}
@@ -61,19 +58,7 @@ export class FacilityFolderCreationService {
   }
 
   private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
-    const dealFolderListItems = await this.sharepointService.findListItems<{
-      Title: string;
-      ServerRelativeUrl: string;
-      Code: string;
-      id: string;
-      ParentCode: string;
-    }>({
-      siteUrl: this.sharepointConfig.scSharepointUrl,
-      listId: this.sharepointConfig.tfisFacilityListId,
-      fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${dealFolderName}` }),
-    });
-
+    const dealFolderListItems = await this.sharepointService.getDealFolder({ siteId, dealFolderName });
     if (!dealFolderListItems.length) {
       throw new FolderDependencyNotFoundException(
         `Site deal folder not found: ${dealFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
@@ -96,15 +81,7 @@ export class FacilityFolderCreationService {
   }
 
   private async getTermGuid(facilityIdentifier: string) {
-    const facilityTermListItems = await this.sharepointService.findListItems<{ FacilityGUID: string; Title: string }>({
-      siteUrl: this.sharepointConfig.tfisSharepointUrl,
-      listId: this.sharepointConfig.tfisFacilityHiddenListTermStoreId,
-      fieldsToReturn: ['FacilityGUID', 'Title'],
-      filter: new AndListItemFilter(
-        new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: facilityIdentifier }),
-        new FieldNotNullListItemFilter({ fieldName: 'FacilityGUID' }),
-      ),
-    });
+    const facilityTermListItems = await this.sharepointService.getFacilityTerm(facilityIdentifier);
 
     if (!facilityTermListItems.length) {
       throw new FolderDependencyNotFoundException(`Facility term not found: ${facilityIdentifier}. To create this resource, call POST /terms/facilities.`);
