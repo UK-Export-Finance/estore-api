@@ -6,5 +6,5 @@ export const REDACT_STRING_PATHS = [
   'err.innerError.message',
   'err.innerError.stack',
   'err.innerError.body',
-  'incomingResponse.ExceptionMessage',
+  'incomingResponse.data.ExceptionMessage',
 ];

@@ -14,13 +14,18 @@ describe('logKeysToRedact', () => {
       logKey: valueGenerator.string(),
       headersLogKey: valueGenerator.string(),
     },
+    incomingResponse: {
+      logKey: valueGenerator.string(),
+      headersLogKey: valueGenerator.string(),
+      sensitiveHeaders: [valueGenerator.string(), valueGenerator.string()],
+    },
     error: {
       logKey: valueGenerator.string(),
-      sensitiveChildKeys: [valueGenerator.string(), valueGenerator.string()],
+      headersLogKey: valueGenerator.string(),
     },
-    dbError: {
+    azureStorageExcessideData: {
       logKey: valueGenerator.string(),
-      sensitiveChildKeys: [valueGenerator.string(), valueGenerator.string()],
+      excessideDataField: valueGenerator.string(),
     },
   };
 
@@ -33,76 +38,85 @@ describe('logKeysToRedact', () => {
   describe('when redactLogs is true', () => {
     let result: string[];
 
-    beforeEach(() => {
+    beforeAll(() => {
       result = logKeysToRedact({ redactLogs: true, ...options });
     });
 
-    it('includes the headers of a client request', () => {
-      const { logKey, headersLogKey } = options.clientRequest;
+    describe('clientRequest redact log keys checks', () => {
+      it('includes the headers of a client request', () => {
+        const { logKey, headersLogKey } = options.clientRequest;
 
-      expect(result).toContain(buildKeyToRedact([logKey, headersLogKey]));
+        expect(result).toContain(buildKeyToRedact([logKey, headersLogKey]));
+      });
     });
 
-    it('includes the headers of an outgoing request', () => {
-      const { logKey, headersLogKey } = options.outgoingRequest;
+    describe('outgoingRequest redact log keys checks', () => {
+      it('includes the headers of an outgoing request', () => {
+        const { logKey, headersLogKey } = options.outgoingRequest;
 
-      expect(result).toContain(buildKeyToRedact([logKey, headersLogKey]));
+        expect(result).toContain(buildKeyToRedact([logKey, headersLogKey]));
+      });
     });
 
-    it('includes all sensitive child keys of an error', () => {
-      const { logKey, sensitiveChildKeys } = options.error;
+    describe('incomingResponse redact log keys checks', () => {
+      it('includes all sensitive headers of an incoming response', () => {
+        const { logKey, headersLogKey, sensitiveHeaders } = options.incomingResponse;
 
-      expect(result).toContain(buildKeyToRedact([logKey, sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, sensitiveChildKeys[1]]));
+        expect(result).toContain(buildKeyToRedact([logKey, headersLogKey, sensitiveHeaders[0]]));
+        expect(result).toContain(buildKeyToRedact([logKey, headersLogKey, sensitiveHeaders[1]]));
+      });
     });
 
-    it('includes all sensitive child keys of an inner error', () => {
-      const { logKey, sensitiveChildKeys } = options.error;
+    describe('error redact log keys checks', () => {
+      it('includes header key of an error', () => {
+        const { logKey, headersLogKey } = options.error;
 
-      expect(result).toContain(buildKeyToRedact([logKey, 'innerError', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'innerError', sensitiveChildKeys[1]]));
+        expect(result).toContain(buildKeyToRedact([logKey, 'config', headersLogKey]));
+      });
+
+      it('includes config of an innerError.config', () => {
+        const { logKey } = options.error;
+
+        expect(result).toContain(buildKeyToRedact([logKey, 'innerError', 'config']));
+      });
+
+      it('includes header of an innerError.request', () => {
+        const { logKey, headersLogKey } = options.error;
+
+        expect(result).toContain(buildKeyToRedact([logKey, 'innerError', 'request', headersLogKey]));
+      });
+
+      it('includes header of an innerError.response.request', () => {
+        const { logKey, headersLogKey } = options.error;
+
+        expect(result).toContain(buildKeyToRedact([logKey, 'innerError', 'response', 'request', headersLogKey]));
+      });
+
+      it('includes header in an options.cause.innerError.request', () => {
+        const { logKey, headersLogKey } = options.error;
+
+        expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', 'request', headersLogKey]));
+      });
+
+      it('includes header in an options.cause.innerError.response.request', () => {
+        const { logKey, headersLogKey } = options.error;
+
+        expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', 'response', 'request', headersLogKey]));
+      });
     });
 
-    it('includes all sensitive child keys of an error cause', () => {
-      const { logKey, sensitiveChildKeys } = options.error;
+    describe('azureStorageExcessideData redact log keys checks', () => {
+      it('includes excessideDataField in an options.cause.innerError.request', () => {
+        const { logKey, excessideDataField } = options.azureStorageExcessideData;
 
-      expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', sensitiveChildKeys[1]]));
-    });
+        expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', 'request', excessideDataField]));
+      });
 
-    it(`includes all sensitive child keys of an error cause's inner error`, () => {
-      const { logKey, sensitiveChildKeys } = options.error;
+      it('includes excessideDataField in an options.cause.innerError.response.request', () => {
+        const { logKey, excessideDataField } = options.azureStorageExcessideData;
 
-      expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', sensitiveChildKeys[1]]));
-    });
-
-    it('includes all sensitive child keys of an dbError', () => {
-      const { logKey, sensitiveChildKeys } = options.dbError;
-
-      expect(result).toContain(buildKeyToRedact([logKey, sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, sensitiveChildKeys[1]]));
-    });
-
-    it('includes all sensitive child keys of an original dbError', () => {
-      const { logKey, sensitiveChildKeys } = options.dbError;
-
-      expect(result).toContain(buildKeyToRedact([logKey, 'originalError', 'info', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'originalError', 'info', sensitiveChildKeys[1]]));
-    });
-
-    it('includes all sensitive child keys of an dbError driverError', () => {
-      const { logKey, sensitiveChildKeys } = options.dbError;
-
-      expect(result).toContain(buildKeyToRedact([logKey, 'driverError', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'driverError', sensitiveChildKeys[1]]));
-    });
-
-    it(`includes all sensitive child keys of an dbError driverError's original error`, () => {
-      const { logKey, sensitiveChildKeys } = options.dbError;
-
-      expect(result).toContain(buildKeyToRedact([logKey, 'driverError', 'originalError', 'info', sensitiveChildKeys[0]]));
-      expect(result).toContain(buildKeyToRedact([logKey, 'driverError', 'originalError', 'info', sensitiveChildKeys[1]]));
+        expect(result).toContain(buildKeyToRedact([logKey, 'options', 'cause', 'innerError', 'response', 'request', excessideDataField]));
+      });
     });
   });
 });

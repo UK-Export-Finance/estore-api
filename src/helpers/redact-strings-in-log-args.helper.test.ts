@@ -15,21 +15,24 @@ describe('Redact errors helper', () => {
       { searchValue: domain, replaceValue: '[RedactedDomain]' },
       { searchValue: otherSensitiveField, replaceValue: '[Redacted]' },
     ];
+
     const args = [
       {
         message: message,
         stack: message,
-        originalError: {
+        err: {
           message: message,
           stack: message,
           safe: 'Nothing sensitive',
-        },
-        driverError: {
-          message: message,
-          stack: message,
-          originalError: {
+          innerError: {
             message: message,
             stack: message,
+            body: message,
+          },
+        },
+        incomingResponse: {
+          data: {
+            ExceptionMessage: message,
             safe: 'Nothing sensitive',
           },
         },
@@ -39,17 +42,19 @@ describe('Redact errors helper', () => {
       {
         message: redactedMessage,
         stack: redactedMessage,
-        originalError: {
+        err: {
           message: redactedMessage,
           stack: redactedMessage,
           safe: 'Nothing sensitive',
-        },
-        driverError: {
-          message: redactedMessage,
-          stack: redactedMessage,
-          originalError: {
+          innerError: {
             message: redactedMessage,
             stack: redactedMessage,
+            body: redactedMessage,
+          },
+        },
+        incomingResponse: {
+          data: {
+            ExceptionMessage: redactedMessage,
             safe: 'Nothing sensitive',
           },
         },
@@ -77,7 +82,7 @@ describe('Redact errors helper', () => {
         {
           message: messageforRegex,
           stack: messageforRegex,
-          originalError: {
+          err: {
             message: messageforRegex,
           },
         },
@@ -86,7 +91,7 @@ describe('Redact errors helper', () => {
         {
           message: redactedMessage,
           stack: redactedMessage,
-          originalError: {
+          err: {
             message: redactedMessage,
           },
         },

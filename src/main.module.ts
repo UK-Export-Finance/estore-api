@@ -51,15 +51,14 @@ import { LoggingInterceptor } from './modules/logging/logging-interceptor.helper
               logKey: INCOMING_RESPONSE_LOG_KEY,
               headersLogKey: HEADERS_LOG_KEY,
               sensitiveHeaders: ['set-cookie'],
-              // bodyLogKey: BODY_LOG_KEY,
-              // sensitiveBodyFields: SENSITIVE_RESPONSE_FIELD_NAMES,
             },
             error: {
               logKey: 'err',
-              sensitiveChildKeys: [
-                // The `config` has basic authentication details for . // TODO: check this
-                // 'config',
-              ],
+              headersLogKey: 'headers',
+            },
+            azureStorageExcessideData: {
+              logKey: 'err',
+              excessideDataField: 'operationSpec',
             },
           }),
         },
