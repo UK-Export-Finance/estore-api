@@ -135,7 +135,6 @@ jobs:
           LOG_LEVEL: ${{ vars.LOG_LEVEL }}
           REDACT_LOGS: ${{ vars.REDACT_LOGS }}
           SINGLE_LINE_LOG_FORMAT: ${{ vars.SINGLE_LINE_LOG_FORMAT }}
-          REDACT_LOGS: ${{ vars.REDACT_LOGS }}
           SWAGGER_USER: ${{ secrets.SWAGGER_USER }}
           SWAGGER_PASSWORD: ${{ secrets.SWAGGER_PASSWORD }}
           API_KEY: ${{ secrets.API_KEY }}
