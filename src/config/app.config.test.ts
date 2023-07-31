@@ -77,29 +77,115 @@ describe('appConfig', () => {
     });
   });
 
-  const replaceEnvironmentVariables = (newEnvVariables: Record<string, string>): void => {
-    process.env = newEnvVariables;
-  };
+  describe('parsing HTTP_VERSIONING_ENABLE', () => {
+    it('uses false as the versioning.enable if HTTP_VERSIONING_ENABLE is not specified', () => {
+      replaceEnvironmentVariables({});
 
-  const configParsedBooleanFromEnvironmentVariablesWithDefault: {
+      const config = appConfig();
+
+      expect(config.versioning.enable).toBe(false);
+    });
+
+    it.each([
+      {
+        testBoolString: 'TRUE',
+        expectedBoolean: true,
+      },
+      {
+        testBoolString: 'True',
+        expectedBoolean: true,
+      },
+      {
+        testBoolString: 'True',
+        expectedBoolean: true,
+      },
+      {
+        testBoolString: 'FALSE',
+        expectedBoolean: false,
+      },
+      {
+        testBoolString: 'False',
+        expectedBoolean: false,
+      },
+      {
+        testBoolString: 'false',
+        expectedBoolean: false,
+      },
+    ])(
+      'is the env variable HTTP_VERSIONING_ENABLE parsed as a $expectedBoolean boolean if HTTP_VERSIONING_ENABLE is $testBoolString',
+      ({ testBoolString, expectedBoolean }) => {
+        replaceEnvironmentVariables({
+          HTTP_VERSIONING_ENABLE: testBoolString,
+        });
+
+        const config = appConfig();
+
+        expect(config.versioning.enable).toBe(expectedBoolean);
+      },
+    );
+  });
+
+  describe('parsing HTTP_VERSION', () => {
+    it('uses 1 as the versioning.version if HTTP_VERSION is not specified', () => {
+      replaceEnvironmentVariables({});
+      const config = appConfig();
+
+      expect(config.versioning.version).toBe('1');
+    });
+
+    it('uses HTTP_VERSION as the versioning.version if HTTP_VERSION is present', () => {
+      replaceEnvironmentVariables({
+        HTTP_VERSION: '2',
+      });
+
+      const config = appConfig();
+
+      expect(config.versioning.version).toBe('2');
+    });
+  });
+
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof AppConfig; environmentVariableName: string; defaultConfigValue?: string }[] = [
+    {
+      configPropertyName: 'name',
+      environmentVariableName: 'APP_NAME',
+      defaultConfigValue: 'estore',
+    },
+    {
+      configPropertyName: 'env',
+      environmentVariableName: 'NODE_ENV',
+      defaultConfigValue: 'development',
+    },
+    { configPropertyName: 'apiKey', environmentVariableName: 'API_KEY' },
+  ];
+
+  const configParsedAsIntFromEnvironmentVariablesWithDefault: {
+    configPropertyName: keyof AppConfig;
+    environmentVariableName: string;
+    defaultConfigValue: number;
+  }[] = [
+    {
+      configPropertyName: 'port',
+      environmentVariableName: 'HTTP_PORT',
+      defaultConfigValue: 3001,
+    },
+  ];
+
+  const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
     configPropertyName: keyof AppConfig;
     environmentVariableName: string;
     defaultConfigValue: boolean;
   }[] = [
-    {
-      configPropertyName: 'singleLineLogFormat',
-      environmentVariableName: 'SINGLE_LINE_LOG_FORMAT',
-      defaultConfigValue: true,
-    },
-    {
-      configPropertyName: 'redactLogs',
-      environmentVariableName: 'REDACT_LOGS',
-      defaultConfigValue: true,
-    },
+    { configPropertyName: 'redactLogs', environmentVariableName: 'REDACT_LOGS', defaultConfigValue: true },
+    { configPropertyName: 'singleLineLogFormat', environmentVariableName: 'SINGLE_LINE_LOG_FORMAT', defaultConfigValue: true },
   ];
 
   withEnvironmentVariableParsingUnitTests({
-    configParsedBooleanFromEnvironmentVariablesWithDefault,
+    configDirectlyFromEnvironmentVariables,
+    configParsedAsIntFromEnvironmentVariablesWithDefault,
+    configParsedAsBooleanFromEnvironmentVariablesWithDefault,
     getConfig: () => appConfig(),
   });
+  const replaceEnvironmentVariables = (newEnvVariables: Record<string, string>): void => {
+    process.env = newEnvVariables;
+  };
 });

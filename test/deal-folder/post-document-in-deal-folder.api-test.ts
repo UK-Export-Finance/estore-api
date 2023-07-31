@@ -25,20 +25,20 @@ describe('postDocumentInDealFolder', () => {
     uploadFileInDealFolderResponse,
     uploadFileInDealFolderParams,
     fileSizeInBytes,
-    downloadFileResponse,
-    getSharepointSiteIdPath,
-    getSharepointSiteIdResponse,
-    getDriveIdPath,
-    getDriveIdResponse,
-    getUploadSessionArgs,
-    uploadSession,
-    getUploadTaskArgs,
-    getListIdPath,
-    getListIdResponse,
-    getItemIdPath,
-    getItemIdResponse,
-    updateFileInfoPath,
-    updateFileInfoRequest,
+    dtfsStorageFileClientDownloadFileResponse,
+    graphClientGetSitePath,
+    graphClientGetSiteByUkefSiteIdResponse,
+    graphClientGetDriveIdPath,
+    graphClientGetResourcesDriveResponse,
+    graphClientGetUploadSessionArgs,
+    graphClientUploadSession,
+    graphClientGetUploadTaskArgs,
+    graphClientGetListIdPath,
+    graphClientGetListIdResponse,
+    graphClientGetItemIdPath,
+    graphClientGetItemIdResponse,
+    graphClientUpdateFileInfoPath,
+    graphClientUpdateFileInfoRequest,
   } = uploadFileInDealFolderGenerator.generate({ numberToGenerate: 1 });
   const [{ buyerName, fileName, fileLocationPath }] = uploadFileInDealFolderRequest;
   const { siteId, dealId } = uploadFileInDealFolderParams;
@@ -116,9 +116,9 @@ describe('postDocumentInDealFolder', () => {
         ];
 
         const modifiedUpdateFileInfoRequest = {
-          ...updateFileInfoRequest,
+          ...graphClientUpdateFileInfoRequest,
           fields: {
-            ...updateFileInfoRequest.fields,
+            ...graphClientUpdateFileInfoRequest.fields,
             Title: documentTitle,
             [ENVIRONMENT_VARIABLES.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME]: documentTypeId,
           },
@@ -177,10 +177,10 @@ describe('postDocumentInDealFolder', () => {
           .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
           // request to download file
           .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
-          .mockSuccessfulDownloadCall(downloadFileResponse);
+          .mockSuccessfulDownloadCall(dtfsStorageFileClientDownloadFileResponse);
         mockGraphClientService
           // request to get sharepoint site id
-          .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
+          .mockSuccessfulGraphApiCallWithPath(graphClientGetSitePath)
           .mockUnsuccessfulGraphGetCall(error);
 
         const { status, body } = await makeRequest();
@@ -204,19 +204,19 @@ describe('postDocumentInDealFolder', () => {
           .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
           // request to download file
           .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
-          .mockSuccessfulDownloadCall(downloadFileResponse);
+          .mockSuccessfulDownloadCall(dtfsStorageFileClientDownloadFileResponse);
         mockGraphClientService
           // request to get sharepoint site id
-          .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
-          .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+          .mockSuccessfulGraphApiCallWithPath(graphClientGetSitePath)
+          .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse);
         mockGraphClientService
           // request to get drive id
-          .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
-          .mockSuccessfulGraphGetCall(getDriveIdResponse);
+          .mockSuccessfulGraphApiCallWithPath(graphClientGetDriveIdPath)
+          .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse);
         mockGraphClientService
           // request to upload file
-          .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
-          .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
+          .mockSuccessfulGetFileUploadSessionCall(...graphClientGetUploadSessionArgs, graphClientUploadSession)
+          .mockSuccessfulGetFileUploadTaskCall(...graphClientGetUploadTaskArgs)
           .mockUnsuccessfulUploadCall(error);
 
         const { status, body } = await makeRequest();
@@ -385,32 +385,32 @@ describe('postDocumentInDealFolder', () => {
       .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
       // request to download file
       .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
-      .mockSuccessfulDownloadCall(downloadFileResponse);
+      .mockSuccessfulDownloadCall(dtfsStorageFileClientDownloadFileResponse);
     mockGraphClientService
       // request to get sharepoint site id
-      .mockSuccessfulGraphApiCallWithPath(getSharepointSiteIdPath)
-      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetSitePath)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse);
     mockGraphClientService
       // request to get drive id
-      .mockSuccessfulGraphApiCallWithPath(getDriveIdPath)
-      .mockSuccessfulGraphGetCall(getDriveIdResponse);
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetDriveIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse);
     mockGraphClientService
       // request to upload file
-      .mockSuccessfulGetFileUploadSessionCall(...getUploadSessionArgs, uploadSession)
-      .mockSuccessfulGetFileUploadTaskCall(...getUploadTaskArgs)
+      .mockSuccessfulGetFileUploadSessionCall(...graphClientGetUploadSessionArgs, graphClientUploadSession)
+      .mockSuccessfulGetFileUploadTaskCall(...graphClientGetUploadTaskArgs)
       .mockSuccessfulUploadCall();
     mockGraphClientService
       // request to get list id
-      .mockSuccessfulGraphApiCallWithPath(getListIdPath)
-      .mockSuccessfulGraphGetCall(getListIdResponse);
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetListIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse);
     mockGraphClientService
       // request to get item id
-      .mockSuccessfulGraphApiCallWithPath(getItemIdPath)
-      .mockSuccessfulGraphGetCall(getItemIdResponse);
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetItemIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetItemIdResponse);
     return (
       mockGraphClientService
         // request to update file information
-        .mockSuccessfulGraphApiCallWithPath(updateFileInfoPath)
+        .mockSuccessfulGraphApiCallWithPath(graphClientUpdateFileInfoPath)
     );
   };
 
@@ -421,28 +421,33 @@ describe('postDocumentInDealFolder', () => {
       .mockSuccessfulGetPropertiesCall(fileSizeInBytes)
       // request to download file
       .mockSuccessfulGetShareFileClientCall(expect.any(String), expect.any(String))
-      .mockSuccessfulDownloadCall(downloadFileResponse);
+      .mockSuccessfulDownloadCall(dtfsStorageFileClientDownloadFileResponse);
     mockGraphClientService
       // request to get sharepoint site id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getSharepointSiteIdResponse);
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse);
     mockGraphClientService
       // request to get drive id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getDriveIdResponse);
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse);
     mockGraphClientService
       // request to upload file
-      .mockSuccessfulGetFileUploadSessionCall(expect.any(String), expect.any(Object), uploadSession)
-      .mockSuccessfulGetFileUploadTaskCall(expect.any(String), getUploadTaskArgs[1], getUploadTaskArgs[2], getUploadTaskArgs[3])
+      .mockSuccessfulGetFileUploadSessionCall(expect.any(String), expect.any(Object), graphClientUploadSession)
+      .mockSuccessfulGetFileUploadTaskCall(
+        expect.any(String),
+        graphClientGetUploadTaskArgs[1],
+        graphClientGetUploadTaskArgs[2],
+        graphClientGetUploadTaskArgs[3],
+      )
       // request to get list id
       .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(getListIdResponse);
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse);
   };
 
   const mockReturningItem = (siteId: string, dealId: string, buyerName: string, fileName: string): void => {
     const itemWebUrl = uploadFileInDealFolderGenerator.constructWebUrlForItem(siteId, dealId, buyerName, fileName);
 
-    const itemId = getItemIdResponse.value[0].id;
+    const itemId = graphClientGetItemIdResponse.value[0].id;
 
     mockGraphClientService
       // first part of request to get item id (does not return item)

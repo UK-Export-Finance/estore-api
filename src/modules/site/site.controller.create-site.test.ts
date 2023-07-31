@@ -1,4 +1,5 @@
 import { ENUMS } from '@ukef/constants';
+import { MdmException } from '@ukef/modules/mdm/exception/mdm.exception';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -6,7 +7,6 @@ import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
 import { when } from 'jest-when';
 
-import { MdmException } from '../mdm/exception/mdm.exception';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
 

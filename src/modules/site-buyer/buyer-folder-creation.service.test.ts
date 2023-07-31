@@ -1,9 +1,9 @@
+import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { when } from 'jest-when';
 
-import { CustodianService } from '../custodian/custodian.service';
 import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
+import { DtfsStorageClientModule } from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.module';
 
-import { DtfsStorageClientModule } from '../dtfs-storage-client/dtfs-storage-client.module';
 import { DtfsStorageFileService } from './dtfs-storage-file.service';
 
 @Module({

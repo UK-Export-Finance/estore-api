@@ -1,7 +1,7 @@
 import { FileGetPropertiesResponse, RestError } from '@azure/storage-file-share';
 import { Injectable } from '@nestjs/common';
+import DtfsStorageClientService from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
 
-import DtfsStorageClientService from '../dtfs-storage-client/dtfs-storage-client.service';
 import { DtfsStorageException } from './exception/dtfs-storage.exception';
 import { DtfsStorageAuthenticationFailedException } from './exception/dtfs-storage-authentication-failed.exception';
 import { DtfsStorageFileNotFoundException } from './exception/dtfs-storage-file-not-found.exception';

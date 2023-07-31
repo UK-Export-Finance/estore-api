@@ -176,7 +176,7 @@ describe('SharepointService', () => {
   describe('sharepoint service methods calling graphService.patch', () => {
     const graphServicePatchTestCases = [
       {
-        method: 'uploadFileInformation',
+        method: 'updateFileInformation',
         path: url,
         requestBody: {
           contentType: {
@@ -190,7 +190,7 @@ describe('SharepointService', () => {
         },
         graphServiceResponse,
         makeRequest: (sharepointService: SharepointService) =>
-          sharepointService.uploadFileInformation({
+          sharepointService.updateFileInformation({
             urlToUpdateFileInfo: url,
             requestBodyToUpdateFileInfo: {
               contentType: {

@@ -1,6 +1,7 @@
 import './load-dotenv';
 
 import { registerAs } from '@nestjs/config';
+import { getBooleanConfig } from '@ukef/helpers/get-boolean-config.helper';
 import { getIntConfig } from '@ukef/helpers/get-int-config';
 
 import { InvalidConfigException } from './invalid-config.exception';
@@ -19,8 +20,8 @@ export interface AppConfig {
   port: number;
   apiKey: string;
   logLevel: string;
-  singleLineLogFormat: boolean;
   redactLogs: boolean;
+  singleLineLogFormat: boolean;
 }
 
 export default registerAs('app', (): Record<string, any> => {
@@ -34,7 +35,7 @@ export default registerAs('app', (): Record<string, any> => {
     env: process.env.NODE_ENV || 'development',
 
     versioning: {
-      enable: process.env.HTTP_VERSIONING_ENABLE === 'true' || false,
+      enable: getBooleanConfig(process.env.HTTP_VERSIONING_ENABLE, false),
       prefix: 'v',
       version: process.env.HTTP_VERSION || '1',
     },
@@ -43,7 +44,7 @@ export default registerAs('app', (): Record<string, any> => {
     port: getIntConfig(process.env.HTTP_PORT, 3001),
     apiKey: process.env.API_KEY,
     logLevel: process.env.LOG_LEVEL || 'info',
-    redactLogs: process.env.REDACT_LOGS !== 'false',
-    singleLineLogFormat: process.env.SINGLE_LINE_LOG_FORMAT !== 'false',
+    redactLogs: getBooleanConfig(process.env.REDACT_LOGS, true),
+    singleLineLogFormat: getBooleanConfig(process.env.SINGLE_LINE_LOG_FORMAT, true),
   };
 });
