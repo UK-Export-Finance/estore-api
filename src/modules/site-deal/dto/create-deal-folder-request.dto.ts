@@ -1,4 +1,5 @@
 import { EXAMPLES } from '@ukef/constants';
+import { ValidatedBuyerNameApiProperty } from '@ukef/decorators/validated-buyer-name-api-property';
 import { ValidatedDealIdentifierApiProperty } from '@ukef/decorators/validated-deal-identifier-api-property';
 import { ValidatedExporterNameApiProperty } from '@ukef/decorators/validated-exporter-name-api-property';
 import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/validated-sharepoint-resource-name-api-property';
@@ -9,7 +10,7 @@ export class CreateDealFolderRequestItem {
   @ValidatedDealIdentifierApiProperty({ description: 'The identifier of the deal.' })
   dealIdentifier: string;
 
-  @ValidatedSharepointResourceNameApiProperty({ description: 'The name of the buyer used in the deal.', example: EXAMPLES.BUYER_NAME })
+  @ValidatedBuyerNameApiProperty()
   buyerName: string;
 
   @ValidatedExporterNameApiProperty()

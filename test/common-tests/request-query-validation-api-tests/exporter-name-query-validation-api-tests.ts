@@ -8,7 +8,7 @@ import {
   disallowedStringTestCases,
   disallowedSubstringTestCases,
   disallowedSuffixTestCases,
-} from '@ukef-test/common-test-cases/exporter-name-test-cases';
+} from '@ukef-test/common-test-cases/sharepoint-folder-name-test-cases';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import { StringQueryValidationApiTestOptions, withStringQueryValidationApiTests } from './string-query-validation-api-tests';
