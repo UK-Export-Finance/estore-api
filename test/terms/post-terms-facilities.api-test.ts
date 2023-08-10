@@ -76,6 +76,17 @@ describe('postFacilityToTermStore', () => {
     expect(body).toStrictEqual({ message: CreateTermForFacilityResponseEnum.FACILITY_TERMS_EXISTS });
   });
 
+  it('returns 500 error for unknown Graph API errors', async () => {
+    const graphError = new GraphError(400, 'Unknown error.');
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
+      .mockUnsuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, graphError);
+
+    const { status, body } = await api.post(postTermsFacilitiesUrl, createTermFacilityRequest[0]);
+    expect(status).toBe(500);
+    expect(body).toStrictEqual({ message: 'Internal server error', statusCode: 500 });
+  });
+
   describe('field validation', () => {
     const makeRequest = (body: unknown[]) => api.post(postTermsFacilitiesUrl, body);
 
