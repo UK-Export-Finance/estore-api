@@ -1,5 +1,6 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
 import { withDealIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/deal-identifier-validation-api-tests';
 import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
@@ -335,8 +336,7 @@ describe('POST /sites/{siteId}/deals', () => {
       successStatusCode,
     });
 
-    withSharepointResourceNameFieldValidationApiTests({
-      fieldName: 'buyerName',
+    withBuyerNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createDealFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),

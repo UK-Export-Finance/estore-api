@@ -1,4 +1,4 @@
-import { EXPORTER_NAME } from '@ukef/constants';
+import { BUYER_NAME } from '@ukef/constants';
 import {
   allowedPrefixTestCases,
   allowedStringTestCases,
@@ -14,37 +14,37 @@ import { prepareModifiedRequest } from '@ukef-test/support/helpers/request-field
 
 import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests } from './string-field-validation-api-tests';
 
-type ExporterNameFieldName = 'exporterName';
+type BuyerNameFieldName = 'buyerName';
 
-interface ExporterNameFieldValidationApiTestOptions<RequestBodyItem extends { exporterName: string }>
+interface BuyerNameFieldValidationApiTestOptions<RequestBodyItem extends { buyerName: string }>
   extends Pick<
-    StringFieldValidationApiTestOptions<RequestBodyItem, ExporterNameFieldName>,
+    StringFieldValidationApiTestOptions<RequestBodyItem, BuyerNameFieldName>,
     'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
   > {
   valueGenerator: RandomValueGenerator;
 }
 
-export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends { exporterName: string }>({
+export const withBuyerNameFieldValidationApiTests = <RequestBodyItem extends { buyerName: string }>({
   valueGenerator,
   validRequestBody,
   successStatusCode,
   makeRequest,
   givenAnyRequestBodyWouldSucceed,
-}: ExporterNameFieldValidationApiTestOptions<RequestBodyItem>): void => {
-  const fieldName = 'exporterName';
+}: BuyerNameFieldValidationApiTestOptions<RequestBodyItem>): void => {
+  const fieldName = 'buyerName';
 
-  withStringFieldValidationApiTests<RequestBodyItem, ExporterNameFieldName>({
+  withStringFieldValidationApiTests<RequestBodyItem, BuyerNameFieldName>({
     fieldName,
     minLength: 1,
     maxLength: 250,
-    generateFieldValueOfLength: (length: number) => valueGenerator.exporterName({ length }) as RequestBodyItem[ExporterNameFieldName],
+    generateFieldValueOfLength: (length: number) => valueGenerator.buyerName({ length }) as RequestBodyItem[BuyerNameFieldName],
     validRequestBody,
     successStatusCode,
     makeRequest,
     givenAnyRequestBodyWouldSucceed,
   });
 
-  describe(`exporterName regex validation`, () => {
+  describe(`buyerName regex validation`, () => {
     beforeEach(() => {
       givenAnyRequestBodyWouldSucceed();
     });
@@ -54,7 +54,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
     const fieldNameToUpdate = fieldName.toString();
 
     it.each([...allowedStringTestCases, ...allowedSubstringTestCases, ...allowedPrefixTestCases, ...allowedSuffixTestCases])(
-      `returns a ${successStatusCode} response if exporterName matches the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      `returns a ${successStatusCode} response if buyerName matches the regular expression ${BUYER_NAME.REGEX} ($testTitle)`,
       async ({ value }) => {
         const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
         const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);
@@ -65,7 +65,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
     );
 
     it.each([...disallowedStringTestCases, ...disallowedSubstringTestCases, ...disallowedPrefixTestCases, ...disallowedSuffixTestCases])(
-      `returns a 400 response if exporterName does not match the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      `returns a 400 response if buyerName does not match the regular expression ${BUYER_NAME.REGEX} ($testTitle)`,
       async ({ value }) => {
         const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
         const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);
@@ -75,7 +75,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
         expect(status).toBe(400);
         expect(body).toMatchObject({
           error: 'Bad Request',
-          message: expect.arrayContaining([`exporterName must match ${EXPORTER_NAME.REGEX} regular expression`]),
+          message: expect.arrayContaining([`buyerName must match ${BUYER_NAME.REGEX} regular expression`]),
           statusCode: 400,
         });
       },
