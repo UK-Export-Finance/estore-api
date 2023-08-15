@@ -22,7 +22,7 @@
     "unit-test": "jest --coverage --selectProjects=Unit --passWithNoTests"
   },
   "dependencies": {
-    "@azure/identity": "^3.2.4",
+    "@azure/identity": "^3.3.0",
     "@azure/storage-file-share": "^12.15.0",
     "@microsoft/microsoft-graph-client": "^3.0.5",
     "@nestjs/axios": "^3.0.0",
