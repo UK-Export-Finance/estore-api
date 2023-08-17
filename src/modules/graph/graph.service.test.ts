@@ -16,6 +16,7 @@ describe('GraphService', () => {
   const path = valueGenerator.string();
   const filterStr = valueGenerator.string();
   const expandStr = valueGenerator.string();
+  const orderByStr = valueGenerator.string();
   const expectedResponse = valueGenerator.string();
 
   const mockGraphClientService = new MockGraphClientService();
@@ -58,6 +59,7 @@ describe('GraphService', () => {
         apiCalled: true,
         filterCalled: false,
         expandCalled: false,
+        orderbyCalled: false,
         getCalled: true,
       });
 
@@ -75,6 +77,7 @@ describe('GraphService', () => {
         apiCalled: true,
         filterCalled: true,
         expandCalled: false,
+        orderbyCalled: false,
         getCalled: true,
       });
       expectations.forEach((expectation) => expectation());
@@ -91,6 +94,24 @@ describe('GraphService', () => {
         apiCalled: true,
         filterCalled: true,
         expandCalled: true,
+        orderbyCalled: false,
+        getCalled: true,
+      });
+      expectations.forEach((expectation) => expectation());
+
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it('calls all graph client methods on a graph service get request with orderby parameter and returns the response', async () => {
+      const request = mockSuccessfulCompleteGraphRequest();
+
+      const result = await graphService.get<string>({ path, filter: filterStr, expand: expandStr, orderBy: orderByStr });
+
+      const expectations = getCallExpectations(request, {
+        apiCalled: true,
+        filterCalled: true,
+        expandCalled: true,
+        orderbyCalled: true,
         getCalled: true,
       });
       expectations.forEach((expectation) => expectation());
@@ -236,6 +257,7 @@ describe('GraphService', () => {
       apiCalled = false,
       filterCalled = false,
       expandCalled = false,
+      orderbyCalled = false,
       getCalled = false,
       postCalled = false,
       patchCalled = false,
@@ -243,6 +265,7 @@ describe('GraphService', () => {
       apiCalled?: boolean;
       filterCalled?: boolean;
       expandCalled?: boolean;
+      orderbyCalled?: boolean;
       getCalled?: boolean;
       postCalled?: boolean;
       patchCalled?: boolean;
@@ -260,6 +283,10 @@ describe('GraphService', () => {
       ? [() => expect(request.expand).toHaveBeenCalledTimes(1), () => expect(request.expand).toHaveBeenCalledWith(expandStr)]
       : [() => expect(request.expand).toHaveBeenCalledTimes(0)];
 
+    const orderbyCallExpectations = orderbyCalled
+      ? [() => expect(request.orderby).toHaveBeenCalledTimes(1), () => expect(request.orderby).toHaveBeenCalledWith(orderByStr)]
+      : [() => expect(request.orderby).toHaveBeenCalledTimes(0)];
+
     const getCallExpectations = getCalled
       ? [() => expect(request.get).toHaveBeenCalledTimes(1), () => expect(request.get).toHaveBeenCalledWith()]
       : [() => expect(request.get).toHaveBeenCalledTimes(0)];
@@ -276,6 +303,7 @@ describe('GraphService', () => {
       ...apiCallExpectations,
       ...filterCallExpectations,
       ...expandCallExpectations,
+      ...orderbyCallExpectations,
       ...getCallExpectations,
       ...postCallExpectations,
       ...patchCallExpectations,

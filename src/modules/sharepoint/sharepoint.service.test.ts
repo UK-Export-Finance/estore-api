@@ -27,6 +27,7 @@ describe('SharepointService', () => {
   const documentStatus = valueGenerator.string();
   const estoreDocumentTypeIdFieldName = valueGenerator.string();
   const documentTypeId = valueGenerator.string();
+  const orderByStr = valueGenerator.string();
 
   const uploadFileRequest: SharepointUploadFileParams = {
     file: valueGenerator.string() as unknown as NodeJS.ReadableStream,
@@ -63,6 +64,14 @@ describe('SharepointService', () => {
         graphServiceResponse,
         methodResponse,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getItems({ ukefSiteId: siteId, listId }),
+      },
+      {
+        method: 'getItems',
+        path: `sites/${sharepointConfig.ukefSharepointName}:/sites/${siteId}:/lists/${listId}/items`,
+        graphServiceResponse,
+        methodResponse,
+        orderByString: orderByStr,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getItems({ ukefSiteId: siteId, listId, orderBy: orderByStr }),
       },
       {
         method: 'getExporterSite',
@@ -120,17 +129,21 @@ describe('SharepointService', () => {
       },
     ];
 
-    describe.each(graphServiceGetTestCases)('$method', ({ path, expandString, filterString, graphServiceResponse, methodResponse, makeRequest }) => {
-      withGetMethodTests({
-        sharepointConfig,
-        path,
-        expandString,
-        filterString,
-        graphServiceResponse,
-        methodResponse,
-        makeRequest,
-      });
-    });
+    describe.each(graphServiceGetTestCases)(
+      '$method',
+      ({ path, expandString, filterString, orderByString, graphServiceResponse, methodResponse, makeRequest }) => {
+        withGetMethodTests({
+          sharepointConfig,
+          path,
+          expandString,
+          filterString,
+          orderByString,
+          graphServiceResponse,
+          methodResponse,
+          makeRequest,
+        });
+      },
+    );
   });
 
   describe('sharepoint service methods calling graphService.post', () => {

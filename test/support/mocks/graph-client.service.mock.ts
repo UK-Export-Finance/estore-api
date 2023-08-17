@@ -19,6 +19,7 @@ class MockFileUploadTask {
 export class MockGraphRequest {
   expand: GraphRequest['expand'];
   filter: GraphRequest['filter'];
+  orderby: GraphRequest['orderby'];
   get: GraphRequest['get'];
   patch: GraphRequest['patch'];
   post: GraphRequest['post'];
@@ -26,6 +27,7 @@ export class MockGraphRequest {
   constructor() {
     this.expand = jest.fn();
     this.filter = jest.fn();
+    this.orderby = jest.fn();
     this.get = jest.fn();
     this.patch = jest.fn();
     this.post = jest.fn();

@@ -170,6 +170,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     const sharepointServiceGetItemsParams = {
       ukefSiteId: values.ukefSiteId,
       listId,
+      orderBy: 'lastModifiedDateTime desc',
     };
 
     const sharepointServiceUpdateFileInformationParams = {
