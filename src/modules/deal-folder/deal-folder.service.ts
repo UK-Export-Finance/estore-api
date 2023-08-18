@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS } from '@ukef/constants';
+import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, GRAPH } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { DocumentTypeMapper } from '@ukef/modules/deal-folder/document-type-mapper';
@@ -83,7 +83,7 @@ export class DealFolderService {
   private async constructUrlToCreateUploadSession(fileName: string, dealId: string, buyerName: string, ukefSiteId: string): Promise<string> {
     const sharepointSiteId = await this.getSharepointSiteIdByUkefSiteId(ukefSiteId);
     const driveId = await this.getResourceIdByName(ukefSiteId, CASE_LIBRARY.DRIVE_NAME, ENUMS.SHAREPOINT_RESOURCE_TYPES.DRIVE);
-    /* Getting the sharepointSiteId (of the format {ukefSharepointName},{alphanumeric code including hyphens},{another alphanumeric code including hyphens}) 
+    /* Getting the sharepointSiteId (of the format {ukefSharepointName},{alphanumeric code including hyphens},{another alphanumeric code including hyphens})
     and driveId appears to necessary because using the ukefSiteId and drive name only appears to work when accessing drives, not items *within* drives. */
     const fileDestinationPath = `${buyerName}/D ${dealId}`;
 
@@ -100,9 +100,9 @@ export class DealFolderService {
         .getResources({ ukefSiteId, sharepointResourceType })
         .then((response) => response.value)
         .then((resources) => resources.find((resource) => resource.name === resourceName))
-        /* The line above is necessary because the 'filter' query parameter does not currently support the 'name' field on lists/list items 
+        /* The line above is necessary because the 'filter' query parameter does not currently support the 'name' field on lists/list items
       (see comment from Microsoft employee https://learn.microsoft.com/en-us/answers/questions/980144/graph-api-sharepoint-list-filter-by-createddatetim).
-      Additionally, the 'filter' query parameter is not supported at all by the 'List available drives' endpoint 
+      Additionally, the 'filter' query parameter is not supported at all by the 'List available drives' endpoint
       (see https://learn.microsoft.com/en-us/graph/api/drive-list?view=graph-rest-1.0&tabs=http#optional-query-parameters for a list of supported parameters). */
         .then((resource) => resource.id)
     );
@@ -153,10 +153,10 @@ export class DealFolderService {
   private getItemIdByWebUrl(ukefSiteId: string, listId: string, webUrl: string): Promise<string> {
     return (
       this.sharepointService
-        .getItems({ ukefSiteId, listId })
+        .getItems({ ukefSiteId, listId, top: GRAPH.INCREASED_RESULTS_PER_CALL })
         .then((response) => response.value)
         .then((list) => list.find((item) => item.webUrl === webUrl))
-        /* The line above is necessary because the 'filter' query parameter does not currently support the 'webUrl' field on lists/list items 
+        /* The line above is necessary because the 'filter' query parameter does not currently support the 'webUrl' field on lists/list items
       (see comment from Microsoft employee https://learn.microsoft.com/en-us/answers/questions/980144/graph-api-sharepoint-list-filter-by-createddatetim). */
         .then((item) => item.id)
     );

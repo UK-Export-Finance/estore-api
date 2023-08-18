@@ -14,6 +14,7 @@
  * 10. FILE_LOCATION_PATH
  * 11. SHAREPOINT
  * 12. UKEF_ID
+ * 13. GRAPH
  */
 
 export * from './allowed-document-file-type.constant';
@@ -26,5 +27,6 @@ export * from './enum.constant';
 export * from './examples.constant';
 export * from './exporter-name.constant';
 export * from './file-location-path.constant';
+export * from './graph.constant';
 export * from './sharepoint.constant';
 export * from './ukef-id.constant';

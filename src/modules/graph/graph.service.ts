@@ -14,12 +14,12 @@ export class GraphService {
     this.client = graphClientService.client;
   }
 
-  async get<T>({ path, filter, expand, knownErrors }: GraphGetParams): Promise<T> {
-    const request = this.createGetRequest({ path, filter, expand });
+  async get<T>({ path, filter, expand, top, knownErrors }: GraphGetParams): Promise<T> {
+    const request = this.createGetRequest({ path, filter, expand, top });
     return await this.makeGetRequest({ request, knownErrors });
   }
 
-  private createGetRequest({ path, filter, expand }: GraphGetParams): GraphRequest {
+  private createGetRequest({ path, filter, expand, top }: GraphGetParams): GraphRequest {
     const request = this.client.api(path);
 
     if (filter) {
@@ -28,6 +28,10 @@ export class GraphService {
 
     if (expand) {
       request.expand(expand);
+    }
+
+    if (top) {
+      request.top(top);
     }
 
     return request;
@@ -119,6 +123,7 @@ export interface GraphGetParams {
   path: string;
   filter?: string;
   expand?: string;
+  top?: number;
   knownErrors?: KnownError[];
 }
 
