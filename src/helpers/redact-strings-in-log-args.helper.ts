@@ -22,8 +22,8 @@ export const redactStringsInLogArgs = (
   return args;
 };
 
-const redactString = (redactStrings: { searchValue: string | RegExp; replaceValue: string }[], string: string): string => {
-  let safeString: string = string;
+const redactString = (redactStrings: { searchValue: string | RegExp; replaceValue: string }[], logMessage: string): string => {
+  let safeString: string = logMessage;
   redactStrings.forEach((redact) => {
     safeString = safeString.replaceAll(redact.searchValue, redact.replaceValue);
   });
