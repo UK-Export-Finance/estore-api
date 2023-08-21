@@ -57,7 +57,6 @@ export class TermsController {
     }
     if (responseMessage.message === ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS) {
       res.status(HttpStatusCode.Ok).json({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS });
-      return;
     }
   }
 }

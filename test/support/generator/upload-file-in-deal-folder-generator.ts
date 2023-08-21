@@ -1,5 +1,5 @@
 import { LargeFileUploadSession, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
-import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS } from '@ukef/constants';
+import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS, GRAPH } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
@@ -31,6 +31,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       uploadSessionExpiry: this.valueGenerator.date(),
       listId: this.valueGenerator.string(),
       itemId: this.valueGenerator.string(),
+      top: this.valueGenerator.integer(),
     };
   }
 
@@ -170,6 +171,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
     const sharepointServiceGetItemsParams = {
       ukefSiteId: values.ukefSiteId,
       listId,
+      top: GRAPH.INCREASED_RESULTS_PER_CALL,
     };
 
     const sharepointServiceUpdateFileInformationParams = {
@@ -244,6 +246,7 @@ interface GenerateValues {
   uploadSessionExpiry: Date;
   listId: string;
   itemId: string;
+  top: number;
 }
 
 interface GenerateResult {

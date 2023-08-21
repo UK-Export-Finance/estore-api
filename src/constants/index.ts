@@ -14,8 +14,9 @@
  * 10. FILE_LOCATION_PATH
  * 11. SHAREPOINT
  * 12. UKEF_ID
- * 13. REDACT_STRINGS
- * 14. REDACT_STRING_PATHS
+ * 13. GRAPH
+ * 14. REDACT_STRINGS
+ * 15. REDACT_STRING_PATHS
  */
 
 export * from './allowed-document-file-type.constant';
@@ -28,6 +29,7 @@ export * from './enum.constant';
 export * from './examples.constant';
 export * from './exporter-name.constant';
 export * from './file-location-path.constant';
+export * from './graph.constant';
 export * from './redact-strings.constant';
 export * from './redact-strings-paths.constant';
 export * from './sharepoint.constant';

@@ -259,7 +259,7 @@ describe('postDocumentInDealFolder', () => {
         message: [
           'buyerName must be a string',
           'buyerName must be longer than or equal to 1 characters',
-          'buyerName must match /^(?!\\s)[\\w\\-.()\\s]+(?<![\\s.])$/ regular expression',
+          'buyerName must match /^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$/ regular expression',
           'documentType must be a string',
           'documentType must be longer than or equal to 0 characters',
           'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',
@@ -283,7 +283,7 @@ describe('postDocumentInDealFolder', () => {
         message: [
           'buyerName must be a string',
           'buyerName must be longer than or equal to 1 characters',
-          'buyerName must match /^(?!\\s)[\\w\\-.()\\s]+(?<![\\s.])$/ regular expression',
+          'buyerName must match /^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$/ regular expression',
           'documentType must be a string',
           'documentType must be longer than or equal to 0 characters',
           'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',

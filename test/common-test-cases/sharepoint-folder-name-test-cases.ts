@@ -1,4 +1,4 @@
-interface ExporterNameRegexTestCase {
+interface SharepointFolderNameRegexTestCase {
   value: string;
   testTitle: string;
 }
@@ -27,7 +27,7 @@ export const allowedStringTestCases = [...allowedStrings].map((testCaseValue) =>
   return { value: testCaseValue, testTitle: `'${testCaseValue}' is allowed as a string (testing string '${testCaseValue}')` };
 });
 
-export const disallowedStringTestCases: ExporterNameRegexTestCase[] = [
+export const disallowedStringTestCases: SharepointFolderNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedCharacters,
@@ -38,7 +38,7 @@ export const disallowedStringTestCases: ExporterNameRegexTestCase[] = [
   return { value: testCaseValue, testTitle: `'${testCaseValue}' is disallowed as a string (testing string '${testCaseValue}')` };
 });
 
-export const allowedSubstringTestCases: ExporterNameRegexTestCase[] = [
+export const allowedSubstringTestCases: SharepointFolderNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedStrings,
@@ -49,17 +49,17 @@ export const allowedSubstringTestCases: ExporterNameRegexTestCase[] = [
   return { value: testString, testTitle: `'${testCaseValue}' is allowed as a substring (testing string '${testString}')` };
 });
 
-export const disallowedSubstringTestCases: ExporterNameRegexTestCase[] = [...disallowedSubstrings, ...disallowedCharacters].map((testCaseValue) => {
+export const disallowedSubstringTestCases: SharepointFolderNameRegexTestCase[] = [...disallowedSubstrings, ...disallowedCharacters].map((testCaseValue) => {
   const testString = `${validSubstring}${testCaseValue}${validSubstring}`;
   return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a substring (testing string '${testString}')` };
 });
 
-export const allowedPrefixTestCases: ExporterNameRegexTestCase[] = [...disallowedStrings, ...disallowedStringsOnRoot].map((testCaseValue) => {
+export const allowedPrefixTestCases: SharepointFolderNameRegexTestCase[] = [...disallowedStrings, ...disallowedStringsOnRoot].map((testCaseValue) => {
   const testString = `${testCaseValue}${validSubstring}`;
   return { value: testString, testTitle: `'${testCaseValue}' is allowed as a prefix (testing string '${testString}')` };
 });
 
-export const disallowedPrefixTestCases: ExporterNameRegexTestCase[] = [
+export const disallowedPrefixTestCases: SharepointFolderNameRegexTestCase[] = [
   ...disallowedPrefixesAndSuffixes,
   ...disallowedPrefixes,
   ...disallowedCharacters,
@@ -69,16 +69,18 @@ export const disallowedPrefixTestCases: ExporterNameRegexTestCase[] = [
   return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a prefix (testing string '${testString}')` };
 });
 
-export const allowedSuffixTestCases: ExporterNameRegexTestCase[] = [...disallowedPrefixes, ...disallowedStrings, ...disallowedStringsOnRoot].map(
+export const allowedSuffixTestCases: SharepointFolderNameRegexTestCase[] = [...disallowedPrefixes, ...disallowedStrings, ...disallowedStringsOnRoot].map(
   (testCaseValue) => {
     const testString = `${validSubstring}${testCaseValue}`;
     return { value: testString, testTitle: `'${testCaseValue}' is allowed as a suffix (testing string '${testString}')` };
   },
 );
 
-export const disallowedSuffixTestCases: ExporterNameRegexTestCase[] = [...disallowedPrefixesAndSuffixes, ...disallowedCharacters, ...disallowedSubstrings].map(
-  (testCaseValue) => {
-    const testString = `${validSubstring}${testCaseValue}`;
-    return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a suffix (testing string '${testString}')` };
-  },
-);
+export const disallowedSuffixTestCases: SharepointFolderNameRegexTestCase[] = [
+  ...disallowedPrefixesAndSuffixes,
+  ...disallowedCharacters,
+  ...disallowedSubstrings,
+].map((testCaseValue) => {
+  const testString = `${validSubstring}${testCaseValue}`;
+  return { value: testString, testTitle: `'${testCaseValue}' is disallowed as a suffix (testing string '${testString}')` };
+});

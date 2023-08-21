@@ -9,6 +9,7 @@ export const withGetMethodTests = ({
   path,
   filterString,
   expandString,
+  topNumber,
   graphServiceResponse,
   methodResponse,
   makeRequest,
@@ -17,6 +18,7 @@ export const withGetMethodTests = ({
   path: string;
   filterString?: string;
   expandString?: string;
+  topNumber?: number;
   graphServiceResponse: unknown;
   methodResponse?: unknown;
   makeRequest: (sharepointService: SharepointService) => Promise<unknown>;
@@ -39,6 +41,7 @@ export const withGetMethodTests = ({
         path,
         filter: filterString,
         expand: expandString,
+        top: topNumber,
       })
       .mockResolvedValueOnce(graphServiceResponse);
 
@@ -49,6 +52,7 @@ export const withGetMethodTests = ({
       path,
       filter: filterString,
       expand: expandString,
+      top: topNumber,
     });
     expect(result).toEqual(methodResponse);
   });

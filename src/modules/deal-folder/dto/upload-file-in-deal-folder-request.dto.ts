@@ -1,18 +1,13 @@
-import { BUYER_NAME, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
+import { ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { EXAMPLES } from '@ukef/constants/examples.constant';
+import { ValidatedBuyerNameApiProperty } from '@ukef/decorators/validated-buyer-name-api-property';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
 export type UploadFileInDealFolderRequestDto = UploadFileInDealFolderRequestItem[];
 
 export class UploadFileInDealFolderRequestItem {
-  @ValidatedStringApiProperty({
-    description: 'The name of the buyer used in the deal.',
-    minLength: 1,
-    maxLength: 250,
-    pattern: BUYER_NAME.REGEX,
-    example: EXAMPLES.BUYER_NAME,
-  })
+  @ValidatedBuyerNameApiProperty()
   buyerName: string;
 
   @ValidatedStringApiProperty({
