@@ -19,6 +19,7 @@ class MockFileUploadTask {
 export class MockGraphRequest {
   expand: GraphRequest['expand'];
   filter: GraphRequest['filter'];
+  top: GraphRequest['top'];
   get: GraphRequest['get'];
   patch: GraphRequest['patch'];
   post: GraphRequest['post'];
@@ -26,6 +27,7 @@ export class MockGraphRequest {
   constructor() {
     this.expand = jest.fn();
     this.filter = jest.fn();
+    this.top = jest.fn();
     this.get = jest.fn();
     this.patch = jest.fn();
     this.post = jest.fn();
@@ -40,6 +42,17 @@ export class MockGraphRequest {
 
   mockSuccessfulExpandCall(): MockGraphRequest {
     return this.mockSuccessfulExpandCallWithExpandString(expect.anything());
+  }
+
+  mockSuccessfulTopCallWithTopNumber(topNumber: number): MockGraphRequest {
+    when(this.top)
+      .calledWith(topNumber)
+      .mockReturnValueOnce(this as unknown as GraphRequest);
+    return this;
+  }
+
+  mockSuccessfulTopCall(): MockGraphRequest {
+    return this.mockSuccessfulTopCallWithTopNumber(expect.anything());
   }
 
   mockSuccessfulFilterCallWithFilterString(filterString: string): MockGraphRequest {

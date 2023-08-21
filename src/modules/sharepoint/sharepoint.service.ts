@@ -20,6 +20,7 @@ export interface SharepointGetResourcesParams {
 export interface SharepointGetItemsParams {
   ukefSiteId: string;
   listId: string;
+  top?: number;
 }
 
 export interface SharepointCreateSiteParams {
@@ -84,9 +85,10 @@ export class SharepointService {
     });
   }
 
-  getItems({ ukefSiteId, listId }: SharepointGetItemsParams): Promise<{ value: { webUrl: string; id: string }[] }> {
+  getItems({ ukefSiteId, listId, top }: SharepointGetItemsParams): Promise<{ value: { webUrl: string; id: string }[] }> {
     return this.graphService.get<{ value: { webUrl: string; id: string }[] }>({
       path: `sites/${this.sharepointConfig.ukefSharepointName}:/sites/${ukefSiteId}:/lists/${listId}/items`,
+      top,
     });
   }
 

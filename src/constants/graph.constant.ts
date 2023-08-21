@@ -1,0 +1,3 @@
+export const GRAPH = {
+  INCREASED_RESULTS_PER_CALL: 99999,
+};
