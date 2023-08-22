@@ -2,7 +2,7 @@ import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
-import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
+import { SharepointGetBuyerFolderParams, SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from '@ukef/modules/site-deal/dto/create-deal-folder-request.dto';
 import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
@@ -95,6 +95,11 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       siteId,
       buyerName,
     };
+    const sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams = {
+      siteId,
+      dealFolderName: `${buyerName}/${dealFolderName}`,
+    };
+
     const sharepointServiceGetExporterSiteParams = exporterName;
     const sharepointServiceGetDestinationMarketParams = destinationMarket;
     const sharepointServiceGetRiskMarketParams = riskMarket;
@@ -184,6 +189,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       createDealFolderResponse,
 
       sharepointServiceGetBuyerDealFolderParams,
+      sharepointServiceGetDealFolderParams,
       sharepointServiceGetExporterSiteParams,
       sharepointServiceGetDestinationMarketParams,
       sharepointServiceGetRiskMarketParams,
@@ -232,6 +238,7 @@ interface GenerateResult {
   createDealFolderResponse: CreateFolderResponseDto;
 
   sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams;
+  sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
   sharepointServiceGetExporterSiteParams: string;
   sharepointServiceGetDestinationMarketParams: string;
   sharepointServiceGetRiskMarketParams: string;

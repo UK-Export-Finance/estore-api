@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
@@ -29,6 +29,12 @@ export class BuyerFolderCreationService {
 
     const caseSiteId = await this.getCaseSiteId(siteId);
     const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId, exporterName);
+
+    const existingBuyerFolder = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
+
+    if (existingBuyerFolder.length) {
+      throw new BadRequestException('Bad request', `Buyer folder ${buyerName} already exists`);
+    }
 
     await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
 

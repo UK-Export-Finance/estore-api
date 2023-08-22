@@ -2,7 +2,7 @@ import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
-import { SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
+import { SharepointGetDealFolderParams, SharepointGetFacilityFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
@@ -118,6 +118,8 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const sharepointServiceGetFacilityTermParams = facilityIdentifier;
 
+    const sharepointServiceGetFacilityFolderParams = { siteId, facilityFolderName: `${dealFolderName}/${facilityFolderName}` };
+
     const custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest = {
       Title: facilityFolderName,
       Id: 0,
@@ -149,6 +151,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
       sharepointServiceGetDealFolderParams,
       sharepointServiceGetFacilityTermParams,
+      sharepointServiceGetFacilityFolderParams,
 
       tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
       tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
@@ -194,6 +197,7 @@ interface GenerateResult {
 
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
   sharepointServiceGetFacilityTermParams: UkefId;
+  sharepointServiceGetFacilityFolderParams: SharepointGetFacilityFolderParams;
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
   tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto<TfisFacilityHiddenListTermStoreFields>;

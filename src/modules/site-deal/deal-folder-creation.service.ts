@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
@@ -43,6 +43,12 @@ export class DealFolderCreationService {
     const destinationMarketTermGuid = await this.getMarketTermGuid(destinationMarket);
     const riskMarketTermGuid = await this.getMarketTermGuid(riskMarket);
     const dealFolderName = this.generateDealFolderName(dealIdentifier);
+
+    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
+
+    if (existingDealFolder.length) {
+      throw new BadRequestException('Bad request', `Deal folder ${dealFolderName} already exists`);
+    }
 
     await this.sendCreateAndProvisionRequestForDealFolder({
       dealIdentifier,

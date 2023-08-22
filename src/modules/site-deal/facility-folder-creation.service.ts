@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
@@ -39,6 +39,15 @@ export class FacilityFolderCreationService {
     const dealFolderId = await this.getDealFolderId(siteId, dealFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
+
+    const existingFacilityFolder = await this.sharepointService.getFacilityFolder({
+      siteId,
+      facilityFolderName: `${dealFolderName}/${facilityFolderName}`,
+    });
+
+    if (existingFacilityFolder.length) {
+      throw new BadRequestException('Bad request', `Facility folder ${facilityFolderName} already exists`);
+    }
 
     const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, dealFolderId, termGuid, termTitle);
 

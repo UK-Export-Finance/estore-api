@@ -1,6 +1,7 @@
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
+import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestDto, CreateBuyerFolderRequestItem } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
 import { CreateBuyerFolderResponseDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-response.dto';
 
@@ -74,6 +75,11 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointServiceGetCaseSiteParams = siteId;
     const sharepointServiceGetExporterSiteParams = exporterName;
 
+    const sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams = {
+      siteId,
+      buyerName,
+    };
+
     const scCaseSitesListSiteRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigScCaseSitesListId}/items`,
       filter: `fields/CustodianSiteURL eq '${siteId}'`,
@@ -128,6 +134,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       createBuyerFolderResponse,
 
       sharepointServiceGetCaseSiteParams,
+      sharepointServiceGetBuyerFolderParams,
       sharepointServiceGetExporterSiteParams,
 
       scCaseSitesListSiteRequest,
@@ -170,6 +177,7 @@ interface GenerateResult {
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;
 
   sharepointServiceGetCaseSiteParams: string;
+  sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams;
   sharepointServiceGetExporterSiteParams: string;
 
   scCaseSitesListSiteRequest: GraphGetParams;
