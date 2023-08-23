@@ -11,6 +11,7 @@ import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
 import { GraphListItemsGenerator } from './common/graph-list-items-generator';
 import { RandomValueGenerator } from './random-value-generator';
+import { ListItem } from '@ukef/modules/sharepoint/list-item.interface';
 
 export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
@@ -72,6 +73,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisFacilityHiddenListTermStoreId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID;
     const sharepointConfigTfisFacilityListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_LIST_ID;
+    const sharepointConfigTfisFacilityListTitle = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_LIST_TITLE;
 
     const createFacilityFolderParamsDto: CreateFacilityFolderParamsDto = {
       siteId,
@@ -109,10 +111,18 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
 
+    const tfisFacilityFolderRequest: GraphGetParams = {
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisFacilityListTitle}/items`,
+      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}/${facilityFolderName}'`,
+      expand: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
+    };
+
     const tfisFacilityListParentFolderResponse = new GraphListItemsGenerator<TfisFacilityListParentFolderResponseFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
+
+    const tfisFacilityFolderResponse = { value: [] };
 
     const sharepointServiceGetDealFolderParams = { siteId, dealFolderName };
 
@@ -159,7 +169,10 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       tfisFacilityListParentFolderRequest,
       tfisFacilityListParentFolderResponse,
 
+      tfisFacilityFolderRequest,
+
       custodianCreateAndProvisionRequest,
+      tfisFacilityFolderResponse,
     };
   }
 }
@@ -204,6 +217,9 @@ interface GenerateResult {
 
   tfisFacilityListParentFolderRequest: GraphGetParams;
   tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto<TfisFacilityListParentFolderResponseFields>;
+
+  tfisFacilityFolderRequest: GraphGetParams;
+  tfisFacilityFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }
