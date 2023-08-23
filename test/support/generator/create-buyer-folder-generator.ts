@@ -59,6 +59,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
+    const sharepointConfigTfisDealListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_DEAL_LIST_ID;
     const sharepointConfigScCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_SC_CASE_SITES_LIST_ID;
 
     const createBuyerFolderRequestItem: CreateBuyerFolderRequestItem = {
@@ -91,6 +92,14 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       filter: `fields/Title eq '${exporterName}'`,
       expand: 'fields($select=TermGuid,Title,URL,SiteURL)',
     };
+
+    const tfisBuyerFolderRequest: GraphGetParams = {
+      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTfisDealListId}/items`,
+      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
+      expand: 'fields($select=id)',
+    };
+
+    const tfisBuyerFolderResponse = { value: [] };
 
     const scCaseSitesListSiteResponse = new GraphListItemsGenerator<ScCaseSitesListFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
@@ -140,6 +149,9 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       scCaseSitesListSiteRequest,
       scCaseSitesListSiteResponse,
 
+      tfisBuyerFolderRequest,
+      tfisBuyerFolderResponse,
+
       tfisCaseSitesListExporterRequest,
       tfisCaseSitesListExporterResponse,
 
@@ -185,6 +197,9 @@ interface GenerateResult {
 
   tfisCaseSitesListExporterRequest: GraphGetParams;
   tfisCaseSitesListExporterResponse: GraphGetListItemsResponseDto<TfisCaseSitesListFields>;
+
+  tfisBuyerFolderRequest: GraphGetParams;
+  tfisBuyerFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }
