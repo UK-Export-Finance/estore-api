@@ -11,6 +11,7 @@ import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
 import { GraphListItemsGenerator } from './common/graph-list-items-generator';
 import { RandomValueGenerator } from './random-value-generator';
+import { ListItem } from '@ukef/modules/sharepoint/list-item.interface';
 
 export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
