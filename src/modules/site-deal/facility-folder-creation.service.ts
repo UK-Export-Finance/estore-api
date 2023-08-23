@@ -40,14 +40,7 @@ export class FacilityFolderCreationService {
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
 
-    const existingFacilityFolder = await this.sharepointService.getFacilityFolder({
-      siteId,
-      facilityFolderName: `${dealFolderName}/${facilityFolderName}`,
-    });
-
-    if (existingFacilityFolder.length) {
-      throw new BadRequestException('Bad request', `Facility folder ${facilityFolderName} already exists`);
-    }
+    await this.checkThatFacilityFolderDoesNotExist(siteId, dealFolderName, facilityFolderName);
 
     const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, dealFolderId, termGuid, termTitle);
 
@@ -87,6 +80,17 @@ export class FacilityFolderCreationService {
     }
 
     return dealFolderId;
+  }
+
+  private async checkThatFacilityFolderDoesNotExist(siteId, dealFolderName, facilityFolderName) {
+    const existingFacilityFolder = await this.sharepointService.getFacilityFolder({
+      siteId,
+      facilityFolderName: `${dealFolderName}/${facilityFolderName}`,
+    });
+
+    if (existingFacilityFolder.length) {
+      throw new BadRequestException('Bad request', `Facility folder ${facilityFolderName} already exists`);
+    }
   }
 
   private async getTermGuid(facilityIdentifier: string) {

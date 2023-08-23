@@ -30,11 +30,7 @@ export class BuyerFolderCreationService {
     const caseSiteId = await this.getCaseSiteId(siteId);
     const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId, exporterName);
 
-    const existingBuyerFolder = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
-
-    if (existingBuyerFolder.length) {
-      throw new BadRequestException('Bad request', `Buyer folder ${buyerName} already exists`);
-    }
+    await this.checkThatBuyerFolderDoesNotExist(siteId, buyerName);
 
     await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
 
@@ -63,6 +59,14 @@ export class BuyerFolderCreationService {
       throw new SiteExporterInvalidException(`The ID for the site found for site ${siteId} is not a number (the value is ${idString}).`);
     }
     return id;
+  }
+
+  private async checkThatBuyerFolderDoesNotExist(siteId, buyerName) {
+    const existingBuyerFolder = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
+
+    if (existingBuyerFolder.length) {
+      throw new BadRequestException('Bad request', `Buyer folder ${buyerName} already exists`);
+    }
   }
 
   private async getBuyerTermFromList(siteId: string, exporterName: string) {

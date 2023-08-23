@@ -44,11 +44,7 @@ export class DealFolderCreationService {
     const riskMarketTermGuid = await this.getMarketTermGuid(riskMarket);
     const dealFolderName = this.generateDealFolderName(dealIdentifier);
 
-    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
-
-    if (existingDealFolder.length) {
-      throw new BadRequestException('Bad request', `Deal folder ${dealFolderName} already exists`);
-    }
+    await this.checkThatDealFolderDoesNotExist(siteId, buyerName, dealFolderName);
 
     await this.sendCreateAndProvisionRequestForDealFolder({
       dealIdentifier,
@@ -84,6 +80,14 @@ export class DealFolderCreationService {
       );
     }
     return buyerFolderId;
+  }
+
+  private async checkThatDealFolderDoesNotExist(siteId, buyerName, dealFolderName) {
+    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
+
+    if (existingDealFolder.length) {
+      throw new BadRequestException('Bad request', `Deal folder ${dealFolderName} already exists`);
+    }
   }
 
   private async getExporterDetails({
