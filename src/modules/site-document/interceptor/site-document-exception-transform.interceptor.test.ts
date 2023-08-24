@@ -4,15 +4,15 @@ import { lastValueFrom, throwError } from 'rxjs';
 
 import { UploadFileInDealFolderExistsException } from '../exception/upload-file-in-deal-folder-exists.exception';
 import { UploadFileInDealFolderSiteNotFoundException } from '../exception/upload-file-in-deal-folder-site-not-found.exception';
-import { DealFolderExceptionTransformInterceptor } from './deal-folder-exception-transform.interceptor';
+import { SiteDocumentExceptionTransformInterceptor } from './site-document-exception-transform.interceptor';
 
-describe('DealFolderExceptionTransformInterceptor', () => {
+describe('SiteDocumentExceptionTransformInterceptor', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  let interceptor: DealFolderExceptionTransformInterceptor;
+  let interceptor: SiteDocumentExceptionTransformInterceptor;
 
   beforeEach(() => {
-    interceptor = new DealFolderExceptionTransformInterceptor();
+    interceptor = new SiteDocumentExceptionTransformInterceptor();
   });
 
   it('converts thrown UploadFileInDealFolderExistsException to BadRequestException', async () => {

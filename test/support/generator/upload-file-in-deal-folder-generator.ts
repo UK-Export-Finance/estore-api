@@ -1,10 +1,10 @@
 import { LargeFileUploadSession, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
 import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS, GRAPH } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
-import { UploadFileInDealFolderParamsDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-params.dto';
-import { UploadFileInDealFolderRequestDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-request.dto';
-import { UploadFileInDealFolderResponseDto } from '@ukef/modules/deal-folder/dto/upload-file-in-deal-folder-response.dto';
 import { SharepointGetItemsParams, SharepointGetResourcesParams, SharepointupdateFileInformationParams } from '@ukef/modules/sharepoint/sharepoint.service';
+import { UploadFileInDealFolderParamsDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-params.dto';
+import { UploadFileInDealFolderRequestDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-request.dto';
+import { UploadFileInDealFolderResponseDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-response.dto';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 import { Readable } from 'stream';
 

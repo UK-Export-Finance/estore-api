@@ -1,4 +1,4 @@
-import { UploadFileInDealFolderExistsException } from '@ukef/modules/deal-folder/exception/upload-file-in-deal-folder-exists.exception';
+import { UploadFileInDealFolderExistsException } from '@ukef/modules/site-document/exception/upload-file-in-deal-folder-exists.exception';
 import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 
 export type KnownErrors = KnownError[];

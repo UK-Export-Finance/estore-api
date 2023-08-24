@@ -2,13 +2,13 @@ import { BadRequestException } from '@nestjs/common/exceptions';
 import { ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { when, WhenMockWithMatchers } from 'jest-when';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
-import { DealFolderService } from './deal-folder.service';
 import { DocumentTypeMapper } from './document-type-mapper';
+import { SiteDocumentService } from './site-document.service';
 
 jest.mock('@ukef/modules/graph/graph.service');
 
@@ -93,7 +93,7 @@ describe('UploadFileInDealFolderService', () => {
   let sharepointServiceGetItems: jest.Mock;
   let sharepointServiceUploadFile: jest.Mock;
   let sharepointServiceUpdateFileInformation: jest.Mock;
-  let service: DealFolderService;
+  let service: SiteDocumentService;
 
   beforeEach(() => {
     const documentTypeMapper = new DocumentTypeMapper(null);
@@ -118,7 +118,7 @@ describe('UploadFileInDealFolderService', () => {
     sharepointService.uploadFile = sharepointServiceUploadFile;
     sharepointService.updateFileInformation = sharepointServiceUpdateFileInformation;
 
-    service = new DealFolderService(
+    service = new SiteDocumentService(
       { baseUrl: sharepointBaseUrl, ukefSharepointName, estoreDocumentTypeIdFieldName, ecmsDocumentContentTypeId },
       documentTypeMapper,
       dtfsStorageFileService,
