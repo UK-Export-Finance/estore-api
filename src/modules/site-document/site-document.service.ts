@@ -4,8 +4,8 @@ import SharepointConfig from '@ukef/config/sharepoint.config';
 import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, GRAPH } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
-import { DocumentTypeMapper } from '@ukef/modules/deal-folder/document-type-mapper';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
+import { DocumentTypeMapper } from '@ukef/modules/site-document/document-type-mapper';
 
 import { SharepointService } from '../sharepoint/sharepoint.service';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
@@ -13,7 +13,7 @@ import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-fol
 type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName' | 'ecmsDocumentContentTypeId';
 
 @Injectable()
-export class DealFolderService {
+export class SiteDocumentService {
   constructor(
     @Inject(SharepointConfig.KEY)
     private readonly sharepointConfig: Pick<ConfigType<typeof SharepointConfig>, RequiredSharepointConfigKeys>,

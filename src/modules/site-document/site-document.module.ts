@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { DtfsStorageModule } from '@ukef/modules/dtfs-storage/dtfs-storage.module';
 
 import { SharepointModule } from '../sharepoint/sharepoint.module';
-import { DealFolderController } from './deal-folder.controller';
-import { DealFolderService } from './deal-folder.service';
 import { DocumentTypeMapper } from './document-type-mapper';
+import { SiteDocumentController } from './site-document.controller';
+import { SiteDocumentService } from './site-document.service';
 
 @Module({
   imports: [DtfsStorageModule, SharepointModule],
-  controllers: [DealFolderController],
-  providers: [DealFolderService, DocumentTypeMapper],
+  controllers: [SiteDocumentController],
+  providers: [SiteDocumentService, DocumentTypeMapper],
 })
-export class DealFolderModule {}
+export class SiteDocumentModule {}

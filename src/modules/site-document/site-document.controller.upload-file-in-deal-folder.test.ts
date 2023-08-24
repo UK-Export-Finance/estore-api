@@ -4,12 +4,12 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { when } from 'jest-when';
 
-import { DealFolderController } from './deal-folder.controller';
-import { DealFolderService } from './deal-folder.service';
 import { UploadFileInDealFolderExistsException } from './exception/upload-file-in-deal-folder-exists.exception';
 import { UploadFileInDealFolderSiteNotFoundException } from './exception/upload-file-in-deal-folder-site-not-found.exception';
+import { SiteDocumentController } from './site-document.controller';
+import { SiteDocumentService } from './site-document.service';
 
-describe('DealFolderController', () => {
+describe('SiteDocumentController', () => {
   const valueGenerator = new RandomValueGenerator();
 
   const { uploadFileInDealFolderRequest, uploadFileInDealFolderResponse, uploadFileInDealFolderParams } = new UploadFileInDealFolderGenerator(
@@ -19,16 +19,16 @@ describe('DealFolderController', () => {
   const [{ fileName, fileLocationPath, buyerName, documentType }] = uploadFileInDealFolderRequest;
   const { siteId: ukefSiteId, dealId } = uploadFileInDealFolderParams;
 
-  const dealFolderService = new DealFolderService(null, null, null, null);
+  const siteDocumentService = new SiteDocumentService(null, null, null, null);
 
   const serviceUploadFileInDealFolder = jest.fn();
-  dealFolderService.uploadFileInDealFolder = serviceUploadFileInDealFolder;
+  siteDocumentService.uploadFileInDealFolder = serviceUploadFileInDealFolder;
 
-  let controller: DealFolderController;
+  let controller: SiteDocumentController;
 
   beforeEach(() => {
     serviceUploadFileInDealFolder.mockReset();
-    controller = new DealFolderController(dealFolderService);
+    controller = new SiteDocumentController(siteDocumentService);
   });
 
   describe('uploadFileInDealFolder', () => {
