@@ -6,7 +6,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   NODE_ENV: 'test',
   TZ: 'Europe/London',
   LOG_LEVEL: 'debug',
-  REDACT_LOGS: false,
+  REDACT_LOGS: true,
   SINGLE_LINE_LOG_FORMAT: true,
 
   SWAGGER_USER: valueGenerator.string(),
