@@ -81,14 +81,6 @@ interface SharepointFindListItemsById<Fields> extends SharepointFindListItemsBas
 
 export type SharepointFindListItems<Fields> = SharepointFindListItemsById<Fields> | SharepointFindListItemsByTitle<Fields>;
 
-export interface SharepointFindListItemsSimple<Fields> {
-  siteUrl: string;
-  fieldsToReturn: (keyof Fields)[];
-  filter: ListItemFilter;
-  listId?: string;
-  listTitle?: string;
-}
-
 @Injectable()
 export class SharepointService {
   constructor(
