@@ -92,7 +92,7 @@ export class SharepointService {
     });
   }
 
-  getExporterSite(exporterName: string): Promise<
+  async getExporterSite(siteId: string): Promise<
     ListItem<{
       Title: string;
       URL: string;
@@ -103,11 +103,11 @@ export class SharepointService {
       };
     }>[]
   > {
-    return this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
+    return await this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
       listId: this.sharepointConfig.tfisCaseSitesListId,
       fieldsToReturn: ['Title', 'URL', 'Sitestatus', 'TermGuid', 'SiteURL'],
-      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
+      filter: new FieldEqualsListItemFilter({ fieldName: 'URL', targetValue: siteId }),
     });
   }
 
@@ -159,14 +159,15 @@ export class SharepointService {
     });
   }
 
-  getCaseSite(siteId: string): Promise<ListItem<{ id: string; CustodianSiteURL: string }>[]> {
+  getCaseSite(siteId: string): Promise<ListItem<{ id: string; CustodianSiteURL: string; Title: string }>[]> {
     return this.findListItems<{
       id: string;
       CustodianSiteURL: string;
+      Title: string;
     }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
       listId: this.sharepointConfig.scCaseSitesListId,
-      fieldsToReturn: ['id', 'CustodianSiteURL'],
+      fieldsToReturn: ['id', 'CustodianSiteURL', 'Title'],
       filter: new FieldEqualsListItemFilter({ fieldName: 'CustodianSiteURL', targetValue: siteId }),
     });
   }

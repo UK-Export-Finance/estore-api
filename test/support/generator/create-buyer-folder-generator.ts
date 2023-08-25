@@ -47,6 +47,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 
     const scCaseSitesListSiteResponseFields: ScCaseSitesListFields = {
       id: exporterSiteIdAsString,
+      Title: exporterName,
     };
     const tfisCaseSitesListExporterResponseFields: TfisCaseSitesListFields = {
       TermGuid: termGuid,
@@ -61,7 +62,6 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointConfigScCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_SC_CASE_SITES_LIST_ID;
 
     const createBuyerFolderRequestItem: CreateBuyerFolderRequestItem = {
-      exporterName: exporterName,
       buyerName: buyerName,
     };
 
@@ -72,17 +72,17 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     };
 
     const sharepointServiceGetCaseSiteParams = siteId;
-    const sharepointServiceGetExporterSiteParams = exporterName;
+    const sharepointServiceGetExporterSiteParams = siteId;
 
     const scCaseSitesListSiteRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigScCaseSitesListId}/items`,
       filter: `fields/CustodianSiteURL eq '${siteId}'`,
-      expand: 'fields($select=id,CustodianSiteURL)',
+      expand: 'fields($select=id,CustodianSiteURL,Title)',
     };
 
     const tfisCaseSitesListExporterRequest: GraphGetParams = {
       path: `${sharepointConfigTfisSharepointUrl}:/lists/${sharepointConfigTfisCaseSitesListId}/items`,
-      filter: `fields/Title eq '${exporterName}'`,
+      filter: `fields/URL eq '${siteId}'`,
       expand: 'fields($select=TermGuid,Title,URL,SiteURL)',
     };
 
@@ -123,6 +123,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 
     return {
       siteId,
+      exporterName,
       createBuyerFolderRequestItem,
       createBuyerFolderRequest,
       createBuyerFolderResponse,
@@ -141,7 +142,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
   }
 }
 
-type ScCaseSitesListFields = { id: string };
+type ScCaseSitesListFields = { id: string; Title: string };
 
 type TfisCaseSitesListFields = {
   TermGuid: string;
@@ -165,6 +166,7 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
+  exporterName: string;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;

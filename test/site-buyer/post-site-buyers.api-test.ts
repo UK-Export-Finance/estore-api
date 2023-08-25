@@ -1,7 +1,6 @@
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
-import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
@@ -17,7 +16,7 @@ describe('POST /sites/{siteId}/buyers', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    createBuyerFolderRequestItem: { exporterName },
+    exporterName,
     createBuyerFolderRequest,
     createBuyerFolderResponse,
     scCaseSitesListSiteRequest,
@@ -162,29 +161,37 @@ describe('POST /sites/{siteId}/buyers', () => {
         description: 'returns a 400 if no list items are found matching the exporterName in the tfisCaseSitesList',
         exporterNameListItems: [],
         statusCode: 400,
-        message: `Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`,
+        message: `Did not find the site for siteId ${siteId} in the tfisCaseSitesList.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
-        exporterNameListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
+        exporterNameListItems: [
+          { fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
+        ],
         statusCode: 400,
         message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
-        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
+        exporterNameListItems: [
+          { fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
+        ],
         statusCode: 400,
         message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a SiteURL field',
-        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), notSiteURL: { Url: valueGenerator.string() } } }],
+        exporterNameListItems: [
+          { fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), notSiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
+        ],
         statusCode: 400,
         message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a Url field on the SiteURL field',
-        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { notUrl: valueGenerator.string() } } }],
+        exporterNameListItems: [
+          { fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { notUrl: valueGenerator.string() }, Title: exporterName } },
+        ],
         statusCode: 400,
         message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
       },
@@ -219,14 +226,6 @@ describe('POST /sites/{siteId}/buyers', () => {
 
   describe('field validation', () => {
     withBuyerNameFieldValidationApiTests({
-      valueGenerator,
-      validRequestBody: createBuyerFolderRequest,
-      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
-      successStatusCode,
-    });
-
-    withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createBuyerFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),

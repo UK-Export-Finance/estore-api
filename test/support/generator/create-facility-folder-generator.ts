@@ -37,7 +37,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions): GenerateResult {
     const [createFacilityFolderValues] = values;
     const {
-      exporterName,
       buyerName,
       facilityIdentifier,
       facilityTermDataResponseFieldFacilityGUID,
@@ -79,7 +78,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     };
 
     const createFacilityFolderRequestItem: CreateFacilityFolderRequestItem = {
-      exporterName: exporterName,
       buyerName: buyerName,
       facilityIdentifier: facilityIdentifier,
     };

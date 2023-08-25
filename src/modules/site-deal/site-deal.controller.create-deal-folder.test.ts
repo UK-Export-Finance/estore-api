@@ -13,7 +13,7 @@ describe('SiteDealController', () => {
 
   const {
     siteId,
-    createDealFolderRequestItem: { dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket },
+    createDealFolderRequestItem: { dealIdentifier, buyerName, destinationMarket, riskMarket },
     createDealFolderRequest,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
@@ -32,9 +32,7 @@ describe('SiteDealController', () => {
     });
 
     it('returns the name of the deal folder that was created', async () => {
-      when(serviceCreateDealFolder)
-        .calledWith({ siteId, dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket })
-        .mockResolvedValueOnce(createdFolderName);
+      when(serviceCreateDealFolder).calledWith({ siteId, dealIdentifier, buyerName, destinationMarket, riskMarket }).mockResolvedValueOnce(createdFolderName);
 
       const response = await controller.createDealFolder({ siteId }, createDealFolderRequest);
 
@@ -45,7 +43,7 @@ describe('SiteDealController', () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyNotFound = new FolderDependencyNotFoundException(errorMessage);
       when(serviceCreateDealFolder)
-        .calledWith({ siteId, dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket })
+        .calledWith({ siteId, dealIdentifier, buyerName, destinationMarket, riskMarket })
         .mockRejectedValueOnce(folderDependencyNotFound);
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest);
@@ -59,7 +57,7 @@ describe('SiteDealController', () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyInvalidException = new FolderDependencyInvalidException(errorMessage);
       when(serviceCreateDealFolder)
-        .calledWith({ siteId, dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket })
+        .calledWith({ siteId, dealIdentifier, buyerName, destinationMarket, riskMarket })
         .mockRejectedValueOnce(folderDependencyInvalidException);
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest);
@@ -72,7 +70,7 @@ describe('SiteDealController', () => {
     it('throws the original error if creating the deal folder throws an exception that is not a FolderDependencyNotFoundException', async () => {
       const errorMessage = valueGenerator.string();
       const error = new Error(errorMessage);
-      when(serviceCreateDealFolder).calledWith({ siteId, dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket }).mockRejectedValueOnce(error);
+      when(serviceCreateDealFolder).calledWith({ siteId, dealIdentifier, buyerName, destinationMarket, riskMarket }).mockRejectedValueOnce(error);
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest);
 

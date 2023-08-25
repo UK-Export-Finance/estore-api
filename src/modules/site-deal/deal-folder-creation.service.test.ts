@@ -13,7 +13,8 @@ describe('DealFolderCreationService', () => {
 
   const {
     siteId,
-    createDealFolderRequestItem: { dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket },
+    exporterName,
+    createDealFolderRequestItem: { dealIdentifier, buyerName, destinationMarket, riskMarket },
     sharepointServiceGetBuyerDealFolderParams,
     sharepointServiceGetExporterSiteParams,
     sharepointServiceGetDestinationMarketParams,
@@ -103,7 +104,7 @@ describe('DealFolderCreationService', () => {
   });
 
   const buyerNameListItem = { fields: { id: buyerFolderId } };
-  const exporterNameListItem = { fields: { TermGuid: exporterTermGuid, URL: exporterUrl } };
+  const exporterNameListItem = { fields: { TermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName } };
   const destinationMarketListItem = { fields: { TermGuid: destinationMarketTermGuid } };
   const riskMarketListItem = { fields: { TermGuid: riskMarketTermGuid } };
   const nonNumberId = 'not-a-number';
@@ -120,7 +121,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });
@@ -140,7 +140,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });
@@ -193,12 +192,12 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyNotFoundException,
-      expectedErrorMessage: `Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`,
+      expectedErrorMessage: `Did not find the siteId ${siteId} in the tfisCaseSitesList.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a TermGuid field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { notTermGuid: exporterTermGuid, URL: exporterUrl } }],
+      listItemsMatchingExporterName: [{ fields: { notTermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
@@ -207,7 +206,7 @@ describe('DealFolderCreationService', () => {
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string TermGuid field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: exporterUrl } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: exporterUrl, Title: exporterName } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
@@ -216,7 +215,7 @@ describe('DealFolderCreationService', () => {
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a URL field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, notURL: exporterUrl } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, notURL: exporterUrl, Title: exporterName } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
@@ -225,7 +224,7 @@ describe('DealFolderCreationService', () => {
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string URL field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, URL: '' } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, URL: '', Title: exporterName } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
@@ -305,7 +304,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });

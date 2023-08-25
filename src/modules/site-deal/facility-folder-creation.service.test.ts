@@ -13,7 +13,7 @@ describe('FacilityFolderCreationService', () => {
 
   const {
     createFacilityFolderParamsDto: { siteId, dealId },
-    createFacilityFolderRequestItem: { facilityIdentifier, buyerName, exporterName },
+    createFacilityFolderRequestItem: { facilityIdentifier, buyerName },
     sharepointServiceGetDealFolderParams,
     sharepointServiceGetFacilityTermParams,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
@@ -92,7 +92,6 @@ describe('FacilityFolderCreationService', () => {
     await service.createFacilityFolder(siteId, dealId, {
       facilityIdentifier,
       buyerName,
-      exporterName,
     });
 
     expect(custodianCreateAndProvision).toHaveBeenCalledTimes(1);
@@ -158,7 +157,6 @@ describe('FacilityFolderCreationService', () => {
     const createFacilityFolderPromise = service.createFacilityFolder(siteId, dealId, {
       facilityIdentifier,
       buyerName,
-      exporterName,
     });
 
     await expect(createFacilityFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);

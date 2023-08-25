@@ -27,19 +27,17 @@ export class DealFolderCreationService {
     siteId,
     dealIdentifier,
     buyerName,
-    exporterName,
     destinationMarket,
     riskMarket,
   }: {
     siteId: string;
     dealIdentifier: string;
     buyerName: string;
-    exporterName: string;
     destinationMarket: string;
     riskMarket: string;
   }): Promise<string> {
     const buyerFolderId = await this.getBuyerFolderId({ siteId, buyerName });
-    const { exporterTermGuid, exporterUrl } = await this.getExporterDetails({ siteId, exporterName });
+    const { exporterTermGuid, exporterUrl } = await this.getExporterDetails({ siteId });
     const destinationMarketTermGuid = await this.getMarketTermGuid(destinationMarket);
     const riskMarketTermGuid = await this.getMarketTermGuid(riskMarket);
     const dealFolderName = this.generateDealFolderName(dealIdentifier);
@@ -80,20 +78,14 @@ export class DealFolderCreationService {
     return buyerFolderId;
   }
 
-  private async getExporterDetails({
-    siteId,
-    exporterName,
-  }: {
-    siteId: string;
-    exporterName: string;
-  }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
-    const exporterTermSearchResults = await this.sharepointService.getExporterSite(exporterName);
+  private async getExporterDetails({ siteId }: { siteId: string }): Promise<{ exporterTermGuid: string; exporterUrl: string; exporterName: string }> {
+    const exporterTermSearchResults = await this.sharepointService.getExporterSite(siteId);
     if (exporterTermSearchResults.length === 0) {
-      throw new FolderDependencyNotFoundException(`Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`);
+      throw new FolderDependencyNotFoundException(`Did not find the siteId ${siteId} in the tfisCaseSitesList.`);
     }
     const [
       {
-        fields: { TermGuid: exporterTermGuid, URL: exporterUrl },
+        fields: { TermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName },
       },
     ] = exporterTermSearchResults;
     if (!exporterTermGuid) {
@@ -102,7 +94,7 @@ export class DealFolderCreationService {
     if (!exporterUrl) {
       throw new FolderDependencyInvalidException(`Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
     }
-    return { exporterTermGuid, exporterUrl };
+    return { exporterTermGuid, exporterUrl, exporterName };
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {

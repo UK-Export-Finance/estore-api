@@ -50,13 +50,12 @@ export class SiteDealController {
   async createDealFolder(
     @Param() { siteId }: CreateDealFolderParams,
     @ValidatedArrayBody({ items: CreateDealFolderRequestItem })
-    [{ dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket }]: CreateDealFolderRequest,
+    [{ dealIdentifier, buyerName, destinationMarket, riskMarket }]: CreateDealFolderRequest,
   ): Promise<CreateFolderResponseDto> {
     const createdFolderName = await this.dealFolderCreationService.createDealFolder({
       siteId,
       dealIdentifier,
       buyerName,
-      exporterName,
       destinationMarket,
       riskMarket,
     });

@@ -25,9 +25,9 @@ export class BuyerFolderCreationService {
   ) {}
 
   async createBuyerFolder(siteId: string, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
-    const { exporterName, buyerName } = createBuyerFolderRequestItem;
+    const { buyerName } = createBuyerFolderRequestItem;
 
-    const caseSiteId = await this.getCaseSiteId(siteId);
+    const { caseSiteId, exporterName } = await this.getCaseSiteIdAndName(siteId);
     const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId, exporterName);
 
     await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
@@ -35,7 +35,7 @@ export class BuyerFolderCreationService {
     return buyerName;
   }
 
-  private async getCaseSiteId(siteId: string) {
+  private async getCaseSiteIdAndName(siteId: string) {
     const searchResults = await this.sharepointService.getCaseSite(siteId);
 
     if (!searchResults.length) {
@@ -44,7 +44,7 @@ export class BuyerFolderCreationService {
 
     const [
       {
-        fields: { id: idString },
+        fields: { id: idString, Title },
       },
     ] = searchResults;
 
@@ -52,17 +52,17 @@ export class BuyerFolderCreationService {
       throw new SiteExporterInvalidException(`Missing ID for the site found with id ${siteId}.`);
     }
 
-    const id = parseInt(idString, 10);
-    if (isNaN(id)) {
+    const caseSiteId = parseInt(idString, 10);
+    if (isNaN(caseSiteId)) {
       throw new SiteExporterInvalidException(`The ID for the site found for site ${siteId} is not a number (the value is ${idString}).`);
     }
-    return id;
+    return { caseSiteId, exporterName: Title };
   }
 
   private async getBuyerTermFromList(siteId: string, exporterName: string) {
-    const searchResults = await this.sharepointService.getExporterSite(exporterName);
+    const searchResults = await this.sharepointService.getExporterSite(siteId);
     if (!searchResults.length) {
-      throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
+      throw new SiteExporterNotFoundException(`Did not find the site for siteId ${siteId} in the tfisCaseSitesList.`);
     }
 
     const [
