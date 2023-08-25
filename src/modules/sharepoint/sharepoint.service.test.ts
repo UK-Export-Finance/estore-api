@@ -121,7 +121,7 @@ describe('SharepointService', () => {
       {
         method: 'getCaseSite',
         path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.scCaseSitesListId}/items`,
-        expandString: 'fields($select=id,CustodianSiteURL,Title)',
+        expandString: 'fields($select=id,CustodianSiteURL)',
         filterString: `fields/CustodianSiteURL eq '${siteId}'`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
