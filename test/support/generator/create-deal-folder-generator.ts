@@ -178,7 +178,6 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
 
     return {
       siteId,
-      exporterName,
       createDealFolderRequestItem,
       createDealFolderRequest,
       createDealFolderResponse,
@@ -227,7 +226,6 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
-  exporterName: string;
   createDealFolderRequestItem: CreateDealFolderRequestItem;
   createDealFolderRequest: CreateDealFolderRequest;
   createDealFolderResponse: CreateFolderResponseDto;

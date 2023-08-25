@@ -13,7 +13,6 @@ describe('BuyerFolderCreationService', () => {
 
   const {
     siteId,
-    exporterName,
     createBuyerFolderRequestItem: { buyerName },
     sharepointServiceGetCaseSiteParams,
     sharepointServiceGetExporterSiteParams,
@@ -84,7 +83,7 @@ describe('BuyerFolderCreationService', () => {
     );
   });
 
-  const siteIdListItem = { fields: { id: exporterSiteId, Title: exporterName } };
+  const siteIdListItem = { fields: { id: exporterSiteId } };
   const exporterNameListItem = { fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { Url: siteUrl } } };
   const nonNumberId = 'not-a-number';
 
@@ -121,21 +120,21 @@ describe('BuyerFolderCreationService', () => {
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter site list item does not have an id field',
-      caseSiteListItemsMatchingSiteId: [{ fields: { notId: exporterSiteId, Title: exporterName } }],
+      caseSiteListItemsMatchingSiteId: [{ fields: { notId: exporterSiteId } }],
       exporterSiteListItemsMatchingSiteId: [exporterNameListItem],
       expectedErrorClass: SiteExporterInvalidException,
       expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter site list item has an empty string id field',
-      caseSiteListItemsMatchingSiteId: [{ fields: { id: '', Title: exporterName } }],
+      caseSiteListItemsMatchingSiteId: [{ fields: { id: '' } }],
       exporterSiteListItemsMatchingSiteId: [exporterNameListItem],
       expectedErrorClass: SiteExporterInvalidException,
       expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found buyer folder list item has an id field that cannot be parsed as a base-10 number',
-      caseSiteListItemsMatchingSiteId: [{ fields: { id: nonNumberId, Title: exporterName } }],
+      caseSiteListItemsMatchingSiteId: [{ fields: { id: nonNumberId } }],
       exporterSiteListItemsMatchingSiteId: [exporterNameListItem],
       expectedErrorClass: SiteExporterInvalidException,
       expectedErrorMessage: `The ID for the site found for site ${siteId} is not a number (the value is ${nonNumberId}).`,
@@ -150,51 +149,51 @@ describe('BuyerFolderCreationService', () => {
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a TermGuid field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { notTermGuid: termGuid, URL: termUrl, SiteURL: { Url: siteUrl }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { notTermGuid: termGuid, URL: termUrl, SiteURL: { Url: siteUrl } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string TermGuid field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: '', URL: termUrl, SiteURL: { Url: siteUrl }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: '', URL: termUrl, SiteURL: { Url: siteUrl } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a URL field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, notURL: termUrl, SiteURL: { Url: siteUrl }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, notURL: termUrl, SiteURL: { Url: siteUrl } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string URL field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: '', SiteURL: { Url: siteUrl }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: '', SiteURL: { Url: siteUrl } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a SiteURL field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl }, Title: exporterName } }] as any,
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl } } }] as any,
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing site URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a Url field on the SiteURL field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { notUrl: siteUrl }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { notUrl: siteUrl } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing site URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string Url field on the SiteURL field',
       caseSiteListItemsMatchingSiteId: [siteIdListItem],
-      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { Url: '' }, Title: exporterName } }],
+      exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { Url: '' } } }],
       expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing site URL for the list item found for exporter site ${siteId}.`,
     },
   ])('$description', async ({ caseSiteListItemsMatchingSiteId, exporterSiteListItemsMatchingSiteId, expectedErrorClass, expectedErrorMessage }) => {
     when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce(caseSiteListItemsMatchingSiteId);

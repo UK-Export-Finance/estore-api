@@ -13,7 +13,6 @@ describe('DealFolderCreationService', () => {
 
   const {
     siteId,
-    exporterName,
     createDealFolderRequestItem: { dealIdentifier, buyerName, destinationMarket, riskMarket },
     sharepointServiceGetBuyerDealFolderParams,
     sharepointServiceGetExporterSiteParams,
@@ -104,7 +103,7 @@ describe('DealFolderCreationService', () => {
   });
 
   const buyerNameListItem = { fields: { id: buyerFolderId } };
-  const exporterNameListItem = { fields: { TermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName } };
+  const exporterNameListItem = { fields: { TermGuid: exporterTermGuid, URL: exporterUrl } };
   const destinationMarketListItem = { fields: { TermGuid: destinationMarketTermGuid } };
   const riskMarketListItem = { fields: { TermGuid: riskMarketTermGuid } };
   const nonNumberId = 'not-a-number';
@@ -197,38 +196,38 @@ describe('DealFolderCreationService', () => {
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a TermGuid field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { notTermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName } }],
+      listItemsMatchingExporterName: [{ fields: { notTermGuid: exporterTermGuid, URL: exporterUrl } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string TermGuid field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: exporterUrl, Title: exporterName } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: exporterUrl } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a URL field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, notURL: exporterUrl, Title: exporterName } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, notURL: exporterUrl } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string URL field',
       listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, URL: '', Title: exporterName } }],
+      listItemsMatchingExporterName: [{ fields: { TermGuid: exporterTermGuid, URL: '' } }],
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyNotFoundException if the destinationMarket is not found in the taxonomyHiddenListTermStore',

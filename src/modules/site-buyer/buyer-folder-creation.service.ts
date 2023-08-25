@@ -27,15 +27,14 @@ export class BuyerFolderCreationService {
   async createBuyerFolder(siteId: string, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
     const { buyerName } = createBuyerFolderRequestItem;
 
-    const { caseSiteId, exporterName } = await this.getCaseSiteIdAndName(siteId);
-    const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId, exporterName);
-
+    const { caseSiteId } = await this.getCaseSiteId(siteId);
+    const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId);
     await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
 
     return buyerName;
   }
 
-  private async getCaseSiteIdAndName(siteId: string) {
+  private async getCaseSiteId(siteId: string) {
     const searchResults = await this.sharepointService.getCaseSite(siteId);
 
     if (!searchResults.length) {
@@ -44,7 +43,7 @@ export class BuyerFolderCreationService {
 
     const [
       {
-        fields: { id: idString, Title },
+        fields: { id: idString },
       },
     ] = searchResults;
 
@@ -56,10 +55,10 @@ export class BuyerFolderCreationService {
     if (isNaN(caseSiteId)) {
       throw new SiteExporterInvalidException(`The ID for the site found for site ${siteId} is not a number (the value is ${idString}).`);
     }
-    return { caseSiteId, exporterName: Title };
+    return { caseSiteId };
   }
 
-  private async getBuyerTermFromList(siteId: string, exporterName: string) {
+  private async getBuyerTermFromList(siteId: string) {
     const searchResults = await this.sharepointService.getExporterSite(siteId);
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for siteId ${siteId} in the tfisCaseSitesList.`);
@@ -72,13 +71,13 @@ export class BuyerFolderCreationService {
     ] = searchResults;
 
     if (!buyerTermGuid) {
-      throw new SiteExporterInvalidException(`Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing TermGuid for the list item found for exporter site ${siteId}.`);
     }
     if (!buyerUrl) {
-      throw new SiteExporterInvalidException(`Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing URL for the list item found for exporter site ${siteId}.`);
     }
     if (!siteUrl?.Url) {
-      throw new SiteExporterInvalidException(`Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing site URL for the list item found for exporter site ${siteId}.`);
     }
 
     return { buyerTermGuid, buyerUrl };

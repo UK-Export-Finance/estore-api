@@ -123,7 +123,6 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 
     return {
       siteId,
-      exporterName,
       createBuyerFolderRequestItem,
       createBuyerFolderRequest,
       createBuyerFolderResponse,
@@ -166,7 +165,6 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
-  exporterName: string;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;

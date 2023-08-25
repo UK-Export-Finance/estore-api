@@ -78,23 +78,23 @@ export class DealFolderCreationService {
     return buyerFolderId;
   }
 
-  private async getExporterDetails({ siteId }: { siteId: string }): Promise<{ exporterTermGuid: string; exporterUrl: string; exporterName: string }> {
+  private async getExporterDetails({ siteId }: { siteId: string }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
     const exporterTermSearchResults = await this.sharepointService.getExporterSite(siteId);
     if (exporterTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the siteId ${siteId} in the tfisCaseSitesList.`);
     }
     const [
       {
-        fields: { TermGuid: exporterTermGuid, URL: exporterUrl, Title: exporterName },
+        fields: { TermGuid: exporterTermGuid, URL: exporterUrl },
       },
     ] = exporterTermSearchResults;
     if (!exporterTermGuid) {
-      throw new FolderDependencyInvalidException(`Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new FolderDependencyInvalidException(`Missing TermGuid for the list item found for exporter site ${siteId}.`);
     }
     if (!exporterUrl) {
-      throw new FolderDependencyInvalidException(`Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new FolderDependencyInvalidException(`Missing URL for the list item found for exporter site ${siteId}.`);
     }
-    return { exporterTermGuid, exporterUrl, exporterName };
+    return { exporterTermGuid, exporterUrl };
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {

@@ -18,7 +18,6 @@ describe('POST /sites/{siteId}/deals', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    exporterName,
     createDealFolderRequestItem: { buyerName, destinationMarket, riskMarket },
     createDealFolderRequest,
     createDealFolderResponse,
@@ -216,15 +215,15 @@ describe('POST /sites/{siteId}/deals', () => {
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
-        ExporterRequestListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), Title: exporterName } }],
+        ExporterRequestListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string() } }],
         statusCode: 400,
-        message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
-        ExporterRequestListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), Title: exporterName } }],
+        ExporterRequestListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string() } }],
         statusCode: 400,
-        message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing URL for the list item found for exporter site ${siteId}.`,
       },
     ])('$description', async ({ ExporterRequestListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();

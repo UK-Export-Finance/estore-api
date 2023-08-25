@@ -16,7 +16,6 @@ describe('POST /sites/{siteId}/buyers', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    exporterName,
     createBuyerFolderRequest,
     createBuyerFolderResponse,
     scCaseSitesListSiteRequest,
@@ -165,35 +164,27 @@ describe('POST /sites/{siteId}/buyers', () => {
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
-        exporterNameListItems: [
-          { fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
-        ],
+        exporterNameListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
         statusCode: 400,
-        message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
-        exporterNameListItems: [
-          { fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
-        ],
+        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string(), SiteURL: { Url: valueGenerator.string() } } }],
         statusCode: 400,
-        message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing URL for the list item found for exporter site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a SiteURL field',
-        exporterNameListItems: [
-          { fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), notSiteURL: { Url: valueGenerator.string() }, Title: exporterName } },
-        ],
+        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), notSiteURL: { Url: valueGenerator.string() } } }],
         statusCode: 400,
-        message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing site URL for the list item found for exporter site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a Url field on the SiteURL field',
-        exporterNameListItems: [
-          { fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { notUrl: valueGenerator.string() }, Title: exporterName } },
-        ],
+        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), URL: valueGenerator.string(), SiteURL: { notUrl: valueGenerator.string() } } }],
         statusCode: 400,
-        message: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing site URL for the list item found for exporter site ${siteId}.`,
       },
     ])('$description', async ({ exporterNameListItems, statusCode, message }) => {
       mockSuccessfulScCaseSitesListSiteRequest();
