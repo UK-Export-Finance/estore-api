@@ -28,6 +28,8 @@ describe('Create Site Deal Facility Folder', () => {
     tfisFacilityListParentFolderRequest,
     tfisFacilityListParentFolderResponse,
     custodianCreateAndProvisionRequest,
+    tfisFacilityFolderRequest,
+    tfisFacilityFolderResponse,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
@@ -59,6 +61,7 @@ describe('Create Site Deal Facility Folder', () => {
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulTfisFacilityListParentFolderRequest();
       mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+      mockSuccessfulTfisFacilityFolderRequest();
       mockSuccessfulCreateAndProvision();
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
@@ -119,6 +122,7 @@ describe('Create Site Deal Facility Folder', () => {
   it('returns the name of the folder created with status code 201 when successful', async () => {
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulTfisFacilityFolderRequest();
     mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
@@ -133,14 +137,31 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
       message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
+      statusCode: 400,
+    });
+  });
+
+  it('returns a 400 if Facility folder already exists', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityFolderRequest.filter)
+      .mockSuccessfulGraphGetCall({ value: [{ any: 'value' }] });
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(400);
+    expect(body).toStrictEqual({
+      message: `Bad request`,
+      error: `Facility folder ${createFacilityFolderResponseDto.folderName} already exists`,
       statusCode: 400,
     });
   });
@@ -154,8 +175,6 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
 
@@ -175,8 +194,6 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
 
@@ -197,8 +214,6 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockSuccessfulCreateAndProvision();
 
     const { status, body } = await makeRequest();
 
@@ -211,7 +226,6 @@ describe('Create Site Deal Facility Folder', () => {
 
   it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest returns an empty value list', async () => {
     mockSuccessfulTfisFacilityListParentFolderRequest();
-    mockSuccessfulCreateAndProvision();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
@@ -232,7 +246,6 @@ describe('Create Site Deal Facility Folder', () => {
     delete modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID;
 
     mockSuccessfulTfisFacilityListParentFolderRequest();
-    mockSuccessfulCreateAndProvision();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
@@ -253,7 +266,6 @@ describe('Create Site Deal Facility Folder', () => {
     modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID = '';
 
     mockSuccessfulTfisFacilityListParentFolderRequest();
-    mockSuccessfulCreateAndProvision();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.expand)
@@ -330,6 +342,12 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCall()
       .mockSuccessfulGraphGetCall(tfisFacilityHiddenListTermStoreFacilityTermDataResponse);
 
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityFolderRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(tfisFacilityFolderResponse);
+
     custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
   };
 
@@ -347,6 +365,14 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(tfisFacilityListParentFolderResponse);
+  };
+
+  const mockSuccessfulTfisFacilityFolderRequest = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityFolderRequest.filter)
+      .mockSuccessfulGraphGetCall(tfisFacilityFolderResponse);
   };
 
   const mockSuccessfulCreateAndProvision = () => {

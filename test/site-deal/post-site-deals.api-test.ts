@@ -24,6 +24,8 @@ describe('POST /sites/{siteId}/deals', () => {
     createDealFolderResponse,
     tfisDealListBuyerRequest,
     tfisDealListBuyerResponse,
+    tfisGetDealFolderRequest,
+    tfisGetDealFolderResponse,
     tfisCaseSitesListExporterRequest,
     tfisCaseSitesListExporterResponse,
     taxonomyHiddenListTermStoreDestinationMarketRequest,
@@ -155,6 +157,7 @@ describe('POST /sites/{siteId}/deals', () => {
   it('returns the name of the folder created with status code 201 when successful', async () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
+    mockSuccessfulGetDealFolderRequest();
     mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
     mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
     mockSuccessfulCreateAndProvision();
@@ -264,6 +267,7 @@ describe('POST /sites/{siteId}/deals', () => {
     ])('$description', async ({ destinationMarketListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
+      mockSuccessfulGetDealFolderRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
         .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
@@ -279,6 +283,44 @@ describe('POST /sites/{siteId}/deals', () => {
         message,
         statusCode,
       });
+    });
+  });
+
+  describe('deal folder exists error cases', () => {
+    it.each([
+      {
+        description: 'returns a 400 if deal folder already exists in sharepoint',
+        existingDealFolderListItems: { value: [{ any: 'value' }] },
+        responseBody: {
+          statusCode: 400,
+          message: `Bad request`,
+          error: `Deal folder ${createDealFolderResponse.folderName} already exists`,
+        },
+      },
+      {
+        description: 'returns a 500 if deal folder presence check fails',
+        existingDealFolderListItems: [],
+        responseBody: {
+          statusCode: 500,
+          message: `Internal server error`,
+        },
+      },
+    ])('$description', async ({ existingDealFolderListItems, responseBody }) => {
+      mockSuccessfulTfisDealListBuyerRequest();
+      mockSuccessfulTfisCaseSitesListExporterRequest();
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(tfisGetDealFolderRequest.path)
+        .mockSuccessfulExpandCallWithExpandString(tfisGetDealFolderRequest.expand)
+        .mockSuccessfulFilterCallWithFilterString(tfisGetDealFolderRequest.filter)
+        .mockSuccessfulGraphGetCall(existingDealFolderListItems);
+      mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
+      mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
+      mockSuccessfulCreateAndProvision();
+
+      const { status, body } = await makeRequest();
+
+      expect(status).toBe(responseBody.statusCode);
+      expect(body).toStrictEqual(responseBody);
     });
   });
 
@@ -299,6 +341,7 @@ describe('POST /sites/{siteId}/deals', () => {
     ])('$description', async ({ riskMarketListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
+      mockSuccessfulGetDealFolderRequest();
       mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
@@ -385,6 +428,12 @@ describe('POST /sites/{siteId}/deals', () => {
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
 
     mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisGetDealFolderRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(tfisGetDealFolderResponse);
+
+    mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
       .mockSuccessfulExpandCall()
       .mockSuccessfulFilterCall()
@@ -413,6 +462,14 @@ describe('POST /sites/{siteId}/deals', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
+  };
+
+  const mockSuccessfulGetDealFolderRequest = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisGetDealFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisGetDealFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisGetDealFolderRequest.filter)
+      .mockSuccessfulGraphGetCall(tfisGetDealFolderResponse);
   };
 
   const mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest = () => {

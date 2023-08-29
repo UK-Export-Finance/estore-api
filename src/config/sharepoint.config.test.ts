@@ -17,6 +17,10 @@ describe('sharepointConfig', () => {
       environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_LIST_ID',
     },
     {
+      configPropertyName: 'tfisFacilityListTitle',
+      environmentVariableName: 'SHAREPOINT_TFIS_FACILITY_LIST_TITLE',
+    },
+    {
       configPropertyName: 'tfisDealListId',
       environmentVariableName: 'SHAREPOINT_TFIS_DEAL_LIST_ID',
     },

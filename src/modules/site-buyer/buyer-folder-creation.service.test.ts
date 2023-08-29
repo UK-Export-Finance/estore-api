@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
@@ -15,6 +16,7 @@ describe('BuyerFolderCreationService', () => {
     siteId,
     createBuyerFolderRequestItem: { exporterName, buyerName },
     sharepointServiceGetCaseSiteParams,
+    sharepointServiceGetBuyerFolderParams,
     sharepointServiceGetExporterSiteParams,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
@@ -55,15 +57,18 @@ describe('BuyerFolderCreationService', () => {
   };
 
   let getCaseSite: jest.Mock;
+  let getBuyerFolder: jest.Mock;
   let getExporterSite: jest.Mock;
   let custodianCreateAndProvision: jest.Mock;
   let service: BuyerFolderCreationService;
 
   beforeEach(() => {
     getCaseSite = jest.fn();
+    getBuyerFolder = jest.fn();
     getExporterSite = jest.fn();
     const sharepointService = new SharepointService(null, null);
     sharepointService.getCaseSite = getCaseSite;
+    sharepointService.getBuyerFolder = getBuyerFolder;
     sharepointService.getExporterSite = getExporterSite;
 
     custodianCreateAndProvision = jest.fn();
@@ -91,6 +96,7 @@ describe('BuyerFolderCreationService', () => {
     it('sends a request to Custodian to create and provision the buyer folder', async () => {
       when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerFolderParams).mockResolvedValueOnce([]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       await service.createBuyerFolder(siteId, { exporterName, buyerName });
@@ -102,6 +108,7 @@ describe('BuyerFolderCreationService', () => {
     it('returns the buyer name', async () => {
       when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerFolderParams).mockResolvedValueOnce([]);
       when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       const response = await service.createBuyerFolder(siteId, { exporterName, buyerName });
@@ -110,99 +117,128 @@ describe('BuyerFolderCreationService', () => {
     });
   });
 
-  it.each([
-    {
-      description: 'throws a SiteExporterNotFoundException if the exporter site list item is not found',
-      listItemsMatchingSiteId: [],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      expectedErrorClass: SiteExporterNotFoundException,
-      expectedErrorMessage: `Did not find the site ${siteId} in the scCaseSitesList.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter site list item does not have an id field',
-      listItemsMatchingSiteId: [{ fields: { notId: exporterSiteId } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter site list item has an empty string id field',
-      listItemsMatchingSiteId: [{ fields: { id: '' } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found buyer folder list item has an id field that cannot be parsed as a base-10 number',
-      listItemsMatchingSiteId: [{ fields: { id: nonNumberId } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `The ID for the site found for site ${siteId} is not a number (the value is ${nonNumberId}).`,
-    },
-    {
-      description: 'throws a SiteExporterNotFoundException if the exporterName is not found in the tfisCaseSitesList',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [],
-      expectedErrorClass: SiteExporterNotFoundException,
-      expectedErrorMessage: `Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a TermGuid field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { notTermGuid: termGuid, URL: termUrl, SiteURL: { Url: siteUrl } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string TermGuid field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: termUrl, SiteURL: { Url: siteUrl } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a URL field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, notURL: termUrl, SiteURL: { Url: siteUrl } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string URL field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: '', SiteURL: { Url: siteUrl } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a SiteURL field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl } } }] as any,
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a Url field on the SiteURL field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { notUrl: siteUrl } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string Url field on the SiteURL field',
-      listItemsMatchingSiteId: [siteIdListItem],
-      listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { Url: '' } } }],
-      expectedErrorClass: SiteExporterInvalidException,
-      expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
-    },
-  ])('$description', async ({ listItemsMatchingSiteId, listItemsMatchingExporterName, expectedErrorClass, expectedErrorMessage }) => {
-    when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce(listItemsMatchingSiteId);
-    when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
-    when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
+  describe('createBuyerFolder exceptions', () => {
+    it.each([
+      {
+        description: 'throws a SiteExporterNotFoundException if the exporter site list item is not found',
+        listItemsMatchingSiteId: [],
+        listItemsMatchingExporterName: [exporterNameListItem],
+        expectedErrorClass: SiteExporterNotFoundException,
+        expectedErrorMessage: `Did not find the site ${siteId} in the scCaseSitesList.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter site list item does not have an id field',
+        listItemsMatchingSiteId: [{ fields: { notId: exporterSiteId } }],
+        listItemsMatchingExporterName: [exporterNameListItem],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter site list item has an empty string id field',
+        listItemsMatchingSiteId: [{ fields: { id: '' } }],
+        listItemsMatchingExporterName: [exporterNameListItem],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing ID for the site found with id ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found buyer folder list item has an id field that cannot be parsed as a base-10 number',
+        listItemsMatchingSiteId: [{ fields: { id: nonNumberId } }],
+        listItemsMatchingExporterName: [exporterNameListItem],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `The ID for the site found for site ${siteId} is not a number (the value is ${nonNumberId}).`,
+      },
+      {
+        description: 'throws a SiteExporterNotFoundException if the exporterName is not found in the tfisCaseSitesList',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [],
+        expectedErrorClass: SiteExporterNotFoundException,
+        expectedErrorMessage: `Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a TermGuid field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { notTermGuid: termGuid, URL: termUrl, SiteURL: { Url: siteUrl } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string TermGuid field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: '', URL: termUrl, SiteURL: { Url: siteUrl } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a URL field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, notURL: termUrl, SiteURL: { Url: siteUrl } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string URL field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: '', SiteURL: { Url: siteUrl } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a SiteURL field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl } } }] as any,
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a Url field on the SiteURL field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { notUrl: siteUrl } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+      {
+        description: 'throws a SiteExporterInvalidException if the found exporter list item has an empty string Url field on the SiteURL field',
+        listItemsMatchingSiteId: [siteIdListItem],
+        listItemsMatchingExporterName: [{ fields: { TermGuid: termGuid, URL: termUrl, SiteURL: { Url: '' } } }],
+        expectedErrorClass: SiteExporterInvalidException,
+        expectedErrorMessage: `Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      },
+    ])('$description', async ({ listItemsMatchingSiteId, listItemsMatchingExporterName, expectedErrorClass, expectedErrorMessage }) => {
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce(listItemsMatchingSiteId);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
-    const createBuyerFolderPromise = service.createBuyerFolder(siteId, { exporterName, buyerName });
+      const createBuyerFolderPromise = service.createBuyerFolder(siteId, { exporterName, buyerName });
 
-    await expect(createBuyerFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
-    await expect(createBuyerFolderPromise).rejects.toThrow(expectedErrorMessage);
+      await expect(createBuyerFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
+      await expect(createBuyerFolderPromise).rejects.toThrow(expectedErrorMessage);
+    });
+
+    it('throws a SiteExporterInvalidException if the found exporter list item has an empty string Url field on the SiteURL field', async () => {
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerFolderParams).mockResolvedValueOnce([]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
+
+      await service.createBuyerFolder(siteId, { exporterName, buyerName });
+
+      expect(custodianCreateAndProvision).toHaveBeenCalledTimes(1);
+      expect(custodianCreateAndProvision).toHaveBeenCalledWith(expectedCustodianRequestToCreateBuyerFolder);
+    });
+
+    it('throws a BadRequestException if Buyer folder exists in Sharepoint', async () => {
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getBuyerFolder)
+        .calledWith(sharepointServiceGetBuyerFolderParams)
+        .mockResolvedValueOnce([{ any: 'value' }]);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
+
+      const responsePromise = service.createBuyerFolder(siteId, { exporterName, buyerName });
+
+      await expect(responsePromise).rejects.toBeInstanceOf(BadRequestException);
+      await expect(responsePromise).rejects.toThrow('Bad request');
+      await expect(responsePromise).rejects.toHaveProperty('response.error', `Buyer folder ${buyerName} already exists`);
+    });
   });
 });

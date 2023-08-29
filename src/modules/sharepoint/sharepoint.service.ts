@@ -33,6 +33,11 @@ export interface SharepointGetDealFolderParams {
   dealFolderName: string;
 }
 
+export interface SharepointGetFacilityFolderParams {
+  siteId: string;
+  facilityFolderName: string;
+}
+
 export interface SharepointGetBuyerFolderParams {
   siteId: string;
   buyerName: string;
@@ -58,12 +63,23 @@ export interface SharepointupdateFileInformationParams {
     };
   };
 }
-export interface SharepointFindListItems<Fields> {
+
+interface SharepointFindListItemsBase<Fields> {
   siteUrl: string;
-  listId: string;
   fieldsToReturn: (keyof Fields)[];
   filter: ListItemFilter;
 }
+interface SharepointFindListItemsByTitle<Fields> extends SharepointFindListItemsBase<Fields> {
+  listId?: never;
+  listTitle: string;
+}
+
+interface SharepointFindListItemsById<Fields> extends SharepointFindListItemsBase<Fields> {
+  listId: string;
+  listTitle?: never;
+}
+
+export type SharepointFindListItems<Fields> = SharepointFindListItemsById<Fields> | SharepointFindListItemsByTitle<Fields>;
 
 @Injectable()
 export class SharepointService {
@@ -147,6 +163,24 @@ export class SharepointService {
     });
   }
 
+  getFacilityFolder({
+    siteId,
+    facilityFolderName,
+  }: SharepointGetFacilityFolderParams): Promise<ListItem<{ Title: string; ServerRelativeUrl: string; Code: string; id: string; ParentCode: string }>[]> {
+    return this.findListItems<{
+      Title: string;
+      ServerRelativeUrl: string;
+      Code: string;
+      id: string;
+      ParentCode: string;
+    }>({
+      siteUrl: this.sharepointConfig.scSharepointUrl,
+      listTitle: this.sharepointConfig.tfisFacilityListTitle,
+      fieldsToReturn: ['Title', 'ServerRelativeUrl', 'Code', 'id', 'ParentCode'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'ServerRelativeUrl', targetValue: `/sites/${siteId}/CaseLibrary/${facilityFolderName}` }),
+    });
+  }
+
   getFacilityTerm(facilityIdentifier: string): Promise<ListItem<{ FacilityGUID: string; Title: string }>[]> {
     return this.findListItems<{ FacilityGUID: string; Title: string }>({
       siteUrl: this.sharepointConfig.tfisSharepointUrl,
@@ -219,10 +253,10 @@ export class SharepointService {
     return this.graphService.uploadFile({ file, fileSizeInBytes, fileName, urlToCreateUploadSession });
   }
 
-  private async findListItems<Fields>({ siteUrl, listId, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
+  private async findListItems<Fields>({ siteUrl, listId, listTitle, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
     const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
-      path: `${siteUrl}/lists/${listId}/items`,
+      path: `${siteUrl}/lists/${listId || listTitle}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
