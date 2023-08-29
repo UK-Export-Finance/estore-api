@@ -15,14 +15,14 @@ describe('SiteService', () => {
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
 
-  let getExporterSite: jest.Mock;
+  let getExporterSiteByName: jest.Mock;
 
   let siteService: SiteService;
 
   beforeEach(() => {
-    getExporterSite = jest.fn();
+    getExporterSiteByName = jest.fn();
     const sharepointService = new SharepointService(null, null);
-    sharepointService.getExporterSite = getExporterSite;
+    sharepointService.getExporterSiteByName = getExporterSiteByName;
 
     const mdmService = new MdmService(null);
     siteService = new SiteService(sharepointService, mdmService);
@@ -38,7 +38,7 @@ describe('SiteService', () => {
     } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
 
     it('returns the site id and status from the service', async () => {
-      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
+      when(getExporterSiteByName).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 
       const response = await siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest);
 
@@ -46,7 +46,7 @@ describe('SiteService', () => {
     });
 
     it('throws a SiteNotFoundException if the site does not exist', async () => {
-      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
+      when(getExporterSiteByName).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
 
       await expect(siteService.getSiteStatusByExporterName(siteServiceGetSiteStatusByExporterNameRequest)).rejects.toThrow(
         new SiteNotFoundException(`Site not found for exporter name: ${siteServiceGetSiteStatusByExporterNameRequest}`),

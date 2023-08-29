@@ -127,6 +127,25 @@ export class SharepointService {
     });
   }
 
+  getExporterSiteByName(exporterName: string): Promise<
+    ListItem<{
+      Title: string;
+      URL: string;
+      Sitestatus: string;
+      TermGuid: string;
+      SiteURL: {
+        Url: string;
+      };
+    }>[]
+  > {
+    return this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
+      siteUrl: this.sharepointConfig.tfisSharepointUrl,
+      listId: this.sharepointConfig.tfisCaseSitesListId,
+      fieldsToReturn: ['Title', 'URL', 'Sitestatus', 'TermGuid', 'SiteURL'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'Title', targetValue: exporterName }),
+    });
+  }
+
   getBuyerFolder({ siteId, buyerName }: SharepointGetBuyerFolderParams): Promise<ListItem<{ id: string }>[]> {
     return this.findListItems<{ id: string }>({
       siteUrl: this.sharepointConfig.scSharepointUrl,
