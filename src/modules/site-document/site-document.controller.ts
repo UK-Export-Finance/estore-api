@@ -3,16 +3,16 @@ import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerEr
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { DtfsStorageExceptionTransformInterceptor } from '@ukef/modules/dtfs-storage/interceptor/dtfs-storage-exception-transform.interceptor';
 
-import { DealFolderService } from './deal-folder.service';
 import { UploadFileInDealFolderParamsDto } from './dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto, UploadFileInDealFolderRequestItem } from './dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
-import { DealFolderExceptionTransformInterceptor } from './interceptor/deal-folder-exception-transform.interceptor';
+import { SiteDocumentExceptionTransformInterceptor } from './interceptor/site-document-exception-transform.interceptor';
+import { SiteDocumentService } from './site-document.service';
 
-@UseInterceptors(DealFolderExceptionTransformInterceptor, DtfsStorageExceptionTransformInterceptor)
+@UseInterceptors(SiteDocumentExceptionTransformInterceptor, DtfsStorageExceptionTransformInterceptor)
 @Controller()
-export class DealFolderController {
-  constructor(private readonly service: DealFolderService) {}
+export class SiteDocumentController {
+  constructor(private readonly service: SiteDocumentService) {}
 
   @Post('sites/:siteId/deals/:dealId/documents')
   @ApiOperation({ summary: 'Upload a file in the deal folder.' })

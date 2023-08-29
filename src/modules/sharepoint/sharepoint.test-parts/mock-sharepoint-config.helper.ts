@@ -11,6 +11,7 @@ export const getMockSharepointConfig = (): SharepointConfig => {
     scSiteFullUrl: valueGenerator.word(),
     scCaseSitesListId: valueGenerator.word(),
     tfisFacilityListId: valueGenerator.word(),
+    tfisFacilityListTitle: valueGenerator.word(),
     tfisFacilityHiddenListTermStoreId: valueGenerator.word(),
     tfisDealListId: valueGenerator.word(),
     tfisCaseSitesListId: valueGenerator.word(),

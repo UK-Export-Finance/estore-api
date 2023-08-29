@@ -2,7 +2,7 @@ import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
-import { SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
+import { SharepointGetDealFolderParams, SharepointGetFacilityFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
@@ -71,6 +71,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisFacilityHiddenListTermStoreId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID;
     const sharepointConfigTfisFacilityListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_LIST_ID;
+    const sharepointConfigTfisFacilityListTitle = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_FACILITY_LIST_TITLE;
 
     const createFacilityFolderParamsDto: CreateFacilityFolderParamsDto = {
       siteId,
@@ -107,14 +108,24 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       expand: 'fields($select=Title,ServerRelativeUrl,Code,ID,ParentCode)',
     };
 
+    const tfisFacilityFolderRequest: GraphGetParams = {
+      path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTfisFacilityListTitle}/items`,
+      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}/${facilityFolderName}'`,
+      expand: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
+    };
+
     const tfisFacilityListParentFolderResponse = new GraphListItemsGenerator<TfisFacilityListParentFolderResponseFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
 
+    const tfisFacilityFolderResponse = { value: [] };
+
     const sharepointServiceGetDealFolderParams = { siteId, dealFolderName };
 
     const sharepointServiceGetFacilityTermParams = facilityIdentifier;
+
+    const sharepointServiceGetFacilityFolderParams = { siteId, facilityFolderName: `${dealFolderName}/${facilityFolderName}` };
 
     const custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest = {
       Title: facilityFolderName,
@@ -147,6 +158,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
       sharepointServiceGetDealFolderParams,
       sharepointServiceGetFacilityTermParams,
+      sharepointServiceGetFacilityFolderParams,
 
       tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
       tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
@@ -154,7 +166,10 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       tfisFacilityListParentFolderRequest,
       tfisFacilityListParentFolderResponse,
 
+      tfisFacilityFolderRequest,
+
       custodianCreateAndProvisionRequest,
+      tfisFacilityFolderResponse,
     };
   }
 }
@@ -192,12 +207,16 @@ interface GenerateResult {
 
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
   sharepointServiceGetFacilityTermParams: UkefId;
+  sharepointServiceGetFacilityFolderParams: SharepointGetFacilityFolderParams;
 
   tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams;
   tfisFacilityHiddenListTermStoreFacilityTermDataResponse: GraphGetListItemsResponseDto<TfisFacilityHiddenListTermStoreFields>;
 
   tfisFacilityListParentFolderRequest: GraphGetParams;
   tfisFacilityListParentFolderResponse: GraphGetListItemsResponseDto<TfisFacilityListParentFolderResponseFields>;
+
+  tfisFacilityFolderRequest: GraphGetParams;
+  tfisFacilityFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }

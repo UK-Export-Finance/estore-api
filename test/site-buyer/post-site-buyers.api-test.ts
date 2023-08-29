@@ -22,6 +22,8 @@ describe('POST /sites/{siteId}/buyers', () => {
     scCaseSitesListSiteResponse,
     tfisCaseSitesListExporterRequest,
     tfisCaseSitesListExporterResponse,
+    tfisBuyerFolderRequest,
+    tfisBuyerFolderResponse,
     custodianCreateAndProvisionRequest,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
@@ -51,6 +53,7 @@ describe('POST /sites/{siteId}/buyers', () => {
   withClientAuthenticationTests({
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulScCaseSitesListSiteRequest();
+      mockSuccessfulGetBuyerFolderRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockSuccessfulCreateAndProvision();
     },
@@ -61,6 +64,7 @@ describe('POST /sites/{siteId}/buyers', () => {
   withCustodianCreateAndProvisionErrorCasesApiTests({
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulScCaseSitesListSiteRequest();
+      mockSuccessfulGetBuyerFolderRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
     },
     makeRequest: () => makeRequest(),
@@ -72,6 +76,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       testName: 'scCaseSitesListSiteRequest',
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulTfisCaseSitesListExporterRequest();
+        mockSuccessfulGetBuyerFolderRequest();
         mockSuccessfulCreateAndProvision();
       },
       givenGraphServiceCallWillThrowError: (error: Error) => {
@@ -86,6 +91,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       testName: 'tfisCaseSitesListExporterRequest',
       givenRequestWouldOtherwiseSucceed: () => {
         mockSuccessfulScCaseSitesListSiteRequest();
+        mockSuccessfulGetBuyerFolderRequest();
         mockSuccessfulCreateAndProvision();
       },
       givenGraphServiceCallWillThrowError: (error: Error) => {
@@ -106,6 +112,7 @@ describe('POST /sites/{siteId}/buyers', () => {
 
   it('returns the buyer name with status code 201 when successful', async () => {
     mockSuccessfulScCaseSitesListSiteRequest();
+    mockSuccessfulGetBuyerFolderRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulCreateAndProvision();
 
@@ -141,6 +148,7 @@ describe('POST /sites/{siteId}/buyers', () => {
         .mockSuccessfulExpandCallWithExpandString(scCaseSitesListSiteRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter)
         .mockSuccessfulGraphGetCall({ value: siteIdListItems });
+      mockSuccessfulGetBuyerFolderRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockSuccessfulCreateAndProvision();
 
@@ -151,6 +159,42 @@ describe('POST /sites/{siteId}/buyers', () => {
         message,
         statusCode,
       });
+    });
+  });
+
+  describe('buyer folder exists error cases', () => {
+    it.each([
+      {
+        description: 'returns a 400 if buyer folder already exists in sharepoint',
+        existingBuyerFolderListItems: { value: [{ any: 'value' }] },
+        responseBody: {
+          statusCode: 400,
+          message: `Bad request`,
+          error: `Buyer folder ${createBuyerFolderResponse.buyerName} already exists`,
+        },
+      },
+      {
+        description: 'returns a 500 if buyer folder presence check fails',
+        existingBuyerFolderListItems: [],
+        responseBody: {
+          statusCode: 500,
+          message: `Internal server error`,
+        },
+      },
+    ])('$description', async ({ existingBuyerFolderListItems, responseBody }) => {
+      mockSuccessfulScCaseSitesListSiteRequest();
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
+        .mockSuccessfulExpandCallWithExpandString(tfisBuyerFolderRequest.expand)
+        .mockSuccessfulFilterCallWithFilterString(tfisBuyerFolderRequest.filter)
+        .mockSuccessfulGraphGetCall(existingBuyerFolderListItems);
+      mockSuccessfulTfisCaseSitesListExporterRequest();
+      mockSuccessfulCreateAndProvision();
+
+      const { status, body } = await makeRequest();
+
+      expect(status).toBe(responseBody.statusCode);
+      expect(body).toStrictEqual(responseBody);
     });
   });
 
@@ -188,6 +232,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       },
     ])('$description', async ({ exporterNameListItems, statusCode, message }) => {
       mockSuccessfulScCaseSitesListSiteRequest();
+      mockSuccessfulGetBuyerFolderRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
         .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
@@ -238,6 +283,12 @@ describe('POST /sites/{siteId}/buyers', () => {
       .mockSuccessfulFilterCall()
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
 
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(tfisBuyerFolderResponse);
+
     custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
   };
 
@@ -255,6 +306,14 @@ describe('POST /sites/{siteId}/buyers', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
+  };
+
+  const mockSuccessfulGetBuyerFolderRequest = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
+      .mockSuccessfulFilterCallWithFilterString(tfisBuyerFolderRequest.filter)
+      .mockSuccessfulExpandCallWithExpandString(tfisBuyerFolderRequest.expand)
+      .mockSuccessfulGraphGetCall(tfisBuyerFolderResponse);
   };
 
   const mockSuccessfulCreateAndProvision = () => {

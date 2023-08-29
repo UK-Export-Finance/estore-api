@@ -1,6 +1,7 @@
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
+import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestDto, CreateBuyerFolderRequestItem } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
 import { CreateBuyerFolderResponseDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-response.dto';
 
@@ -57,6 +58,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointConfigScSharepointUrl = `sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com:/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
     const sharepointConfigTfisCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_CASE_SITES_LIST_ID;
+    const sharepointConfigTfisDealListId = ENVIRONMENT_VARIABLES.SHAREPOINT_TFIS_DEAL_LIST_ID;
     const sharepointConfigScCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_SC_CASE_SITES_LIST_ID;
 
     const createBuyerFolderRequestItem: CreateBuyerFolderRequestItem = {
@@ -72,6 +74,11 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointServiceGetCaseSiteParams = siteId;
     const sharepointServiceGetExporterSiteParams = siteId;
 
+    const sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams = {
+      siteId,
+      buyerName,
+    };
+
     const scCaseSitesListSiteRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigScCaseSitesListId}/items`,
       filter: `fields/CustodianSiteURL eq '${siteId}'`,
@@ -83,6 +90,14 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       filter: `fields/URL eq '${siteId}'`,
       expand: 'fields($select=TermGuid,Title,URL,SiteURL)',
     };
+
+    const tfisBuyerFolderRequest: GraphGetParams = {
+      path: `${sharepointConfigScSharepointUrl}:/lists/${sharepointConfigTfisDealListId}/items`,
+      filter: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
+      expand: 'fields($select=id)',
+    };
+
+    const tfisBuyerFolderResponse = { value: [] };
 
     const scCaseSitesListSiteResponse = new GraphListItemsGenerator<ScCaseSitesListFields>(this.valueGenerator).generate({
       numberToGenerate: 1,
@@ -126,10 +141,14 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       createBuyerFolderResponse,
 
       sharepointServiceGetCaseSiteParams,
+      sharepointServiceGetBuyerFolderParams,
       sharepointServiceGetExporterSiteParams,
 
       scCaseSitesListSiteRequest,
       scCaseSitesListSiteResponse,
+
+      tfisBuyerFolderRequest,
+      tfisBuyerFolderResponse,
 
       tfisCaseSitesListExporterRequest,
       tfisCaseSitesListExporterResponse,
@@ -168,6 +187,7 @@ interface GenerateResult {
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;
 
   sharepointServiceGetCaseSiteParams: string;
+  sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams;
   sharepointServiceGetExporterSiteParams: string;
 
   scCaseSitesListSiteRequest: GraphGetParams;
@@ -175,6 +195,9 @@ interface GenerateResult {
 
   tfisCaseSitesListExporterRequest: GraphGetParams;
   tfisCaseSitesListExporterResponse: GraphGetListItemsResponseDto<TfisCaseSitesListFields>;
+
+  tfisBuyerFolderRequest: GraphGetParams;
+  tfisBuyerFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
 }

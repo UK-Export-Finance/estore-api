@@ -1,5 +1,5 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { UploadFileInDealFolderExistsException } from '@ukef/modules/deal-folder/exception/upload-file-in-deal-folder-exists.exception';
+import { UploadFileInDealFolderExistsException } from '@ukef/modules/site-document/exception/upload-file-in-deal-folder-exists.exception';
 import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService, MockGraphRequest } from '@ukef-test/support/mocks/graph-client.service.mock';

@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
@@ -17,7 +18,9 @@ describe('DealFolderCreationService', () => {
     sharepointServiceGetBuyerDealFolderParams,
     sharepointServiceGetExporterSiteParams,
     sharepointServiceGetDestinationMarketParams,
+    sharepointServiceGetDealFolderParams,
     sharepointServiceGetRiskMarketParams,
+    createDealFolderResponse,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const scSiteFullUrl = valueGenerator.httpsUrl();
@@ -69,6 +72,7 @@ describe('DealFolderCreationService', () => {
   };
 
   let getBuyerFolder: jest.Mock;
+  let getDealFolder: jest.Mock;
   let getExporterSite: jest.Mock;
   let getMarketTerm: jest.Mock;
 
@@ -77,11 +81,13 @@ describe('DealFolderCreationService', () => {
 
   beforeEach(() => {
     getBuyerFolder = jest.fn();
+    getDealFolder = jest.fn();
     getExporterSite = jest.fn();
     getMarketTerm = jest.fn();
 
     const sharepointService = new SharepointService(null, null);
     sharepointService.getBuyerFolder = getBuyerFolder;
+    sharepointService.getDealFolder = getDealFolder;
     sharepointService.getExporterSite = getExporterSite;
     sharepointService.getMarketTerm = getMarketTerm;
 
@@ -111,6 +117,7 @@ describe('DealFolderCreationService', () => {
   describe('createDealFolder', () => {
     it('sends a request to Custodian to create and provision the deal folder', async () => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
+      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
@@ -130,6 +137,7 @@ describe('DealFolderCreationService', () => {
 
     it('returns the name of the created deal folder', async () => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
+      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
@@ -294,6 +302,7 @@ describe('DealFolderCreationService', () => {
       expectedErrorMessage,
     }) => {
       when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerName);
+      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce(listItemsMatchingDestinationMarket);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce(listItemsMatchingRiskMarket);
@@ -309,6 +318,51 @@ describe('DealFolderCreationService', () => {
 
       await expect(createDealFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
       await expect(createDealFolderPromise).rejects.toThrow(expectedErrorMessage);
+    },
+  );
+
+  it.each([
+    {
+      description: 'throws a BadRequestException if the facility folder already exists in Sharepoint',
+      listItemsMatchingBuyerName: [buyerNameListItem],
+      listItemsMatchingExporterName: [exporterNameListItem],
+      listItemsMatchingDestinationMarket: [destinationMarketListItem],
+      listItemsMatchingRiskMarket: [riskMarketListItem],
+      listItemsMatchingDealFolder: [{ any: 'value' }],
+      expectedErrorClass: BadRequestException,
+      expectedErrorMessage: 'Bad request',
+      expectedErrorDescription: `Deal folder ${createDealFolderResponse.folderName} already exists`,
+    },
+  ])(
+    '$description',
+    async ({
+      listItemsMatchingBuyerName,
+      listItemsMatchingExporterName,
+      listItemsMatchingDestinationMarket,
+      listItemsMatchingRiskMarket,
+      listItemsMatchingDealFolder,
+      expectedErrorClass,
+      expectedErrorMessage,
+      expectedErrorDescription,
+    }) => {
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerName);
+      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce(listItemsMatchingDealFolder);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
+      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce(listItemsMatchingDestinationMarket);
+      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce(listItemsMatchingRiskMarket);
+      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
+
+      const createDealFolderPromise = service.createDealFolder({
+        siteId,
+        dealIdentifier,
+        buyerName,
+        destinationMarket,
+        riskMarket,
+      });
+
+      await expect(createDealFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
+      await expect(createDealFolderPromise).rejects.toThrow(expectedErrorMessage);
+      await expect(createDealFolderPromise).rejects.toHaveProperty('response.error', expectedErrorDescription);
     },
   );
 });
