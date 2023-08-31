@@ -7,15 +7,16 @@ import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-ge
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
-import { MockMdmService } from '@ukef-test/support/mocks/mdm.service.mock';
+import { MockMdmApi } from '@ukef-test/support/mocks/mdm-api.mock';
 import { resetAllWhenMocks } from 'jest-when';
+import nock from 'nock';
 
 describe('createSite', () => {
   const valueGenerator = new RandomValueGenerator();
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
-  let mockMdmService: MockMdmService;
+  const mdmApi = new MockMdmApi(nock);
 
   const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
@@ -23,21 +24,26 @@ describe('createSite', () => {
 
   const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
 
-  const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
+  const { createSiteRequest, graphServicePostParams, graphCreateSiteResponseDto, mdmCreateNumbersRequest, mdmCreateNumbersResponse } = new CreateSiteGenerator(
+    valueGenerator,
+  ).generate({
     numberToGenerate: 1,
     status: ENUMS.SITE_STATUSES.PROVISIONING,
     exporterName,
   });
 
-  const { siteId } = createSiteResponse[0];
-
   beforeAll(async () => {
-    ({ api, mockGraphClientService, mockMdmService } = await Api.create());
+    ({ api, mockGraphClientService } = await Api.create());
   });
 
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+  });
+
+  afterEach(() => {
+    nock.abortPendingRequests();
+    nock.cleanAll();
   });
 
   afterAll(async () => {
@@ -52,7 +58,7 @@ describe('createSite', () => {
         .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
         .mockSuccessfulGraphGetCall({ value: [] });
 
-      mockMdmService.mockSuccessfulReturnValue(siteId);
+      mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
@@ -110,13 +116,13 @@ describe('createSite', () => {
 
     const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
 
-    const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
+    const { createSiteRequest, createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto, mdmCreateNumbersResponse } = new CreateSiteGenerator(
+      valueGenerator,
+    ).generate({
       numberToGenerate: 1,
       status: ENUMS.SITE_STATUSES.PROVISIONING,
       exporterName,
     });
-
-    const { siteId } = createSiteResponse[0];
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
@@ -124,7 +130,7 @@ describe('createSite', () => {
       .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    mockMdmService.mockSuccessfulReturnValue(siteId);
+    mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
@@ -154,7 +160,36 @@ describe('createSite', () => {
       .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
-    mockMdmService.mockMdmCallError();
+    mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(500, { message: 'Internal server error' });
+
+    const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
+    expect(status).toBe(500);
+    expect(body).toStrictEqual({
+      statusCode: 500,
+      message: 'Internal server error',
+    });
+  });
+
+  it('returns 500 with message Internal server error, if mdm call is unauthorised', async () => {
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      numberToGenerate: 1,
+    });
+
+    const { exporterName } = siteControllerGetSiteStatusByExporterNameQueryDto;
+
+    const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({
+      numberToGenerate: 1,
+      status: ENUMS.SITE_STATUSES.PROVISIONING,
+      exporterName,
+    });
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+      .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+      .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+      .mockSuccessfulGraphGetCall({ value: [] });
+
+    mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(401, 'Unauthorized');
 
     const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
     expect(status).toBe(500);
@@ -172,13 +207,11 @@ describe('createSite', () => {
         numberToGenerate: 1,
       });
 
-      const { createSiteResponse, graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
+      const { graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
         numberToGenerate: 1,
         status: ENUMS.SITE_STATUSES.PROVISIONING,
         exporterName,
       });
-
-      const { siteId } = createSiteResponse[0];
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
@@ -186,7 +219,7 @@ describe('createSite', () => {
         .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
         .mockSuccessfulGraphGetCall({ value: [] });
 
-      mockMdmService.mockSuccessfulReturnValue(siteId);
+      mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
 
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)

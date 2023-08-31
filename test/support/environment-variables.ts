@@ -75,3 +75,4 @@ export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
 const delayToExceedTimeoutByInMilliseconds = 1;
 
 export const TIME_EXCEEDING_CUSTODIAN_TIMEOUT = ENVIRONMENT_VARIABLES.CUSTODIAN_TIMEOUT + delayToExceedTimeoutByInMilliseconds;
+export const TIME_EXCEEDING_APIM_MDM_TIMEOUT = ENVIRONMENT_VARIABLES.APIM_MDM_TIMEOUT + delayToExceedTimeoutByInMilliseconds;

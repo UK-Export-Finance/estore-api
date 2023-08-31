@@ -5,13 +5,12 @@ import request from 'supertest';
 import { App } from './app';
 import { MockDtfsStorageClientService } from './mocks/dtfs-storage-client.service.mock';
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
-import { MockMdmService } from './mocks/mdm.service.mock';
 
 export class Api {
   static async create(): Promise<CreateApi> {
-    const { app, mockGraphClientService, mockMdmService, mockDtfsStorageClientService } = await App.create();
+    const { app, mockGraphClientService, mockDtfsStorageClientService } = await App.create();
     const api = new Api(app);
-    return { api, mockGraphClientService, mockMdmService, mockDtfsStorageClientService };
+    return { api, mockGraphClientService, mockDtfsStorageClientService };
   }
 
   constructor(private readonly app: App) {}
@@ -62,6 +61,5 @@ export class Api {
 interface CreateApi {
   api: Api;
   mockGraphClientService: MockGraphClientService;
-  mockMdmService: MockMdmService;
   mockDtfsStorageClientService: MockDtfsStorageClientService;
 }

@@ -39,10 +39,20 @@ describe('MdmService', () => {
 
     const createdNumbers: MdmCreateNumbersResponse = [
       {
+        id: valueGenerator.integer(),
         maskedId: valueGenerator.stringOfNumericCharacters(),
+        type: valueGenerator.integer(),
+        createdBy: valueGenerator.string(),
+        createdDatetime: valueGenerator.dateTimeString(),
+        requestingSystem: valueGenerator.string(),
       },
       {
+        id: valueGenerator.integer(),
         maskedId: valueGenerator.stringOfNumericCharacters(),
+        type: valueGenerator.integer(),
+        createdBy: valueGenerator.string(),
+        createdDatetime: valueGenerator.dateTimeString(),
+        requestingSystem: valueGenerator.string(),
       },
     ];
 
