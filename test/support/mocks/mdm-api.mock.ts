@@ -10,6 +10,12 @@ export class MockMdmApi {
     return this.buildNumbersRequestInterceptor(scope, requestBodyMatcher);
   }
 
+  requestGenerateNewNumbersAnyItem(): MdmApiRequestInterceptor {
+    const requestBodyPlaceholder = '*';
+    const scope = this.nockMdmRequest().filteringRequestBody(() => requestBodyPlaceholder);
+    return this.buildNumbersRequestInterceptor(scope, requestBodyPlaceholder);
+  }
+
   private nockMdmRequest(): nock.Scope {
     return this.nockInstance(ENVIRONMENT_VARIABLES.APIM_MDM_URL);
   }

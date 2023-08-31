@@ -1,5 +1,6 @@
 import { ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
+import { withMdmNumbersErrorCasesApiTests } from '@ukef-test/common-tests/mdm-numbers-error-cases-api-tests';
 import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
@@ -74,6 +75,18 @@ describe('createSite', () => {
       mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path).mockUnsuccessfulGraphGetCall(error);
     },
     makeRequest: () => api.post(`/api/v1/sites`, createSiteRequest),
+  });
+
+  withMdmNumbersErrorCasesApiTests({
+    givenTheRequestWouldOtherwiseSucceed: () => {
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
+        .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
+        .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+        .mockSuccessfulGraphGetCall({ value: [] });
+    },
+    makeRequest: () => api.post(`/api/v1/sites`, createSiteRequest),
+    mdmApi,
   });
 
   const statusCodeTestInputs = [
