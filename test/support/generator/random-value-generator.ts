@@ -1,6 +1,7 @@
 import { UKEFID } from '@ukef/constants';
 import { ALLOWED_DOCUMENT_FILE_TYPE } from '@ukef/constants/allowed-document-file-type.constant';
 import { UkefId } from '@ukef/helpers';
+import { DateString } from '@ukef/helpers/date-string.type';
 import { Chance } from 'chance';
 
 interface Enum {
@@ -77,6 +78,10 @@ export class RandomValueGenerator {
 
   date(): Date {
     return this.chance.date();
+  }
+
+  dateTimeString(): DateString {
+    return this.date().toISOString();
   }
 
   integer({ min, max }: { min?: number; max?: number } = {}): number {

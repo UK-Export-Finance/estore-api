@@ -1,6 +1,9 @@
 import { ENUMS } from '@ukef/constants';
 import { SiteStatusEnum } from '@ukef/constants/enums/site-status';
+import { DateString } from '@ukef/helpers/date-string.type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
+import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
+import { MdmCreateNumbersResponse } from '@ukef/modules/mdm/dto/mdm-create-numbers-response.dto';
 import { SharepointCreateSiteParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
 import { CreateSiteResponse } from '@ukef/modules/site/dto/create-site-response.dto';
@@ -18,6 +21,8 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
     return {
       exporterName: this.valueGenerator.exporterName(),
       siteId: this.valueGenerator.ukefSiteId(),
+      dbId: this.valueGenerator.integer(),
+      nowDate: this.valueGenerator.dateTimeString(),
     };
   }
 
@@ -61,6 +66,26 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       },
     }));
 
+    const mdmCreateNumbersRequest: MdmCreateNumbersRequest = [
+      {
+        numberTypeId: 6,
+        createdBy: 'Estore',
+        requestingSystem: 'Estore',
+      },
+    ];
+    const mdmCreateNumbersResponse: MdmCreateNumbersResponse[] = values.map((value) => {
+      return [
+        {
+          id: value.dbId,
+          maskedId: value.siteId,
+          type: 6,
+          createdBy: 'Estore',
+          createdDatetime: value.nowDate,
+          requestingSystem: 'Estore',
+        },
+      ];
+    });
+
     const applicationNameToCreateSiteIdWith = 'Estore';
     const requestToCreateSiteId = [
       {
@@ -76,6 +101,8 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
       graphCreateSiteResponseDto,
       createSiteResponse,
       sharepointServiceCreateSiteParams,
+      mdmCreateNumbersRequest,
+      mdmCreateNumbersResponse,
       requestToCreateSiteId,
     };
   }
@@ -84,6 +111,8 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
 interface GenerateValues {
   exporterName: string;
   siteId: string;
+  dbId: number;
+  nowDate: DateString;
 }
 
 interface GenerateResult {
@@ -91,6 +120,8 @@ interface GenerateResult {
   graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[];
   createSiteResponse: CreateSiteResponse[];
   sharepointServiceCreateSiteParams: SharepointCreateSiteParams[];
+  mdmCreateNumbersRequest: MdmCreateNumbersRequest;
+  mdmCreateNumbersResponse: MdmCreateNumbersResponse[];
   graphServicePostParams;
   requestToCreateSiteId;
 }
