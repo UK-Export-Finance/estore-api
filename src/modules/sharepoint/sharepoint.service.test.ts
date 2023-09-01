@@ -78,10 +78,10 @@ describe('SharepointService', () => {
         method: 'getExporterSite',
         path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
         expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
-        filterString: `fields/Title eq '${exporterName}'`,
+        filterString: `fields/URL eq '${siteId}'`,
         graphServiceResponse,
         methodResponse: methodResponseFromListItem,
-        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(exporterName),
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(siteId),
       },
       {
         method: 'getBuyerFolder',

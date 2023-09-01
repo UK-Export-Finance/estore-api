@@ -14,7 +14,7 @@ describe('DealFolderCreationService', () => {
 
   const {
     siteId,
-    createDealFolderRequestItem: { dealIdentifier, buyerName, exporterName, destinationMarket, riskMarket },
+    createDealFolderRequestItem: { dealIdentifier, buyerName, destinationMarket, riskMarket },
     sharepointServiceGetBuyerDealFolderParams,
     sharepointServiceGetExporterSiteParams,
     sharepointServiceGetDestinationMarketParams,
@@ -127,7 +127,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });
@@ -148,7 +147,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });
@@ -201,7 +199,7 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyNotFoundException,
-      expectedErrorMessage: `Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`,
+      expectedErrorMessage: `Did not find the siteId ${siteId} in the tfisCaseSitesList.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a TermGuid field',
@@ -210,7 +208,7 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string TermGuid field',
@@ -219,7 +217,7 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item does not have a URL field',
@@ -228,7 +226,7 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyInvalidException if the found exporter list item has an empty string URL field',
@@ -237,7 +235,7 @@ describe('DealFolderCreationService', () => {
       listItemsMatchingDestinationMarket: [destinationMarketListItem],
       listItemsMatchingRiskMarket: [riskMarketListItem],
       expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+      expectedErrorMessage: `Missing URL for the list item found for exporter site ${siteId}.`,
     },
     {
       description: 'throws a FolderDependencyNotFoundException if the destinationMarket is not found in the taxonomyHiddenListTermStore',
@@ -314,7 +312,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });
@@ -359,7 +356,6 @@ describe('DealFolderCreationService', () => {
         siteId,
         dealIdentifier,
         buyerName,
-        exporterName,
         destinationMarket,
         riskMarket,
       });

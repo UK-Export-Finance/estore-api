@@ -3,7 +3,6 @@ import { UkefId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
-import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withFacilityIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/facility-identifier-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/string-param-validation-api-tests';
@@ -304,14 +303,6 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   describe('field validation', () => {
-    withExporterNameFieldValidationApiTests({
-      valueGenerator,
-      validRequestBody: createFacilityFolderRequestDto,
-      successStatusCode: 201,
-      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
-    });
-
     withBuyerNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,

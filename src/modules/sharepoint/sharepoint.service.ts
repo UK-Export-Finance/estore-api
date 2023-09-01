@@ -108,7 +108,26 @@ export class SharepointService {
     });
   }
 
-  getExporterSite(exporterName: string): Promise<
+  getExporterSite(siteId: string): Promise<
+    ListItem<{
+      Title: string;
+      URL: string;
+      Sitestatus: string;
+      TermGuid: string;
+      SiteURL: {
+        Url: string;
+      };
+    }>[]
+  > {
+    return this.findListItems<{ Title: string; URL: string; Sitestatus: string; TermGuid: string; SiteURL: { Url: string } }>({
+      siteUrl: this.sharepointConfig.tfisSharepointUrl,
+      listId: this.sharepointConfig.tfisCaseSitesListId,
+      fieldsToReturn: ['Title', 'URL', 'Sitestatus', 'TermGuid', 'SiteURL'],
+      filter: new FieldEqualsListItemFilter({ fieldName: 'URL', targetValue: siteId }),
+    });
+  }
+
+  getExporterSiteByName(exporterName: string): Promise<
     ListItem<{
       Title: string;
       URL: string;

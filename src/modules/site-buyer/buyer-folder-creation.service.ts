@@ -25,11 +25,10 @@ export class BuyerFolderCreationService {
   ) {}
 
   async createBuyerFolder(siteId: string, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
-    const { exporterName, buyerName } = createBuyerFolderRequestItem;
+    const { buyerName } = createBuyerFolderRequestItem;
 
-    const caseSiteId = await this.getCaseSiteId(siteId);
-    const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId, exporterName);
-
+    const { caseSiteId } = await this.getCaseSiteId(siteId);
+    const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId);
     await this.checkThatBuyerFolderDoesNotExist(siteId, buyerName);
 
     await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
@@ -54,11 +53,11 @@ export class BuyerFolderCreationService {
       throw new SiteExporterInvalidException(`Missing ID for the site found with id ${siteId}.`);
     }
 
-    const id = parseInt(idString, 10);
-    if (isNaN(id)) {
+    const caseSiteId = parseInt(idString, 10);
+    if (isNaN(caseSiteId)) {
       throw new SiteExporterInvalidException(`The ID for the site found for site ${siteId} is not a number (the value is ${idString}).`);
     }
-    return id;
+    return { caseSiteId };
   }
 
   private async checkThatBuyerFolderDoesNotExist(siteId, buyerName) {
@@ -69,10 +68,10 @@ export class BuyerFolderCreationService {
     }
   }
 
-  private async getBuyerTermFromList(siteId: string, exporterName: string) {
-    const searchResults = await this.sharepointService.getExporterSite(exporterName);
+  private async getBuyerTermFromList(siteId: string) {
+    const searchResults = await this.sharepointService.getExporterSite(siteId);
     if (!searchResults.length) {
-      throw new SiteExporterNotFoundException(`Did not find the site for exporter ${exporterName} in the tfisCaseSitesList.`);
+      throw new SiteExporterNotFoundException(`Did not find the site for siteId ${siteId} in the tfisCaseSitesList.`);
     }
 
     const [
@@ -82,13 +81,13 @@ export class BuyerFolderCreationService {
     ] = searchResults;
 
     if (!buyerTermGuid) {
-      throw new SiteExporterInvalidException(`Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing TermGuid for the list item found for exporter site ${siteId}.`);
     }
     if (!buyerUrl) {
-      throw new SiteExporterInvalidException(`Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing URL for the list item found for exporter site ${siteId}.`);
     }
     if (!siteUrl?.Url) {
-      throw new SiteExporterInvalidException(`Missing site URL for the list item found for exporter ${exporterName} in site ${siteId}.`);
+      throw new SiteExporterInvalidException(`Missing site URL for the list item found for exporter site ${siteId}.`);
     }
 
     return { buyerTermGuid, buyerUrl };

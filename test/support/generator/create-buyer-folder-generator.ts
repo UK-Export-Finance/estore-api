@@ -35,7 +35,6 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
         siteId,
 
         buyerName,
-        exporterName,
 
         exporterSiteIdAsNumber,
         termGuid,
@@ -63,7 +62,6 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const sharepointConfigScCaseSitesListId = ENVIRONMENT_VARIABLES.SHAREPOINT_SC_CASE_SITES_LIST_ID;
 
     const createBuyerFolderRequestItem: CreateBuyerFolderRequestItem = {
-      exporterName: exporterName,
       buyerName: buyerName,
     };
 
@@ -74,7 +72,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     };
 
     const sharepointServiceGetCaseSiteParams = siteId;
-    const sharepointServiceGetExporterSiteParams = exporterName;
+    const sharepointServiceGetExporterSiteParams = siteId;
 
     const sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams = {
       siteId,
@@ -89,7 +87,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 
     const tfisCaseSitesListExporterRequest: GraphGetParams = {
       path: `${sharepointConfigTfisSharepointUrl}:/lists/${sharepointConfigTfisCaseSitesListId}/items`,
-      filter: `fields/Title eq '${exporterName}'`,
+      filter: `fields/URL eq '${siteId}'`,
       expand: 'fields($select=TermGuid,Title,URL,SiteURL)',
     };
 

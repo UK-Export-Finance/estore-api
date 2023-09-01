@@ -19,7 +19,7 @@ describe('SiteService', () => {
 
   let siteService: SiteService;
   let sharepointServiceCreateSiteRequest: jest.Mock;
-  let sharepointServiceGetExportSiteRequest: jest.Mock;
+  let sharepointServiceGetExportSiteByNameRequest: jest.Mock;
   let mdmServiceCreateNumbers: jest.Mock;
 
   beforeEach(() => {
@@ -27,8 +27,8 @@ describe('SiteService', () => {
     sharepointServiceCreateSiteRequest = jest.fn();
     sharepointService.createSite = sharepointServiceCreateSiteRequest;
 
-    sharepointServiceGetExportSiteRequest = jest.fn();
-    sharepointService.getExporterSite = sharepointServiceGetExportSiteRequest;
+    sharepointServiceGetExportSiteByNameRequest = jest.fn();
+    sharepointService.getExporterSiteByName = sharepointServiceGetExportSiteByNameRequest;
     const mdmService = new MdmService(null);
     mdmServiceCreateNumbers = jest.fn();
     mdmService.createNumbers = mdmServiceCreateNumbers;
@@ -58,7 +58,7 @@ describe('SiteService', () => {
       });
 
       const siteId = createSiteResponse[0].siteId;
-      when(sharepointServiceGetExportSiteRequest).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
+      when(sharepointServiceGetExportSiteByNameRequest).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
       when(mdmServiceCreateNumbers)
         .calledWith(requestToCreateSiteId)
         .mockResolvedValueOnce([{ maskedId: siteId }]);
@@ -93,7 +93,7 @@ describe('SiteService', () => {
         tfisCaseSitesListId,
         status,
       });
-      when(sharepointServiceGetExportSiteRequest)
+      when(sharepointServiceGetExportSiteByNameRequest)
         .calledWith(sharepointServiceGetExporterSiteParams)
         .mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);
 

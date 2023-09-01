@@ -2,7 +2,6 @@ import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/comm
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
 import { withDealIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/deal-identifier-validation-api-tests';
-import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/exporter-name-field-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -19,7 +18,7 @@ describe('POST /sites/{siteId}/deals', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    createDealFolderRequestItem: { buyerName, exporterName, destinationMarket, riskMarket },
+    createDealFolderRequestItem: { buyerName, destinationMarket, riskMarket },
     createDealFolderRequest,
     createDealFolderResponse,
     tfisDealListBuyerRequest,
@@ -209,33 +208,33 @@ describe('POST /sites/{siteId}/deals', () => {
     });
   });
 
-  describe('exporterName error cases', () => {
+  describe('ExporterRequest error cases', () => {
     it.each([
       {
         description: 'returns a 400 if no list items are found matching the exporterName in the tfisCaseSitesList',
-        exporterNameListItems: [],
+        ExporterRequestListItems: [],
         statusCode: 400,
-        message: `Did not find the exporterName ${exporterName} in the tfisCaseSitesList.`,
+        message: `Did not find the siteId ${siteId} in the tfisCaseSitesList.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a TermGuid field',
-        exporterNameListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string() } }],
+        ExporterRequestListItems: [{ fields: { notTermGuid: valueGenerator.string(), URL: valueGenerator.string() } }],
         statusCode: 400,
-        message: `Missing TermGuid for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing TermGuid for the list item found for exporter site ${siteId}.`,
       },
       {
         description: 'returns a 400 if the list item matching the exporterName in the tfisCaseSitesList does not have a URL field',
-        exporterNameListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string() } }],
+        ExporterRequestListItems: [{ fields: { TermGuid: valueGenerator.string(), notURL: valueGenerator.string() } }],
         statusCode: 400,
-        message: `Missing URL for the list item found for exporter ${exporterName} in site ${siteId}.`,
+        message: `Missing URL for the list item found for exporter site ${siteId}.`,
       },
-    ])('$description', async ({ exporterNameListItems, statusCode, message }) => {
+    ])('$description', async ({ ExporterRequestListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
         .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
-        .mockSuccessfulGraphGetCall({ value: exporterNameListItems });
+        .mockSuccessfulGraphGetCall({ value: ExporterRequestListItems });
       mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
       mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
       mockSuccessfulCreateAndProvision();
@@ -380,14 +379,6 @@ describe('POST /sites/{siteId}/deals', () => {
     });
 
     withBuyerNameFieldValidationApiTests({
-      valueGenerator,
-      validRequestBody: createDealFolderRequest,
-      makeRequest: (body: unknown[]) => makeRequestWithBody(body),
-      givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
-      successStatusCode,
-    });
-
-    withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createDealFolderRequest,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
