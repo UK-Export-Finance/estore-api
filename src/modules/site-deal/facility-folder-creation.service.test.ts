@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
@@ -18,7 +17,6 @@ describe('FacilityFolderCreationService', () => {
     sharepointServiceGetDealFolderParams,
     sharepointServiceGetFacilityTermParams,
     sharepointServiceGetFacilityFolderParams,
-    createFacilityFolderResponseDto,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const scSiteFullUrl = valueGenerator.httpsUrl();
@@ -105,6 +103,22 @@ describe('FacilityFolderCreationService', () => {
     expect(custodianCreateAndProvision).toHaveBeenCalledWith(expectedCustodianRequestToCreateFacilityFolder);
   });
 
+  it('returns facility folder name if it already exists', async () => {
+    when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([buyerDealFolderListItem]);
+    when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce([facilityTermListItem]);
+    when(getFacilityFolder)
+      .calledWith(sharepointServiceGetFacilityFolderParams)
+      .mockResolvedValueOnce([{ some: 'value' }]);
+
+    const createdFolderName = await service.createFacilityFolder(siteId, dealId, {
+      facilityIdentifier,
+      buyerName,
+    });
+
+    expect(custodianCreateAndProvision).toHaveBeenCalledTimes(0);
+    expect(createdFolderName).toEqual({ folderName: expectedFolderName });
+  });
+
   it.each([
     {
       description: 'throws a FolderDependencyNotFoundException if the buyer deal folder list item is not found',
@@ -163,15 +177,6 @@ describe('FacilityFolderCreationService', () => {
       expectedErrorClass: FolderDependencyInvalidException,
       expectedErrorMessage: `Missing FacilityGUID for facility term ${facilityIdentifier}.`,
     },
-    {
-      description: 'throws a BadRequestException if the facility folder already exists',
-      listItemsMatchingBuyerDealFolder: [buyerDealFolderListItem],
-      listItemsMatchingFacilityTerm: [facilityTermListItem],
-      listItemsMatchingFacilityFolder: [{ any: 'value' }],
-      expectedErrorClass: BadRequestException,
-      expectedErrorMessage: `Bad request`,
-      expectedErrorDescription: `Facility folder ${createFacilityFolderResponseDto.folderName} already exists`,
-    },
   ])(
     '$description',
     async ({ listItemsMatchingBuyerDealFolder, listItemsMatchingFacilityTerm, listItemsMatchingFacilityFolder, expectedErrorClass, expectedErrorMessage }) => {
@@ -187,42 +192,6 @@ describe('FacilityFolderCreationService', () => {
 
       await expect(createFacilityFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
       await expect(createFacilityFolderPromise).rejects.toThrow(expectedErrorMessage);
-    },
-  );
-
-  it.each([
-    {
-      description: 'throws a BadRequestException if the facility folder already exists in Sharepoint',
-      listItemsMatchingBuyerDealFolder: [buyerDealFolderListItem],
-      listItemsMatchingFacilityTerm: [facilityTermListItem],
-      listItemsMatchingFacilityFolder: [{ any: 'value' }],
-      expectedErrorClass: BadRequestException,
-      expectedErrorMessage: `Bad request`,
-      expectedErrorDescription: `Facility folder ${createFacilityFolderResponseDto.folderName} already exists`,
-    },
-  ])(
-    '$description',
-    async ({
-      listItemsMatchingBuyerDealFolder,
-      listItemsMatchingFacilityTerm,
-      listItemsMatchingFacilityFolder,
-      expectedErrorClass,
-      expectedErrorMessage,
-      expectedErrorDescription,
-    }) => {
-      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerDealFolder);
-      when(getFacilityTerm).calledWith(sharepointServiceGetFacilityTermParams).mockResolvedValueOnce(listItemsMatchingFacilityTerm);
-      when(getFacilityFolder).calledWith(sharepointServiceGetFacilityFolderParams).mockResolvedValueOnce(listItemsMatchingFacilityFolder);
-      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateFacilityFolder).mockResolvedValueOnce(undefined);
-
-      const createFacilityFolderPromise = service.createFacilityFolder(siteId, dealId, {
-        facilityIdentifier,
-        buyerName,
-      });
-
-      await expect(createFacilityFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
-      await expect(createFacilityFolderPromise).rejects.toThrow(expectedErrorMessage);
-      await expect(createFacilityFolderPromise).rejects.toHaveProperty('response.error', expectedErrorDescription);
     },
   );
 });

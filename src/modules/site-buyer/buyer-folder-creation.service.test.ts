@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
@@ -115,6 +114,20 @@ describe('BuyerFolderCreationService', () => {
 
       expect(response).toBe(buyerName);
     });
+
+    it('returns the buyer name when buyer folder exists in Sharepoint', async () => {
+      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getBuyerFolder)
+        .calledWith(sharepointServiceGetBuyerFolderParams)
+        .mockResolvedValueOnce([{ any: 'value' }]);
+
+      const response = await service.createBuyerFolder(siteId, { buyerName });
+
+      expect(response).toBe(buyerName);
+
+      expect(custodianCreateAndProvision).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('createBuyerFolder exceptions', () => {
@@ -225,21 +238,6 @@ describe('BuyerFolderCreationService', () => {
 
       expect(custodianCreateAndProvision).toHaveBeenCalledTimes(1);
       expect(custodianCreateAndProvision).toHaveBeenCalledWith(expectedCustodianRequestToCreateBuyerFolder);
-    });
-
-    it('throws a BadRequestException if Buyer folder exists in Sharepoint', async () => {
-      when(getCaseSite).calledWith(sharepointServiceGetCaseSiteParams).mockResolvedValueOnce([siteIdListItem]);
-      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
-      when(getBuyerFolder)
-        .calledWith(sharepointServiceGetBuyerFolderParams)
-        .mockResolvedValueOnce([{ any: 'value' }]);
-      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
-
-      const responsePromise = service.createBuyerFolder(siteId, { buyerName });
-
-      await expect(responsePromise).rejects.toBeInstanceOf(BadRequestException);
-      await expect(responsePromise).rejects.toThrow('Bad request');
-      await expect(responsePromise).rejects.toHaveProperty('response.error', `Buyer folder ${buyerName} already exists`);
     });
   });
 });
