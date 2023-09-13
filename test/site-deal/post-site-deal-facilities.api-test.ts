@@ -130,6 +130,17 @@ describe('Create Site Deal Facility Folder', () => {
     expect(body).toEqual(createFacilityFolderResponseDto);
   });
 
+  it('returns the name of the folder created with status code 201 when folder already exists', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulTfisFacilityFolderRequestWhereFolderExists();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(201);
+    expect(body).toEqual(createFacilityFolderResponseDto);
+  });
+
   it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest returns an empty value list', async () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
@@ -142,25 +153,6 @@ describe('Create Site Deal Facility Folder', () => {
     expect(status).toBe(400);
     expect(body).toStrictEqual({
       message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
-      statusCode: 400,
-    });
-  });
-
-  it('returns a 400 if Facility folder already exists', async () => {
-    mockSuccessfulTfisFacilityListParentFolderRequest();
-    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(tfisFacilityFolderRequest.path)
-      .mockSuccessfulExpandCallWithExpandString(tfisFacilityFolderRequest.expand)
-      .mockSuccessfulFilterCallWithFilterString(tfisFacilityFolderRequest.filter)
-      .mockSuccessfulGraphGetCall({ value: [{ any: 'value' }] });
-
-    const { status, body } = await makeRequest();
-
-    expect(status).toBe(400);
-    expect(body).toStrictEqual({
-      message: `Bad request`,
-      error: `Facility folder ${createFacilityFolderResponseDto.folderName} already exists`,
       statusCode: 400,
     });
   });
@@ -364,6 +356,14 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityFolderRequest.filter)
       .mockSuccessfulGraphGetCall(tfisFacilityFolderResponse);
+  };
+
+  const mockSuccessfulTfisFacilityFolderRequestWhereFolderExists = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisFacilityFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisFacilityFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisFacilityFolderRequest.filter)
+      .mockSuccessfulGraphGetCall({ value: [{ some: 'value' }] });
   };
 
   const mockSuccessfulCreateAndProvision = () => {

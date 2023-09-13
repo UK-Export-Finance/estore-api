@@ -122,6 +122,17 @@ describe('POST /sites/{siteId}/buyers', () => {
     expect(body).toEqual(createBuyerFolderResponse);
   });
 
+  it('returns the buyer name with status code 201 when buyer folder exists', async () => {
+    mockSuccessfulScCaseSitesListSiteRequest();
+    mockSuccessfulGetBuyerFolderRequestFolderExists();
+    mockSuccessfulTfisCaseSitesListExporterRequest();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(201);
+    expect(body).toEqual(createBuyerFolderResponse);
+  });
+
   describe('siteId error cases', () => {
     it.each([
       {
@@ -164,15 +175,6 @@ describe('POST /sites/{siteId}/buyers', () => {
 
   describe('buyer folder exists error cases', () => {
     it.each([
-      {
-        description: 'returns a 400 if buyer folder already exists in sharepoint',
-        existingBuyerFolderListItems: { value: [{ any: 'value' }] },
-        responseBody: {
-          statusCode: 400,
-          message: `Bad request`,
-          error: `Buyer folder ${createBuyerFolderResponse.buyerName} already exists`,
-        },
-      },
       {
         description: 'returns a 500 if buyer folder presence check fails',
         existingBuyerFolderListItems: [],
@@ -314,6 +316,14 @@ describe('POST /sites/{siteId}/buyers', () => {
       .mockSuccessfulFilterCallWithFilterString(tfisBuyerFolderRequest.filter)
       .mockSuccessfulExpandCallWithExpandString(tfisBuyerFolderRequest.expand)
       .mockSuccessfulGraphGetCall(tfisBuyerFolderResponse);
+  };
+
+  const mockSuccessfulGetBuyerFolderRequestFolderExists = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
+      .mockSuccessfulFilterCallWithFilterString(tfisBuyerFolderRequest.filter)
+      .mockSuccessfulExpandCallWithExpandString(tfisBuyerFolderRequest.expand)
+      .mockSuccessfulGraphGetCall({ value: [{ some: 'value' }] });
   };
 
   const mockSuccessfulCreateAndProvision = () => {

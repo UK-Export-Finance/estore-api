@@ -167,6 +167,19 @@ describe('POST /sites/{siteId}/deals', () => {
     expect(body).toEqual(createDealFolderResponse);
   });
 
+  it('returns the name of the folder created with status code 201 when folder exists', async () => {
+    mockSuccessfulTfisDealListBuyerRequest();
+    mockSuccessfulTfisCaseSitesListExporterRequest();
+    mockSuccessfulGetDealFolderRequestWhereFolderExists();
+    mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
+    mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(201);
+    expect(body).toEqual(createDealFolderResponse);
+  });
+
   describe('buyerName error cases', () => {
     it.each([
       {
@@ -287,15 +300,6 @@ describe('POST /sites/{siteId}/deals', () => {
 
   describe('deal folder exists error cases', () => {
     it.each([
-      {
-        description: 'returns a 400 if deal folder already exists in sharepoint',
-        existingDealFolderListItems: { value: [{ any: 'value' }] },
-        responseBody: {
-          statusCode: 400,
-          message: `Bad request`,
-          error: `Deal folder ${createDealFolderResponse.folderName} already exists`,
-        },
-      },
       {
         description: 'returns a 500 if deal folder presence check fails',
         existingDealFolderListItems: [],
@@ -461,6 +465,14 @@ describe('POST /sites/{siteId}/deals', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisGetDealFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisGetDealFolderRequest.filter)
       .mockSuccessfulGraphGetCall(tfisGetDealFolderResponse);
+  };
+
+  const mockSuccessfulGetDealFolderRequestWhereFolderExists = () => {
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(tfisGetDealFolderRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(tfisGetDealFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisGetDealFolderRequest.filter)
+      .mockSuccessfulGraphGetCall({ value: [{ some: 'value' }] });
   };
 
   const mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest = () => {

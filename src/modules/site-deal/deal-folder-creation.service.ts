@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
@@ -42,7 +42,12 @@ export class DealFolderCreationService {
     const riskMarketTermGuid = await this.getMarketTermGuid(riskMarket);
     const dealFolderName = this.generateDealFolderName(dealIdentifier);
 
-    await this.checkThatDealFolderDoesNotExist(siteId, buyerName, dealFolderName);
+    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
+
+    if (existingDealFolder.length) {
+      // Deal folder already exists, return 201.
+      return dealFolderName;
+    }
 
     await this.sendCreateAndProvisionRequestForDealFolder({
       dealIdentifier,
@@ -78,14 +83,6 @@ export class DealFolderCreationService {
       );
     }
     return buyerFolderId;
-  }
-
-  private async checkThatDealFolderDoesNotExist(siteId, buyerName, dealFolderName) {
-    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
-
-    if (existingDealFolder.length) {
-      throw new BadRequestException('Bad request', `Deal folder ${dealFolderName} already exists`);
-    }
   }
 
   private async getExporterDetails({ siteId }: { siteId: string }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {

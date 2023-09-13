@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
@@ -20,7 +19,6 @@ describe('DealFolderCreationService', () => {
     sharepointServiceGetDestinationMarketParams,
     sharepointServiceGetDealFolderParams,
     sharepointServiceGetRiskMarketParams,
-    createDealFolderResponse,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const scSiteFullUrl = valueGenerator.httpsUrl();
@@ -152,6 +150,28 @@ describe('DealFolderCreationService', () => {
       });
 
       expect(createdFolderName).toBe(expectedFolderName);
+    });
+
+    it('returns the name of the deal folder when it already exists', async () => {
+      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
+      when(getDealFolder)
+        .calledWith(sharepointServiceGetDealFolderParams)
+        .mockResolvedValueOnce([{ some: 'value' }]);
+      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
+      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
+
+      const createdFolderName = await service.createDealFolder({
+        siteId,
+        dealIdentifier,
+        buyerName,
+        destinationMarket,
+        riskMarket,
+      });
+
+      expect(createdFolderName).toBe(expectedFolderName);
+
+      expect(custodianCreateAndProvision).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -318,51 +338,6 @@ describe('DealFolderCreationService', () => {
 
       await expect(createDealFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
       await expect(createDealFolderPromise).rejects.toThrow(expectedErrorMessage);
-    },
-  );
-
-  it.each([
-    {
-      description: 'throws a BadRequestException if the facility folder already exists in Sharepoint',
-      listItemsMatchingBuyerName: [buyerNameListItem],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      listItemsMatchingDestinationMarket: [destinationMarketListItem],
-      listItemsMatchingRiskMarket: [riskMarketListItem],
-      listItemsMatchingDealFolder: [{ any: 'value' }],
-      expectedErrorClass: BadRequestException,
-      expectedErrorMessage: 'Bad request',
-      expectedErrorDescription: `Deal folder ${createDealFolderResponse.folderName} already exists`,
-    },
-  ])(
-    '$description',
-    async ({
-      listItemsMatchingBuyerName,
-      listItemsMatchingExporterName,
-      listItemsMatchingDestinationMarket,
-      listItemsMatchingRiskMarket,
-      listItemsMatchingDealFolder,
-      expectedErrorClass,
-      expectedErrorMessage,
-      expectedErrorDescription,
-    }) => {
-      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce(listItemsMatchingBuyerName);
-      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce(listItemsMatchingDealFolder);
-      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(listItemsMatchingExporterName);
-      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce(listItemsMatchingDestinationMarket);
-      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce(listItemsMatchingRiskMarket);
-      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
-
-      const createDealFolderPromise = service.createDealFolder({
-        siteId,
-        dealIdentifier,
-        buyerName,
-        destinationMarket,
-        riskMarket,
-      });
-
-      await expect(createDealFolderPromise).rejects.toBeInstanceOf(expectedErrorClass);
-      await expect(createDealFolderPromise).rejects.toThrow(expectedErrorMessage);
-      await expect(createDealFolderPromise).rejects.toHaveProperty('response.error', expectedErrorDescription);
     },
   );
 });
