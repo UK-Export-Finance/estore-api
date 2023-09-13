@@ -121,7 +121,6 @@ describe('BuyerFolderCreationService', () => {
       when(getBuyerFolder)
         .calledWith(sharepointServiceGetBuyerFolderParams)
         .mockResolvedValueOnce([{ any: 'value' }]);
-      //when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateBuyerFolder).mockResolvedValueOnce(undefined);
 
       const response = await service.createBuyerFolder(siteId, { buyerName });
 
