@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@azure/identity": "^3.3.0",
-    "@azure/storage-file-share": "^12.15.0",
+    "@azure/storage-file-share": "^12.16.0",
     "@microsoft/microsoft-graph-client": "^3.0.6",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/cache-manager": "^2.1.0",
