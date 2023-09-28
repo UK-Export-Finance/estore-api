@@ -19,7 +19,17 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:watch": "jest --watch",
-    "unit-test": "jest --coverage --selectProjects=Unit --passWithNoTests"
+    "unit-test": "jest --coverage --selectProjects=Unit --passWithNoTests",
+    "spellcheck": "cspell lint --gitignore --no-must-find-files --unique --no-progress --show-suggestions --color '**/*'",
+    "housekeeping": "npm update --save --legacy-peer-deps && npm i --legacy-peer-deps && npm audit --fix && npm run spellcheck"
+  },
+  "lint-staged": {
+    "**/package.json": "sort-package-json",
+    "**/*.js": "eslint --fix",
+    "**/*.ts": "eslint --fix",
+    "**/*": [
+      "cspell lint --gitignore --no-must-find-files --unique --no-progress --show-suggestions --color"
+    ]
   },
   "dependencies": {
     "@azure/identity": "^3.3.0",
@@ -65,12 +75,12 @@
     "@types/jest": "29.5.5",
     "@types/jest-when": "^3.5.3",
     "@types/lodash": "^4.14.199",
-    "@types/node": "^20.7.0",
+    "@types/node": "^20.7.1",
     "@types/supertest": "^2.0.13",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "chance": "^1.1.11",
-    "cspell": "^7.3.6",
+    "cspell": "^7.3.7",
     "eslint": "^8.50.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -104,6 +114,6 @@
   },
   "engines": {
     "node": ">=18",
-    "npm": ">=9.5.0"
+    "npm": ">=9.8.0"
   }
 }
