@@ -1,6 +1,6 @@
 import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withCustodianErrorCasesApiTests } from '@ukef-test/common-tests/custodian-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
@@ -78,7 +78,7 @@ describe('POST /sites/{siteId}/buyers', () => {
       api.postWithoutAuth(getPostSiteBuyersUrl(siteId), createBuyerFolderRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  withCustodianCreateAndProvisionErrorCasesApiTests({
+  withCustodianErrorCasesApiTests({
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulScCaseSitesListSiteRequest();
       mockSuccessfulGetBuyerFolderRequest();

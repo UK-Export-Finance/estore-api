@@ -1,6 +1,6 @@
 import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withCustodianErrorCasesApiTests } from '@ukef-test/common-tests/custodian-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
 import { withDealIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/deal-identifier-validation-api-tests';
 import { withSharepointResourceNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/sharepoint-resource-name-field-validation-api-tests';
@@ -84,7 +84,7 @@ describe('POST /sites/{siteId}/deals', () => {
       api.postWithoutAuth(getPostSiteDealsUrl(siteId), createDealFolderRequest, incorrectAuth?.headerName, incorrectAuth?.headerValue),
   });
 
-  withCustodianCreateAndProvisionErrorCasesApiTests({
+  withCustodianErrorCasesApiTests({
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
