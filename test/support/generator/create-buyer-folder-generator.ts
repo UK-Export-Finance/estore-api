@@ -1,4 +1,6 @@
+import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
+import { CustodianProvisionJobsByRequestIdRequest } from '@ukef/modules/custodian/dto/custodian-provision-jobs-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -26,6 +28,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       termGuid: this.valueGenerator.guid(),
       termUrl: this.valueGenerator.httpsUrl(),
       siteUrl: this.valueGenerator.word(),
+      custodianRequestId: this.valueGenerator.string(),
     };
   }
 
@@ -40,8 +43,11 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
         termGuid,
         termUrl,
         siteUrl,
+        custodianRequestId,
       },
     ] = values;
+
+    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${exporterSiteIdAsNumber.toString()}-${buyerName}`;
 
     const exporterSiteIdAsString = exporterSiteIdAsNumber.toString();
 
@@ -68,7 +74,18 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     const createBuyerFolderRequest: CreateBuyerFolderRequestDto = [createBuyerFolderRequestItem];
 
     const createBuyerFolderResponse: CreateBuyerFolderResponseDto = {
-      buyerName: buyerName,
+      folderName: buyerName,
+      status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
+    };
+
+    const createBuyerFolderResponseWhenFolderExistsInSharepoint: CreateBuyerFolderResponseDto = {
+      folderName: buyerName,
+      status: ENUMS.FOLDER_STATUSES.EXISTS_IN_SHAREPOINT,
+    };
+
+    const createBuyerFolderResponseWhenFolderCustodianJobStarted: CreateBuyerFolderResponseDto = {
+      folderName: buyerName,
+      status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_STARTED,
     };
 
     const sharepointServiceGetCaseSiteParams = siteId;
@@ -134,11 +151,20 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       SPHostUrl: sharepointConfigScSiteFullUrl,
     };
 
+    const custodianJobsByRequestIdRequest = {
+      RequestId: custodianRequestId,
+      SPHostUrl: sharepointConfigScSiteFullUrl,
+    };
+
     return {
       siteId,
+      custodianRequestId,
+      custodianCachekey,
       createBuyerFolderRequestItem,
       createBuyerFolderRequest,
       createBuyerFolderResponse,
+      createBuyerFolderResponseWhenFolderExistsInSharepoint,
+      createBuyerFolderResponseWhenFolderCustodianJobStarted,
 
       sharepointServiceGetCaseSiteParams,
       sharepointServiceGetBuyerFolderParams,
@@ -154,6 +180,7 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
       tfisCaseSitesListExporterResponse,
 
       custodianCreateAndProvisionRequest,
+      custodianJobsByRequestIdRequest,
     };
   }
 }
@@ -178,13 +205,18 @@ interface GenerateValues {
   termGuid: string;
   termUrl: string;
   siteUrl: string;
+  custodianRequestId: string;
 }
 
 interface GenerateResult {
   siteId: string;
+  custodianRequestId: string;
+  custodianCachekey: string;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
   createBuyerFolderResponse: CreateBuyerFolderResponseDto;
+  createBuyerFolderResponseWhenFolderExistsInSharepoint: CreateBuyerFolderResponseDto;
+  createBuyerFolderResponseWhenFolderCustodianJobStarted: CreateBuyerFolderResponseDto;
 
   sharepointServiceGetCaseSiteParams: string;
   sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams;
@@ -200,4 +232,5 @@ interface GenerateResult {
   tfisBuyerFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
+  custodianJobsByRequestIdRequest: CustodianProvisionJobsByRequestIdRequest;
 }

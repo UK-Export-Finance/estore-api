@@ -1,3 +1,4 @@
+import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
@@ -10,6 +11,7 @@ import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-d
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { Cache } from 'cache-manager';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
 
@@ -18,9 +20,13 @@ describe('POST /sites/{siteId}/deals', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
+    custodianRequestId,
+    custodianCachekey,
     createDealFolderRequestItem: { buyerName, destinationMarket, riskMarket },
     createDealFolderRequest,
     createDealFolderResponse,
+    createDealFolderResponseWhenFolderExistsInSharepoint,
+    createDealFolderResponseWhenFolderCustodianJobStarted,
     tfisDealListBuyerRequest,
     tfisDealListBuyerResponse,
     tfisGetDealFolderRequest,
@@ -32,20 +38,25 @@ describe('POST /sites/{siteId}/deals', () => {
     taxonomyHiddenListTermStoreRiskMarketRequest,
     taxonomyHiddenListTermStoreRiskMarketResponse,
     custodianCreateAndProvisionRequest,
+    custodianJobsByRequestIdRequest,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
+
+  const folderName = createDealFolderResponse.folderName;
 
   const custodianApi = new MockCustodianApi(nock);
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
-    ({ api, mockGraphClientService } = await Api.create());
+    ({ api, mockGraphClientService, cacheManager } = await Api.create());
   });
 
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    cacheManager.reset();
   });
 
   afterAll(async () => {
@@ -167,7 +178,7 @@ describe('POST /sites/{siteId}/deals', () => {
     expect(body).toEqual(createDealFolderResponse);
   });
 
-  it('returns the name of the folder created with status code 201 when folder exists', async () => {
+  it('returns the name of the folder created with status code 200 when folder exists', async () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulGetDealFolderRequestWhereFolderExists();
@@ -176,8 +187,34 @@ describe('POST /sites/{siteId}/deals', () => {
 
     const { status, body } = await makeRequest();
 
-    expect(status).toBe(201);
-    expect(body).toEqual(createDealFolderResponse);
+    expect(status).toBe(200);
+    expect(body).toEqual(createDealFolderResponseWhenFolderExistsInSharepoint);
+  });
+
+  it('returns the deal folder name with status code 202 when buyer folder is still processed by Custodian', async () => {
+    mockSuccessfulTfisDealListBuyerRequest();
+    mockSuccessfulTfisCaseSitesListExporterRequest();
+    mockSuccessfulGetDealFolderRequest();
+    setCacheForPreviousCustodianJob();
+    mockFolderInCustodianJobQueue();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual(createDealFolderResponseWhenFolderCustodianJobStarted);
+  });
+
+  it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {
+    mockSuccessfulTfisDealListBuyerRequest();
+    mockSuccessfulTfisCaseSitesListExporterRequest();
+    mockSuccessfulGetDealFolderRequest();
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+    mockFolderInCustodianEmptyResponse();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
   });
 
   describe('buyerName error cases', () => {
@@ -243,14 +280,12 @@ describe('POST /sites/{siteId}/deals', () => {
       },
     ])('$description', async ({ ExporterRequestListItems, statusCode, message }) => {
       mockSuccessfulTfisDealListBuyerRequest();
+      mockSuccessfulGetDealFolderRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
         .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
         .mockSuccessfulGraphGetCall({ value: ExporterRequestListItems });
-      mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-      mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
 
       const { status, body } = await makeRequest();
 
@@ -492,6 +527,24 @@ describe('POST /sites/{siteId}/deals', () => {
   };
   const mockSuccessfulCreateAndProvision = () => {
     custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
+  };
+
+  const setCacheForPreviousCustodianJob = () => {
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+  };
+
+  const mockFolderInCustodianEmptyResponse = () => {
+    custodianApi.requestToReadJobsByRequestId(JSON.stringify(custodianJobsByRequestIdRequest)).respondsWith(200, []);
+  };
+
+  const mockFolderInCustodianJobQueue = () => {
+    custodianApi.requestToReadJobsByAnyRequestId().respondsWith(200, [
+      {
+        Started: valueGenerator.dateTimeString(),
+        Completed: CUSTODIAN.EMPTY_DATE,
+        Failed: false,
+      },
+    ]);
   };
 
   const makeRequestWithBody = (requestBody: unknown[]) => api.post(getPostSiteDealsUrl(siteId), requestBody);

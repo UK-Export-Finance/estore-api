@@ -1,3 +1,4 @@
+import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
@@ -8,6 +9,7 @@ import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { Cache } from 'cache-manager';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
 
@@ -16,8 +18,12 @@ describe('POST /sites/{siteId}/buyers', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
+    custodianRequestId,
+    custodianCachekey,
     createBuyerFolderRequest,
     createBuyerFolderResponse,
+    createBuyerFolderResponseWhenFolderExistsInSharepoint,
+    createBuyerFolderResponseWhenFolderCustodianJobStarted,
     scCaseSitesListSiteRequest,
     scCaseSitesListSiteResponse,
     tfisCaseSitesListExporterRequest,
@@ -25,20 +31,25 @@ describe('POST /sites/{siteId}/buyers', () => {
     tfisBuyerFolderRequest,
     tfisBuyerFolderResponse,
     custodianCreateAndProvisionRequest,
+    custodianJobsByRequestIdRequest,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
+  const buyerName = createBuyerFolderRequest[0].buyerName;
   const custodianApi = new MockCustodianApi(nock);
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
-    ({ api, mockGraphClientService } = await Api.create());
+    ({ api, mockGraphClientService, cacheManager } = await Api.create());
   });
 
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+
+    cacheManager.reset();
   });
 
   afterAll(async () => {
@@ -111,8 +122,8 @@ describe('POST /sites/{siteId}/buyers', () => {
   });
 
   it('returns the buyer name with status code 201 when successful', async () => {
-    mockSuccessfulScCaseSitesListSiteRequest();
     mockSuccessfulGetBuyerFolderRequest();
+    mockSuccessfulScCaseSitesListSiteRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulCreateAndProvision();
 
@@ -122,15 +133,37 @@ describe('POST /sites/{siteId}/buyers', () => {
     expect(body).toEqual(createBuyerFolderResponse);
   });
 
-  it('returns the buyer name with status code 201 when buyer folder exists', async () => {
-    mockSuccessfulScCaseSitesListSiteRequest();
+  it('returns the buyer name with status code 200 when buyer folder exists', async () => {
     mockSuccessfulGetBuyerFolderRequestFolderExists();
-    mockSuccessfulTfisCaseSitesListExporterRequest();
 
     const { status, body } = await makeRequest();
 
-    expect(status).toBe(201);
-    expect(body).toEqual(createBuyerFolderResponse);
+    expect(status).toBe(200);
+    expect(body).toEqual(createBuyerFolderResponseWhenFolderExistsInSharepoint);
+  });
+
+  it('returns the buyer name with status code 202 when buyer folder is still processed by Custodian', async () => {
+    mockSuccessfulGetBuyerFolderRequest();
+    mockSuccessfulScCaseSitesListSiteRequest();
+    setCacheForPreviousCustodianJob();
+    mockFolderInCustodianJobQueue();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual(createBuyerFolderResponseWhenFolderCustodianJobStarted);
+  });
+
+  it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {
+    mockSuccessfulGetBuyerFolderRequest();
+    mockSuccessfulScCaseSitesListSiteRequest();
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+    mockFolderInCustodianEmptyResponse();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual({ folderName: buyerName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
   });
 
   describe('siteId error cases', () => {
@@ -154,14 +187,12 @@ describe('POST /sites/{siteId}/buyers', () => {
         message: `The ID for the site found for site ${siteId} is not a number (the value is this-is-not-a-number).`,
       },
     ])('$description', async ({ siteIdListItems, statusCode, message }) => {
+      mockSuccessfulGetBuyerFolderRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
         .mockSuccessfulExpandCallWithExpandString(scCaseSitesListSiteRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(scCaseSitesListSiteRequest.filter)
         .mockSuccessfulGraphGetCall({ value: siteIdListItems });
-      mockSuccessfulGetBuyerFolderRequest();
-      mockSuccessfulTfisCaseSitesListExporterRequest();
-      mockSuccessfulCreateAndProvision();
 
       const { status, body } = await makeRequest();
 
@@ -184,14 +215,11 @@ describe('POST /sites/{siteId}/buyers', () => {
         },
       },
     ])('$description', async ({ existingBuyerFolderListItems, responseBody }) => {
-      mockSuccessfulScCaseSitesListSiteRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
         .mockSuccessfulExpandCallWithExpandString(tfisBuyerFolderRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(tfisBuyerFolderRequest.filter)
         .mockSuccessfulGraphGetCall(existingBuyerFolderListItems);
-      mockSuccessfulTfisCaseSitesListExporterRequest();
-      mockSuccessfulCreateAndProvision();
 
       const { status, body } = await makeRequest();
 
@@ -274,16 +302,16 @@ describe('POST /sites/{siteId}/buyers', () => {
 
   const givenAnyRequestBodyWouldSucceed = () => {
     mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
-      .mockSuccessfulGraphGetCall(scCaseSitesListSiteResponse);
-
-    mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
       .mockSuccessfulExpandCall()
       .mockSuccessfulFilterCall()
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(scCaseSitesListSiteRequest.path)
+      .mockSuccessfulExpandCall()
+      .mockSuccessfulFilterCall()
+      .mockSuccessfulGraphGetCall(scCaseSitesListSiteResponse);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
@@ -328,6 +356,24 @@ describe('POST /sites/{siteId}/buyers', () => {
 
   const mockSuccessfulCreateAndProvision = () => {
     custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
+  };
+
+  const setCacheForPreviousCustodianJob = () => {
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+  };
+
+  const mockFolderInCustodianEmptyResponse = () => {
+    custodianApi.requestToReadJobsByRequestId(JSON.stringify(custodianJobsByRequestIdRequest)).respondsWith(200, []);
+  };
+
+  const mockFolderInCustodianJobQueue = () => {
+    custodianApi.requestToReadJobsByAnyRequestId().respondsWith(200, [
+      {
+        Started: valueGenerator.dateTimeString(),
+        Completed: CUSTODIAN.EMPTY_DATE,
+        Failed: false,
+      },
+    ]);
   };
 
   const makeRequestWithBody = (requestBody: unknown[]) => api.post(getPostSiteBuyersUrl(siteId), requestBody);

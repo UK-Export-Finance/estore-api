@@ -1,5 +1,7 @@
+import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
+import { CustodianProvisionJobsByRequestIdRequest } from '@ukef/modules/custodian/dto/custodian-provision-jobs-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetBuyerFolderParams, SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -31,6 +33,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       exporterUrl: this.valueGenerator.httpsUrl(),
       destinationMarketTermGuid: this.valueGenerator.guid(),
       riskMarketTermGuid: this.valueGenerator.guid(),
+      custodianRequestId: this.valueGenerator.string(),
     };
   }
 
@@ -50,10 +53,14 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
         exporterUrl,
         destinationMarketTermGuid,
         riskMarketTermGuid,
+        custodianRequestId,
       },
     ] = values;
 
     const dealFolderName = `D ${dealIdentifier}`;
+
+    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${buyerFolderIdAsNumber.toString()}-${dealFolderName}`;
+
     const buyerFolderIdAsString = buyerFolderIdAsNumber.toString();
 
     const tfisDealListBuyerResponseFields = {
@@ -89,6 +96,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
 
     const createDealFolderResponse: CreateFolderResponseDto = {
       folderName: dealFolderName,
+      status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
     };
 
     const sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams = {
@@ -124,6 +132,16 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
 
     const tfisGetDealFolderResponse = { value: [] };
 
+    const createDealFolderResponseWhenFolderExistsInSharepoint: CreateFolderResponseDto = {
+      folderName: dealFolderName,
+      status: ENUMS.FOLDER_STATUSES.EXISTS_IN_SHAREPOINT,
+    };
+
+    const createDealFolderResponseWhenFolderCustodianJobStarted: CreateFolderResponseDto = {
+      folderName: dealFolderName,
+      status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_STARTED,
+    };
+
     const taxonomyHiddenListTermStoreDestinationMarketRequest: GraphGetParams = {
       path: `${sharepointConfigScSharepointUrl}/lists/${sharepointConfigTaxonomyTermStoreListId}/items`,
       filter: `fields/Title eq '${destinationMarket}'`,
@@ -155,6 +173,11 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       numberToGenerate: 1,
       graphListItemsFields: taxonomyTermStoreListRiskMarketResponseFields,
     });
+
+    const custodianJobsByRequestIdRequest = {
+      RequestId: custodianRequestId,
+      SPHostUrl: sharepointConfigScSiteFullUrl,
+    };
 
     const custodianCreateAndProvisionRequest = {
       Title: dealFolderName,
@@ -192,9 +215,13 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
 
     return {
       siteId,
+      custodianRequestId,
+      custodianCachekey,
       createDealFolderRequestItem,
       createDealFolderRequest,
       createDealFolderResponse,
+      createDealFolderResponseWhenFolderExistsInSharepoint,
+      createDealFolderResponseWhenFolderCustodianJobStarted,
 
       sharepointServiceGetBuyerDealFolderParams,
       sharepointServiceGetDealFolderParams,
@@ -218,6 +245,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
       taxonomyHiddenListTermStoreRiskMarketResponse,
 
       custodianCreateAndProvisionRequest,
+      custodianJobsByRequestIdRequest,
     };
   }
 }
@@ -228,6 +256,8 @@ type TaxonomyHiddenListTermStoreFields = { TermGuid: string };
 
 interface GenerateValues {
   siteId: string;
+
+  custodianRequestId: string;
 
   dealIdentifier: UkefId;
   exporterName: string;
@@ -244,9 +274,13 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
+  custodianRequestId: string;
+  custodianCachekey: string;
   createDealFolderRequestItem: CreateDealFolderRequestItem;
   createDealFolderRequest: CreateDealFolderRequest;
   createDealFolderResponse: CreateFolderResponseDto;
+  createDealFolderResponseWhenFolderExistsInSharepoint: CreateFolderResponseDto;
+  createDealFolderResponseWhenFolderCustodianJobStarted: CreateFolderResponseDto;
 
   sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams;
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
@@ -270,4 +304,5 @@ interface GenerateResult {
   taxonomyHiddenListTermStoreRiskMarketResponse: GraphGetListItemsResponseDto<TaxonomyHiddenListTermStoreFields>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
+  custodianJobsByRequestIdRequest: CustodianProvisionJobsByRequestIdRequest;
 }

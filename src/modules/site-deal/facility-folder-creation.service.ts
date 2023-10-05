@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
-import { UkefId } from '@ukef/helpers';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -27,25 +26,14 @@ export class FacilityFolderCreationService {
   ) {}
 
   async createFacilityFolder(
-    siteId: string,
-    dealId: UkefId,
     createFacilityFolderRequestItem: CreateFacilityFolderRequestItem,
+    dealFolderId: number,
+    facilityFolderName: string,
   ): Promise<CreateFolderResponseDto> {
-    const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
+    const { facilityIdentifier } = createFacilityFolderRequestItem;
 
-    const dealFolderName = this.getDealFolderName(buyerName, dealId);
-    const facilityFolderName = this.getFacilityFolderName(facilityIdentifier);
-
-    const dealFolderId = await this.getDealFolderId(siteId, dealFolderName);
     const termGuid = await this.getTermGuid(facilityIdentifier);
     const termTitle = facilityIdentifier;
-
-    const existingFacilityFolder = await this.sharepointService.getFacilityFolder({ siteId, facilityFolderName: `${dealFolderName}/${facilityFolderName}` });
-
-    if (existingFacilityFolder.length) {
-      // Facility folder already exists, return 201.
-      return { folderName: facilityFolderName };
-    }
 
     const custodianCreateAndProvisionRequest = this.createCustodianCreateAndProvisionRequest(facilityFolderName, dealFolderId, termGuid, termTitle);
 
@@ -56,15 +44,15 @@ export class FacilityFolderCreationService {
     };
   }
 
-  private getFacilityFolderName(facilityIdentifier: string): string {
+  getFacilityFolderName(facilityIdentifier: string): string {
     return `F ${facilityIdentifier}`;
   }
 
-  private getDealFolderName(buyerName: string, dealId: string): string {
+  getDealFolderName(buyerName: string, dealId: string): string {
     return `${buyerName}/D ${dealId}`;
   }
 
-  private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
+  async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
     const dealFolderListItems = await this.sharepointService.getDealFolder({ siteId, dealFolderName });
     if (!dealFolderListItems.length) {
       throw new FolderDependencyNotFoundException(

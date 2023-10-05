@@ -1,5 +1,6 @@
 import { AUTH } from '@ukef/constants';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
+import { Cache } from 'cache-manager';
 import request from 'supertest';
 
 import { App } from './app';
@@ -8,9 +9,9 @@ import { MockGraphClientService } from './mocks/graph-client.service.mock';
 
 export class Api {
   static async create(): Promise<CreateApi> {
-    const { app, mockGraphClientService, mockDtfsStorageClientService } = await App.create();
+    const { app, mockGraphClientService, mockDtfsStorageClientService, cacheManager } = await App.create();
     const api = new Api(app);
-    return { api, mockGraphClientService, mockDtfsStorageClientService };
+    return { api, mockGraphClientService, mockDtfsStorageClientService, cacheManager };
   }
 
   constructor(private readonly app: App) {}
@@ -47,6 +48,10 @@ export class Api {
     return this.app.destroy();
   }
 
+  getGlobalCacheManager(): Promise<void> {
+    return this.app.getGlobalCacheManager();
+  }
+
   private request(): request.SuperTest<request.Test> {
     return request(this.app.getHttpServer());
   }
@@ -62,4 +67,5 @@ interface CreateApi {
   api: Api;
   mockGraphClientService: MockGraphClientService;
   mockDtfsStorageClientService: MockDtfsStorageClientService;
+  cacheManager: Cache;
 }

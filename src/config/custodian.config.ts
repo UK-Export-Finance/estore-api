@@ -15,6 +15,7 @@ export interface CustodianConfig {
   dealTypeGuid: string;
   facilityTemplateId: string;
   facilityTypeGuid: string;
+  custodianJobStoreTtlInMilliseconds: number;
 }
 
 export default registerAs(
@@ -31,5 +32,6 @@ export default registerAs(
     dealTypeGuid: process.env.CUSTODIAN_DEAL_TYPE_GUID,
     facilityTemplateId: process.env.CUSTODIAN_FACILITY_TEMPLATE_ID,
     facilityTypeGuid: process.env.CUSTODIAN_FACILITY_TYPE_GUID,
+    custodianJobStoreTtlInMilliseconds: getIntConfig(process.env.CUSTODIAN_JOB_STORE_TTL_IN_MILLISECONDS, 3600000),
   }),
 );

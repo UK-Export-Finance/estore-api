@@ -57,6 +57,11 @@ describe('custodianConfig', () => {
       environmentVariableName: 'CUSTODIAN_TIMEOUT',
       defaultConfigValue: 30000,
     },
+    {
+      configPropertyName: 'custodianJobStoreTtlInMilliseconds',
+      environmentVariableName: 'CUSTODIAN_JOB_STORE_TTL_IN_MILLISECONDS',
+      defaultConfigValue: 3600000,
+    },
   ];
 
   withEnvironmentVariableParsingUnitTests({

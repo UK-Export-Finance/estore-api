@@ -1,7 +1,14 @@
-import { ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 import { EXAMPLES } from '@ukef/constants';
+import { FolderStatusEnum } from '@ukef/constants/enums/folder-status';
 
 export class CreateBuyerFolderResponseDto {
   @ApiResponseProperty({ example: EXAMPLES.BUYER_NAME })
-  buyerName: string;
+  folderName: string;
+
+  @ApiProperty({
+    description: 'Folder creation takes some time, status field provides more information about creation progress',
+    example: FolderStatusEnum.SENT_TO_CUSTODIAN,
+  })
+  status?: FolderStatusEnum;
 }

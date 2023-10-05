@@ -17,12 +17,14 @@
  * 13. GRAPH
  * 14. REDACT_STRINGS
  * 15. REDACT_STRING_PATHS
+ * 16. CUSTODIAN
  */
 
 export * from './allowed-document-file-type.constant';
 export * from './auth.constant';
 export * from './buyer-name.constant';
 export * from './case-library.constant';
+export * from './custodian.constant';
 export * from './document-x0020-status.constant';
 export * from './dtfs-max-file-size-bytes.constant';
 export * from './enum.constant';

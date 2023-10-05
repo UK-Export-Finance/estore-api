@@ -60,6 +60,7 @@ export const ENVIRONMENT_VARIABLES = Object.freeze({
   CUSTODIAN_DEAL_TYPE_GUID: valueGenerator.guid(),
   CUSTODIAN_FACILITY_TEMPLATE_ID: valueGenerator.word(),
   CUSTODIAN_FACILITY_TYPE_GUID: valueGenerator.guid(),
+  CUSTODIAN_JOB_STORE_TTL_IN_MILLISECONDS: 360000,
 });
 
 export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
@@ -70,6 +71,7 @@ export const getEnvironmentVariablesForProcessEnv = (): NodeJS.ProcessEnv => ({
   APIM_MDM_TIMEOUT: ENVIRONMENT_VARIABLES.APIM_MDM_TIMEOUT.toString(),
   CUSTODIAN_MAX_REDIRECTS: ENVIRONMENT_VARIABLES.CUSTODIAN_MAX_REDIRECTS.toString(),
   CUSTODIAN_TIMEOUT: ENVIRONMENT_VARIABLES.CUSTODIAN_TIMEOUT.toString(),
+  CUSTODIAN_JOB_STORE_TTL_IN_MILLISECONDS: ENVIRONMENT_VARIABLES.CUSTODIAN_JOB_STORE_TTL_IN_MILLISECONDS.toString(),
 });
 
 const delayToExceedTimeoutByInMilliseconds = 1;
