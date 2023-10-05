@@ -9,6 +9,7 @@ export class CreateFolderResponseDto {
   @ApiProperty({
     description: 'Folder creation takes some time, status field provides more information about creation progress',
     example: FolderStatusEnum.SENT_TO_CUSTODIAN,
+    enum: FolderStatusEnum,
   })
   status?: FolderStatusEnum;
 }

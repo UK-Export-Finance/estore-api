@@ -1,5 +1,14 @@
 import { Controller, Param, Post, Res, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -25,6 +34,14 @@ export class SiteBuyerController {
   @ApiOperation({ summary: 'Creates a buyer folder.' })
   @ApiCreatedResponse({
     description: 'The creation of the buyer folder has been scheduled successfully.',
+    type: CreateBuyerFolderResponseDto,
+  })
+  @ApiOkResponse({
+    description: 'The creation of the buyer folder has been completed and it exists in Estore Sharepoint site.',
+    type: CreateBuyerFolderResponseDto,
+  })
+  @ApiAcceptedResponse({
+    description: 'The creation of the buyer folder is still scheduled, please give Custodian some time to complete it.',
     type: CreateBuyerFolderResponseDto,
   })
   @ApiBody({ type: CreateBuyerFolderRequestItem, isArray: true })

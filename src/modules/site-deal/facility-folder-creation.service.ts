@@ -7,7 +7,7 @@ import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
 import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
-import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
+import { CreateFolderResponseDto } from './dto/create-folder-response.dto';
 import { FolderDependencyInvalidException } from './exception/folder-dependency-invalid.exception';
 import { FolderDependencyNotFoundException } from './exception/folder-dependency-not-found.exception';
 

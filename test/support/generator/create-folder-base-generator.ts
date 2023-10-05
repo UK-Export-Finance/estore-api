@@ -17,24 +17,24 @@ export class CreateFolderBaseGenerator extends AbstractGenerator<GenerateValues,
     };
   }
 
-  protected transformRawValuesToGeneratedValues(values: GenerateValues[], _options: GenerateOptions): GenerateResult {
+  protected transformRawValuesToGeneratedValues(values: GenerateValues[], { folderName, parentFolderId }: GenerateOptions): GenerateResult {
     const [{ custodianRequestId }] = values;
 
-    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${_options.parentFolderId.toString()}-${_options.folderName}`;
+    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${parentFolderId.toString()}-${folderName}`;
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
 
     const createFolderResponse: CreateBuyerFolderResponseDto = {
-      folderName: _options.folderName,
+      folderName: folderName,
       status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
     };
 
     const createFolderResponseWhenFolderExistsInSharepoint: CreateBuyerFolderResponseDto = {
-      folderName: _options.folderName,
+      folderName: folderName,
       status: ENUMS.FOLDER_STATUSES.EXISTS_IN_SHAREPOINT,
     };
 
     const createFolderResponseWhenFolderCustodianJobStarted: CreateBuyerFolderResponseDto = {
-      folderName: _options.folderName,
+      folderName: folderName,
       status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_STARTED,
     };
 

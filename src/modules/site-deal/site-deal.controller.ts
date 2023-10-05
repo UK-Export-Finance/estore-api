@@ -1,5 +1,14 @@
 import { Controller, Param, Post, Res, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiAcceptedResponse,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { Response } from 'express';
@@ -11,7 +20,7 @@ import { CreateDealFolderParams } from './dto/create-deal-folder-params.dto';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from './dto/create-deal-folder-request.dto';
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
-import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
+import { CreateFolderResponseDto } from './dto/create-folder-response.dto';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { FolderDependencyExceptionTransformInterceptor } from './interceptor/folder-dependency-exception-transform.interceptor';
 
@@ -29,6 +38,14 @@ export class SiteDealController {
   @ApiOperation({ summary: 'Creates a facility folder for a deal' })
   @ApiCreatedResponse({
     description: 'The creation of the facility folder has been scheduled successfully.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiOkResponse({
+    description: 'The creation of the facility folder has been completed and it exists in Estore Sharepoint site.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiAcceptedResponse({
+    description: 'The creation of the facility folder is still scheduled, please give Custodian some time to complete it.',
     type: CreateFolderResponseDto,
   })
   @ApiBody({ type: CreateFacilityFolderRequestItem, isArray: true })
@@ -63,6 +80,14 @@ export class SiteDealController {
   @ApiOperation({ summary: 'Creates a deal folder.' })
   @ApiCreatedResponse({
     description: 'The creation of the deal folder has been scheduled successfully.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiOkResponse({
+    description: 'The creation of the deal folder has been completed and it exists in Estore Sharepoint site.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiAcceptedResponse({
+    description: 'The creation of the deal folder is still scheduled, please give Custodian some time to complete it.',
     type: CreateFolderResponseDto,
   })
   @ApiBody({ type: CreateDealFolderRequestItem, isArray: true })

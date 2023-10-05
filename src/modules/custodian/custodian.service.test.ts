@@ -19,11 +19,11 @@ describe('CustodianService', () => {
   const custodianRequestId = valueGenerator.string();
   const configScSiteFullUrl = valueGenerator.httpsUrl();
   const configCustodianJobStoreTtlInMilliseconds = 60000;
-  const folderParentSharepointListId = valueGenerator.nonnegativeInteger();
+  const folderParentId = valueGenerator.nonnegativeInteger();
   const folderName = valueGenerator.string();
   const cacheIdGenerator = (parrentId: number, folderName: string): string => `${CUSTODIAN.CACHE_KEY_PREFIX}-${parrentId.toString()}-${folderName}`;
   const httpResponseGenerator = (data) => of({ data, status: 200, statusText: 'OK' });
-  const cacheId = cacheIdGenerator(folderParentSharepointListId, folderName);
+  const cacheId = cacheIdGenerator(folderParentId, folderName);
   const mockDate = new Date();
 
   let httpServicePost: jest.Mock;
@@ -82,7 +82,7 @@ describe('CustodianService', () => {
       Id: valueGenerator.nonnegativeInteger(),
       Code: valueGenerator.string(),
       TemplateId: valueGenerator.string(),
-      ParentId: folderParentSharepointListId,
+      ParentId: folderParentId,
       InterestedParties: valueGenerator.string(),
       Secure: valueGenerator.boolean(),
       DoNotSubscribeInterestedParties: valueGenerator.boolean(),
@@ -188,7 +188,7 @@ describe('CustodianService', () => {
 
     it('returns null if no cache id is stored for folder', async () => {
       when(cacheManagerGet).calledWith(cacheId).mockReturnValueOnce(false);
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).not.toHaveBeenCalled();
       expect(response).toBeNull();
@@ -199,7 +199,7 @@ describe('CustodianService', () => {
       when(httpServicePost)
         .calledWith(...expectedHttpServiceReadJobArgs)
         .mockReturnValueOnce(httpResponseGenerator([]));
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).toHaveBeenCalledWith(202);
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
@@ -220,7 +220,7 @@ describe('CustodianService', () => {
             },
           ]),
         );
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).toHaveBeenCalledWith(202);
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_STARTED });
@@ -239,7 +239,7 @@ describe('CustodianService', () => {
             },
           ]),
         );
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).toHaveBeenCalledWith(202);
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_STARTED });
@@ -258,7 +258,7 @@ describe('CustodianService', () => {
             },
           ]),
         );
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_COMPLETED });
@@ -277,7 +277,7 @@ describe('CustodianService', () => {
             },
           ]),
         );
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_FAILED });
@@ -287,7 +287,7 @@ describe('CustodianService', () => {
     it('returns null if custodian job failed in previous run, and we will allow repeated call', async () => {
       when(cacheManagerGet).calledWith(cacheId).mockReturnValueOnce({ requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_FAILED });
 
-      const response = await service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const response = await service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       expect(res.status).not.toHaveBeenCalled();
       expect(response).toBeNull();
@@ -297,7 +297,7 @@ describe('CustodianService', () => {
     it('throws exception if job is still being sent to Custodian, duplicate call detected', async () => {
       when(cacheManagerGet).calledWith(cacheId).mockReturnValueOnce({ requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENDING_TO_CUSTODIAN });
 
-      const responsePromise = service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const responsePromise = service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       await expect(responsePromise).rejects.toBeInstanceOf(BadRequestException);
       await expect(responsePromise).rejects.toThrow(
@@ -320,7 +320,7 @@ describe('CustodianService', () => {
         .calledWith(...expectedHttpServiceReadJobArgs)
         .mockReturnValueOnce(throwError(() => axiosError));
 
-      const responsePromise = service.getApiResponseIfFolderInCustodian(folderParentSharepointListId, folderName, res);
+      const responsePromise = service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       await expect(responsePromise).rejects.toBeInstanceOf(CustodianException);
       await expect(responsePromise).rejects.toThrow(`Failed to get an Provisioning job by request id for cache id ${cacheId}.`);
