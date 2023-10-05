@@ -1,13 +1,10 @@
-import { CUSTODIAN, ENUMS } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
-import { CustodianProvisionJobsByRequestIdRequest } from '@ukef/modules/custodian/dto/custodian-provision-jobs-request.dto';
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetDealFolderParams, SharepointGetFacilityFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
-import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -33,7 +30,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       parentFolderResponseFieldServerRelativeUrl: this.valueGenerator.string(),
       parentFolderResponseFieldCode: this.valueGenerator.stringOfNumericCharacters(),
       parentFolderResponseFieldParentCode: this.valueGenerator.stringOfNumericCharacters(),
-      custodianRequestId: this.valueGenerator.string(),
     };
   }
 
@@ -46,7 +42,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       parentFolderResponseFieldServerRelativeUrl,
       parentFolderResponseFieldCode,
       parentFolderResponseFieldParentCode,
-      custodianRequestId,
     } = createFacilityFolderValues;
 
     const siteId = options.siteId ?? createFacilityFolderValues.siteId;
@@ -89,26 +84,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const createFacilityFolderRequestDto: CreateFacilityFolderRequestDto = [createFacilityFolderRequestItem];
 
-    const createFacilityFolderResponseDto: CreateFolderResponseDto = {
-      folderName: facilityFolderName,
-      status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
-    };
-
-    const createFacilityFolderResponseWhenFolderExistsInSharepoint: CreateFolderResponseDto = {
-      folderName: facilityFolderName,
-      status: ENUMS.FOLDER_STATUSES.EXISTS_IN_SHAREPOINT,
-    };
-
-    const createFacilityFolderResponseWhenFolderCustodianJobStarted: CreateFolderResponseDto = {
-      folderName: facilityFolderName,
-      status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_STARTED,
-    };
-
-    const custodianJobsByRequestIdRequest = {
-      RequestId: custodianRequestId,
-      SPHostUrl: sharepointConfigScSiteFullUrl,
-    };
-
     const tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams = {
       path: `${sharepointConfigTfisSharepointUrl}/lists/${sharepointConfigTfisFacilityHiddenListTermStoreId}/items`,
       filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
@@ -139,9 +114,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
 
-    const parentFolderId = tfisFacilityListParentFolderResponse.value[0].fields.id;
-
-    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${parentFolderId}-${facilityFolderName}`;
+    const parentFolderId = parseInt(tfisFacilityListParentFolderResponse.value[0].fields.id);
 
     const tfisFacilityFolderResponse = { value: [] };
 
@@ -156,7 +129,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       Id: 0,
       Code: '',
       TemplateId: custodianConfigFacilityTemplateId,
-      ParentId: parseInt(parentFolderId),
+      ParentId: parentFolderId,
       InterestedParties: '',
       Secure: false,
       DoNotSubscribeInterestedParties: false,
@@ -174,15 +147,12 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     };
 
     return {
-      custodianRequestId,
-      custodianCachekey,
+      parentFolderId,
+      facilityFolderName,
       createFacilityFolderParamsDto,
       createFacilityFolderRequestItem,
 
       createFacilityFolderRequestDto,
-      createFacilityFolderResponseDto,
-      createFacilityFolderResponseWhenFolderExistsInSharepoint,
-      createFacilityFolderResponseWhenFolderCustodianJobStarted,
 
       sharepointServiceGetDealFolderParams,
       sharepointServiceGetFacilityTermParams,
@@ -198,7 +168,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
       custodianCreateAndProvisionRequest,
       tfisFacilityFolderResponse,
-      custodianJobsByRequestIdRequest,
     };
   }
 }
@@ -214,7 +183,6 @@ type TfisFacilityListParentFolderResponseFields = {
 
 interface GenerateValues {
   siteId: string;
-  custodianRequestId: string;
   dealId: UkefId;
 
   exporterName: string;
@@ -229,16 +197,12 @@ interface GenerateValues {
 }
 
 interface GenerateResult {
-  custodianRequestId: string;
-  custodianCachekey: string;
-
+  parentFolderId: number;
+  facilityFolderName: string;
   createFacilityFolderParamsDto: CreateFacilityFolderParamsDto;
   createFacilityFolderRequestItem: CreateFacilityFolderRequestItem;
 
   createFacilityFolderRequestDto: CreateFacilityFolderRequestDto;
-  createFacilityFolderResponseDto: CreateFolderResponseDto;
-  createFacilityFolderResponseWhenFolderExistsInSharepoint: CreateFolderResponseDto;
-  createFacilityFolderResponseWhenFolderCustodianJobStarted: CreateFolderResponseDto;
 
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
   sharepointServiceGetFacilityTermParams: UkefId;
@@ -254,8 +218,6 @@ interface GenerateResult {
   tfisFacilityFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
-
-  custodianJobsByRequestIdRequest: CustodianProvisionJobsByRequestIdRequest;
 }
 
 interface GenerateOptions {

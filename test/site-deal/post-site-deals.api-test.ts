@@ -8,6 +8,7 @@ import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/reque
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateDealFolderGenerator } from '@ukef-test/support/generator/create-deal-folder-generator';
+import { CreateFolderBaseGenerator } from '@ukef-test/support/generator/create-folder-base-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
@@ -20,13 +21,10 @@ describe('POST /sites/{siteId}/deals', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    custodianRequestId,
-    custodianCachekey,
+    parentFolderId,
+    dealFolderName: folderName,
     createDealFolderRequestItem: { buyerName, destinationMarket, riskMarket },
     createDealFolderRequest,
-    createDealFolderResponse,
-    createDealFolderResponseWhenFolderExistsInSharepoint,
-    createDealFolderResponseWhenFolderCustodianJobStarted,
     tfisDealListBuyerRequest,
     tfisDealListBuyerResponse,
     tfisGetDealFolderRequest,
@@ -38,10 +36,16 @@ describe('POST /sites/{siteId}/deals', () => {
     taxonomyHiddenListTermStoreRiskMarketRequest,
     taxonomyHiddenListTermStoreRiskMarketResponse,
     custodianCreateAndProvisionRequest,
-    custodianJobsByRequestIdRequest,
   } = new CreateDealFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
-  const folderName = createDealFolderResponse.folderName;
+  const {
+    custodianRequestId,
+    custodianCachekey,
+    createFolderResponse,
+    createFolderResponseWhenFolderExistsInSharepoint,
+    createFolderResponseWhenFolderCustodianJobStarted,
+    custodianJobsByRequestIdRequest,
+  } = new CreateFolderBaseGenerator(valueGenerator).generate({ numberToGenerate: 1, parentFolderId, folderName });
 
   const custodianApi = new MockCustodianApi(nock);
 
@@ -175,7 +179,7 @@ describe('POST /sites/{siteId}/deals', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(201);
-    expect(body).toEqual(createDealFolderResponse);
+    expect(body).toEqual(createFolderResponse);
   });
 
   it('returns the name of the folder created with status code 200 when folder exists', async () => {
@@ -188,7 +192,7 @@ describe('POST /sites/{siteId}/deals', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(200);
-    expect(body).toEqual(createDealFolderResponseWhenFolderExistsInSharepoint);
+    expect(body).toEqual(createFolderResponseWhenFolderExistsInSharepoint);
   });
 
   it('returns the deal folder name with status code 202 when buyer folder is still processed by Custodian', async () => {
@@ -201,7 +205,7 @@ describe('POST /sites/{siteId}/deals', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(202);
-    expect(body).toEqual(createDealFolderResponseWhenFolderCustodianJobStarted);
+    expect(body).toEqual(createFolderResponseWhenFolderCustodianJobStarted);
   });
 
   it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {

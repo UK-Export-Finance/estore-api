@@ -33,13 +33,8 @@ describe('SiteDealController', () => {
   facilityFolderCreationService.getFacilityFolderName = serviceGetFacilityFolderName;
   facilityFolderCreationService.getDealFolderId = serviceGetDealFolderId;
 
-  const {
-    createFacilityFolderParamsDto,
-    createFacilityFolderRequestItem,
-    createFacilityFolderRequestDto,
-    createFacilityFolderResponseDto,
-    custodianCreateAndProvisionRequest,
-  } = new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
+  const { createFacilityFolderParamsDto, createFacilityFolderRequestItem, createFacilityFolderRequestDto, custodianCreateAndProvisionRequest } =
+    new CreateFacilityFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const facilityIdentifier = createFacilityFolderRequestItem.facilityIdentifier;
   const dealIdentifier = createFacilityFolderParamsDto.dealId;
@@ -87,7 +82,7 @@ describe('SiteDealController', () => {
 
       const result = await controller.createFacilityFolder(createFacilityFolderParamsDto, createFacilityFolderRequestDto, res);
 
-      expect(result).toEqual(createFacilityFolderResponseDto);
+      expect(result).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
       expect(serviceCreateFacilityFolder).toHaveBeenCalledWith(createFacilityFolderRequestItem, dealFolderId, folderName);
     });
 

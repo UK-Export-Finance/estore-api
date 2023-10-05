@@ -6,6 +6,7 @@ import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/reque
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-buyer-folder-generator';
+import { CreateFolderBaseGenerator } from '@ukef-test/support/generator/create-folder-base-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
@@ -18,12 +19,8 @@ describe('POST /sites/{siteId}/buyers', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
-    custodianRequestId,
-    custodianCachekey,
+    parentFolderId,
     createBuyerFolderRequest,
-    createBuyerFolderResponse,
-    createBuyerFolderResponseWhenFolderExistsInSharepoint,
-    createBuyerFolderResponseWhenFolderCustodianJobStarted,
     scCaseSitesListSiteRequest,
     scCaseSitesListSiteResponse,
     tfisCaseSitesListExporterRequest,
@@ -31,10 +28,19 @@ describe('POST /sites/{siteId}/buyers', () => {
     tfisBuyerFolderRequest,
     tfisBuyerFolderResponse,
     custodianCreateAndProvisionRequest,
-    custodianJobsByRequestIdRequest,
   } = new CreateBuyerFolderGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
   const buyerName = createBuyerFolderRequest[0].buyerName;
+
+  const {
+    custodianRequestId,
+    custodianCachekey,
+    createFolderResponse,
+    createFolderResponseWhenFolderExistsInSharepoint,
+    createFolderResponseWhenFolderCustodianJobStarted,
+    custodianJobsByRequestIdRequest,
+  } = new CreateFolderBaseGenerator(valueGenerator).generate({ numberToGenerate: 1, parentFolderId, folderName: buyerName });
+
   const custodianApi = new MockCustodianApi(nock);
 
   let api: Api;
@@ -130,7 +136,7 @@ describe('POST /sites/{siteId}/buyers', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(201);
-    expect(body).toEqual(createBuyerFolderResponse);
+    expect(body).toEqual(createFolderResponse);
   });
 
   it('returns the buyer name with status code 200 when buyer folder exists', async () => {
@@ -139,7 +145,7 @@ describe('POST /sites/{siteId}/buyers', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(200);
-    expect(body).toEqual(createBuyerFolderResponseWhenFolderExistsInSharepoint);
+    expect(body).toEqual(createFolderResponseWhenFolderExistsInSharepoint);
   });
 
   it('returns the buyer name with status code 202 when buyer folder is still processed by Custodian', async () => {
@@ -151,7 +157,7 @@ describe('POST /sites/{siteId}/buyers', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(202);
-    expect(body).toEqual(createBuyerFolderResponseWhenFolderCustodianJobStarted);
+    expect(body).toEqual(createFolderResponseWhenFolderCustodianJobStarted);
   });
 
   it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {

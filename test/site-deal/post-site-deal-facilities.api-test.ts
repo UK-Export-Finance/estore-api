@@ -9,6 +9,7 @@ import { withParamValidationApiTests } from '@ukef-test/common-tests/request-par
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
+import { CreateFolderBaseGenerator } from '@ukef-test/support/generator/create-folder-base-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
@@ -19,14 +20,11 @@ import nock from 'nock';
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
-    custodianRequestId,
-    custodianCachekey,
+    parentFolderId,
+    facilityFolderName: folderName,
     createFacilityFolderParamsDto,
     createFacilityFolderRequestItem,
     createFacilityFolderRequestDto,
-    createFacilityFolderResponseDto,
-    createFacilityFolderResponseWhenFolderExistsInSharepoint,
-    createFacilityFolderResponseWhenFolderCustodianJobStarted,
     tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
     tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
     tfisFacilityListParentFolderRequest,
@@ -34,12 +32,18 @@ describe('Create Site Deal Facility Folder', () => {
     custodianCreateAndProvisionRequest,
     tfisFacilityFolderRequest,
     tfisFacilityFolderResponse,
-    custodianJobsByRequestIdRequest,
   } = new CreateFacilityFolderGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
 
-  const folderName = createFacilityFolderResponseDto.folderName;
+  const {
+    custodianRequestId,
+    custodianCachekey,
+    createFolderResponse,
+    createFolderResponseWhenFolderExistsInSharepoint,
+    createFolderResponseWhenFolderCustodianJobStarted,
+    custodianJobsByRequestIdRequest,
+  } = new CreateFolderBaseGenerator(valueGenerator).generate({ numberToGenerate: 1, parentFolderId, folderName });
 
   const custodianApi = new MockCustodianApi(nock);
 
@@ -137,7 +141,7 @@ describe('Create Site Deal Facility Folder', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(201);
-    expect(body).toEqual(createFacilityFolderResponseDto);
+    expect(body).toEqual(createFolderResponse);
   });
 
   it('returns the name of the folder created with status code 200 when folder already exists', async () => {
@@ -148,7 +152,7 @@ describe('Create Site Deal Facility Folder', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(200);
-    expect(body).toEqual(createFacilityFolderResponseWhenFolderExistsInSharepoint);
+    expect(body).toEqual(createFolderResponseWhenFolderExistsInSharepoint);
   });
 
   it('returns the deal folder name with status code 202 when buyer folder is still processed by Custodian', async () => {
@@ -161,7 +165,7 @@ describe('Create Site Deal Facility Folder', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(202);
-    expect(body).toEqual(createFacilityFolderResponseWhenFolderCustodianJobStarted);
+    expect(body).toEqual(createFolderResponseWhenFolderCustodianJobStarted);
   });
 
   it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {
