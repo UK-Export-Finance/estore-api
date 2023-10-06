@@ -6,6 +6,7 @@ import { ConfigType } from '@nestjs/config';
 import CustodianConfig from '@ukef/config/custodian.config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { CUSTODIAN, ENUMS } from '@ukef/constants';
+import { getCustodianFolderCreationCacheKey } from '@ukef/helpers/get-custodian-folder-creation-cache-key.helper';
 import { HttpClient } from '@ukef/modules/http/http.client';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
@@ -42,7 +43,7 @@ export class CustodianService {
 
   async createAndProvision(itemToCreateAndProvision: CustodianCreateAndProvisionRequest): Promise<void> {
     const { Title: titleOfItemToCreateAndProvision } = itemToCreateAndProvision;
-    const folderCreationCacheId = this.generateFolderCreationCacheId(itemToCreateAndProvision.ParentId, itemToCreateAndProvision.Title);
+    const folderCreationCacheId = getCustodianFolderCreationCacheKey(itemToCreateAndProvision.ParentId, itemToCreateAndProvision.Title);
 
     const recentJob: CustodianRecentFolderJob = {
       created: new Date().toISOString(),
@@ -89,7 +90,7 @@ export class CustodianService {
   }
 
   private getRecentFolderCreationJob(parentSharepointListId: number, folderName: string): Promise<CustodianRecentFolderJob | null> {
-    const folderCreationCacheId = this.generateFolderCreationCacheId(parentSharepointListId, folderName);
+    const folderCreationCacheId = getCustodianFolderCreationCacheKey(parentSharepointListId, folderName);
     return this.getRecentFolderCreationJobByCacheId(folderCreationCacheId);
   }
 
@@ -156,9 +157,5 @@ export class CustodianService {
     };
     this.logger.debug('Setting Custodian recent folder creation job cache %o.', recentJobWithExtraFields);
     await this.cacheManager.set(cid, recentJobWithExtraFields, this.custodianConfig.custodianJobStoreTtlInMilliseconds);
-  }
-
-  private generateFolderCreationCacheId(parentSharepointListId: number, folderName: string): string {
-    return `${CUSTODIAN.CACHE_KEY_PREFIX}-${parentSharepointListId.toString()}-${folderName}`;
   }
 }

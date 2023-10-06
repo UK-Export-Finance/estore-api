@@ -1,4 +1,5 @@
-import { CUSTODIAN, ENUMS } from '@ukef/constants';
+import { ENUMS } from '@ukef/constants';
+import { getCustodianFolderCreationCacheKey } from '@ukef/helpers/get-custodian-folder-creation-cache-key.helper';
 import { CustodianProvisionJobsByRequestIdRequest } from '@ukef/modules/custodian/dto/custodian-provision-jobs-request.dto';
 import { CreateBuyerFolderResponseDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-response.dto';
 
@@ -20,7 +21,7 @@ export class CreateFolderBaseGenerator extends AbstractGenerator<GenerateValues,
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], { folderName, parentFolderId }: GenerateOptions): GenerateResult {
     const [{ custodianRequestId }] = values;
 
-    const custodianCachekey = `${CUSTODIAN.CACHE_KEY_PREFIX}-${parentFolderId.toString()}-${folderName}`;
+    const custodianCachekey = getCustodianFolderCreationCacheKey(parentFolderId, folderName);
     const sharepointConfigScSiteFullUrl = `https://${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com/sites/${ENVIRONMENT_VARIABLES.SHAREPOINT_SC_SITE_NAME}`;
 
     const createFolderResponse: CreateBuyerFolderResponseDto = {

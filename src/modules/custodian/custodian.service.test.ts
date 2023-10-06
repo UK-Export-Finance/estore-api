@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { CUSTODIAN, ENUMS } from '@ukef/constants';
+import { getCustodianFolderCreationCacheKey } from '@ukef/helpers/get-custodian-folder-creation-cache-key.helper';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
@@ -21,9 +22,8 @@ describe('CustodianService', () => {
   const configCustodianJobStoreTtlInMilliseconds = 60000;
   const folderParentId = valueGenerator.nonnegativeInteger();
   const folderName = valueGenerator.string();
-  const cacheIdGenerator = (parrentId: number, folderName: string): string => `${CUSTODIAN.CACHE_KEY_PREFIX}-${parrentId.toString()}-${folderName}`;
   const httpResponseGenerator = (data) => of({ data, status: 200, statusText: 'OK' });
-  const cacheId = cacheIdGenerator(folderParentId, folderName);
+  const cacheId = getCustodianFolderCreationCacheKey(folderParentId, folderName);
   const mockDate = new Date();
 
   let httpServicePost: jest.Mock;
