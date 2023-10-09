@@ -61,11 +61,12 @@ export class SiteDealController {
 
     const dealFolderName = this.facilityFolderCreationService.getDealFolderName(buyerName, dealId);
     const folderName = this.facilityFolderCreationService.getFacilityFolderName(facilityIdentifier);
-    const dealFolderId = await this.facilityFolderCreationService.getDealFolderId(siteId, dealFolderName);
 
     if ((await this.sharepointService.getFacilityFolder({ siteId, facilityFolderName: `${dealFolderName}/${folderName}` })).length) {
       return this.sharepointService.getFolderInSharepointApiResponse(folderName, response);
     }
+
+    const dealFolderId = await this.facilityFolderCreationService.getDealFolderId(siteId, dealFolderName);
 
     const folderInCustodianResponse = await this.custodianService.getApiResponseIfFolderInCustodian(dealFolderId, folderName, response);
     if (folderInCustodianResponse) {
@@ -101,11 +102,12 @@ export class SiteDealController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<CreateFolderResponseDto> {
     const folderName = this.dealFolderCreationService.generateDealFolderName(dealIdentifier);
-    const buyerFolderId = await this.dealFolderCreationService.getBuyerFolderId({ siteId, buyerName });
 
     if ((await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${folderName}` })).length) {
       return this.sharepointService.getFolderInSharepointApiResponse(folderName, response);
     }
+
+    const buyerFolderId = await this.dealFolderCreationService.getBuyerFolderId({ siteId, buyerName });
 
     const folderInCustodianResponse = await this.custodianService.getApiResponseIfFolderInCustodian(buyerFolderId, folderName, response);
     if (folderInCustodianResponse) {

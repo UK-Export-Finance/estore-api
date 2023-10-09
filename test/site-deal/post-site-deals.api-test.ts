@@ -250,7 +250,7 @@ describe('POST /sites/{siteId}/deals', () => {
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
       mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
+      mockSuccessfulGetDealFolderRequest();
 
       const { status, body } = await makeRequest();
 

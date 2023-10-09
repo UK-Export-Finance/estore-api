@@ -95,6 +95,10 @@ describe('SiteDealController', () => {
       const folderDependencyNotFound = new FolderDependencyNotFoundException(errorMessage);
 
       when(serviceGenerateDealFolderName).calledWith(dealIdentifier).mockReturnValueOnce(folderName);
+      when(sharepointServiceGetDealFolder)
+        .calledWith({ siteId, dealFolderName: `${buyerName}/${folderName}` })
+        .mockResolvedValueOnce(emptySharepointResponse);
+
       when(serviceGetBuyerFolderId).calledWith({ siteId, buyerName }).mockRejectedValueOnce(folderDependencyNotFound);
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest, res);
@@ -109,6 +113,10 @@ describe('SiteDealController', () => {
       const errorMessage = valueGenerator.string();
       const folderDependencyInvalidException = new FolderDependencyInvalidException(errorMessage);
       when(serviceGenerateDealFolderName).calledWith(dealIdentifier).mockReturnValueOnce(folderName);
+      when(sharepointServiceGetDealFolder)
+        .calledWith({ siteId, dealFolderName: `${buyerName}/${folderName}` })
+        .mockResolvedValueOnce(emptySharepointResponse);
+
       when(serviceGetBuyerFolderId).calledWith({ siteId, buyerName }).mockRejectedValueOnce(folderDependencyInvalidException);
 
       const createDealFolderPromise = controller.createDealFolder({ siteId }, createDealFolderRequest, res);

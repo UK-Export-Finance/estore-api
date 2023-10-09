@@ -188,6 +188,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
 
+    mockSuccessfulTfisFacilityFolderRequest();
+
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
@@ -207,6 +209,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
 
+    mockSuccessfulTfisFacilityFolderRequest();
+
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
@@ -225,6 +229,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
+
+    mockSuccessfulTfisFacilityFolderRequest();
 
     const { status, body } = await makeRequest();
 

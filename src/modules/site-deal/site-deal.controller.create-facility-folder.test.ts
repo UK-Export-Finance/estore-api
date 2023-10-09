@@ -106,6 +106,9 @@ describe('SiteDealController', () => {
     it('throws the original error if get buyer folder id throws a FolderDependencyNotFoundException', async () => {
       when(serviceGetDealFolderName).calledWith(buyerName, dealIdentifier).mockReturnValueOnce(dealFolderName);
       when(serviceGetFacilityFolderName).calledWith(facilityIdentifier).mockReturnValueOnce(folderName);
+      when(sharepointServiceGetFacilityFolder)
+        .calledWith({ siteId, facilityFolderName: `${dealFolderName}/${folderName}` })
+        .mockResolvedValueOnce(emptySharepointResponse);
 
       const errorMessage = valueGenerator.string();
       const folderDependencyNotFound = new FolderDependencyNotFoundException(errorMessage);
