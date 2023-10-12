@@ -30,9 +30,22 @@ describe('dtfsStorageConfig', () => {
     },
   ];
 
+  const configParsedAsIntFromEnvironmentVariablesWithDefault: {
+    configPropertyName: keyof DtfsStorageConfig;
+    environmentVariableName: string;
+    defaultConfigValue: number;
+  }[] = [
+    {
+      configPropertyName: 'sasTokenTtlInSeconds',
+      environmentVariableName: 'SAS_TOKEN_TTL_IN_SECONDS',
+      defaultConfigValue: 60,
+    },
+  ];
+
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configModifiedFromEnvironmentVariables,
+    configParsedAsIntFromEnvironmentVariablesWithDefault,
     getConfig: () => dtfsStorageConfig(),
   });
 });
