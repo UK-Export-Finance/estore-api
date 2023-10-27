@@ -8,7 +8,7 @@ import { ALLOWED_DOCUMENT_FILE_TYPE } from './allowed-document-file-type.constan
  */
 const disallowedPrefixes = ['\\s', '~\\$'];
 const disallowedSuffixes = ['\\s'];
-const disallowedCharacters = ['"', '*', '<', '>', '?', '/', '\\\\', '\\|'];
+const disallowedCharacters = ['"', '*', '<', '>', '?', '/', '\\\\', '\\|', ':'];
 const disallowedSubstrings = ['_vti_'];
 const disallowedStrings = ['\\.lock', 'CON', 'PRN', 'AUX', 'NUL', 'COM\\d', 'LPT\\d', 'desktop\\.ini'];
 const disallowedStringsOnRoot = ['forms'];
