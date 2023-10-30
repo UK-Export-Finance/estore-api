@@ -32,7 +32,7 @@
     "@azure/identity": "^3.3.2",
     "@azure/storage-file-share": "^12.16.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@nestjs/axios": "^3.0.0",
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/cache-manager": "^2.1.0",
     "@nestjs/common": "^10.2.7",
     "@nestjs/config": "^3.1.1",
