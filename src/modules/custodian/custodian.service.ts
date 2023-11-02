@@ -107,7 +107,7 @@ export class CustodianService {
     }
 
     if (recentJob.status === ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_FAILED) {
-      this.logger.warn('Found cache with failed Custodian job for folder creation. Lets try to create new job.');
+      this.logger.warn("Found cache with failed Custodian job for folder creation. Let's try to create new job.");
       return;
     }
 
@@ -125,7 +125,7 @@ export class CustodianService {
         },
         headers: { 'Content-Type': 'application/json' },
         onError: (error: Error) => {
-          return throwError(() => new CustodianException(`Failed to get an Provisioning job by request id for cache id ${folderCreationCacheId}.`, error));
+          return throwError(() => new CustodianException(`Failed to get a Provisioning job by request id for cache id ${folderCreationCacheId}.`, error));
         },
       });
       if (custodianJobStatus?.data?.length) {

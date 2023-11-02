@@ -19,7 +19,7 @@ describe('CustodianService', () => {
   const valueGenerator = new RandomValueGenerator();
   const custodianRequestId = valueGenerator.string();
   const configScSiteFullUrl = valueGenerator.httpsUrl();
-  const configCustodianJobStoreTtlInMilliseconds = 60000;
+  const jobStoreTtl = 60000;
   const folderParentId = valueGenerator.nonnegativeInteger();
   const folderName = valueGenerator.string();
   const httpResponseGenerator = (data) => of({ data, status: 200, statusText: 'OK' });
@@ -58,7 +58,7 @@ describe('CustodianService', () => {
     service = new CustodianService(
       httpService,
       {
-        custodianJobStoreTtlInMilliseconds: configCustodianJobStoreTtlInMilliseconds,
+        custodianJobStoreTtlInMilliseconds: jobStoreTtl,
       },
       {
         scSiteFullUrl: configScSiteFullUrl,
@@ -118,6 +118,20 @@ describe('CustodianService', () => {
       { headers: { 'Content-Type': 'application/json' } },
     ];
 
+    const expectedCacheSendingState = {
+      created: mockDate.toISOString(),
+      status: ENUMS.FOLDER_STATUSES.SENDING_TO_CUSTODIAN,
+      cacheId,
+      modified: mockDate.toISOString(),
+    };
+    const expectedCacheSentState = {
+      created: mockDate.toISOString(),
+      requestId: custodianRequestId,
+      status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
+      cacheId,
+      modified: mockDate.toISOString(),
+    };
+
     it('sends a POST to the Custodian /Create/CreateAndProvision endpoint with the specified item to create and provision', async () => {
       when(httpServicePost)
         .calledWith(...expectedHttpServicePostArgs)
@@ -137,29 +151,8 @@ describe('CustodianService', () => {
       expect(httpServicePost).toHaveBeenCalledWith(...expectedHttpServicePostArgs);
 
       expect(cacheManagerSet).toHaveBeenCalledTimes(2);
-      expect(cacheManagerSet).toHaveBeenNthCalledWith(
-        1,
-        cacheId,
-        {
-          created: mockDate.toISOString(),
-          status: ENUMS.FOLDER_STATUSES.SENDING_TO_CUSTODIAN,
-          cacheId,
-          modified: mockDate.toISOString(),
-        },
-        configCustodianJobStoreTtlInMilliseconds,
-      );
-      expect(cacheManagerSet).toHaveBeenNthCalledWith(
-        2,
-        cacheId,
-        {
-          created: mockDate.toISOString(),
-          requestId: custodianRequestId,
-          status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN,
-          cacheId,
-          modified: mockDate.toISOString(),
-        },
-        configCustodianJobStoreTtlInMilliseconds,
-      );
+      expect(cacheManagerSet).toHaveBeenCalledWith(cacheId, expectedCacheSendingState, jobStoreTtl);
+      expect(cacheManagerSet).toHaveBeenCalledWith(cacheId, expectedCacheSentState, jobStoreTtl);
     });
 
     it('throws a CustodianException if the request to Custodian fails', async () => {
@@ -205,7 +198,7 @@ describe('CustodianService', () => {
       expect(response).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
     });
 
-    it('returns response with status CUSTODIAN_JOB_NOT_STARTED if custodian job has start, but no completion date', async () => {
+    it('returns response with status CUSTODIAN_JOB_NOT_STARTED if custodian job no start and no completion dates', async () => {
       when(cacheManagerGet)
         .calledWith(cacheId)
         .mockReturnValueOnce({ requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
@@ -291,7 +284,7 @@ describe('CustodianService', () => {
 
       expect(res.status).not.toHaveBeenCalled();
       expect(response).toBeNull();
-      expect(loggerWarn).toHaveBeenCalledWith('Found cache with failed Custodian job for folder creation. Lets try to create new job.');
+      expect(loggerWarn).toHaveBeenCalledWith("Found cache with failed Custodian job for folder creation. Let's try to create new job.");
     });
 
     it('throws exception if job is still being sent to Custodian, duplicate call detected', async () => {
@@ -323,7 +316,7 @@ describe('CustodianService', () => {
       const responsePromise = service.getApiResponseIfFolderInCustodian(folderParentId, folderName, res);
 
       await expect(responsePromise).rejects.toBeInstanceOf(CustodianException);
-      await expect(responsePromise).rejects.toThrow(`Failed to get an Provisioning job by request id for cache id ${cacheId}.`);
+      await expect(responsePromise).rejects.toThrow(`Failed to get a Provisioning job by request id for cache id ${cacheId}.`);
       await expect(responsePromise).rejects.toHaveProperty('innerError', axiosError);
     });
   });
