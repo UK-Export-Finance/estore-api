@@ -1,6 +1,23 @@
 # eStore API 🚀
 eStore API provides endpoints for internal eStore responsible for reading and writing to SharePoint/eStore
 
+**Status** 🚦
+
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
+
+**CI** 💫
+
+![Lint](https://github.com/UK-Export-Finance/estore-api/actions/workflows/lint.yml/badge.svg)
+![SCA](https://github.com/UK-Export-Finance/estore-api/actions/workflows/sca.yml/badge.svg)
+![QA](https://github.com/UK-Export-Finance/estore-api/actions/workflows/test.yml/badge.svg)
+![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/publish.yml/badge.svg)
+
+**CD** 🚀
+
+![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=dev)
+![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=staging)
+![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=production)
+
 ## Install 💻
 
 ```bash
