@@ -1,5 +1,61 @@
 # Changelog
 
+## 1.5.0 (2023-12-29)
+
+
+### Features
+
+* **APIM-461:** api-tests for POST /terms/facilities ([#206](https://github.com/UK-Export-Finance/estore-api/issues/206)) ([f2663a9](https://github.com/UK-Export-Finance/estore-api/commit/f2663a9214768966809df1e609d20a0f1a936f73))
+* **APIM-465:** remove sensitive data from logs ([#180](https://github.com/UK-Export-Finance/estore-api/issues/180)) ([ad9b7cc](https://github.com/UK-Export-Finance/estore-api/commit/ad9b7ccf37e023b521c51f8ce1f71a3ad0778e63))
+* **APIM-478:** added common standard error tests file for MDM nock mock ([596c22f](https://github.com/UK-Export-Finance/estore-api/commit/596c22fed94c726f693d7143f860bdbd9f0eb9de))
+* **APIM-478:** improve api-tests. Mock MDM API using nock, instead of mocking mdm service class ([#263](https://github.com/UK-Export-Finance/estore-api/issues/263)) ([004fb1c](https://github.com/UK-Export-Finance/estore-api/commit/004fb1ca1b040610fab949a06a9b4ef6a65e13c7))
+* **APIM-478:** improve MDM API api-tests. Mock API using nock, instead of mocking mdm service class ([c00068c](https://github.com/UK-Export-Finance/estore-api/commit/c00068c802a156d678466bfd32f0df4b00681999))
+* **APIM-482:** clean up ([e2400dc](https://github.com/UK-Export-Finance/estore-api/commit/e2400dccfff23d801a89e0c54fe35afe3a478047))
+* **APIM-482:** don't create folder if it already exists in Sharepoint ([4b513fd](https://github.com/UK-Export-Finance/estore-api/commit/4b513fd699ec6a6c4aa2190a9413cfbaf746c7dc))
+* **APIM-482:** don't create folder if it already exists ([#234](https://github.com/UK-Export-Finance/estore-api/issues/234)) ([a6c0091](https://github.com/UK-Export-Finance/estore-api/commit/a6c0091c23d28ecc4365f3c800344698c5f40d5a))
+* **APIM-482:** tidy up ([faea3ff](https://github.com/UK-Export-Finance/estore-api/commit/faea3ffd0705c197355f884b27bd89bb9027ba56))
+* **APIM-482:** tidy up ([46b027b](https://github.com/UK-Export-Finance/estore-api/commit/46b027b7c497aebb63e7ebd664936a7f326eb565))
+* **APIM-482:** unit and api tests for get buyer, deal, facility folders ([5fa17e9](https://github.com/UK-Export-Finance/estore-api/commit/5fa17e908f48d2e45c7a67759a74b5d92716e864))
+* **APIM-482:** unit and api tests for get buyer, deal, facility folders ([cb6cdb3](https://github.com/UK-Export-Finance/estore-api/commit/cb6cdb3f4b8d8d6847cc186c3bbf0529e6d8a009))
+* **APIM-562:** rename module deal-folder to site-document ([ca825dc](https://github.com/UK-Export-Finance/estore-api/commit/ca825dc30a1d19d8e29cb936133479b66e239b81))
+* **APIM-562:** rename module deal-folder to site-document ([#240](https://github.com/UK-Export-Finance/estore-api/issues/240)) ([b1b0096](https://github.com/UK-Export-Finance/estore-api/commit/b1b00969a38fd461ef8ae96533653a94b8fcdd6e))
+* **APIM-580:** cleanup ([86fc091](https://github.com/UK-Export-Finance/estore-api/commit/86fc0911934aa31a14ff99f9c6ac14b8706fa0a2))
+* **APIM-580:** cleanup - remove extra Exporter name fields ([5664b7d](https://github.com/UK-Export-Finance/estore-api/commit/5664b7db536a54fa8a1a26302f7a31339e91c47b))
+* **APIM-580:** fix - GET /site, this endpoint still need to use exporterName ([c856215](https://github.com/UK-Export-Finance/estore-api/commit/c8562155fb4671b3cc82979057c2f16435cf2a46))
+* **APIM-580:** remove input field exporterName if it is not required ([#254](https://github.com/UK-Export-Finance/estore-api/issues/254)) ([418339a](https://github.com/UK-Export-Finance/estore-api/commit/418339a8f66b281893435589bcdb3d65a6dfbf1b))
+* **APIM-580:** removing payload field exporterName if it is not required, work in progress ([55956d0](https://github.com/UK-Export-Finance/estore-api/commit/55956d0e13be8a44112249d29de88429e40a06fd))
+* **release-please-v4:** updated release-please to v4 ([4f820ab](https://github.com/UK-Export-Finance/estore-api/commit/4f820abb7763fd944694ab78bfb84979cdee8586))
+* **release-please-v4:** updated release-please to v4 ([3d7611a](https://github.com/UK-Export-Finance/estore-api/commit/3d7611ae1916fcfd905744ec9d9896ac73c02474))
+* **release-please-v4:** updated release-please to v4 ([#491](https://github.com/UK-Export-Finance/estore-api/issues/491)) ([9e77ba0](https://github.com/UK-Export-Finance/estore-api/commit/9e77ba038c25cd470729a8921c8b219f4f43cdcd))
+* **spellcheck:** added spellcheck to the pipeline ([f812bd9](https://github.com/UK-Export-Finance/estore-api/commit/f812bd9204b233f58119482e23036ae63ca373a0))
+* **spellcheck:** added spellcheck to the pipeline ([81a09f4](https://github.com/UK-Export-Finance/estore-api/commit/81a09f422e0ef996238d303d460b4cce791979e3))
+* **template:** pull request template ([d69941b](https://github.com/UK-Export-Finance/estore-api/commit/d69941b1e092dd733dcf0b286354314528cc979e))
+* **template:** pull request template ([#429](https://github.com/UK-Export-Finance/estore-api/issues/429)) ([8dc29d1](https://github.com/UK-Export-Finance/estore-api/commit/8dc29d18e7172d6f992842a956d91afa2f23c5ec))
+
+
+### Bug Fixes
+
+* **APIM-465:** renamed variable 'string' to 'logMessage' ([d6a0e68](https://github.com/UK-Export-Finance/estore-api/commit/d6a0e6881cef832a55d6e236b70b05f654dfb970))
+* **APIM-584:** increase number of records in GRAPH API GET results, fix file metadata updating ([01439d5](https://github.com/UK-Export-Finance/estore-api/commit/01439d5f3b8b2609e954e5b8eb314c97eb738823))
+* **APIM-584:** increase number of records in GRAPH API GET results, fix file metadata updating ([#221](https://github.com/UK-Export-Finance/estore-api/issues/221)) ([dcd4f57](https://github.com/UK-Export-Finance/estore-api/commit/dcd4f57edb4a5357a48392510158b68f8bee6d32))
+* **APIM-601:** added colon to disallowed characters of Exporter and buyer names ([3c931a4](https://github.com/UK-Export-Finance/estore-api/commit/3c931a48731c0b1a5e0d2aa6ae8ce0945d6d7063))
+* **APIM-601:** added colon to disallowed characters of Exporter and buyer names ([#348](https://github.com/UK-Export-Finance/estore-api/issues/348)) ([7d080c1](https://github.com/UK-Export-Finance/estore-api/commit/7d080c19fe76c41093e0bb09a5b84073ec283122))
+* changed status from 400 to 201 in situation where Buyer, Deal or Facility folder exists ([2cec2b8](https://github.com/UK-Export-Finance/estore-api/commit/2cec2b85e1d42d48c153134c28acc04da6adb45e))
+* **ci:** run ci with legacy-peer-deps argument ([9b3b535](https://github.com/UK-Export-Finance/estore-api/commit/9b3b53564ae5ba7d4fae8595f7521c3d61098315))
+* **ci:** run ci with legacy-peer-deps argument ([a6fec2b](https://github.com/UK-Export-Finance/estore-api/commit/a6fec2bb624dc837f1ebd994ff0cdea8d4cebed2))
+* cleanup ([c8960de](https://github.com/UK-Export-Finance/estore-api/commit/c8960de3c2906b957c5b53611199c82a449998f1))
+* **dockerfile:** base dockerfile update ([87b3136](https://github.com/UK-Export-Finance/estore-api/commit/87b31361cf2377aefa139679f0d10c3d46447049))
+* **dockerfile:** base dockerfile update ([#368](https://github.com/UK-Export-Finance/estore-api/issues/368)) ([da45cbf](https://github.com/UK-Export-Finance/estore-api/commit/da45cbf36dfb937d4a7d6cc3c3013773a1278dbd))
+* **package:** fixed package.json sync ([d44d616](https://github.com/UK-Export-Finance/estore-api/commit/d44d616c1e13bb2f95ecd8a121ca3b5dbcba2b9f))
+* **package:** fixed package.json sync ([ee544d9](https://github.com/UK-Export-Finance/estore-api/commit/ee544d94648a38348e14ae5ef50472951f278c1b))
+* **package:** package sync ([1fdad48](https://github.com/UK-Export-Finance/estore-api/commit/1fdad48b2efc46160afc8dd320c3fad20004b240))
+* **package:** package.json sync ([9754bd3](https://github.com/UK-Export-Finance/estore-api/commit/9754bd3a86dac3afddf810cecb75c6f301f7bea4))
+* **package:** remove frivolous scripts ([ed0534c](https://github.com/UK-Export-Finance/estore-api/commit/ed0534c5b2a813f47f569fb3f079d584de7b66a0))
+* **package:** remove frivolous scripts ([26a946d](https://github.com/UK-Export-Finance/estore-api/commit/26a946d793972ce8fa6b90d746e196c05efa8dcf))
+* **release:** release version manager ([#342](https://github.com/UK-Export-Finance/estore-api/issues/342)) ([29d2ceb](https://github.com/UK-Export-Finance/estore-api/commit/29d2cebaeb32e69a112d1ab45177dfcf2ee05cc2))
+* **spellcheck:** added spellcheck to the pipeline ([#325](https://github.com/UK-Export-Finance/estore-api/issues/325)) ([b573acc](https://github.com/UK-Export-Finance/estore-api/commit/b573accb9725decf18bb720a41466be4aba18c26))
+* **tsconfig:** tsconfig file fix ([8f3c2fe](https://github.com/UK-Export-Finance/estore-api/commit/8f3c2fe0ab0a599373af73e37a3ce981a8b43e3e))
+
 ## [1.4.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.3.2...v1.4.0) (2023-09-12)
 
 
