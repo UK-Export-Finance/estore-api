@@ -12,7 +12,7 @@
 * **APIM-478:** improve MDM API api-tests. Mock API using nock, instead of mocking mdm service class ([c00068c](https://github.com/UK-Export-Finance/estore-api/commit/c00068c802a156d678466bfd32f0df4b00681999))
 * **APIM-482:** clean up ([e2400dc](https://github.com/UK-Export-Finance/estore-api/commit/e2400dccfff23d801a89e0c54fe35afe3a478047))
 * **APIM-482:** don't create folder if it already exists in Sharepoint ([4b513fd](https://github.com/UK-Export-Finance/estore-api/commit/4b513fd699ec6a6c4aa2190a9413cfbaf746c7dc))
-* **APIM-482:** dont create folder if it already exists ([#234](https://github.com/UK-Export-Finance/estore-api/issues/234)) ([a6c0091](https://github.com/UK-Export-Finance/estore-api/commit/a6c0091c23d28ecc4365f3c800344698c5f40d5a))
+* **APIM-482:** don't create folder if it already exists ([#234](https://github.com/UK-Export-Finance/estore-api/issues/234)) ([a6c0091](https://github.com/UK-Export-Finance/estore-api/commit/a6c0091c23d28ecc4365f3c800344698c5f40d5a))
 * **APIM-482:** tidy up ([faea3ff](https://github.com/UK-Export-Finance/estore-api/commit/faea3ffd0705c197355f884b27bd89bb9027ba56))
 * **APIM-482:** tidy up ([46b027b](https://github.com/UK-Export-Finance/estore-api/commit/46b027b7c497aebb63e7ebd664936a7f326eb565))
 * **APIM-482:** unit and api tests for get buyer, deal, facility folders ([5fa17e9](https://github.com/UK-Export-Finance/estore-api/commit/5fa17e908f48d2e45c7a67759a74b5d92716e864))
