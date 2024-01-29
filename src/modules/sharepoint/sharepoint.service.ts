@@ -1,9 +1,11 @@
 import { UploadResult } from '@microsoft/microsoft-graph-client';
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
+import { ENUMS } from '@ukef/constants';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import GraphService from '@ukef/modules/graph/graph.service';
+import { Response } from 'express';
 
 import { GraphCreateSiteResponseDto } from '../graph/dto/graph-create-site-response.dto';
 import { ListItem } from './list-item.interface';
@@ -274,11 +276,17 @@ export class SharepointService {
 
   private async findListItems<Fields>({ siteUrl, listId, listTitle, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
+
     const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId || listTitle}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
     return listItemsMatchingFilter;
+  }
+
+  getFolderInSharepointApiResponse(folderName: string, response: Response) {
+    response.status(HttpStatus.OK);
+    return { folderName, status: ENUMS.FOLDER_STATUSES.EXISTS_IN_SHAREPOINT };
   }
 }

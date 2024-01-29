@@ -3,7 +3,6 @@ import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateBuyerFolderRequestDto, CreateBuyerFolderRequestItem } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
-import { CreateBuyerFolderResponseDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -66,10 +65,6 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
     };
 
     const createBuyerFolderRequest: CreateBuyerFolderRequestDto = [createBuyerFolderRequestItem];
-
-    const createBuyerFolderResponse: CreateBuyerFolderResponseDto = {
-      buyerName: buyerName,
-    };
 
     const sharepointServiceGetCaseSiteParams = siteId;
     const sharepointServiceGetExporterSiteParams = siteId;
@@ -136,9 +131,9 @@ export class CreateBuyerFolderGenerator extends AbstractGenerator<GenerateValues
 
     return {
       siteId,
+      parentFolderId: exporterSiteIdAsNumber,
       createBuyerFolderRequestItem,
       createBuyerFolderRequest,
-      createBuyerFolderResponse,
 
       sharepointServiceGetCaseSiteParams,
       sharepointServiceGetBuyerFolderParams,
@@ -182,9 +177,9 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
+  parentFolderId: number;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
-  createBuyerFolderResponse: CreateBuyerFolderResponseDto;
 
   sharepointServiceGetCaseSiteParams: string;
   sharepointServiceGetBuyerFolderParams: SharepointGetBuyerFolderParams;

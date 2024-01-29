@@ -6,7 +6,6 @@ import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
-import { CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
 import { SiteExporterInvalidException } from './exception/site-exporter-invalid.exception';
 import { SiteExporterNotFoundException } from './exception/site-exporter-not-found.exception';
 
@@ -24,25 +23,12 @@ export class BuyerFolderCreationService {
     private readonly custodianService: CustodianService,
   ) {}
 
-  async createBuyerFolder(siteId: string, createBuyerFolderRequestItem: CreateBuyerFolderRequestItem): Promise<string> {
-    const { buyerName } = createBuyerFolderRequestItem;
-
-    const { caseSiteId } = await this.getCaseSiteId(siteId);
+  async createBuyerFolder(siteId: string, caseSiteId: number, buyerName: string): Promise<void> {
     const { buyerTermGuid, buyerUrl } = await this.getBuyerTermFromList(siteId);
-
-    const existingBuyerFolder = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
-
-    if (existingBuyerFolder.length) {
-      // Buyer folder already exists, return 201.
-      return buyerName;
-    }
-
-    await this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
-
-    return buyerName;
+    return this.sendCreateAndProvisionRequestForBuyerFolder(buyerName, caseSiteId, buyerTermGuid, buyerUrl);
   }
 
-  private async getCaseSiteId(siteId: string) {
+  async getCaseSiteId(siteId: string) {
     const searchResults = await this.sharepointService.getCaseSite(siteId);
 
     if (!searchResults.length) {
@@ -116,6 +102,6 @@ export class BuyerFolderCreationService {
       TypeGuid: this.custodianConfig.buyerTypeGuid,
       SPHostUrl: this.sharepointConfig.scSiteFullUrl,
     };
-    await this.custodianService.createAndProvision(createFolderRequest);
+    return await this.custodianService.createAndProvision(createFolderRequest);
   }
 }

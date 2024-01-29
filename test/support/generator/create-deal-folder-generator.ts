@@ -4,7 +4,6 @@ import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetBuyerFolderParams, SharepointGetDealFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from '@ukef/modules/site-deal/dto/create-deal-folder-request.dto';
-import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -54,6 +53,7 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
     ] = values;
 
     const dealFolderName = `D ${dealIdentifier}`;
+
     const buyerFolderIdAsString = buyerFolderIdAsNumber.toString();
 
     const tfisDealListBuyerResponseFields = {
@@ -86,10 +86,6 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
     };
 
     const createDealFolderRequest: CreateDealFolderRequest = [createDealFolderRequestItem];
-
-    const createDealFolderResponse: CreateFolderResponseDto = {
-      folderName: dealFolderName,
-    };
 
     const sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams = {
       siteId,
@@ -192,9 +188,10 @@ export class CreateDealFolderGenerator extends AbstractGenerator<GenerateValues,
 
     return {
       siteId,
+      parentFolderId: buyerFolderIdAsNumber,
+      dealFolderName,
       createDealFolderRequestItem,
       createDealFolderRequest,
-      createDealFolderResponse,
 
       sharepointServiceGetBuyerDealFolderParams,
       sharepointServiceGetDealFolderParams,
@@ -244,9 +241,10 @@ interface GenerateValues {
 
 interface GenerateResult {
   siteId: string;
+  parentFolderId: number;
+  dealFolderName: string;
   createDealFolderRequestItem: CreateDealFolderRequestItem;
   createDealFolderRequest: CreateDealFolderRequest;
-  createDealFolderResponse: CreateFolderResponseDto;
 
   sharepointServiceGetBuyerDealFolderParams: SharepointGetBuyerFolderParams;
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;

@@ -26,28 +26,21 @@ export class DealFolderCreationService {
   async createDealFolder({
     siteId,
     dealIdentifier,
-    buyerName,
     destinationMarket,
     riskMarket,
+    dealFolderName,
+    buyerFolderId,
   }: {
     siteId: string;
     dealIdentifier: string;
-    buyerName: string;
     destinationMarket: string;
     riskMarket: string;
+    dealFolderName: string;
+    buyerFolderId: number;
   }): Promise<string> {
-    const buyerFolderId = await this.getBuyerFolderId({ siteId, buyerName });
     const { exporterTermGuid, exporterUrl } = await this.getExporterDetails({ siteId });
     const destinationMarketTermGuid = await this.getMarketTermGuid(destinationMarket);
     const riskMarketTermGuid = await this.getMarketTermGuid(riskMarket);
-    const dealFolderName = this.generateDealFolderName(dealIdentifier);
-
-    const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
-
-    if (existingDealFolder.length) {
-      // Deal folder already exists, return 201.
-      return dealFolderName;
-    }
 
     await this.sendCreateAndProvisionRequestForDealFolder({
       dealIdentifier,
@@ -63,7 +56,7 @@ export class DealFolderCreationService {
     return dealFolderName;
   }
 
-  private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
+  async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
     const buyerFolderSearchResults = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
     if (buyerFolderSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find a folder for buyer ${buyerName} in site ${siteId}.`);
@@ -120,7 +113,7 @@ export class DealFolderCreationService {
     return marketTermGuid;
   }
 
-  private generateDealFolderName(dealIdentifier: string): string {
+  generateDealFolderName(dealIdentifier: string): string {
     return `D ${dealIdentifier}`;
   }
 
