@@ -1,4 +1,4 @@
-# eStore Git Hub Actions
+# ESTORE-API Git Hub Actions
 #####################################
 # This GHA is responsible for initiating various test suites
 # upon a PR creation. Following test suites are executed:
@@ -25,8 +25,7 @@ on:
 
 env:
   environment: "qa"
-  timezone: "Europe/London"
-  node: ${{ vars.NODE_VERSION }}
+  timezone: ${{ vars.TIMEZONE }}
 
 jobs:
   # 1. Setup test infrastructure
@@ -52,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Timezone
-        uses: szenius/set-timezone@v1.2
+        uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
@@ -62,7 +61,7 @@ jobs:
       - name: Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.node }}
+          node-version: ${{ vars.NODE_VERSION }}
 
       - name: Dependencies
         working-directory: ./
@@ -81,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Timezone
-        uses: szenius/set-timezone@v1.2
+        uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
@@ -91,7 +90,7 @@ jobs:
       - name: Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.node }}
+          node-version: ${{ vars.NODE_VERSION }}
 
       - name: Dependencies
         working-directory: ./
@@ -110,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Timezone
-        uses: szenius/set-timezone@v1.2
+        uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
@@ -120,7 +119,7 @@ jobs:
       - name: Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.node }}
+          node-version: ${{ vars.NODE_VERSION }}
 
       - name: Dependencies
         working-directory: ./
@@ -137,51 +136,27 @@ jobs:
           SINGLE_LINE_LOG_FORMAT: ${{ vars.SINGLE_LINE_LOG_FORMAT }}
           SWAGGER_USER: ${{ secrets.SWAGGER_USER }}
           SWAGGER_PASSWORD: ${{ secrets.SWAGGER_PASSWORD }}
+          ACBS_BASE_URL: ${{ secrets.ACBS_BASE_URL }}
+          ACBS_MAX_REDIRECTS: ${{ secrets.ACBS_MAX_REDIRECTS }}
+          ACBS_TIMEOUT: ${{ secrets.ACBS_TIMEOUT }}
+          ACBS_USE_RETURN_EXCEPTION_HEADER: ${{ vars.ACBS_USE_RETURN_EXCEPTION_HEADER }}
+          ACBS_AUTHENTICATION_API_KEY: ${{ secrets.ACBS_AUTHENTICATION_API_KEY }}
+          ACBS_AUTHENTICATION_API_KEY_HEADER_NAME: ${{ secrets.ACBS_AUTHENTICATION_API_KEY_HEADER_NAME }}
+          ACBS_AUTHENTICATION_BASE_URL: ${{ secrets.ACBS_AUTHENTICATION_BASE_URL }}
+          ACBS_AUTHENTICATION_CLIENT_ID: ${{ secrets.ACBS_AUTHENTICATION_CLIENT_ID }}
+          ACBS_AUTHENTICATION_ID_TOKEN_CACHE_TTL_IN_MILLISECONDS: ${{ secrets.ACBS_AUTHENTICATION_ID_TOKEN_CACHE_TTL_IN_MILLISECONDS }}
+          ACBS_AUTHENTICATION_LOGIN_NAME: ${{ secrets.ACBS_AUTHENTICATION_LOGIN_NAME }}
+          ACBS_AUTHENTICATION_MAX_REDIRECTS: ${{ secrets.ACBS_AUTHENTICATION_MAX_REDIRECTS }}
+          ACBS_AUTHENTICATION_PASSWORD: ${{ secrets.ACBS_AUTHENTICATION_PASSWORD }}
+          ACBS_AUTHENTICATION_RETRY_DELAY_IN_MILLISECONDS: ${{ secrets.ACBS_AUTHENTICATION_RETRY_DELAY_IN_MILLISECONDS }}
+          ACBS_AUTHENTICATION_TIMEOUT: ${{ secrets.ACBS_AUTHENTICATION_TIMEOUT }}
+          ACBS_AUTHENTICATION_MAX_NUMBER_OF_RETRIES: ${{ secrets.ACBS_AUTHENTICATION_MAX_NUMBER_OF_RETRIES }}
           API_KEY: ${{ secrets.API_KEY }}
-          GRAPH_BASE_URL: ${{ secrets.GRAPH_BASE_URL }}
-          GRAPH_AUTHENTICATION_TENANT_ID: ${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}
-          GRAPH_AUTHENTICATION_CLIENT_ID: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}
-          GRAPH_AUTHENTICATION_CLIENT_SECRET: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}
-          SHAREPOINT_BASE_URL: ${{ secrets.SHAREPOINT_BASE_URL }}
-          SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
-          SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
-          SHAREPOINT_SC_SITE_NAME: ${{ secrets.SHAREPOINT_SC_SITE_NAME}}
-          SHAREPOINT_SC_CASE_SITES_LIST_ID: ${{ secrets.SHAREPOINT_SC_CASE_SITES_LIST_ID }}
-          SHAREPOINT_TFIS_FACILITY_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_FACILITY_LIST_ID }}
-          SHAREPOINT_TFIS_FACILITY_LIST_TITLE: ${{ secrets.SHAREPOINT_TFIS_FACILITY_LIST_TITLE }}
-          SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID: ${{ secrets.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID }}
-          SHAREPOINT_TFIS_SITE_ID: ${{ secrets.SHAREPOINT_TFIS_SITE_ID }}
-          SHAREPOINT_TFIS_DEAL_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_DEAL_LIST_ID }}
-          SHAREPOINT_TFIS_TERM_STORE: ${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}
-          SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME }}
-          SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION }}
-          SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT }}
-          SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION }}
-          SHAREPOINT_TFIS_CASE_SITES_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_CASE_SITES_LIST_ID }}
-          SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID: ${{ secrets.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID }}
-          SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID: ${{ secrets.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID }}
           APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
           APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
           APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}
           APIM_MDM_MAX_REDIRECTS: ${{ secrets.APIM_MDM_MAX_REDIRECTS }}
           APIM_MDM_TIMEOUT: ${{ secrets.APIM_MDM_TIMEOUT }}
-          DTFS_STORAGE_ACCOUNT_NAME: ${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}
-          DTFS_STORAGE_ACCOUNT_KEY: ${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}
-          DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH: ${{ secrets.DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH }}
-          DTFS_STORAGE_EXAMPLE_FILE_NAME: ${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_NAME }}
-          DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH: ${{ secrets.DTFS_STORAGE_EXAMPLE_FILE_LOCATION_PATH }}
-          CUSTODIAN_BASE_URL: ${{ secrets.CUSTODIAN_BASE_URL }}
-          CUSTODIAN_API_KEY_HEADER_NAME: ${{ secrets.CUSTODIAN_API_KEY_HEADER_NAME }}
-          CUSTODIAN_API_KEY_HEADER_VALUE: ${{ secrets.CUSTODIAN_API_KEY_HEADER_VALUE }}
-          CUSTODIAN_MAX_REDIRECTS: ${{ secrets.CUSTODIAN_MAX_REDIRECTS }}
-          CUSTODIAN_TIMEOUT: ${{ secrets.CUSTODIAN_TIMEOUT }}
-          CUSTODIAN_BUYER_TEMPLATE_ID: ${{ secrets.CUSTODIAN_BUYER_TEMPLATE_ID }}
-          CUSTODIAN_BUYER_TYPE_GUID: ${{ secrets.CUSTODIAN_BUYER_TYPE_GUID }}
-          CUSTODIAN_DEAL_TEMPLATE_ID: ${{ secrets.CUSTODIAN_DEAL_TEMPLATE_ID }}
-          CUSTODIAN_DEAL_TYPE_GUID: ${{ secrets.CUSTODIAN_DEAL_TYPE_GUID }}
-          CUSTODIAN_FACILITY_TEMPLATE_ID: ${{ secrets.CUSTODIAN_FACILITY_TEMPLATE_ID }}
-          CUSTODIAN_FACILITY_TYPE_GUID: ${{ secrets.CUSTODIAN_FACILITY_TYPE_GUID }}
-
         run: docker-compose up --build -d
 
       - name: Execute
