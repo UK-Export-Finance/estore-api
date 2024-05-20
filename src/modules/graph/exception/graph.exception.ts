@@ -1,5 +1,8 @@
 export class GraphException extends Error {
-  constructor(message: string, public readonly innerError?: Error) {
+  constructor(
+    message: string,
+    public readonly innerError?: Error,
+  ) {
     super(message);
     this.name = this.constructor.name;
   }
