@@ -131,9 +131,10 @@ export class RandomValueGenerator {
   }
 
   fileLocationPath(options?: { length?: number }) {
-    let length: number;
-    if (options && (options.length || options.length === 0)) {
-      if (options.length === 25) {
+    let length: number = options?.length;
+
+    if (options?.length || options?.length === 0) {
+      if (length === 25) {
         throw new Error(`fileLocationPath cannot have length 25 as this means it ends in a '/'.`);
       }
     } else {
