@@ -15,7 +15,7 @@
     "plugin:eslint-comments/recommended",
     "plugin:optimize-regex/recommended",
     "plugin:switch-case/recommended",
-    "plugin:security/recommended",
+    "plugin:security/recommended-legacy",
     "plugin:import/recommended",
     "plugin:import/typescript",
     "prettier"
@@ -128,7 +128,11 @@
         "consistent": true
       }
     ],
-    "import/no-named-as-default-member": "off"
+    "import/no-named-as-default-member": "off",
+    "prefer-destructuring": ["error", {
+      "array": true,
+      "object": true
+    }]
   },
   "overrides": [
     {

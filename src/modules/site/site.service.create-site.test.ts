@@ -57,7 +57,7 @@ describe('SiteService', () => {
         exporterName,
       });
 
-      const siteId = createSiteResponse[0].siteId;
+      const [{ siteId }] = createSiteResponse;
       when(sharepointServiceGetExportSiteByNameRequest).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([]);
       when(mdmServiceCreateNumbers)
         .calledWith(requestToCreateSiteId)

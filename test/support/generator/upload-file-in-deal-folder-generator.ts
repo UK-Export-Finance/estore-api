@@ -61,7 +61,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
       dealId: values.dealId,
     };
 
-    const fileSizeInBytes = values.fileSizeInBytes;
+    const { fileSizeInBytes } = values;
 
     const dtfsStorageFileServiceGetFileSizeResponse = { contentLength: fileSizeInBytes };
 
@@ -124,7 +124,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
 
     const graphClientGetListIdPath = `${graphClientGetSitePath}:/lists`;
 
-    const listId = values.listId;
+    const { listId } = values;
 
     const graphClientGetListIdResponse = { value: [{ name: 'CaseLibrary', id: listId }] };
 

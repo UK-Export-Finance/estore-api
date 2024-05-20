@@ -11,7 +11,10 @@ import { SiteNotFoundException } from './exception/site-not-found.exception';
 
 @Injectable()
 export class SiteService {
-  constructor(private readonly sharepointService: SharepointService, private readonly mdmService: MdmService) {}
+  constructor(
+    private readonly sharepointService: SharepointService,
+    private readonly mdmService: MdmService,
+  ) {}
 
   async getSiteStatusByExporterName(exporterName: string): Promise<GetSiteStatusByExporterNameResponse> {
     const { siteId, status } = await this.getSiteFromSitesList({

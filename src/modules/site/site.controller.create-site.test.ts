@@ -31,7 +31,7 @@ describe('SiteController', () => {
     const { siteStatusByExporterNameResponse } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
     const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({ numberToGenerate: 1 });
-    const exporterName = createSiteRequest[0].exporterName;
+    const [{ exporterName }] = createSiteRequest;
 
     it.each([
       {
