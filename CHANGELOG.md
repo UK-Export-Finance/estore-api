@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.6.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.5.0...v1.6.0) (2024-05-22)
+
+
+### Features
+
+* **github-actions:** enable various imperative github actions ([081415e](https://github.com/UK-Export-Finance/estore-api/commit/081415e11ceb6b3df5326ffb107c4db4fd7f0206))
+* **github-actions:** enable various imperative github actions ([#581](https://github.com/UK-Export-Finance/estore-api/issues/581)) ([90f802f](https://github.com/UK-Export-Finance/estore-api/commit/90f802fee54dfbe82df1bd801ecf90aebaeea305))
+
+
+### Bug Fixes
+
+* **eslint:** consistent eslint configuration ([0414d36](https://github.com/UK-Export-Finance/estore-api/commit/0414d36aa4195291608c7e7cfbbaf15526e672b1))
+* **eslint:** consistent eslint configuration ([#592](https://github.com/UK-Export-Finance/estore-api/issues/592)) ([dd370e7](https://github.com/UK-Export-Finance/estore-api/commit/dd370e78ede90e87f6be0ac0abc303fe8720fe71))
+* **eslint:** fixed failing test ([f54a827](https://github.com/UK-Export-Finance/estore-api/commit/f54a8272a803ae5d473023d0d151e16445f46d32))
+* **github-actions:** fixed test.yml ([45a5734](https://github.com/UK-Export-Finance/estore-api/commit/45a573462f0e89e59e20556583fc3ef3da6d4b79))
+* **github-actions:** fixed test.yml ([dda88b9](https://github.com/UK-Export-Finance/estore-api/commit/dda88b94e75c7cdffc5e278a471da09946143afa))
+* **github:** fixed github actions ([650e1a7](https://github.com/UK-Export-Finance/estore-api/commit/650e1a7eb5dea277898831d556e82c1ed2f2b6d8))
+* **github:** fixed github actions ([11106e0](https://github.com/UK-Export-Finance/estore-api/commit/11106e047231af6e24eba54d31ca3bbd538e7723))
+* **release-please:** updated to github plugin ([c8e7a6a](https://github.com/UK-Export-Finance/estore-api/commit/c8e7a6a04a768113cefa97a551bc73589785a792))
+* **release-please:** updated to github plugin ([#598](https://github.com/UK-Export-Finance/estore-api/issues/598)) ([c1e3864](https://github.com/UK-Export-Finance/estore-api/commit/c1e3864fdb6169828d233a8f739205018dc36d68))
+
 ## 1.5.0 (2023-12-29)
 
 
