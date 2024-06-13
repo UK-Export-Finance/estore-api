@@ -56,10 +56,10 @@ export const withBuyerNameFieldValidationApiTests = <RequestBodyItem extends { b
     it.each([...allowedStringTestCases, ...allowedSubstringTestCases, ...allowedPrefixTestCases, ...allowedSuffixTestCases])(
       `returns a ${successStatusCode} response if buyerName matches the regular expression ${BUYER_NAME.REGEX} ($testTitle)`,
       async ({ value }) => {
-        const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
-        const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);
+        const requestWithValidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
+        const preparedRequestWithValidField = prepareModifiedRequest(requestIsAnArray, requestWithValidField);
 
-        const { status } = await makeRequest(preparedRequestWithInvalidField);
+        const { status } = await makeRequest(preparedRequestWithValidField);
         expect(status).toBe(successStatusCode);
       },
     );

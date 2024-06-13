@@ -13,7 +13,7 @@ describe('DealFolderCreationService', () => {
 
   const {
     siteId,
-    createDealFolderRequestItem: { dealIdentifier, buyerName, destinationMarket, riskMarket },
+    createDealFolderRequestItem: { dealIdentifier, destinationMarket, riskMarket },
     sharepointServiceGetBuyerDealFolderParams,
     sharepointServiceGetExporterSiteParams,
     sharepointServiceGetDestinationMarketParams,
@@ -33,10 +33,10 @@ describe('DealFolderCreationService', () => {
   const dealTemplateId = valueGenerator.string();
   const dealTypeGuid = valueGenerator.guid();
 
-  const expectedFolderName = `D ${dealIdentifier}`;
+  const dealFolderName = `D ${dealIdentifier}`;
 
   const expectedCustodianRequestToCreateDealFolder = {
-    Title: expectedFolderName,
+    Title: dealFolderName,
     Id: 0,
     Code: '',
     TemplateId: dealTemplateId,
@@ -90,7 +90,7 @@ describe('DealFolderCreationService', () => {
     sharepointService.getMarketTerm = getMarketTerm;
 
     custodianCreateAndProvision = jest.fn();
-    const custodianService = new CustodianService(null);
+    const custodianService = new CustodianService(null, null, null, null, null);
     custodianService.createAndProvision = custodianCreateAndProvision;
 
     service = new DealFolderCreationService(
@@ -110,21 +110,18 @@ describe('DealFolderCreationService', () => {
   const exporterNameListItem = { fields: { TermGuid: exporterTermGuid, URL: exporterUrl } };
   const destinationMarketListItem = { fields: { TermGuid: destinationMarketTermGuid } };
   const riskMarketListItem = { fields: { TermGuid: riskMarketTermGuid } };
-  const nonNumberId = 'not-a-number';
 
   describe('createDealFolder', () => {
     it('sends a request to Custodian to create and provision the deal folder', async () => {
-      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
-      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
-      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
 
       await service.createDealFolder({
         siteId,
         dealIdentifier,
-        buyerName,
+        buyerFolderId: buyerFolderIdAsNumber,
+        dealFolderName,
         destinationMarket,
         riskMarket,
       });
@@ -134,29 +131,6 @@ describe('DealFolderCreationService', () => {
     });
 
     it('returns the name of the created deal folder', async () => {
-      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
-      when(getDealFolder).calledWith(sharepointServiceGetDealFolderParams).mockResolvedValueOnce([]);
-      when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
-      when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
-      when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
-      when(custodianCreateAndProvision).calledWith(expectedCustodianRequestToCreateDealFolder).mockResolvedValueOnce(undefined);
-
-      const createdFolderName = await service.createDealFolder({
-        siteId,
-        dealIdentifier,
-        buyerName,
-        destinationMarket,
-        riskMarket,
-      });
-
-      expect(createdFolderName).toBe(expectedFolderName);
-    });
-
-    it('returns the name of the deal folder when it already exists', async () => {
-      when(getBuyerFolder).calledWith(sharepointServiceGetBuyerDealFolderParams).mockResolvedValueOnce([buyerNameListItem]);
-      when(getDealFolder)
-        .calledWith(sharepointServiceGetDealFolderParams)
-        .mockResolvedValueOnce([{ some: 'value' }]);
       when(getExporterSite).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce([exporterNameListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetDestinationMarketParams).mockResolvedValueOnce([destinationMarketListItem]);
       when(getMarketTerm).calledWith(sharepointServiceGetRiskMarketParams).mockResolvedValueOnce([riskMarketListItem]);
@@ -164,54 +138,17 @@ describe('DealFolderCreationService', () => {
       const createdFolderName = await service.createDealFolder({
         siteId,
         dealIdentifier,
-        buyerName,
+        buyerFolderId: buyerFolderIdAsNumber,
+        dealFolderName,
         destinationMarket,
         riskMarket,
       });
 
-      expect(createdFolderName).toBe(expectedFolderName);
-
-      expect(custodianCreateAndProvision).toHaveBeenCalledTimes(0);
+      expect(createdFolderName).toBe(dealFolderName);
     });
   });
 
   it.each([
-    {
-      description: 'throws a FolderDependencyNotFoundException if the buyer folder list item is not found',
-      listItemsMatchingBuyerName: [],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      listItemsMatchingDestinationMarket: [destinationMarketListItem],
-      listItemsMatchingRiskMarket: [riskMarketListItem],
-      expectedErrorClass: FolderDependencyNotFoundException,
-      expectedErrorMessage: `Did not find a folder for buyer ${buyerName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a FolderDependencyInvalidException if the found buyer folder list item does not have an id field',
-      listItemsMatchingBuyerName: [{ fields: { notId: buyerFolderId } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      listItemsMatchingDestinationMarket: [destinationMarketListItem],
-      listItemsMatchingRiskMarket: [riskMarketListItem],
-      expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing id for the folder found for ${buyerName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a FolderDependencyInvalidException if the found buyer folder list item has an empty string id field',
-      listItemsMatchingBuyerName: [{ fields: { id: '' } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      listItemsMatchingDestinationMarket: [destinationMarketListItem],
-      listItemsMatchingRiskMarket: [riskMarketListItem],
-      expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `Missing id for the folder found for ${buyerName} in site ${siteId}.`,
-    },
-    {
-      description: 'throws a FolderDependencyInvalidException if the found buyer folder list item has an id field that cannot be parsed as a base-10 number',
-      listItemsMatchingBuyerName: [{ fields: { id: nonNumberId } }],
-      listItemsMatchingExporterName: [exporterNameListItem],
-      listItemsMatchingDestinationMarket: [destinationMarketListItem],
-      listItemsMatchingRiskMarket: [riskMarketListItem],
-      expectedErrorClass: FolderDependencyInvalidException,
-      expectedErrorMessage: `The id for the folder found for ${buyerName} in site ${siteId} is not a number (the value is ${nonNumberId}).`,
-    },
     {
       description: 'throws a FolderDependencyNotFoundException if the exporterName is not found in the tfisCaseSitesList',
       listItemsMatchingBuyerName: [buyerNameListItem],
@@ -331,7 +268,8 @@ describe('DealFolderCreationService', () => {
       const createDealFolderPromise = service.createDealFolder({
         siteId,
         dealIdentifier,
-        buyerName,
+        buyerFolderId: buyerFolderIdAsNumber,
+        dealFolderName,
         destinationMarket,
         riskMarket,
       });

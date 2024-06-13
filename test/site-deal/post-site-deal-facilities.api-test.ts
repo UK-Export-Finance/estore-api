@@ -1,7 +1,7 @@
-import { UKEFID } from '@ukef/constants';
+import { CUSTODIAN, ENUMS, UKEFID } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
-import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
+import { withCustodianErrorCasesApiTests } from '@ukef-test/common-tests/custodian-error-cases-api-tests';
 import { withBuyerNameFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/buyer-name-field-validation-api-tests';
 import { withFacilityIdentifierFieldValidationApiTests } from '@ukef-test/common-tests/request-field-validation-api-tests/facility-identifier-validation-api-tests';
 import { withSiteIdParamValidationApiTests } from '@ukef-test/common-tests/request-param-validation-api-tests/site-id-param-validation-api-tests';
@@ -9,19 +9,22 @@ import { withParamValidationApiTests } from '@ukef-test/common-tests/request-par
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/create-facility-folder-generator';
+import { CreateFolderBaseGenerator } from '@ukef-test/support/generator/create-folder-base-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { Cache } from 'cache-manager';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
 
 describe('Create Site Deal Facility Folder', () => {
   const valueGenerator = new RandomValueGenerator();
   const {
+    parentFolderId,
+    facilityFolderName: folderName,
     createFacilityFolderParamsDto,
     createFacilityFolderRequestItem,
     createFacilityFolderRequestDto,
-    createFacilityFolderResponseDto,
     tfisFacilityHiddenListTermStoreFacilityTermDataRequest,
     tfisFacilityHiddenListTermStoreFacilityTermDataResponse,
     tfisFacilityListParentFolderRequest,
@@ -33,18 +36,29 @@ describe('Create Site Deal Facility Folder', () => {
     numberToGenerate: 1,
   });
 
+  const {
+    custodianRequestId,
+    custodianCachekey,
+    createFolderResponse,
+    createFolderResponseWhenFolderExistsInSharepoint,
+    createFolderResponseWhenFolderCustodianJobStarted,
+    custodianJobsByRequestIdRequest,
+  } = new CreateFolderBaseGenerator(valueGenerator).generate({ numberToGenerate: 1, parentFolderId, folderName });
+
   const custodianApi = new MockCustodianApi(nock);
 
   let api: Api;
   let mockGraphClientService: MockGraphClientService;
+  let cacheManager: Cache;
 
   beforeAll(async () => {
-    ({ api, mockGraphClientService } = await Api.create());
+    ({ api, mockGraphClientService, cacheManager } = await Api.create());
   });
 
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    cacheManager.reset();
   });
 
   afterAll(async () => {
@@ -72,7 +86,7 @@ describe('Create Site Deal Facility Folder', () => {
       ),
   });
 
-  withCustodianCreateAndProvisionErrorCasesApiTests({
+  withCustodianErrorCasesApiTests({
     givenTheRequestWouldOtherwiseSucceed: () => {
       mockSuccessfulTfisFacilityListParentFolderRequest();
       mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
@@ -127,18 +141,44 @@ describe('Create Site Deal Facility Folder', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(201);
-    expect(body).toEqual(createFacilityFolderResponseDto);
+    expect(body).toEqual(createFolderResponse);
   });
 
-  it('returns the name of the folder created with status code 201 when folder already exists', async () => {
+  it('returns the name of the folder created with status code 200 when folder already exists', async () => {
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
     mockSuccessfulTfisFacilityFolderRequestWhereFolderExists();
 
     const { status, body } = await makeRequest();
 
-    expect(status).toBe(201);
-    expect(body).toEqual(createFacilityFolderResponseDto);
+    expect(status).toBe(200);
+    expect(body).toEqual(createFolderResponseWhenFolderExistsInSharepoint);
+  });
+
+  it('returns the deal folder name with status code 202 when buyer folder is still processed by Custodian', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulTfisFacilityFolderRequest();
+    setCacheForPreviousCustodianJob();
+    mockFolderInCustodianJobQueue();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual(createFolderResponseWhenFolderCustodianJobStarted);
+  });
+
+  it('returns the buyer name with status code 202 when buyer folder is sent to Custodian, but Custodian is not returning information about this job yet', async () => {
+    mockSuccessfulTfisFacilityListParentFolderRequest();
+    mockSuccessfulTfisFacilityHiddenListTermStoreFacilityTermDataRequest();
+    mockSuccessfulTfisFacilityFolderRequest();
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+    mockFolderInCustodianEmptyResponse();
+
+    const { status, body } = await makeRequest();
+
+    expect(status).toBe(202);
+    expect(body).toEqual({ folderName, status: ENUMS.FOLDER_STATUSES.CUSTODIAN_JOB_NOT_READABLE_YET });
   });
 
   it('returns a 400 if the list item query to tfisFacilityListParentFolderRequest returns an empty value list', async () => {
@@ -147,6 +187,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall({ value: [] });
+
+    mockSuccessfulTfisFacilityFolderRequest();
 
     const { status, body } = await makeRequest();
 
@@ -167,6 +209,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
 
+    mockSuccessfulTfisFacilityFolderRequest();
+
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
@@ -186,6 +230,8 @@ describe('Create Site Deal Facility Folder', () => {
       .mockSuccessfulFilterCallWithFilterString(tfisFacilityListParentFolderRequest.filter)
       .mockSuccessfulGraphGetCall(modifiedTfisFacilityListParentFolderResponse);
 
+    mockSuccessfulTfisFacilityFolderRequest();
+
     const { status, body } = await makeRequest();
 
     expect(status).toBe(400);
@@ -200,6 +246,7 @@ describe('Create Site Deal Facility Folder', () => {
     const notANumber = 'not a number';
     modifiedTfisFacilityListParentFolderResponse.value[0].fields.id = notANumber;
 
+    mockSuccessfulTfisFacilityFolderRequest();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityListParentFolderRequest.path)
       .mockSuccessfulExpandCallWithExpandString(tfisFacilityListParentFolderRequest.expand)
@@ -216,6 +263,7 @@ describe('Create Site Deal Facility Folder', () => {
   });
 
   it('returns a 400 if the list item query to tfisFacilityHiddenListTermStoreFacilityTermDataRequest returns an empty value list', async () => {
+    mockSuccessfulTfisFacilityFolderRequest();
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
@@ -236,6 +284,7 @@ describe('Create Site Deal Facility Folder', () => {
     const modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
     delete modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID;
 
+    mockSuccessfulTfisFacilityFolderRequest();
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
@@ -256,6 +305,7 @@ describe('Create Site Deal Facility Folder', () => {
     const modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse = JSON.parse(JSON.stringify(tfisFacilityHiddenListTermStoreFacilityTermDataResponse));
     modifiedTfisFacilityHiddenListTermStoreFacilityTermDataResponse.value[0].fields.FacilityGUID = '';
 
+    mockSuccessfulTfisFacilityFolderRequest();
     mockSuccessfulTfisFacilityListParentFolderRequest();
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisFacilityHiddenListTermStoreFacilityTermDataRequest.path)
@@ -385,5 +435,23 @@ describe('Create Site Deal Facility Folder', () => {
   const getPostSiteDealFacilitiesUrl = (params: { siteId: string; dealId: string }) => {
     const { siteId, dealId } = params;
     return `/api/v1/sites/${siteId}/deals/${dealId}/facilities`;
+  };
+
+  const setCacheForPreviousCustodianJob = () => {
+    cacheManager.set(custodianCachekey, { requestId: custodianRequestId, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN });
+  };
+
+  const mockFolderInCustodianEmptyResponse = () => {
+    custodianApi.requestToReadJobsByRequestId(JSON.stringify(custodianJobsByRequestIdRequest)).respondsWith(200, []);
+  };
+
+  const mockFolderInCustodianJobQueue = () => {
+    custodianApi.requestToReadJobsByAnyRequestId().respondsWith(200, [
+      {
+        Started: valueGenerator.dateTimeString(),
+        Completed: CUSTODIAN.EMPTY_DATE,
+        Failed: false,
+      },
+    ]);
   };
 });
