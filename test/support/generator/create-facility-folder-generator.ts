@@ -5,7 +5,6 @@ import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetDealFolderParams, SharepointGetFacilityFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateFacilityFolderParamsDto } from '@ukef/modules/site-deal/dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from '@ukef/modules/site-deal/dto/create-facility-folder-request.dto';
-import { CreateFolderResponseDto } from '@ukef/modules/site-deal/dto/create-facility-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';
 import { AbstractGenerator } from './abstract-generator';
@@ -85,10 +84,6 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
 
     const createFacilityFolderRequestDto: CreateFacilityFolderRequestDto = [createFacilityFolderRequestItem];
 
-    const createFacilityFolderResponseDto: CreateFolderResponseDto = {
-      folderName: facilityFolderName,
-    };
-
     const tfisFacilityHiddenListTermStoreFacilityTermDataRequest: GraphGetParams = {
       path: `${sharepointConfigTfisSharepointUrl}/lists/${sharepointConfigTfisFacilityHiddenListTermStoreId}/items`,
       filter: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
@@ -119,6 +114,8 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       graphListItemsFields: tfisFacilityListParentFolderResponseFields,
     });
 
+    const parentFolderId = parseInt(tfisFacilityListParentFolderResponse.value[0].fields.id);
+
     const tfisFacilityFolderResponse = { value: [] };
 
     const sharepointServiceGetDealFolderParams = { siteId, dealFolderName };
@@ -132,7 +129,7 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
       Id: 0,
       Code: '',
       TemplateId: custodianConfigFacilityTemplateId,
-      ParentId: parseInt(tfisFacilityListParentFolderResponse.value[0].fields.id),
+      ParentId: parentFolderId,
       InterestedParties: '',
       Secure: false,
       DoNotSubscribeInterestedParties: false,
@@ -150,11 +147,12 @@ export class CreateFacilityFolderGenerator extends AbstractGenerator<GenerateVal
     };
 
     return {
+      parentFolderId,
+      facilityFolderName,
       createFacilityFolderParamsDto,
       createFacilityFolderRequestItem,
 
       createFacilityFolderRequestDto,
-      createFacilityFolderResponseDto,
 
       sharepointServiceGetDealFolderParams,
       sharepointServiceGetFacilityTermParams,
@@ -199,11 +197,12 @@ interface GenerateValues {
 }
 
 interface GenerateResult {
+  parentFolderId: number;
+  facilityFolderName: string;
   createFacilityFolderParamsDto: CreateFacilityFolderParamsDto;
   createFacilityFolderRequestItem: CreateFacilityFolderRequestItem;
 
   createFacilityFolderRequestDto: CreateFacilityFolderRequestDto;
-  createFacilityFolderResponseDto: CreateFolderResponseDto;
 
   sharepointServiceGetDealFolderParams: SharepointGetDealFolderParams;
   sharepointServiceGetFacilityTermParams: UkefId;

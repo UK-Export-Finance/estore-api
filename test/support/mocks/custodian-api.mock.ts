@@ -28,6 +28,26 @@ export class MockCustodianApi {
       .matchHeader('Content-Type', 'application/json');
     return new CustodianApiRequestInterceptor(interceptor);
   }
+
+  requestToReadJobsByRequestId(requestBodyMatcher: nock.RequestBodyMatcher): CustodianApiRequestInterceptor {
+    const scope = this.nockCustodianRequest();
+    return this.buildReadJobsByRequestIdInterceptor(scope, requestBodyMatcher);
+  }
+
+  requestToReadJobsByAnyRequestId(): CustodianApiRequestInterceptor {
+    const requestBodyPlaceholder = '*';
+    const scope = this.nockCustodianRequest().filteringRequestBody(() => requestBodyPlaceholder);
+    return this.buildReadJobsByRequestIdInterceptor(scope, requestBodyPlaceholder);
+  }
+
+  private buildReadJobsByRequestIdInterceptor(scope: nock.Scope, requestBodyMatcher: nock.RequestBodyMatcher): CustodianApiRequestInterceptor {
+    const interceptor = scope
+      .post('/Provisioning/JobsByRequestId', requestBodyMatcher)
+      .matchHeader(ENVIRONMENT_VARIABLES.CUSTODIAN_API_KEY_HEADER_NAME, ENVIRONMENT_VARIABLES.CUSTODIAN_API_KEY_HEADER_VALUE)
+      .matchHeader('Accept', 'application/json')
+      .matchHeader('Content-Type', 'application/json');
+    return new CustodianApiRequestInterceptor(interceptor);
+  }
 }
 
 class CustodianApiRequestInterceptor {
