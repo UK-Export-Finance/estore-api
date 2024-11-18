@@ -32,7 +32,7 @@
     ]
   },
   "dependencies": {
-    "@azure/identity": "^4.3.0",
+    "@azure/identity": "^4.5.0",
     "@azure/storage-file-share": "^12.18.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@nestjs/axios": "^3.0.2",
