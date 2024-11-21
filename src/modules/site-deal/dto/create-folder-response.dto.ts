@@ -1,9 +1,9 @@
-import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { EXAMPLES } from '@ukef/constants';
 import { FolderStatusEnum } from '@ukef/constants/enums/folder-status';
 
-export class CreateBuyerFolderResponseDto {
-  @ApiResponseProperty({ example: EXAMPLES.BUYER_NAME })
+export class CreateFolderResponseDto {
+  @ApiProperty({ description: 'The name of the created folder.', example: EXAMPLES.FOLDER_NAME })
   folderName: string;
 
   @ApiProperty({

@@ -1,13 +1,26 @@
-import { Controller, Param, Post, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { Controller, Param, Post, Res, UseInterceptors } from '@nestjs/common';
+import {
+  ApiAcceptedResponse,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
+import { Response } from 'express';
 
+import { CustodianService } from '../custodian/custodian.service';
+import { SharepointService } from '../sharepoint/sharepoint.service';
 import { DealFolderCreationService } from './deal-folder-creation.service';
 import { CreateDealFolderParams } from './dto/create-deal-folder-params.dto';
 import { CreateDealFolderRequest, CreateDealFolderRequestItem } from './dto/create-deal-folder-request.dto';
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
 import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
-import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
+import { CreateFolderResponseDto } from './dto/create-folder-response.dto';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { FolderDependencyExceptionTransformInterceptor } from './interceptor/folder-dependency-exception-transform.interceptor';
 
@@ -16,6 +29,8 @@ export class SiteDealController {
   constructor(
     private readonly facilityFolderCreationService: FacilityFolderCreationService,
     private readonly dealFolderCreationService: DealFolderCreationService,
+    private readonly sharepointService: SharepointService,
+    private readonly custodianService: CustodianService,
   ) {}
 
   @Post('/:dealId/facilities')
@@ -25,6 +40,14 @@ export class SiteDealController {
     description: 'The creation of the facility folder has been scheduled successfully.',
     type: CreateFolderResponseDto,
   })
+  @ApiOkResponse({
+    description: 'The creation of the facility folder has been completed and it exists in Estore Sharepoint site.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiAcceptedResponse({
+    description: 'The creation of the facility folder is still scheduled, please give Custodian some time to complete it.',
+    type: CreateFolderResponseDto,
+  })
   @ApiBody({ type: CreateFacilityFolderRequestItem, isArray: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiInternalServerErrorResponse({ description: 'An internal server error has occurred.' })
@@ -32,8 +55,25 @@ export class SiteDealController {
   async createFacilityFolder(
     @Param() { siteId, dealId }: CreateFacilityFolderParamsDto,
     @ValidatedArrayBody({ items: CreateFacilityFolderRequestItem }) [createFacilityFolderRequestItem]: CreateFacilityFolderRequestDto,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<CreateFolderResponseDto> {
-    return await this.facilityFolderCreationService.createFacilityFolder(siteId, dealId, createFacilityFolderRequestItem);
+    const { facilityIdentifier, buyerName } = createFacilityFolderRequestItem;
+
+    const dealFolderName = this.facilityFolderCreationService.getDealFolderName(buyerName, dealId);
+    const folderName = this.facilityFolderCreationService.getFacilityFolderName(facilityIdentifier);
+
+    if ((await this.sharepointService.getFacilityFolder({ siteId, facilityFolderName: `${dealFolderName}/${folderName}` })).length) {
+      return this.sharepointService.getFolderInSharepointApiResponse(folderName, response);
+    }
+
+    const dealFolderId = await this.facilityFolderCreationService.getDealFolderId(siteId, dealFolderName);
+
+    const folderInCustodianResponse = await this.custodianService.getApiResponseIfFolderInCustodian(dealFolderId, folderName, response);
+    if (folderInCustodianResponse) {
+      return folderInCustodianResponse;
+    }
+    await this.facilityFolderCreationService.createFacilityFolder(createFacilityFolderRequestItem, dealFolderId, folderName);
+    return { folderName, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN };
   }
 
   @Post()
@@ -41,6 +81,14 @@ export class SiteDealController {
   @ApiOperation({ summary: 'Creates a deal folder.' })
   @ApiCreatedResponse({
     description: 'The creation of the deal folder has been scheduled successfully.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiOkResponse({
+    description: 'The creation of the deal folder has been completed and it exists in Estore Sharepoint site.',
+    type: CreateFolderResponseDto,
+  })
+  @ApiAcceptedResponse({
+    description: 'The creation of the deal folder is still scheduled, please give Custodian some time to complete it.',
     type: CreateFolderResponseDto,
   })
   @ApiBody({ type: CreateDealFolderRequestItem, isArray: true })
@@ -51,14 +99,22 @@ export class SiteDealController {
     @Param() { siteId }: CreateDealFolderParams,
     @ValidatedArrayBody({ items: CreateDealFolderRequestItem })
     [{ dealIdentifier, buyerName, destinationMarket, riskMarket }]: CreateDealFolderRequest,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<CreateFolderResponseDto> {
-    const createdFolderName = await this.dealFolderCreationService.createDealFolder({
-      siteId,
-      dealIdentifier,
-      buyerName,
-      destinationMarket,
-      riskMarket,
-    });
-    return { folderName: createdFolderName };
+    const folderName = this.dealFolderCreationService.generateDealFolderName(dealIdentifier);
+
+    if ((await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${folderName}` })).length) {
+      return this.sharepointService.getFolderInSharepointApiResponse(folderName, response);
+    }
+
+    const buyerFolderId = await this.dealFolderCreationService.getBuyerFolderId({ siteId, buyerName });
+
+    const folderInCustodianResponse = await this.custodianService.getApiResponseIfFolderInCustodian(buyerFolderId, folderName, response);
+    if (folderInCustodianResponse) {
+      return folderInCustodianResponse;
+    }
+
+    await this.dealFolderCreationService.createDealFolder({ siteId, dealIdentifier, destinationMarket, riskMarket, dealFolderName: folderName, buyerFolderId });
+    return { folderName, status: ENUMS.FOLDER_STATUSES.SENT_TO_CUSTODIAN };
   }
 }

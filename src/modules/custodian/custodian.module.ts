@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustodianConfig, KEY as CUSTODIAN_CONFIG_KEY } from '@ukef/config/custodian.config';
@@ -7,6 +8,8 @@ import { CustodianService } from './custodian.service';
 
 @Module({
   imports: [
+    CacheModule.register(),
+    ConfigModule,
     HttpModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
