@@ -137,9 +137,11 @@ describe('postDocumentInDealFolder', () => {
   describe('unhappy paths', () => {
     describe('error cases when getting the file size', () => {
       it('returns a 400 if the file is not found in DTFS', async () => {
-        mockDtfsStorageClientService
-          .mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath)
-          .mockUnsuccessfulGetPropertiesCall(new RestError('', '', 404));
+        mockDtfsStorageClientService.mockSuccessfulGetShareFileClientCall(fileName, fileLocationPath).mockUnsuccessfulGetPropertiesCall(
+          new RestError('', {
+            statusCode: 404,
+          }),
+        );
 
         const { status, body } = await makeRequest();
 
