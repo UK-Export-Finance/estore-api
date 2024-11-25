@@ -1,6 +1,6 @@
 # UKEF
 .env
-.env.prod
+.env*
 
 # compiled output
 /dist
@@ -14,6 +14,8 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+**/generated_reports
+**/coverage
 
 # OS
 .DS_Store
@@ -37,3 +39,5 @@ lerna-debug.log*
 .vscode/tasks.json
 .vscode/launch.json
 .vscode/extensions.json
+
+mssql/

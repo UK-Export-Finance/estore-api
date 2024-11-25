@@ -39,7 +39,9 @@ describe('DtfsStorageFileService', () => {
 
     it('throws a DtfsStorageAuthenticationFailedException if the client responds with a 403', async () => {
       mockSuccessfulGetShareFileClientCall();
-      const innerError = new RestError('', undefined, 403);
+      const innerError = new RestError('', {
+        statusCode: 403,
+      });
       mockUnsuccessfulDownloadCall(innerError);
 
       const errorPromise = getFile();
@@ -51,7 +53,9 @@ describe('DtfsStorageFileService', () => {
 
     it('throws a DtfsStorageFileNotFoundException if the client responds with a 404', async () => {
       mockSuccessfulGetShareFileClientCall();
-      const innerError = new RestError('', undefined, 404);
+      const innerError = new RestError('', {
+        statusCode: 404,
+      });
       mockUnsuccessfulDownloadCall(innerError);
 
       const errorPromise = getFile();
@@ -65,7 +69,10 @@ describe('DtfsStorageFileService', () => {
       mockSuccessfulGetShareFileClientCall();
       const message = valueGenerator.string();
       const code = valueGenerator.string();
-      const innerError = new RestError(message, code, 401);
+      const innerError = new RestError(message, {
+        code,
+        statusCode: 401,
+      });
       mockUnsuccessfulDownloadCall(innerError);
 
       const errorPromise = getFile();
