@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.0.0 (2025-01-24)
+
+
+### Features
+
+* **github-actions:** enable various imperative github actions ([081415e](https://github.com/UK-Export-Finance/estore-api/commit/081415e11ceb6b3df5326ffb107c4db4fd7f0206))
+* **github-actions:** enable various imperative github actions ([#581](https://github.com/UK-Export-Finance/estore-api/issues/581)) ([90f802f](https://github.com/UK-Export-Finance/estore-api/commit/90f802fee54dfbe82df1bd801ecf90aebaeea305))
+* **release-please-v4:** updated release-please to v4 ([4f820ab](https://github.com/UK-Export-Finance/estore-api/commit/4f820abb7763fd944694ab78bfb84979cdee8586))
+* **release-please-v4:** updated release-please to v4 ([3d7611a](https://github.com/UK-Export-Finance/estore-api/commit/3d7611ae1916fcfd905744ec9d9896ac73c02474))
+* **release-please-v4:** updated release-please to v4 ([#491](https://github.com/UK-Export-Finance/estore-api/issues/491)) ([9e77ba0](https://github.com/UK-Export-Finance/estore-api/commit/9e77ba038c25cd470729a8921c8b219f4f43cdcd))
+* **template:** pull request template ([d69941b](https://github.com/UK-Export-Finance/estore-api/commit/d69941b1e092dd733dcf0b286354314528cc979e))
+* **template:** pull request template ([#429](https://github.com/UK-Export-Finance/estore-api/issues/429)) ([8dc29d1](https://github.com/UK-Export-Finance/estore-api/commit/8dc29d18e7172d6f992842a956d91afa2f23c5ec))
+
+
+### Bug Fixes
+
+* **ci:** run ci with legacy-peer-deps argument ([9b3b535](https://github.com/UK-Export-Finance/estore-api/commit/9b3b53564ae5ba7d4fae8595f7521c3d61098315))
+* **ci:** run ci with legacy-peer-deps argument ([a6fec2b](https://github.com/UK-Export-Finance/estore-api/commit/a6fec2bb624dc837f1ebd994ff0cdea8d4cebed2))
+* **eslint:** consistent eslint configuration ([0414d36](https://github.com/UK-Export-Finance/estore-api/commit/0414d36aa4195291608c7e7cfbbaf15526e672b1))
+* **eslint:** consistent eslint configuration ([#592](https://github.com/UK-Export-Finance/estore-api/issues/592)) ([dd370e7](https://github.com/UK-Export-Finance/estore-api/commit/dd370e78ede90e87f6be0ac0abc303fe8720fe71))
+* **eslint:** fixed failing test ([f54a827](https://github.com/UK-Export-Finance/estore-api/commit/f54a8272a803ae5d473023d0d151e16445f46d32))
+* **github-actions:** fixed test.yml ([45a5734](https://github.com/UK-Export-Finance/estore-api/commit/45a573462f0e89e59e20556583fc3ef3da6d4b79))
+* **github-actions:** fixed test.yml ([dda88b9](https://github.com/UK-Export-Finance/estore-api/commit/dda88b94e75c7cdffc5e278a471da09946143afa))
+* **github:** fixed github actions ([650e1a7](https://github.com/UK-Export-Finance/estore-api/commit/650e1a7eb5dea277898831d556e82c1ed2f2b6d8))
+* **github:** fixed github actions ([11106e0](https://github.com/UK-Export-Finance/estore-api/commit/11106e047231af6e24eba54d31ca3bbd538e7723))
+* **package:** package sync ([1fdad48](https://github.com/UK-Export-Finance/estore-api/commit/1fdad48b2efc46160afc8dd320c3fad20004b240))
+* **release-please:** updated to github plugin ([c8e7a6a](https://github.com/UK-Export-Finance/estore-api/commit/c8e7a6a04a768113cefa97a551bc73589785a792))
+* **release-please:** updated to github plugin ([#598](https://github.com/UK-Export-Finance/estore-api/issues/598)) ([c1e3864](https://github.com/UK-Export-Finance/estore-api/commit/c1e3864fdb6169828d233a8f739205018dc36d68))
+* **release:** version updated to current ([c04b6b3](https://github.com/UK-Export-Finance/estore-api/commit/c04b6b34f39db71a46833924e578b3f85264a184))
+* **release:** version updated to current ([f3a7651](https://github.com/UK-Export-Finance/estore-api/commit/f3a76510ccd7d91ad250a90ddcd7c1d4ed00f6c4))
+* **tsconfig:** tsconfig file fix ([8f3c2fe](https://github.com/UK-Export-Finance/estore-api/commit/8f3c2fe0ab0a599373af73e37a3ce981a8b43e3e))
+
 ## [1.6.0](https://github.com/UK-Export-Finance/estore-api/compare/v1.5.0...v1.6.0) (2024-05-22)
 
 
