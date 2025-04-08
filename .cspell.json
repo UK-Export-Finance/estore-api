@@ -48,7 +48,9 @@
     "ukef",
     "UKRATEGRP",
     "venv",
-    "vnet"
+    "vnet",
+    "crapimdev",
+    "crapimstaging"
   ],
   "dictionaries": [
     "en-gb",
