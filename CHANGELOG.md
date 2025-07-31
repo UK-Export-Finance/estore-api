@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0 (2025-07-31)
+
+
+### Features
+
+* **acr:** acr purge workflow ([732e1a8](https://github.com/UK-Export-Finance/estore-api/commit/732e1a8056ea954697e5c3f675b4c142bdce95e4))
+* **acr:** acr purge workflow ([#966](https://github.com/UK-Export-Finance/estore-api/issues/966)) ([5969748](https://github.com/UK-Export-Finance/estore-api/commit/596974884d35ca65fa77a8777ab96864af070c11))
+* **apim:** lint fixes ([fc38943](https://github.com/UK-Export-Finance/estore-api/commit/fc38943379198895b2a1498c41239f5ee4f0f741))
+* **apim:** merge conflicts ([83e9a0f](https://github.com/UK-Export-Finance/estore-api/commit/83e9a0f94523c6a04a540939c3a8cd0918457f52))
+
 ## 1.7.0 (2025-05-12)
 
 

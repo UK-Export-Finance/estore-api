@@ -1,6 +1,6 @@
 {
   "name": "estore-api",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "description": "eStore API",
   "license": "MIT",
@@ -77,8 +77,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@nestjs/cli": "^11.0.9",
-    "@nestjs/schematics": "^11.0.6",
+    "@nestjs/cli": "^11.0.10",
+    "@nestjs/schematics": "^11.0.7",
     "@nestjs/testing": "^11.1.5",
     "@tsconfig/node21": "^21.0.4",
     "@types/chance": "^1.1.7",
