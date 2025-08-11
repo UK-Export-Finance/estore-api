@@ -28,7 +28,7 @@ npm install
 
 ## Environment Variables 👨🏼‍💻
 
-On first setup you will need to create a `.env ` file in the route of the project,
+On first setup you will need to create a `.env` file in the route of the project,
 refer to `.env.sample` for the required variables. A member of the team should send
 an encrypted copy of the `.env` file.
 
@@ -82,12 +82,10 @@ $ docker compose up --build
 $ npm run start:dev
 ```
 
-
 To view the Swagger API documentation visit
 [localhost:{PORT}/docs](http://localhost:3001/docs).
 You will be prompted for a username & password, these are the Swagger credentials
 in your `.env`.
-
 
 To view the API documentation in YAML format visit
 [localhost:{PORT}/openapi/yaml](http://localhost:3001/openapi/yaml).
@@ -99,7 +97,8 @@ Note: `PORT` will default to `3001` if it's not assigned a value in the `.env` f
 We are running several test suites as part of our CI/CD pipeline.
 
 * Unit test :   These tests are written using Jest and ends with `*.test.ts` extension.
-* API test  :   These tests are written using Jest and ends with `*.api-test.ts` extension.
+* API test  :   These tests are written using Jest and ends with
+  `*.api-test.ts` extension.
 * E2E test  :   These tests are written using Jest and ends with
   `*.e2e-test.ts` extension.
 
@@ -133,20 +132,18 @@ It specifies the base image as `node:20.0-alpine3.16`, which is a minimalistic
 image of Node.js 20 running on Alpine Linux 3.16. The RUN command installs bash
 and curl packages, then deletes the cache to reduce the image size.
 
-
 The `WORKDIR` command sets the working directory to `/app`.
 The `COPY` command copies package.json and package-lock.json to the /app directory,
 followed by the npm ci command, which installs the dependencies listed in package.json
 while ensuring compatibility with peer dependencies. The npm cache clean command
 removes the npm cache.
-The COPY command copies the rest of the files in the current directory to the /app directory.
+The COPY command copies the rest of the files in the current directory to the
+/app directory.
 The `npm run build` command builds the application.
 Finally, the npm ci command installs **only** the dependencies listed in `package.json`,
 ignoring the `devDependencies`, thus reducing the final build image size.
 
-
 #### Stage 2: `Production`
-
 
 This section sets up the production stage of the Dockerfile. It specifies the same
 base image as the build stage. The `WORKDIR` command sets the working directory to
@@ -158,7 +155,6 @@ runs the npm `run start:prod` command to start the application in production mod
 
 #### Conclusion
 
-
 Overall, the Dockerfile sets up a secure build and deployment environment for the
 Node.js application, with a non-root user and a lean production image containing
 only the necessary dependencies and files.
@@ -167,22 +163,21 @@ only the necessary dependencies and files.
 
 This is a Docker Compose file used to define and configure the `api` service.
 
-
 The first section defines the version of the Compose file syntax being used
 (version `3.8`), and the services that will be run.
 
 Under the api **service**, the following options are specified:
 
-
-* `build`: specifies the build context for the Docker image. In this case, it is set
-  to the current directory (.), which means that Docker will look for a Dockerfile
-  in the current directory to build the image.
+* `build`: specifies the build context for the Docker image. In this case,
+  it is set to the current directory (.), which means that Docker will look
+  for a Dockerfile in the current directory to build the image.
 * `image`: specifies the name of the Docker image that will be built.
 * `container_name`: specifies the name of the Docker container that will be created
   from the image.
-* `restart`: specifies that the container should always be restarted if it stops running.
-* `command`: specifies the command that should be run when the container starts. In this case,
-  it is set to `npm run start:prod`.
+* `restart`: specifies that the container should always be restarted  
+  if it stops running.
+* `command`: specifies the command that should be run when the container starts.
+  In this case, it is set to `npm run start:prod`.
 * `ports`: specifies the ports that should be exposed by the container. In this case,
   it is set to ${PORT}:${PORT}, which means that the value of the PORT environment
   variable will be used for both the host and container ports.
@@ -195,19 +190,19 @@ Under the api **service**, the following options are specified:
   values are not specified in the file since they will be referred from local
   `.env` file. (Please refer to `.env.sample` for getting started).
 
-The next section defines a **healthcheck** for the container, which will periodically check if
-the container is running correctly. The options specified are:
-
+The next section defines a **healthcheck** for the container, which will
+periodically check if the container is running correctly. The options specified
+are:
 
 * `test`: specifies the command that should be run to test the health of the container.
   In this case, it is set to `['CMD', 'curl', '-f', 'http://localhost:${PORT}']`,
   which means that the healthcheck will run the curl command to make a request to
   the container's web server and check if it receives a response.
-* `retries`: specifies the number of times that the healthcheck should be retried before
-  considering the container as unhealthy.
+* `retries`: specifies the number of times that the healthcheck should be retried
+  before considering the container as unhealthy.
 * `interval`: specifies the interval at which the healthcheck should be run.
-* `timeout`: specifies the maximum amount of time that the healthcheck command can run before
-  being considered as failed.
+* `timeout`: specifies the maximum amount of time that the healthcheck command can
+  run before being considered as failed.
 * `start_period`: specifies the amount of time to wait before running the first healthcheck
   after the container has started.
 
