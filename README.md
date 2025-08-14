@@ -25,6 +25,8 @@ eStore API provides endpoints for internal eStore responsible for reading and wr
 npm install
 ```
 
+When commiting changes - If the pre-commit hook does not run, execute the following:
+
 ## Environment Variables 👨🏼‍💻
 
 On first setup you will need to create a `.env` file in the route of the project, refer to `.env.sample` for the required variables. A member of the team should
