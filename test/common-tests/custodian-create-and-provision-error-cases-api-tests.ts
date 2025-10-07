@@ -21,7 +21,7 @@ export const withCustodianCreateAndProvisionErrorCasesApiTests = ({ givenTheRequ
 
     it('returns a 500 error if the CreateAndProvision request times out', async () => {
       givenTheRequestWouldOtherwiseSucceed();
-      custodianApi.requestToCreateAndProvisionAnyItem().timesOutWith(200);
+      custodianApi.requestToCreateAndProvisionAnyItem().timesOutWith(500);
 
       const { status, body } = await makeRequest();
 
