@@ -5,11 +5,10 @@ import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests 
 
 type FacilityIdentifierFieldName = 'facilityIdentifier';
 
-interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }>
-  extends Pick<
-    StringFieldValidationApiTestOptions<RequestBodyItem, FacilityIdentifierFieldName>,
-    'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-  > {
+interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }> extends Pick<
+  StringFieldValidationApiTestOptions<RequestBodyItem, FacilityIdentifierFieldName>,
+  'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+> {
   valueGenerator: RandomValueGenerator;
 }
 

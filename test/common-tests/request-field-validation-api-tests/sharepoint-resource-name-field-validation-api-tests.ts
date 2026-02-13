@@ -7,9 +7,9 @@ interface SharepointResourceNameFieldValidationApiTestOptions<
   RequestBodyItem extends Record<SharepointResourceNameFieldName, string>,
   SharepointResourceNameFieldName extends keyof any,
 > extends Pick<
-    StringFieldValidationApiTestOptions<RequestBodyItem, SharepointResourceNameFieldName>,
-    'fieldName' | 'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-  > {
+  StringFieldValidationApiTestOptions<RequestBodyItem, SharepointResourceNameFieldName>,
+  'fieldName' | 'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+> {
   valueGenerator: RandomValueGenerator;
 }
 

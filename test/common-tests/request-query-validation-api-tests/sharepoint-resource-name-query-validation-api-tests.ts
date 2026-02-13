@@ -7,9 +7,9 @@ interface SharepointResourceNameQueryValidationApiTestOptions<
   RequestQueryItems extends Record<SharepointResourceNameQueryName, string>,
   SharepointResourceNameQueryName extends keyof any,
 > extends Pick<
-    StringQueryValidationApiTestOptions<RequestQueryItems, SharepointResourceNameQueryName>,
-    'queryName' | 'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
-  > {
+  StringQueryValidationApiTestOptions<RequestQueryItems, SharepointResourceNameQueryName>,
+  'queryName' | 'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
+> {
   valueGenerator: RandomValueGenerator;
 }
 
