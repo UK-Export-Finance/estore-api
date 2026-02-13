@@ -15,11 +15,10 @@ import { StringQueryValidationApiTestOptions, withStringQueryValidationApiTests 
 
 type ExporterNameQueryName = 'exporterName';
 
-interface ExporterNameQueryValidationApiTestOptions<RequestBodyItem extends { exporterName: string }>
-  extends Pick<
-    StringQueryValidationApiTestOptions<RequestBodyItem, ExporterNameQueryName>,
-    'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
-  > {
+interface ExporterNameQueryValidationApiTestOptions<RequestBodyItem extends { exporterName: string }> extends Pick<
+  StringQueryValidationApiTestOptions<RequestBodyItem, ExporterNameQueryName>,
+  'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
+> {
   valueGenerator: RandomValueGenerator;
 }
 

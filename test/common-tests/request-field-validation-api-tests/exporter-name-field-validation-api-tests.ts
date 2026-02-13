@@ -16,11 +16,10 @@ import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests 
 
 type ExporterNameFieldName = 'exporterName';
 
-interface ExporterNameFieldValidationApiTestOptions<RequestBodyItem extends { exporterName: string }>
-  extends Pick<
-    StringFieldValidationApiTestOptions<RequestBodyItem, ExporterNameFieldName>,
-    'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-  > {
+interface ExporterNameFieldValidationApiTestOptions<RequestBodyItem extends { exporterName: string }> extends Pick<
+  StringFieldValidationApiTestOptions<RequestBodyItem, ExporterNameFieldName>,
+  'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
+> {
   valueGenerator: RandomValueGenerator;
 }
 
