@@ -9,6 +9,7 @@ import { Api } from '@ukef-test/support/api';
 import { CreateTermFacilityGenerator } from '@ukef-test/support/generator/create-term-facility-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('postFacilityToTermStore', () => {
@@ -101,7 +102,7 @@ describe('postFacilityToTermStore', () => {
       generateFieldValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
       generateFieldValueThatDoesNotMatchRegex: () => '1000000000' as UkefId,
       validRequestBody: createTermFacilityRequest[0],
-      successStatusCode: 201,
+      successStatusCode: HttpStatusCode.Created,
       makeRequest,
       givenAnyRequestBodyWouldSucceed,
     });

@@ -14,10 +14,11 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { UploadFileInDealFolderGenerator } from '@ukef-test/support/generator/upload-file-in-deal-folder-generator';
 import { MockDtfsStorageClientService } from '@ukef-test/support/mocks/dtfs-storage-client.service.mock';
 import { MockGraphClientService, MockGraphRequest } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('postDocumentInDealFolder', () => {
-  const successStatusCode = 201;
+  const successStatusCode = HttpStatusCode.Created;
   const valueGenerator = new RandomValueGenerator();
   const uploadFileInDealFolderGenerator = new UploadFileInDealFolderGenerator(valueGenerator);
   const {

@@ -7,6 +7,7 @@ import { Api } from '@ukef-test/support/api';
 import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
@@ -110,7 +111,7 @@ describe('getSiteStatusByExporterName', () => {
   withExporterNameQueryValidationApiTests({
     valueGenerator,
     validRequestQueries: siteControllerGetSiteStatusByExporterNameQueryDto,
-    successStatusCode: 202,
+    successStatusCode: HttpStatusCode.Accepted,
     makeRequestWithQueries: (queries: GetSiteStatusByExporterNameQueryDto) => makeRequestWithQueries(queries),
     givenAnyRequestQueryWouldSucceed: () => {
       mockGraphClientService

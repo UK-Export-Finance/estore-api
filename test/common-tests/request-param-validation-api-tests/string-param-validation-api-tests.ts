@@ -1,5 +1,4 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
-import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface ParamValidationApiTestOptions {
@@ -13,7 +12,7 @@ export interface ParamValidationApiTestOptions {
   generateParamValueThatDoesNotMatchRegex?: () => string;
   generateParamValueThatDoesNotMatchEnum?: () => string;
   validRequestParam: string;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: number;
   makeRequest: (paramValue: string) => request.Test;
   givenAnyRequestParamWouldSucceed: () => void;
 }

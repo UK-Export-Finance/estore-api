@@ -1,6 +1,5 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import { prepareModifiedRequest } from '@ukef-test/support/helpers/request-field-validation-helper';
-import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem> {
@@ -15,7 +14,7 @@ export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBod
   generateFieldValueThatDoesNotMatchRegex?: () => RequestBodyItem[RequestBodyItemKey];
   generateFieldValueThatDoesNotMatchEnum?: () => RequestBodyItem[RequestBodyItemKey];
   validRequestBody: RequestBodyItem[] | RequestBodyItem;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: number;
   makeRequest: ((body: unknown[]) => request.Test) | ((body: unknown) => request.Test);
   givenAnyRequestBodyWouldSucceed: () => void;
 }

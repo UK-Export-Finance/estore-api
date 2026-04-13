@@ -1,5 +1,4 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
-import { HttpStatusCode } from 'axios';
 import request from 'supertest';
 
 export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems> {
@@ -14,7 +13,7 @@ export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQ
   generateQueryValueThatDoesNotMatchRegex?: () => RequestQueryItems[RequestQueryItemsKey];
   generateQueryValueThatDoesNotMatchEnum?: () => RequestQueryItems[RequestQueryItemsKey];
   validRequestQueries: RequestQueryItems;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: number;
   makeRequestWithQueries: (queries: RequestQueryItems) => request.Test;
   givenAnyRequestQueryWouldSucceed: () => void;
 }
