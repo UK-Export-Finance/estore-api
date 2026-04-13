@@ -13,7 +13,7 @@ export interface ParamValidationApiTestOptions {
   generateParamValueThatDoesNotMatchRegex?: () => string;
   generateParamValueThatDoesNotMatchEnum?: () => string;
   validRequestParam: string;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: typeof HttpStatusCode;
   makeRequest: (paramValue: string) => request.Test;
   givenAnyRequestParamWouldSucceed: () => void;
 }

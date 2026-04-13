@@ -14,7 +14,7 @@ export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQ
   generateQueryValueThatDoesNotMatchRegex?: () => RequestQueryItems[RequestQueryItemsKey];
   generateQueryValueThatDoesNotMatchEnum?: () => RequestQueryItems[RequestQueryItemsKey];
   validRequestQueries: RequestQueryItems;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: typeof HttpStatusCode;
   makeRequestWithQueries: (queries: RequestQueryItems) => request.Test;
   givenAnyRequestQueryWouldSucceed: () => void;
 }

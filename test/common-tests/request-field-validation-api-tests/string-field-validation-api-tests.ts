@@ -15,7 +15,7 @@ export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBod
   generateFieldValueThatDoesNotMatchRegex?: () => RequestBodyItem[RequestBodyItemKey];
   generateFieldValueThatDoesNotMatchEnum?: () => RequestBodyItem[RequestBodyItemKey];
   validRequestBody: RequestBodyItem[] | RequestBodyItem;
-  successStatusCode: HttpStatusCode;
+  successStatusCode: typeof HttpStatusCode;
   makeRequest: ((body: unknown[]) => request.Test) | ((body: unknown) => request.Test);
   givenAnyRequestBodyWouldSucceed: () => void;
 }
