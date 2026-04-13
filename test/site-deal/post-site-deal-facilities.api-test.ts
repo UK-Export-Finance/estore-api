@@ -12,6 +12,7 @@ import { CreateFacilityFolderGenerator } from '@ukef-test/support/generator/crea
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
 
@@ -276,7 +277,7 @@ describe('Create Site Deal Facility Folder', () => {
     withSiteIdParamValidationApiTests({
       valueGenerator,
       validRequestParam: createFacilityFolderParamsDto.siteId,
-      successStatusCode: 201,
+      successStatusCode: HttpStatusCode.Created,
       makeRequest: (siteId) => api.post(getPostSiteDealFacilitiesUrl({ siteId, dealId: createFacilityFolderParamsDto.dealId }), createFacilityFolderRequestDto),
       givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -288,7 +289,7 @@ describe('Create Site Deal Facility Folder', () => {
       generateParamValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
       generateParamValueThatDoesNotMatchRegex: () => '11000000' as UkefId,
       validRequestParam: createFacilityFolderParamsDto.dealId,
-      successStatusCode: 201,
+      successStatusCode: HttpStatusCode.Created,
       makeRequest: (dealId) => api.post(getPostSiteDealFacilitiesUrl({ dealId, siteId: createFacilityFolderParamsDto.siteId }), createFacilityFolderRequestDto),
       givenAnyRequestParamWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -298,7 +299,7 @@ describe('Create Site Deal Facility Folder', () => {
     withBuyerNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
-      successStatusCode: 201,
+      successStatusCode: HttpStatusCode.Created,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });
@@ -306,7 +307,7 @@ describe('Create Site Deal Facility Folder', () => {
     withFacilityIdentifierFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createFacilityFolderRequestDto,
-      successStatusCode: 201,
+      successStatusCode: HttpStatusCode.Created,
       makeRequest: (body: unknown[]) => makeRequestWithBody(body),
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestBodyWouldSucceed(),
     });

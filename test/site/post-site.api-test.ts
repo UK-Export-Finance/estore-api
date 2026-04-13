@@ -10,6 +10,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { MockMdmApi } from '@ukef-test/support/mocks/mdm-api.mock';
 import { resetAllWhenMocks } from 'jest-when';
+import { HttpStatusCode } from 'axios';
 import nock from 'nock';
 
 describe('createSite', () => {
@@ -242,7 +243,7 @@ describe('createSite', () => {
     withExporterNameFieldValidationApiTests({
       valueGenerator,
       validRequestBody: createSiteRequest,
-      successStatusCode: 202,
+      successStatusCode: HttpStatusCode.Accepted,
       makeRequest,
       givenAnyRequestBodyWouldSucceed,
     });

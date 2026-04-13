@@ -8,11 +8,12 @@ import { CreateBuyerFolderGenerator } from '@ukef-test/support/generator/create-
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
+import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 import nock from 'nock';
 
 describe('POST /sites/{siteId}/buyers', () => {
-  const successStatusCode = 201;
+  const successStatusCode = HttpStatusCode.Created;
   const valueGenerator = new RandomValueGenerator();
   const {
     siteId,
