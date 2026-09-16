@@ -102,7 +102,6 @@ The provided code is a GitHub Actions workflow file (test.yml) responsible for r
 * setup: This job sets up the test infrastructure and defines environment variables. It runs on an Ubuntu environment and outputs the environment and timezone values.
 * unit-tests: This job performs unit tests using Jest. It depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, and executes the unit tests using the command "npm run unit-test."
 * api-tests: This job performs API tests using Jest. It also depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, and executes the API tests using the command "npm run api-test."
-* e2e-tests: This job performs end-to-end (E2E) tests using Jest. It depends on the setup job and runs on Ubuntu. It sets the timezone, checks out the repository, sets up Node.js, installs dependencies using npm ci, starts Docker containers using docker-compose, and executes the E2E tests using the command "npm run e2e-test."
 
 Each job runs in parallel, and the subsequent jobs depend on the completion of the setup job.
 
