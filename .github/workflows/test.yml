@@ -2,6 +2,7 @@
 #####################################
 # This GHA is responsible for initiating various test suites
 # upon a PR creation. Following test suites are executed:
+# 1. Build and start check
 # 2. Unit tests (Jest)
 # 3. API tests (Jest)
 
@@ -72,7 +73,7 @@ jobs:
         working-directory: ./
         run: npm run build
 
-      - name: Start (timeout after 10 seconds)
+      - name: Start (timeout after 30 seconds)
         working-directory: ./
         run: timeout 30 npm start || [ $? -eq 124 ]
         continue-on-error: false
@@ -80,7 +81,7 @@ jobs:
   # 3. Unit tests
   unit-tests:
     name: Unit 👷
-    needs: [setup, build-and-start-check]
+    needs: setup
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
@@ -91,7 +92,7 @@ jobs:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
       - name: Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Node
         uses: actions/setup-node@v6
@@ -120,7 +121,7 @@ jobs:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
       - name: Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Node
         uses: actions/setup-node@v6

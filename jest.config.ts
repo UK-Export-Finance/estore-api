@@ -33,7 +33,7 @@ const config: JestConfigWithTsJest = {
       testMatch: ['**/*.api-test.ts'],
       transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
       ...defaultSettings,
-    }
+    },
   ],
   reporters: [['default', { summaryThreshold: 1 }]],
 };
