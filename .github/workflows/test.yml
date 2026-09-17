@@ -47,7 +47,9 @@ jobs:
     name: Build and Start Check 🔨
     needs: setup
     env:
-      GRAPH_AUTHENTICATION_TENANT_ID: ${{ vars.GRAPH_AUTHENTICATION_TENANT_ID }}
+      GRAPH_AUTHENTICATION_TENANT_ID: ${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}
+      GRAPH_AUTHENTICATION_CLIENT_ID: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}
+      GRAPH_AUTHENTICATION_CLIENT_SECRET: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
