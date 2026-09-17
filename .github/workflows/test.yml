@@ -47,7 +47,7 @@ jobs:
     name: Build and Start Check 🔨
     needs: setup
     env:
-      FF_GIFT_ENABLED: 'true'
+      GRAPH_AUTHENTICATION_TENANT_ID: ${{ vars.GRAPH_AUTHENTICATION_TENANT_ID }}
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
