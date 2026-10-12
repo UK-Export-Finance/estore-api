@@ -2,6 +2,8 @@ import { registerAs } from '@nestjs/config';
 
 const KEY = 'graph';
 
+export { KEY as GRAPH_CONFIG_KEY };
+
 export type GraphConfigType = {
   clientId: string;
   clientSecret: string;

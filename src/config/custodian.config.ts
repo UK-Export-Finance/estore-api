@@ -1,7 +1,9 @@
 import { registerAs } from '@nestjs/config';
 import { getIntConfig } from '@ukef/helpers/get-int-config';
 
-export const KEY = 'custodian';
+const KEY = 'custodian';
+
+export { KEY as CUSTODIAN_CONFIG_KEY };
 
 export type CustodianConfigType = {
   baseUrl: string;

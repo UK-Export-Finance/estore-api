@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { ENUMS } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';

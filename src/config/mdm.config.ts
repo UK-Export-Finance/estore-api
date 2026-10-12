@@ -1,7 +1,9 @@
 import { registerAs } from '@nestjs/config';
 import { getIntConfig } from '@ukef/helpers/get-int-config';
 
-export const KEY = 'mdm';
+const KEY = 'mdm';
+
+export { KEY as MDM_CONFIG_KEY };
 
 export type MdmConfigType = {
   baseUrl: string;

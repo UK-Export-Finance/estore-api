@@ -1,7 +1,7 @@
 import { UploadResult } from '@microsoft/microsoft-graph-client';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { GraphService } from '@ukef/modules/graph/graph.service';
 

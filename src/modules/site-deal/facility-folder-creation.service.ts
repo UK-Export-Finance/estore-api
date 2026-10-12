@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import CustodianConfig from '@ukef/config/custodian.config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { CustodianConfig } from '@ukef/config/custodian.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { UkefId } from '@ukef/helpers';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';

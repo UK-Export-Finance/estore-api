@@ -1,7 +1,7 @@
 import { ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import DtfsConfig from '@ukef/config/dtfs-storage.config';
+import { DtfsStorageConfig } from '@ukef/config/dtfs-storage.config';
 
 @Injectable()
 export class DtfsStorageClientService {
@@ -10,8 +10,8 @@ export class DtfsStorageClientService {
   readonly storageSharedKeyCredential: StorageSharedKeyCredential;
 
   constructor(
-    @Inject(DtfsConfig.KEY)
-    { baseUrl, accountName, accountKey, dealDocumentsFolderPath }: ConfigType<typeof DtfsConfig>,
+    @Inject(DtfsStorageConfig.KEY)
+    { baseUrl, accountName, accountKey, dealDocumentsFolderPath }: ConfigType<typeof DtfsStorageConfig>,
   ) {
     this.baseUrl = baseUrl;
     this.dealDocumentsFolderPath = dealDocumentsFolderPath;

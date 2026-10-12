@@ -2,6 +2,8 @@ import { registerAs } from '@nestjs/config';
 
 const KEY = 'sharepoint';
 
+export { KEY as SHAREPOINT_CONFIG_KEY };
+
 export type SharepointConfigType = {
   baseUrl: string;
   ukefSharepointName: string;

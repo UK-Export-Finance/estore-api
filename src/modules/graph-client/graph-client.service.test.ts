@@ -6,7 +6,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { resetAllWhenMocks, when } from 'jest-when';
 import { Readable } from 'stream';
 
-import GraphClientService from './graph-client.service';
+import { GraphClientService } from './graph-client.service';
 
 jest.mock('@azure/identity');
 jest.mock('@microsoft/microsoft-graph-client');
