@@ -1,8 +1,7 @@
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { SiteExporterInvalidException } from '@ukef/modules/site-buyer/exception/site-exporter-invalid.exception';
+import { SiteExporterNotFoundException } from '@ukef/modules/site-buyer/exception/site-exporter-not-found.exception';
 import { catchError, Observable, throwError } from 'rxjs';
-
-import { SiteExporterInvalidException } from '../exception/site-exporter-invalid.exception';
-import { SiteExporterNotFoundException } from '../exception/site-exporter-not-found.exception';
 
 @Injectable()
 export class SiteExporterExceptionTransformInterceptor implements NestInterceptor {

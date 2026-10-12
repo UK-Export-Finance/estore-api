@@ -5,9 +5,9 @@ import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, G
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { DocumentTypeMapper } from '@ukef/modules/site-document/document-type-mapper';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
 
 type RequiredSharepointConfigKeys = 'baseUrl' | 'estoreDocumentTypeIdFieldName' | 'ukefSharepointName' | 'ecmsDocumentContentTypeId';
