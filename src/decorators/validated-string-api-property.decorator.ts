@@ -26,14 +26,14 @@ export const ValidatedStringApiProperty = ({
   example,
   default: theDefault,
 }: Options) => {
-  minLength = length ?? minLength ?? 0;
-  maxLength = length ?? maxLength;
+  const resolvedMinLength = length ?? minLength ?? 0;
+  const resolvedMaxLength = length ?? maxLength;
   const decoratorsToApply = [
     ApiProperty({
       type: 'string',
       description,
-      minLength,
-      maxLength,
+      minLength: resolvedMinLength,
+      maxLength: resolvedMaxLength,
       required,
       pattern: pattern ? regexToString(pattern) : undefined,
       enum: theEnum,
@@ -41,7 +41,7 @@ export const ValidatedStringApiProperty = ({
       default: theDefault,
     }),
     IsString(),
-    Length(minLength, maxLength),
+    Length(resolvedMinLength, resolvedMaxLength),
   ];
 
   const isRequiredProperty = required ?? true;

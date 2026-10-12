@@ -1,6 +1,6 @@
 import { Client, GraphRequest, LargeFileUploadSession, LargeFileUploadTaskOptions, UploadResult } from '@microsoft/microsoft-graph-client';
 import { Injectable } from '@nestjs/common';
-import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+import { GraphClientService } from '@ukef/modules/graph-client/graph-client.service';
 import { Readable } from 'stream';
 
 import { createGraphError } from './create-graph-error';
@@ -136,5 +136,3 @@ export type GraphPatchParams<RequestBody> = {
   path: string;
   requestBody: RequestBody;
 };
-
-export default GraphService;

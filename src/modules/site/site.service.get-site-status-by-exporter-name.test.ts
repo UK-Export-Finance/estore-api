@@ -1,5 +1,5 @@
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
@@ -35,7 +35,7 @@ describe('SiteService', () => {
       siteStatusByExporterNameResponse,
       sharepointServiceGetExporterSiteParams,
       sharepointServiceGetExporterSiteResponse,
-    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
+    } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, tfisSharepointUrl, tfisCaseSitesListId });
 
     it('returns the site id and status from the service', async () => {
       when(getExporterSiteByName).calledWith(sharepointServiceGetExporterSiteParams).mockResolvedValueOnce(sharepointServiceGetExporterSiteResponse);

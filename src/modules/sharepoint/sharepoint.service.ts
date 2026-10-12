@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
-import GraphService from '@ukef/modules/graph/graph.service';
+import { GraphService } from '@ukef/modules/graph/graph.service';
 
 import { GraphCreateSiteResponseDto } from '../graph/dto/graph-create-site-response.dto';
 import { ListItem } from './list-item.interface';

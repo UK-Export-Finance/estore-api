@@ -23,5 +23,3 @@ export class DtfsStorageClientService {
     return new ShareFileClient(url, this.storageSharedKeyCredential);
   }
 }
-
-export default DtfsStorageClientService;

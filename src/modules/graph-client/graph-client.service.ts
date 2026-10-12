@@ -40,5 +40,3 @@ export class GraphClientService {
     return new LargeFileUploadTask(this.client, streamUpload, uploadSession, options);
   }
 }
-
-export default GraphClientService;

@@ -4,7 +4,7 @@ import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/comm
 import { withExporterNameQueryValidationApiTests } from '@ukef-test/common-tests/request-query-validation-api-tests/exporter-name-query-validation-api-tests';
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { HttpStatusCode } from 'axios';
@@ -17,7 +17,7 @@ describe('getSiteStatusByExporterName', () => {
     siteControllerGetSiteStatusByExporterNameQueryDto,
     graphServiceGetParams: { path, expand, filter },
     graphServiceGetResponse,
-  } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+  } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
 
@@ -81,7 +81,7 @@ describe('getSiteStatusByExporterName', () => {
       siteStatusByExporterNameResponse: modifiedSiteStatusByExporterNameResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
       graphServiceGetResponse: modifiedgraphServiceGetResponse,
-    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
+    } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)

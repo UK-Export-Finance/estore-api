@@ -1,5 +1,5 @@
 import { ENUMS } from '@ukef/constants';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
@@ -25,7 +25,7 @@ describe('SiteController', () => {
 
   describe('getSiteStatusByExporterName', () => {
     const { siteControllerGetSiteStatusByExporterNameQueryDto, siteServiceGetSiteStatusByExporterNameRequest, siteStatusByExporterNameResponse } =
-      new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
+      new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
     it.each([
       {

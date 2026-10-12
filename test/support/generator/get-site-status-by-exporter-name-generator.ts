@@ -11,7 +11,7 @@ import { AbstractGenerator } from './abstract-generator';
 import { GraphListItemsGenerator } from './common/graph-list-items-generator';
 import { RandomValueGenerator } from './random-value-generator';
 
-export class getSiteStatusByExporterNameGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
+export class GetSiteStatusByExporterNameGenerator extends AbstractGenerator<GenerateValues, GenerateResult, GenerateOptions> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
     super(valueGenerator);
   }

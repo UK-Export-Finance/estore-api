@@ -37,7 +37,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
   const queryName = queryNameSymbol as string;
   const { minLength, maxLength } = getMinAndMaxLengthFromOptions({ parameterName: queryName, minLengthOption, maxLengthOption, lengthOption });
 
-  required = required ?? true;
+  const isRequired = required ?? true;
 
   describe(`${queryName} validation`, () => {
     beforeEach(() => {
@@ -56,7 +56,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
       expect(status).toBe(successStatusCode);
     });
 
-    if (required) {
+    if (isRequired) {
       if (theEnum && generateQueryValueThatDoesNotMatchEnum) {
         it(`returns a 400 response if ${queryName} is not present`, async () => {
           const { [queryNameSymbol]: removed, ...requestWithoutTheQuery } = validRequestQueries;

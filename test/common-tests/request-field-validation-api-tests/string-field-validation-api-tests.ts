@@ -40,7 +40,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
   const requestIsAnArray = Array.isArray(validRequestBody);
   const requestBodyItem = requestIsAnArray ? validRequestBody[0] : validRequestBody;
 
-  required = required ?? true;
+  const isRequired = required ?? true;
 
   describe(`${fieldName} validation`, () => {
     beforeEach(() => {
@@ -61,7 +61,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       });
     });
 
-    if (required) {
+    if (isRequired) {
       if (theEnum && generateFieldValueThatDoesNotMatchEnum) {
         it(`returns a 400 response if ${fieldName} is not present`, async () => {
           const { [fieldNameSymbol]: removed, ...requestWithoutTheField } = requestBodyItem;
