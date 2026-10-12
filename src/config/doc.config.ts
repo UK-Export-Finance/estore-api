@@ -11,4 +11,3 @@ export const DocConfig = registerAs(
     prefix: '/docs',
   }),
 );
-
