@@ -3,7 +3,7 @@ import { getIntConfig } from '@ukef/helpers/get-int-config';
 
 export const KEY = 'custodian';
 
-export type CustodianConfig = {
+export type CustodianConfigType = {
   baseUrl: string;
   apiKeyHeaderName: string;
   apiKeyHeaderValue: string;
@@ -17,9 +17,9 @@ export type CustodianConfig = {
   facilityTypeGuid: string;
 };
 
-export default registerAs(
+export const CustodianConfig = registerAs(
   KEY,
-  (): CustodianConfig => ({
+  (): CustodianConfigType => ({
     baseUrl: process.env.CUSTODIAN_BASE_URL,
     apiKeyHeaderName: process.env.CUSTODIAN_API_KEY_HEADER_NAME,
     apiKeyHeaderValue: process.env.CUSTODIAN_API_KEY_HEADER_VALUE,

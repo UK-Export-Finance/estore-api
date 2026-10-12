@@ -3,7 +3,7 @@ import { getIntConfig } from '@ukef/helpers/get-int-config';
 
 export const KEY = 'mdm';
 
-export type MdmConfig = {
+export type MdmConfigType = {
   baseUrl: string;
   apiKeyHeaderName: string;
   apiKeyHeaderValue: string;
@@ -11,9 +11,9 @@ export type MdmConfig = {
   timeout: number;
 };
 
-export default registerAs(
+export const MdmConfig = registerAs(
   KEY,
-  (): MdmConfig => ({
+  (): MdmConfigType => ({
     baseUrl: process.env.APIM_MDM_URL,
     apiKeyHeaderName: process.env.APIM_MDM_KEY,
     apiKeyHeaderValue: process.env.APIM_MDM_VALUE,

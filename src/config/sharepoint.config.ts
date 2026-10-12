@@ -1,6 +1,8 @@
 import { registerAs } from '@nestjs/config';
 
-export type SharepointConfig = {
+const KEY = 'sharepoint';
+
+export type SharepointConfigType = {
   baseUrl: string;
   ukefSharepointName: string;
   tfisSharepointUrl: string;
@@ -20,7 +22,7 @@ export type SharepointConfig = {
   ecmsDocumentContentTypeId: string;
 };
 
-export default registerAs('sharepoint', (): SharepointConfig => {
+export const SharepointConfig = registerAs(KEY, (): SharepointConfigType => {
   return {
     baseUrl: process.env.SHAREPOINT_BASE_URL,
     ukefSharepointName: `${process.env.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com`,
