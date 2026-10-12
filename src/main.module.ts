@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CustodianConfig, DocConfig, DtfsStorageConfig, MdmConfig, SharepointConfig } from '@ukef/config';
+import { AppConfig, CustodianConfig, DocConfig, DtfsStorageConfig, MdmConfig, SharepointConfig } from '@ukef/config';
 import { EstoreModule } from '@ukef/modules/estore.module';
 import { LoggerModule } from 'nestjs-pino';
 
@@ -11,7 +11,7 @@ import { HEADERS_LOG_KEY, INCOMING_RESPONSE_LOG_KEY, OUTGOING_REQUEST_LOG_KEY } 
 import { logKeysToRedact } from './modules/logging/log-keys-to-redact';
 import { LoggingInterceptor } from './modules/logging/logging-interceptor.helper';
 
-const CONFIGS = [CustodianConfig, DocConfig, DtfsStorageConfig, MdmConfig, SharepointConfig];
+const CONFIGS = [AppConfig, CustodianConfig, DocConfig, DtfsStorageConfig, MdmConfig, SharepointConfig];
 
 @Module({
   imports: [

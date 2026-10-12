@@ -65,7 +65,6 @@ module.exports = defineConfig([
       },
     },
     rules: {
-      'n/no-sync': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/await-thenable': 'off',
@@ -199,18 +198,6 @@ module.exports = defineConfig([
       '@typescript-eslint/no-import-type-side-effects': 'off',
       'import-x/no-useless-path-segments': 'off',
       'n/prefer-node-protocol': 'off',
-
-      // disable all stylistic rules in favor of Prettier, except for a few that we want to enforce
-      '@stylistic/max-len': 'off',
-      '@stylistic/implicit-arrow-linebreak': 'off',
-      '@stylistic/quotes': 'off',
-      '@stylistic/operator-linebreak': 'off',
-      '@stylistic/object-curly-newline': 'off',
-      '@stylistic/indent': 'off',
-      '@stylistic/function-paren-newline': 'off',
-      '@stylistic/no-confusing-arrow': 'off',
-      '@stylistic/newline-per-chained-call': 'off',
-      '@stylistic/generator-star-spacing': 'off',
     },
   },
 
