@@ -29,9 +29,11 @@ export class DtfsStorageFileService {
     if (error.statusCode === 403) {
       throw new DtfsStorageAuthenticationFailedException('Failed to authenticate with the DTFS storage account.', error);
     }
+
     if (error.statusCode === 404) {
       throw new DtfsStorageFileNotFoundException(`File ${fileLocationPath}/${fileName} was not found in DTFS.`, error);
     }
+
     throw new DtfsStorageException(`Failed to get ${isGetFilePropertiesRequest ? 'properties for ' : ''}file ${fileLocationPath}/${fileName}.`, error);
   }
 }

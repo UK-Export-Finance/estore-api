@@ -10,9 +10,11 @@ export const redactStringsInLogArgs = (
   if (!redactLogs) {
     return args;
   }
+
   args.forEach((arg, index) => {
     redactPaths.forEach((path) => {
       const value: string = get(arg, path);
+
       if (value) {
         const safeValue = redactString(redactStrings, value);
         set(args[index], path, safeValue);
@@ -24,8 +26,10 @@ export const redactStringsInLogArgs = (
 
 const redactString = (redactStrings: { searchValue: string | RegExp; replaceValue: string }[], logMessage: string): string => {
   let safeString: string = logMessage;
+
   redactStrings.forEach((redact) => {
     safeString = safeString.replaceAll(redact.searchValue, redact.replaceValue);
   });
+
   return safeString;
 };

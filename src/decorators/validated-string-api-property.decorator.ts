@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { regexToString } from '@ukef/helpers';
 import { IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
 
-interface Options {
+type Options = {
   description: string;
   length?: number;
   minLength?: number;
@@ -13,7 +13,7 @@ interface Options {
   enum?: any;
   example?: string;
   default?: string;
-}
+};
 
 export const ValidatedStringApiProperty = ({
   description,
@@ -45,14 +45,18 @@ export const ValidatedStringApiProperty = ({
   ];
 
   const isRequiredProperty = required ?? true;
+
   if (!isRequiredProperty) {
     decoratorsToApply.push(IsOptional());
   }
+
   if (pattern) {
     decoratorsToApply.push(Matches(pattern));
   }
+
   if (theEnum) {
     decoratorsToApply.push(IsEnum(theEnum));
   }
+
   return applyDecorators(...decoratorsToApply);
 };

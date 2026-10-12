@@ -36,6 +36,7 @@ export const withUploadFileMethodTests = ({
 
     expect(graphServiceUploadFile).toHaveBeenCalledTimes(1);
     expect(graphServiceUploadFile).toHaveBeenCalledWith(requestBody);
+
     if (methodResponse) {
       expect(result).toEqual(methodResponse);
     }

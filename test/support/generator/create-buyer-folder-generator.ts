@@ -168,7 +168,7 @@ type TfisCaseSitesListFields = {
   };
 };
 
-interface GenerateValues {
+type GenerateValues = {
   siteId: string;
 
   exporterName: string;
@@ -178,9 +178,9 @@ interface GenerateValues {
   termGuid: string;
   termUrl: string;
   siteUrl: string;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   siteId: string;
   createBuyerFolderRequestItem: CreateBuyerFolderRequestItem;
   createBuyerFolderRequest: CreateBuyerFolderRequestDto;
@@ -200,4 +200,4 @@ interface GenerateResult {
   tfisBuyerFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
-}
+};

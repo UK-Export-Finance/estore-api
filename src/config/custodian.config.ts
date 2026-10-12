@@ -3,7 +3,7 @@ import { getIntConfig } from '@ukef/helpers/get-int-config';
 
 export const KEY = 'custodian';
 
-export interface CustodianConfig {
+export type CustodianConfig = {
   baseUrl: string;
   apiKeyHeaderName: string;
   apiKeyHeaderValue: string;
@@ -15,7 +15,7 @@ export interface CustodianConfig {
   dealTypeGuid: string;
   facilityTemplateId: string;
   facilityTypeGuid: string;
-}
+};
 
 export default registerAs(
   KEY,

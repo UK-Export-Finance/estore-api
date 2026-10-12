@@ -30,5 +30,6 @@ export const createGraphError = ({
       });
     });
   }
+
   throw new GraphException(error.message, error);
 };

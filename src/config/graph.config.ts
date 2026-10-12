@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 
-export interface GraphConfig {
+export type GraphConfig = {
   clientId: string;
   clientSecret: string;
   tenantId: string;
   scope: string;
-}
+};
 
 export default registerAs('graph', (): GraphConfig => {
   return {

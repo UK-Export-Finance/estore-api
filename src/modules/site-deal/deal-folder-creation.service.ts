@@ -65,58 +65,73 @@ export class DealFolderCreationService {
 
   private async getBuyerFolderId({ siteId, buyerName }: { siteId: string; buyerName: string }): Promise<number> {
     const buyerFolderSearchResults = await this.sharepointService.getBuyerFolder({ siteId, buyerName });
+
     if (buyerFolderSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find a folder for buyer ${buyerName} in site ${siteId}.`);
     }
+
     const [
       {
         fields: { id: buyerFolderIdString },
       },
     ] = buyerFolderSearchResults;
+
     if (!buyerFolderIdString) {
       throw new FolderDependencyInvalidException(`Missing id for the folder found for ${buyerName} in site ${siteId}.`);
     }
+
     const buyerFolderId = parseInt(buyerFolderIdString, 10);
-    if (isNaN(buyerFolderId)) {
+
+    if (Number.isNaN(buyerFolderId)) {
       throw new FolderDependencyInvalidException(
         `The id for the folder found for ${buyerName} in site ${siteId} is not a number (the value is ${buyerFolderIdString}).`,
       );
     }
+
     return buyerFolderId;
   }
 
   private async getExporterDetails({ siteId }: { siteId: string }): Promise<{ exporterTermGuid: string; exporterUrl: string }> {
     const exporterTermSearchResults = await this.sharepointService.getExporterSite(siteId);
+
     if (exporterTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the siteId ${siteId} in the tfisCaseSitesList.`);
     }
+
     const [
       {
         fields: { TermGuid: exporterTermGuid, URL: exporterUrl },
       },
     ] = exporterTermSearchResults;
+
     if (!exporterTermGuid) {
       throw new FolderDependencyInvalidException(`Missing TermGuid for the list item found for exporter site ${siteId}.`);
     }
+
     if (!exporterUrl) {
       throw new FolderDependencyInvalidException(`Missing URL for the list item found for exporter site ${siteId}.`);
     }
+
     return { exporterTermGuid, exporterUrl };
   }
 
   private async getMarketTermGuid(marketName: string): Promise<string> {
     const marketTermSearchResults = await this.sharepointService.getMarketTerm(marketName);
+
     if (marketTermSearchResults.length === 0) {
       throw new FolderDependencyNotFoundException(`Did not find the market ${marketName} in the taxonomyHiddenListTermStore.`);
     }
+
     const [
       {
         fields: { TermGuid: marketTermGuid },
       },
     ] = marketTermSearchResults;
+
     if (!marketTermGuid) {
       throw new FolderDependencyInvalidException(`Missing TermGuid for the market list item found for ${marketName}.`);
     }
+
     return marketTermGuid;
   }
 
@@ -178,6 +193,7 @@ export class DealFolderCreationService {
       TypeGuid: this.custodianConfig.dealTypeGuid,
       SPHostUrl: this.sharepointConfig.scSiteFullUrl,
     };
+
     await this.custodianService.createAndProvision(createFolderRequest);
   }
 

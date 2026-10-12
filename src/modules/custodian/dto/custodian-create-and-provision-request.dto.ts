@@ -1,4 +1,4 @@
-export interface CustodianCreateAndProvisionRequest {
+export type CustodianCreateAndProvisionRequest = {
   Title: string;
   Id?: number;
   Code?: string;
@@ -13,9 +13,9 @@ export interface CustodianCreateAndProvisionRequest {
   Metadata?: MetadataItem[];
   TypeGuid: string;
   SPHostUrl: string;
-}
+};
 
-interface MetadataItem {
+type MetadataItem = {
   Name: string;
   Values: string[];
-}
+};

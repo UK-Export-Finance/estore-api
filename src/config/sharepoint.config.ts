@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 
-export interface SharepointConfig {
+export type SharepointConfig = {
   baseUrl: string;
   ukefSharepointName: string;
   tfisSharepointUrl: string;
@@ -18,7 +18,7 @@ export interface SharepointConfig {
   estoreDocumentTypeIdFinancialStatement: string;
   estoreDocumentTypeIdBusinessInformation: string;
   ecmsDocumentContentTypeId: string;
-}
+};
 
 export default registerAs('sharepoint', (): SharepointConfig => {
   return {

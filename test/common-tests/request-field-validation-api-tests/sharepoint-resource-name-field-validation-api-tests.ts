@@ -3,15 +3,15 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 
 import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests } from './string-field-validation-api-tests';
 
-interface SharepointResourceNameFieldValidationApiTestOptions<
+type SharepointResourceNameFieldValidationApiTestOptions<
   RequestBodyItem extends Record<SharepointResourceNameFieldName, string>,
   SharepointResourceNameFieldName extends keyof any,
-> extends Pick<
+> = Pick<
   StringFieldValidationApiTestOptions<RequestBodyItem, SharepointResourceNameFieldName>,
   'fieldName' | 'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-> {
+> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withSharepointResourceNameFieldValidationApiTests = <
   RequestBodyItem extends Record<SharepointResourceNameFieldName, string>,

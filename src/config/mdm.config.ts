@@ -3,13 +3,13 @@ import { getIntConfig } from '@ukef/helpers/get-int-config';
 
 export const KEY = 'mdm';
 
-export interface MdmConfig {
+export type MdmConfig = {
   baseUrl: string;
   apiKeyHeaderName: string;
   apiKeyHeaderValue: string;
   maxRedirects: number;
   timeout: number;
-}
+};
 
 export default registerAs(
   KEY,

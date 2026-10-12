@@ -66,6 +66,7 @@ export class FacilityFolderCreationService {
 
   private async getDealFolderId(siteId: string, dealFolderName: string): Promise<number> {
     const dealFolderListItems = await this.sharepointService.getDealFolder({ siteId, dealFolderName });
+
     if (!dealFolderListItems.length) {
       throw new FolderDependencyNotFoundException(
         `Site deal folder not found: ${dealFolderName}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
@@ -73,12 +74,14 @@ export class FacilityFolderCreationService {
     }
 
     const dealFolderIdString = dealFolderListItems[0].fields.id;
+
     if (!dealFolderIdString) {
       throw new FolderDependencyInvalidException(`Missing id for the deal folder ${dealFolderName} in site ${siteId}.`);
     }
 
     const dealFolderId = parseInt(dealFolderIdString);
-    if (isNaN(dealFolderId)) {
+
+    if (Number.isNaN(dealFolderId)) {
       throw new FolderDependencyInvalidException(
         `The id for the deal folder ${dealFolderName} in site ${siteId} is not a number (the value is ${dealFolderIdString}).`,
       );
@@ -95,6 +98,7 @@ export class FacilityFolderCreationService {
     }
 
     const facilityGuid = facilityTermListItems[0].fields.FacilityGUID;
+
     if (!facilityGuid) {
       throw new FolderDependencyInvalidException(`Missing FacilityGUID for facility term ${facilityIdentifier}.`);
     }

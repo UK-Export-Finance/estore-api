@@ -45,9 +45,11 @@ export class SiteDocumentService {
 
   private async checkFileIsNotTooLargeAndReturnSizeInBytes(fileName: string, fileLocationPath: string): Promise<number> {
     const fileSizeInBytes = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => response.contentLength);
+
     if (fileSizeInBytes > DTFS_MAX_FILE_SIZE_BYTES) {
       throw new BadRequestException('Bad request', `The file exceeds the maximum allowed size of ${DTFS_MAX_FILE_SIZE_BYTES} bytes.`);
     }
+
     return fileSizeInBytes;
   }
 

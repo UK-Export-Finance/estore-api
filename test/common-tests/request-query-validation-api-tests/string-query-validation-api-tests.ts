@@ -1,7 +1,7 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import request from 'supertest';
 
-export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems> {
+export type StringQueryValidationApiTestOptions<RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems> = {
   queryName: RequestQueryItemsKey;
   length?: number;
   minLength?: number;
@@ -16,7 +16,7 @@ export interface StringQueryValidationApiTestOptions<RequestQueryItems, RequestQ
   successStatusCode: number;
   makeRequestWithQueries: (queries: RequestQueryItems) => request.Test;
   givenAnyRequestQueryWouldSucceed: () => void;
-}
+};
 
 export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQueryItemsKey extends keyof RequestQueryItems>({
   queryName: queryNameSymbol,
@@ -59,7 +59,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
     if (required) {
       if (theEnum && generateQueryValueThatDoesNotMatchEnum) {
         it(`returns a 400 response if ${queryName} is not present`, async () => {
-          const { [queryNameSymbol]: _removed, ...requestWithoutTheQuery } = validRequestQueries;
+          const { [queryNameSymbol]: removed, ...requestWithoutTheQuery } = validRequestQueries;
 
           const { status, body } = await makeRequestWithQueries(requestWithoutTheQuery as RequestQueryItems);
 
@@ -72,7 +72,7 @@ export const withStringQueryValidationApiTests = <RequestQueryItems, RequestQuer
         });
       } else {
         it(`returns a 400 response if ${queryName} is not present`, async () => {
-          const { [queryNameSymbol]: _removed, ...requestWithoutTheQuery } = validRequestQueries;
+          const { [queryNameSymbol]: removed, ...requestWithoutTheQuery } = validRequestQueries;
 
           const { status, body } = await makeRequestWithQueries(requestWithoutTheQuery as RequestQueryItems);
 

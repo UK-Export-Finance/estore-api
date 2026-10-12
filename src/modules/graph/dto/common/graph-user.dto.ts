@@ -1,5 +1,5 @@
-export interface GraphUser {
+export type GraphUser = {
   email: string;
   id: string;
   displayName: string;
-}
+};

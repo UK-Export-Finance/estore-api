@@ -119,22 +119,22 @@ export class GraphService {
   }
 }
 
-export interface GraphGetParams {
+export type GraphGetParams = {
   path: string;
   filter?: string;
   expand?: string;
   top?: number;
   knownErrors?: KnownError[];
-}
+};
 
-export interface GraphPostParams {
+export type GraphPostParams = {
   path: string;
   requestBody: any;
-}
+};
 
-export interface GraphPatchParams<RequestBody> {
+export type GraphPatchParams<RequestBody> = {
   path: string;
   requestBody: RequestBody;
-}
+};
 
 export default GraphService;

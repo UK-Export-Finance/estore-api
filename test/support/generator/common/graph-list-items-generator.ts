@@ -52,16 +52,16 @@ export class GraphListItemsGenerator<ListItemFields> extends AbstractGenerator<
   }
 }
 
-interface GenerateValues {
+type GenerateValues = {
   facilityTermDateResponseCreatedDateTime: Date;
   facilityTermDateResponseETag: string;
   facilityTermDateResponseId: string;
   facilityTermDateResponseLastModifiedDateTime: Date;
   facilityTermDateResponseWebUrl: string;
-}
+};
 
 type GenerateResult<ListItemFields> = GraphGetListItemsResponseDto<{ id: string } & ListItemFields>;
 
-interface GenerateOptions<ListItemFields> {
+type GenerateOptions<ListItemFields> = {
   graphListItemsFields: ListItemFields;
-}
+};

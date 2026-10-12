@@ -39,8 +39,8 @@ export class App extends AppUnderTest {
   }
 }
 
-export interface MockApp {
+export type MockApp = {
   app: App;
   mockGraphClientService: MockGraphClientService;
   mockDtfsStorageClientService: MockDtfsStorageClientService;
-}
+};

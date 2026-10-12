@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 
-export interface DtfsStorageConfig {
+export type DtfsStorageConfig = {
   baseUrl: string;
   accountName: string;
   accountKey: string;
   dealDocumentsFolderPath: string;
-}
+};
 
 export default registerAs('dtfsStorage', (): DtfsStorageConfig => {
   return {

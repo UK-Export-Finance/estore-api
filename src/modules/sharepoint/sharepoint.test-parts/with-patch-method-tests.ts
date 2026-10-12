@@ -46,6 +46,7 @@ export const withPatchMethodTests = ({
       path,
       requestBody,
     });
+
     if (methodResponse) {
       expect(result).toEqual(methodResponse);
     }

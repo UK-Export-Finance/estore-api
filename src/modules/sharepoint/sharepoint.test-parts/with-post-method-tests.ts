@@ -46,6 +46,7 @@ export const withPostMethodTests = ({
       path,
       requestBody,
     });
+
     if (methodResponse) {
       expect(result).toEqual(methodResponse);
     }

@@ -11,7 +11,7 @@ import { HttpStatusCode } from 'axios';
 import { resetAllWhenMocks } from 'jest-when';
 
 describe('getSiteStatusByExporterName', () => {
-  const endpoint_url = '/api/v1/sites';
+  const url = '/api/v1/sites';
   const valueGenerator = new RandomValueGenerator();
   const {
     siteControllerGetSiteStatusByExporterNameQueryDto,
@@ -46,7 +46,7 @@ describe('getSiteStatusByExporterName', () => {
         .mockSuccessfulGraphGetCall(graphServiceGetResponse);
     },
     makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) =>
-      api.getWithoutAuth(endpoint_url, incorrectAuth?.headerName, incorrectAuth?.headerValue).query(siteControllerGetSiteStatusByExporterNameQueryDto),
+      api.getWithoutAuth(url, incorrectAuth?.headerName, incorrectAuth?.headerValue).query(siteControllerGetSiteStatusByExporterNameQueryDto),
   });
 
   withSharedGraphExceptionHandlingTests({
@@ -127,6 +127,6 @@ describe('getSiteStatusByExporterName', () => {
   };
 
   const makeRequestWithQueries = (queries: GetSiteStatusByExporterNameQueryDto) => {
-    return api.get(endpoint_url).query(queries);
+    return api.get(url).query(queries);
   };
 });

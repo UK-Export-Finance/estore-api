@@ -1,7 +1,7 @@
-interface SharepointFolderNameRegexTestCase {
+type SharepointFolderNameRegexTestCase = {
   value: string;
   testTitle: string;
-}
+};
 
 const validSubstring = 'substring';
 const disallowedPrefixesAndSuffixes = [' '];

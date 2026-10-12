@@ -1,3 +1,3 @@
-export interface ListItemFilter {
+export type ListItemFilter = {
   getFilterString: () => string;
-}
+};

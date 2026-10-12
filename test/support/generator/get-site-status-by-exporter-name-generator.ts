@@ -88,7 +88,7 @@ type GetExporterSiteResponseFields = {
   Sitestatus: string;
 };
 
-interface GenerateValues {
+type GenerateValues = {
   exporterName: string;
   siteId: string;
   graphCreatedDateTime: Date;
@@ -96,9 +96,9 @@ interface GenerateValues {
   graphId: string;
   graphLastModifiedDateTime: Date;
   graphWebUrl: string;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   siteControllerGetSiteStatusByExporterNameQueryDto: GetSiteStatusByExporterNameQueryDto;
   siteServiceGetSiteStatusByExporterNameRequest: string;
   sharepointServiceGetExporterSiteParams: string;
@@ -106,10 +106,10 @@ interface GenerateResult {
   graphServiceGetParams: GraphGetParams;
   graphServiceGetResponse: GraphGetListItemsResponseDto<GetExporterSiteResponseFields>;
   siteStatusByExporterNameResponse: GetSiteStatusByExporterNameResponse;
-}
+};
 
-interface GenerateOptions {
+type GenerateOptions = {
   status?: string;
   tfisSharepointUrl?: string;
   tfisCaseSitesListId?: string;
-}
+};
