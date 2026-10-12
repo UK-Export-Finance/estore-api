@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import SharepointConfig from '@ukef/config/sharepoint.config';
 import { ENUMS } from '@ukef/constants';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { TermsFacilityExistsException } from './exception/terms-facility-exists.exception';
 import { TermsService } from './terms.service';
 
