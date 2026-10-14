@@ -28,6 +28,7 @@ export const ValidatedStringApiProperty = ({
 }: Options) => {
   const resolvedMinLength = length ?? minLength ?? 0;
   const resolvedMaxLength = length ?? maxLength;
+
   const decoratorsToApply = [
     ApiProperty({
       type: 'string',
