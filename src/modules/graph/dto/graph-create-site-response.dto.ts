@@ -3,7 +3,7 @@ import { GraphParentReference } from './common/graph-parent-reference.dto';
 import { GraphSiteFields } from './common/graph-site-fields.dto';
 import { GraphUser } from './common/graph-user.dto';
 
-export interface GraphCreateSiteResponseDto {
+export type GraphCreateSiteResponseDto = {
   createdDateTime: Date;
   eTag: string;
   id: string;
@@ -14,4 +14,4 @@ export interface GraphCreateSiteResponseDto {
   parentReference: GraphParentReference;
   contentType: GraphContentType;
   fields: GraphSiteFields;
-}
+};

@@ -232,7 +232,7 @@ export class UploadFileInDealFolderGenerator extends AbstractGenerator<GenerateV
   }
 }
 
-interface GenerateValues {
+type GenerateValues = {
   buyerName: string;
   fileName: string;
   fileLocationPath: string;
@@ -247,9 +247,9 @@ interface GenerateValues {
   listId: string;
   itemId: string;
   top: number;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   uploadFileInDealFolderRequest: UploadFileInDealFolderRequestDto;
   uploadFileInDealFolderResponse: UploadFileInDealFolderResponseDto;
   uploadFileInDealFolderParams: UploadFileInDealFolderParamsDto;
@@ -291,12 +291,12 @@ interface GenerateResult {
   sharepointServiceUrlToCreateUploadSession: string;
   sharepointServiceGetListIdResponse: { value: { name: string; id: string }[] };
   sharepointServiceGetItemIdResponse: { value: { webUrl: string; id: string }[] };
-}
+};
 
-interface GenerateOptions {
+type GenerateOptions = {
   ecmsDocumentContentTypeId?: string;
   sharepointBaseUrl?: string;
   ukefSharepointName?: string;
   estoreDocumentTypeIdFieldName?: string;
   documentTypeId?: string;
-}
+};

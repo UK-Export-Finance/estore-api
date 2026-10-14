@@ -1,9 +1,9 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import dtfsStorageConfig, { DtfsStorageConfig } from './dtfs-storage.config';
+import { DtfsStorageConfig, DtfsStorageConfigType } from './dtfs-storage.config';
 
-describe('dtfsStorageConfig', () => {
-  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof DtfsStorageConfig; environmentVariableName: string }[] = [
+describe('DtfsStorageConfig', () => {
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof DtfsStorageConfigType; environmentVariableName: string }[] = [
     {
       configPropertyName: 'accountName',
       environmentVariableName: 'DTFS_STORAGE_ACCOUNT_NAME',
@@ -19,7 +19,7 @@ describe('dtfsStorageConfig', () => {
   ];
 
   const configModifiedFromEnvironmentVariables: {
-    configPropertyName: keyof DtfsStorageConfig;
+    configPropertyName: keyof DtfsStorageConfigType;
     environmentVariableNames: string[];
     getExpectedResult: (environmentVariableValues: string[]) => string;
   }[] = [
@@ -33,6 +33,6 @@ describe('dtfsStorageConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configModifiedFromEnvironmentVariables,
-    getConfig: () => dtfsStorageConfig(),
+    getConfig: () => DtfsStorageConfig(),
   });
 });

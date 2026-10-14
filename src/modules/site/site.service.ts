@@ -58,6 +58,7 @@ export class SiteService {
     if (!listItems.length) {
       return ifNotFound();
     }
+
     const { URL: siteId, Sitestatus: siteStatus } = listItems[0].fields;
 
     const status = convertToEnum<typeof SiteStatusEnum>(siteStatus, SiteStatusEnum);

@@ -1,11 +1,11 @@
 import { MockMdmApi } from '@ukef-test/support/mocks/mdm-api.mock';
 import request from 'supertest';
 
-interface Options {
+type Options = {
   givenTheRequestWouldOtherwiseSucceed: () => void;
   makeRequest: () => request.Test;
   mdmApi: MockMdmApi;
-}
+};
 
 export const withMdmNumbersErrorCasesApiTests = ({ givenTheRequestWouldOtherwiseSucceed, makeRequest, mdmApi }: Options) => {
   describe('Mdm Numbers error cases', () => {

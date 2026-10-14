@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { CASE_LIBRARY, DOCUMENT_X0020_STATUS, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, GRAPH } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
@@ -45,9 +45,11 @@ export class SiteDocumentService {
 
   private async checkFileIsNotTooLargeAndReturnSizeInBytes(fileName: string, fileLocationPath: string): Promise<number> {
     const fileSizeInBytes = await this.dtfsStorageFileService.getFileProperties(fileName, fileLocationPath).then((response) => response.contentLength);
+
     if (fileSizeInBytes > DTFS_MAX_FILE_SIZE_BYTES) {
       throw new BadRequestException('Bad request', `The file exceeds the maximum allowed size of ${DTFS_MAX_FILE_SIZE_BYTES} bytes.`);
     }
+
     return fileSizeInBytes;
   }
 

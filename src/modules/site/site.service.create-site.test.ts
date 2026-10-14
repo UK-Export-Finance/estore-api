@@ -1,7 +1,7 @@
 import { ENUMS } from '@ukef/constants';
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
@@ -38,7 +38,7 @@ describe('SiteService', () => {
 
   describe('createSite', () => {
     it('calls sharepoint.createSite and returns new site id and status from the service', async () => {
-      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetExporterSiteParams } = new getSiteStatusByExporterNameGenerator(
+      const { siteServiceGetSiteStatusByExporterNameRequest, sharepointServiceGetExporterSiteParams } = new GetSiteStatusByExporterNameGenerator(
         valueGenerator,
       ).generate({
         numberToGenerate: 1,
@@ -87,7 +87,7 @@ describe('SiteService', () => {
         sharepointServiceGetExporterSiteParams,
         sharepointServiceGetExporterSiteResponse,
         siteStatusByExporterNameResponse,
-      } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
         tfisSharepointUrl,
         tfisCaseSitesListId,

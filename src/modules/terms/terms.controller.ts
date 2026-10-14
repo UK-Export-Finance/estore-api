@@ -51,10 +51,13 @@ export class TermsController {
     @Res() res: Response,
   ): Promise<CreateTermFacilityResponse> {
     const responseMessage = await this.service.postFacilityToTermStore(term[0].id);
+
     if (responseMessage.message === ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED) {
       res.status(HttpStatusCode.Created).json({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERM_CREATED });
+
       return;
     }
+
     if (responseMessage.message === ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS) {
       res.status(HttpStatusCode.Ok).json({ message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS });
     }

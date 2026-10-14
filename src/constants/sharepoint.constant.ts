@@ -38,10 +38,10 @@ export const SHAREPOINT = {
     REGEX: /^[\w\-.()\s]+$/,
   },
   DOCUMENT_FILE_NAME: {
-    REGEX: new RegExp(`^(?!\\s)[\\w\\-.()\\s]+\.(${Object.values(ALLOWED_DOCUMENT_FILE_TYPE).join('|')})(?<![\\s.])$`),
+    REGEX: new RegExp(`^(?!\\s)[\\w\\-.()\\s]+\\.(${Object.values(ALLOWED_DOCUMENT_FILE_TYPE).join('|')})(?<![\\s.])$`),
   },
   CASE_SITE_URL: {
-    REGEX: /^[^,&!@~#$%*:;()+./\\[\]\-]+$/,
+    REGEX: /^[^,&!@~#$%*:;()+./\\[\]-]+$/,
   },
   SAFE_FOLDER_NAME: {
     REGEX: assembledRegexExpression,

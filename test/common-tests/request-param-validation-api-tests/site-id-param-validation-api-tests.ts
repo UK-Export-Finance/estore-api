@@ -3,9 +3,9 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 
 import { ParamValidationApiTestOptions, withParamValidationApiTests } from './string-param-validation-api-tests';
 
-interface Options extends Pick<ParamValidationApiTestOptions, 'validRequestParam' | 'makeRequest' | 'givenAnyRequestParamWouldSucceed' | 'successStatusCode'> {
+type Options = Pick<ParamValidationApiTestOptions, 'validRequestParam' | 'makeRequest' | 'givenAnyRequestParamWouldSucceed' | 'successStatusCode'> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withSiteIdParamValidationApiTests = ({
   valueGenerator,

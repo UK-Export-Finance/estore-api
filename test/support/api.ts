@@ -10,6 +10,7 @@ export class Api {
   static async create(): Promise<CreateApi> {
     const { app, mockGraphClientService, mockDtfsStorageClientService } = await App.create();
     const api = new Api(app);
+
     return { api, mockGraphClientService, mockDtfsStorageClientService };
   }
 
@@ -21,9 +22,11 @@ export class Api {
 
   getWithoutAuth(url: string, strategy?: string, key?: string): request.Test {
     const query = this.request().get(url);
+
     if (strategy) {
       return query.set({ [strategy]: key });
     }
+
     return query;
   }
 
@@ -37,9 +40,11 @@ export class Api {
 
   postWithoutAuth(url: string, body: string | object, strategy?: string, key?: string): request.Test {
     const query = this.request().post(url).send(body);
+
     if (strategy) {
       return query.set({ [strategy]: key });
     }
+
     return query;
   }
 
@@ -54,12 +59,15 @@ export class Api {
   private getValidAuthHeader(): Record<string, string> {
     const apiKey = ENVIRONMENT_VARIABLES.API_KEY;
     const strategy = AUTH.STRATEGY;
-    return { [strategy]: apiKey };
+
+    return {
+      [strategy]: apiKey,
+    };
   }
 }
 
-interface CreateApi {
+type CreateApi = {
   api: Api;
   mockGraphClientService: MockGraphClientService;
   mockDtfsStorageClientService: MockDtfsStorageClientService;
-}
+};
