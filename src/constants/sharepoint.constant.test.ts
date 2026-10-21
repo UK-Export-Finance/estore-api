@@ -9,9 +9,26 @@ import {
   disallowedSuffixTestCases,
 } from '@ukef-test/common-test-cases/sharepoint-folder-name-test-cases';
 
+import { ALLOWED_DOCUMENT_FILE_TYPE } from './allowed-document-file-type.constant';
 import { SHAREPOINT } from './sharepoint.constant';
 
 describe('sharepoint', () => {
+  describe('document file name validation', () => {
+    it('keeps the literal extensions in sync with the allowed document file types', () => {
+      const extensions = SHAREPOINT.DOCUMENT_FILE_NAME.REGEX.source.match(/\((\w+(?:\|\w+)*)\)/)?.[1].split('|');
+
+      expect(extensions).toStrictEqual(Object.values(ALLOWED_DOCUMENT_FILE_TYPE));
+    });
+
+    it.each(Object.values(ALLOWED_DOCUMENT_FILE_TYPE))('allows the %s file extension', (extension) => {
+      expect(`Document name-1.0 (final).${extension}`).toMatch(SHAREPOINT.DOCUMENT_FILE_NAME.REGEX);
+    });
+
+    it.each([' file.pdf', 'file.exe', 'file.PDF', 'file.pdf ', 'file.pdf.', 'file/name.pdf', '.pdf', 'filepdf'])('rejects %s', (filename) => {
+      expect(filename).not.toMatch(SHAREPOINT.DOCUMENT_FILE_NAME.REGEX);
+    });
+  });
+
   describe('caseSiteUrl string validation', () => {
     it.each([
       { value: ',' },

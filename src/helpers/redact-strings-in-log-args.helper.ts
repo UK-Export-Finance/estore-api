@@ -1,28 +1,36 @@
-import { get } from 'lodash';
-
 // Segments that could be used to reach the prototype chain and pollute it via a crafted path.
 const UNSAFE_PATH_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype']);
 
 const isPathAllowed = (path: string): boolean => path.split('.').every((segment) => !UNSAFE_PATH_SEGMENTS.has(segment));
 
-// Sets a value at a dotted path, only ever creating/traversing own properties so the prototype chain cannot be touched.
-const setOwnPath = (target: Record<string, any>, path: string, value: unknown): void => {
+// Only traverse own data properties; inherited objects must never be mutated.
+const redactOwnPath = (target: unknown, path: string, redactStrings: { searchValue: string | RegExp; replaceValue: string }[]): void => {
   const segments = path.split('.');
-  let current: Record<string, any> = target;
+  let current: unknown = target;
 
-  segments.forEach((segment, index) => {
+  for (const [index, segment] of segments.entries()) {
+    if (typeof current !== 'object' || current === null) {
+      return;
+    }
+
+    const descriptor = Object.getOwnPropertyDescriptor(current, segment);
+
+    if (!descriptor || !('value' in descriptor)) {
+      return;
+    }
+
+    const value: unknown = descriptor.value;
+
     if (index === segments.length - 1) {
-      current[segment] = value;
+      if (typeof value === 'string' && value) {
+        Object.defineProperty(current, segment, { ...descriptor, value: redactString(redactStrings, value) });
+      }
 
       return;
     }
 
-    if (!Object.prototype.hasOwnProperty.call(current, segment) || typeof current[segment] !== 'object' || current[segment] === null) {
-      current[segment] = {};
-    }
-
-    current = current[segment];
-  });
+    current = value;
+  }
 };
 
 // This helper function is used to redact sensitive data in Error object strings.
@@ -36,18 +44,13 @@ export const redactStringsInLogArgs = (
     return args;
   }
 
-  args.forEach((arg, index) => {
+  args.forEach((arg) => {
     redactPaths.forEach((path) => {
       if (!isPathAllowed(path)) {
         return;
       }
 
-      const value: string = get(arg, path);
-
-      if (value) {
-        const safeValue = redactString(redactStrings, value);
-        setOwnPath(args[index], path, safeValue);
-      }
+      redactOwnPath(arg, path, redactStrings);
     });
   });
   return args;

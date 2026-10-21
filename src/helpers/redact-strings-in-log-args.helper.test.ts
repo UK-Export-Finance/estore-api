@@ -126,5 +126,58 @@ describe('Redact errors helper', () => {
 
       expect(redacted).toStrictEqual(expectedResult);
     });
+
+    it.each(['__proto__.message', 'constructor.prototype.message', 'err.__proto__.message', 'err.constructor.prototype.message', 'prototype.message'])(
+      'ignores unsafe path %s',
+      (path) => {
+        const prototype = { message };
+        const arg = Object.create(prototype);
+        arg.err = Object.create(prototype);
+        arg.prototype = { message };
+
+        redactStringsInLogArgs(true, [path], redactStrings, [arg]);
+
+        expect(prototype.message).toBe(message);
+        expect(arg.prototype.message).toBe(message);
+        expect(Object.hasOwn(arg, 'message')).toBe(false);
+        expect(Object.hasOwn(arg.err, 'message')).toBe(false);
+      },
+    );
+
+    it('does not traverse inherited objects at otherwise safe paths', () => {
+      const inheritedError = { message };
+      const arg = Object.create({ err: inheritedError });
+
+      redactStringsInLogArgs(true, ['err.message'], redactStrings, [arg]);
+
+      expect(inheritedError.message).toBe(message);
+      expect(Object.hasOwn(arg, 'err')).toBe(false);
+    });
+
+    it('redacts Error properties without changing their descriptors', () => {
+      const error = new Error(message);
+      const descriptor = Object.getOwnPropertyDescriptor(error, 'message');
+
+      redactStringsInLogArgs(true, ['message'], redactStrings, [error]);
+
+      expect(error.message).toBe(redactedMessage);
+      expect(Object.getOwnPropertyDescriptor(error, 'message')).toStrictEqual({ ...descriptor, value: redactedMessage });
+    });
+
+    it('leaves missing and non-string values unchanged', () => {
+      const args = [null, undefined, { err: null }, { message: 42 }, { message: '' }, {}];
+
+      redactStringsInLogArgs(true, ['message', 'err.message'], redactStrings, args);
+
+      expect(args).toStrictEqual([null, undefined, { err: null }, { message: 42 }, { message: '' }, {}]);
+    });
+
+    it('does not apply empty search strings to empty values', () => {
+      const args = [{ message: '' }];
+
+      redactStringsInLogArgs(true, ['message'], [{ searchValue: '', replaceValue: '[Redacted]' }], args);
+
+      expect(args).toStrictEqual([{ message: '' }]);
+    });
   });
 });
