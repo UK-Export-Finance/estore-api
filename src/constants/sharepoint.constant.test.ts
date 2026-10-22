@@ -15,7 +15,8 @@ import { SHAREPOINT } from './sharepoint.constant';
 describe('sharepoint', () => {
   describe('document file name validation', () => {
     it('keeps the literal extensions in sync with the allowed document file types', () => {
-      const extensions = SHAREPOINT.DOCUMENT_FILE_NAME.REGEX.source.match(/\((\w+(?:\|\w+)*)\)/)?.[1].split('|');
+      const extensionGroup = SHAREPOINT.DOCUMENT_FILE_NAME.REGEX.source.split('\\.(').at(1)?.split(')', 1)[0];
+      const extensions = extensionGroup?.split('|');
 
       expect(extensions).toStrictEqual(Object.values(ALLOWED_DOCUMENT_FILE_TYPE));
     });
