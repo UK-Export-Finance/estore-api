@@ -1,9 +1,9 @@
 import { MdmService } from '@ukef/modules/mdm/mdm.service';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { SiteNotFoundException } from './exception/site-not-found.exception';
 import { SiteService } from './site.service';
 

@@ -1,8 +1,7 @@
-import { SharepointConfigType } from '@ukef/config/sharepoint.config';
 import { GraphService } from '@ukef/modules/graph/graph.service';
+import { SharepointConfigType } from '@ukef/config/sharepoint.config';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { resetAllWhenMocks, when } from 'jest-when';
-
-import { SharepointService } from '../sharepoint.service';
 
 export const withGetMethodTests = ({
   sharepointConfig,
