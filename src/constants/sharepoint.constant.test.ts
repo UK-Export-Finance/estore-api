@@ -92,7 +92,7 @@ describe('sharepoint', () => {
 
       describe('prefix validation tests', () => {
         it.each(allowedPrefixTestCases)('$testTitle', ({ value }) => {
-          // Arrange & Act 
+          // Arrange & Act
           expect(value).toMatch(SHAREPOINT.SAFE_FOLDER_NAME.REGEX);
         });
 
