@@ -3,15 +3,15 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 
 import { StringQueryValidationApiTestOptions, withStringQueryValidationApiTests } from './string-query-validation-api-tests';
 
-interface SharepointResourceNameQueryValidationApiTestOptions<
+type SharepointResourceNameQueryValidationApiTestOptions<
   RequestQueryItems extends Record<SharepointResourceNameQueryName, string>,
   SharepointResourceNameQueryName extends keyof any,
-> extends Pick<
+> = Pick<
   StringQueryValidationApiTestOptions<RequestQueryItems, SharepointResourceNameQueryName>,
   'queryName' | 'validRequestQueries' | 'successStatusCode' | 'makeRequestWithQueries' | 'givenAnyRequestQueryWouldSucceed'
-> {
+> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withSharepointResourceNameQueryValidationApiTests = <
   RequestQueryItems extends Record<SharepointResourceNameQueryName, string>,

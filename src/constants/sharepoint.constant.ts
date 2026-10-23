@@ -1,7 +1,5 @@
 import { regexToString } from '@ukef/helpers';
 
-import { ALLOWED_DOCUMENT_FILE_TYPE } from './allowed-document-file-type.constant';
-
 /*
  * The following limitations for folder naming are taken from sharepoint limitations:
  * https://support.microsoft.com/en-gb/office/restrictions-and-limitations-in-onedrive-and-sharepoint-64883a5d-228e-48f5-b3d2-eb39e07630fa
@@ -38,10 +36,10 @@ export const SHAREPOINT = {
     REGEX: /^[\w\-.()\s]+$/,
   },
   DOCUMENT_FILE_NAME: {
-    REGEX: new RegExp(`^(?!\\s)[\\w\\-.()\\s]+\.(${Object.values(ALLOWED_DOCUMENT_FILE_TYPE).join('|')})(?<![\\s.])$`),
+    REGEX: /^(?!\s)[\w\-.()\s]+\.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\s.])$/,
   },
   CASE_SITE_URL: {
-    REGEX: /^[^,&!@~#$%*:;()+./\\[\]\-]+$/,
+    REGEX: /^[^,&!@~#$%*:;()+./\\[\]-]+$/,
   },
   SAFE_FOLDER_NAME: {
     REGEX: assembledRegexExpression,

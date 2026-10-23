@@ -16,12 +16,12 @@ import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests 
 
 type BuyerNameFieldName = 'buyerName';
 
-interface BuyerNameFieldValidationApiTestOptions<RequestBodyItem extends { buyerName: string }> extends Pick<
+type BuyerNameFieldValidationApiTestOptions<RequestBodyItem extends { buyerName: string }> = Pick<
   StringFieldValidationApiTestOptions<RequestBodyItem, BuyerNameFieldName>,
   'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-> {
+> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withBuyerNameFieldValidationApiTests = <RequestBodyItem extends { buyerName: string }>({
   valueGenerator,

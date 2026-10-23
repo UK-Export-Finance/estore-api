@@ -1,3 +1,3 @@
-export interface CustodianCreateAndProvisionResponse {
+export type CustodianCreateAndProvisionResponse = {
   Id?: number;
-}
+};

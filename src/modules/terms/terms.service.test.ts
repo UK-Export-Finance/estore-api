@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { ENUMS } from '@ukef/constants';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';

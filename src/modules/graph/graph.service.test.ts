@@ -6,7 +6,7 @@ import { MockGraphClientService, MockGraphRequest } from '@ukef-test/support/moc
 import { resetAllWhenMocks } from 'jest-when';
 import { Readable } from 'stream';
 
-import GraphService from './graph.service';
+import { GraphService } from './graph.service';
 import { withSharedGraphExceptionHandlingTests } from './graph.test-parts/with-shared-graph-exception-handling-tests';
 
 describe('GraphService', () => {

@@ -2,11 +2,11 @@ import { GraphContentType } from './common/graph-content-type.dto';
 import { GraphParentReference } from './common/graph-parent-reference.dto';
 import { GraphUser } from './common/graph-user.dto';
 
-export interface GraphGetListItemsResponseDto<ListItemFields> {
+export type GraphGetListItemsResponseDto<ListItemFields> = {
   value: GraphGetListItemsResponseItem<ListItemFields>[];
-}
+};
 
-export interface GraphGetListItemsResponseItem<ListItemFields> {
+export type GraphGetListItemsResponseItem<ListItemFields> = {
   createdDateTime: Date;
   eTag: string;
   id: string;
@@ -17,4 +17,4 @@ export interface GraphGetListItemsResponseItem<ListItemFields> {
   parentReference: GraphParentReference;
   contentType: GraphContentType;
   fields: ListItemFields;
-}
+};

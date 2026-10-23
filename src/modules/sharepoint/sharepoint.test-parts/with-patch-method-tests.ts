@@ -1,6 +1,6 @@
-import { SharepointConfig } from '@ukef/config/sharepoint.config';
-import GraphService from '@ukef/modules/graph/graph.service';
+import { SharepointConfigType } from '@ukef/config/sharepoint.config';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
+import { GraphService } from '@ukef/modules/graph/graph.service';
 import { resetAllWhenMocks, when } from 'jest-when';
 
 export const withPatchMethodTests = ({
@@ -11,7 +11,7 @@ export const withPatchMethodTests = ({
   methodResponse,
   makeRequest,
 }: {
-  sharepointConfig: SharepointConfig;
+  sharepointConfig: SharepointConfigType;
   path: string;
   requestBody?: unknown;
   graphServiceResponse: unknown;
@@ -45,6 +45,7 @@ export const withPatchMethodTests = ({
       path,
       requestBody,
     });
+
     if (methodResponse) {
       expect(result).toEqual(methodResponse);
     }

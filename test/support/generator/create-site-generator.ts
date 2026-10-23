@@ -108,14 +108,14 @@ export class CreateSiteGenerator extends AbstractGenerator<GenerateValues, Gener
   }
 }
 
-interface GenerateValues {
+type GenerateValues = {
   exporterName: string;
   siteId: string;
   dbId: number;
   nowDate: DateString;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   createSiteRequest: CreateSiteRequest;
   graphCreateSiteResponseDto: Partial<GraphCreateSiteResponseDto>[];
   createSiteResponse: CreateSiteResponse[];
@@ -124,11 +124,11 @@ interface GenerateResult {
   mdmCreateNumbersResponse: MdmCreateNumbersResponse[];
   graphServicePostParams;
   requestToCreateSiteId;
-}
+};
 
-interface GenerateOptions {
+type GenerateOptions = {
   status?: SiteStatusEnum;
   exporterName?: string;
   tfisSharepointUrl?: string;
   tfisCaseSitesListId?: string;
-}
+};

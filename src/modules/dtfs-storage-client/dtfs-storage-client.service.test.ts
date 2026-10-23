@@ -2,7 +2,8 @@ import { ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks } from 'jest-when';
 
-import DtfsStorageClientService from './dtfs-storage-client.service';
+import { DtfsStorageClientService } from './dtfs-storage-client.service';
+
 jest.mock('@azure/storage-file-share');
 
 describe('DtfsStorageClientService', () => {

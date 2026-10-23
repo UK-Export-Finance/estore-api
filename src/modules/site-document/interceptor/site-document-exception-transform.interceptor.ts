@@ -12,6 +12,7 @@ export class SiteDocumentExceptionTransformInterceptor implements NestIntercepto
           if (err instanceof UploadFileInDealFolderExistsException || err instanceof UploadFileInDealFolderSiteNotFoundException) {
             return new BadRequestException('Bad request', { cause: err, description: err.message });
           }
+
           return err;
         }),
       ),

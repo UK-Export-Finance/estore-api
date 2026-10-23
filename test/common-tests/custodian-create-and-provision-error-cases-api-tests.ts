@@ -1,11 +1,11 @@
 import { MockCustodianApi } from '@ukef-test/support/mocks/custodian-api.mock';
 import request from 'supertest';
 
-interface Options {
+type Options = {
   givenTheRequestWouldOtherwiseSucceed: () => void;
   makeRequest: () => request.Test;
   custodianApi: MockCustodianApi;
-}
+};
 
 export const withCustodianCreateAndProvisionErrorCasesApiTests = ({ givenTheRequestWouldOtherwiseSucceed, makeRequest, custodianApi }: Options) => {
   describe('Custodian CreateAndProvision error cases', () => {

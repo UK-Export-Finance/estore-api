@@ -1,10 +1,10 @@
 import { UploadResult } from '@microsoft/microsoft-graph-client';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
-import GraphService from '@ukef/modules/graph/graph.service';
+import { GraphService } from '@ukef/modules/graph/graph.service';
 
 import { ListItem } from './list-item.interface';
 import { AndListItemFilter } from './list-item-filter/and.list-item-filter';
@@ -12,45 +12,45 @@ import { FieldEqualsListItemFilter } from './list-item-filter/field-equals.list-
 import { FieldNotNullListItemFilter } from './list-item-filter/field-not-null.list-item-filter';
 import { ListItemFilter } from './list-item-filter/list-item-filter.interface';
 
-export interface SharepointGetResourcesParams {
+export type SharepointGetResourcesParams = {
   ukefSiteId: string;
   sharepointResourceType: SharepointResourceTypeEnum;
-}
+};
 
-export interface SharepointGetItemsParams {
+export type SharepointGetItemsParams = {
   ukefSiteId: string;
   listId: string;
   top?: number;
-}
+};
 
-export interface SharepointCreateSiteParams {
+export type SharepointCreateSiteParams = {
   exporterName: string;
   newSiteId: string;
-}
+};
 
-export interface SharepointGetDealFolderParams {
+export type SharepointGetDealFolderParams = {
   siteId: string;
   dealFolderName: string;
-}
+};
 
-export interface SharepointGetFacilityFolderParams {
+export type SharepointGetFacilityFolderParams = {
   siteId: string;
   facilityFolderName: string;
-}
+};
 
-export interface SharepointGetBuyerFolderParams {
+export type SharepointGetBuyerFolderParams = {
   siteId: string;
   buyerName: string;
-}
+};
 
-export interface SharepointUploadFileParams {
+export type SharepointUploadFileParams = {
   file: NodeJS.ReadableStream;
   fileSizeInBytes: number;
   fileName: string;
   urlToCreateUploadSession: string;
-}
+};
 
-export interface SharepointupdateFileInformationParams {
+export type SharepointupdateFileInformationParams = {
   urlToUpdateFileInfo: string;
   requestBodyToUpdateFileInfo: {
     contentType: {
@@ -62,22 +62,22 @@ export interface SharepointupdateFileInformationParams {
       [documentTypeIdFieldName: string]: string;
     };
   };
-}
+};
 
-interface SharepointFindListItemsBase<Fields> {
+type SharepointFindListItemsBase<Fields> = {
   siteUrl: string;
   fieldsToReturn: (keyof Fields)[];
   filter: ListItemFilter;
-}
-interface SharepointFindListItemsByTitle<Fields> extends SharepointFindListItemsBase<Fields> {
+};
+type SharepointFindListItemsByTitle<Fields> = SharepointFindListItemsBase<Fields> & {
   listId?: never;
   listTitle: string;
-}
+};
 
-interface SharepointFindListItemsById<Fields> extends SharepointFindListItemsBase<Fields> {
+type SharepointFindListItemsById<Fields> = SharepointFindListItemsBase<Fields> & {
   listId: string;
   listTitle?: never;
-}
+};
 
 export type SharepointFindListItems<Fields> = SharepointFindListItemsById<Fields> | SharepointFindListItemsByTitle<Fields>;
 

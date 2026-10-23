@@ -12,6 +12,7 @@ export class SiteExporterExceptionTransformInterceptor implements NestIntercepto
           if (err instanceof SiteExporterNotFoundException || err instanceof SiteExporterInvalidException) {
             return new BadRequestException(err.message, { cause: err });
           }
+
           return err;
         }),
       ),

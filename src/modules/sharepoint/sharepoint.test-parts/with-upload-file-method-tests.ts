@@ -1,6 +1,6 @@
-import { SharepointConfig } from '@ukef/config/sharepoint.config';
-import GraphService from '@ukef/modules/graph/graph.service';
+import { SharepointConfigType } from '@ukef/config/sharepoint.config';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
+import { GraphService } from '@ukef/modules/graph/graph.service';
 import { resetAllWhenMocks, when } from 'jest-when';
 
 export const withUploadFileMethodTests = ({
@@ -10,7 +10,7 @@ export const withUploadFileMethodTests = ({
   methodResponse,
   makeRequest,
 }: {
-  sharepointConfig: SharepointConfig;
+  sharepointConfig: SharepointConfigType;
   requestBody?: unknown;
   graphServiceResponse: unknown;
   methodResponse?: unknown;
@@ -35,6 +35,7 @@ export const withUploadFileMethodTests = ({
 
     expect(graphServiceUploadFile).toHaveBeenCalledTimes(1);
     expect(graphServiceUploadFile).toHaveBeenCalledWith(requestBody);
+
     if (methodResponse) {
       expect(result).toEqual(methodResponse);
     }

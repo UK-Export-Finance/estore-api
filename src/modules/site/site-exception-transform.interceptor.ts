@@ -12,6 +12,7 @@ export class SiteExceptionTransformInterceptor implements NestInterceptor {
           if (err instanceof SiteNotFoundException) {
             return new NotFoundException('Not found', { cause: err });
           }
+
           return err;
         }),
       ),
