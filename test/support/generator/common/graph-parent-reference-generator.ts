@@ -2,7 +2,7 @@ import { GraphParentReference } from '@ukef/modules/graph/dto/common/graph-paren
 import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
-export class graphParentReferenceGenerator extends AbstractGenerator<GenerateValues, GenerateResult, unknown> {
+export class GraphParentReferenceGenerator extends AbstractGenerator<GenerateValues, GenerateResult, unknown> {
   constructor(protected readonly valueGenerator: RandomValueGenerator) {
     super(valueGenerator);
   }

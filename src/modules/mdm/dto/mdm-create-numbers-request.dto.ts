@@ -1,7 +1,7 @@
 export type MdmCreateNumbersRequest = MdmCreateNumbersRequestItem[];
 
-interface MdmCreateNumbersRequestItem {
+type MdmCreateNumbersRequestItem = {
   numberTypeId: number;
   createdBy: string;
   requestingSystem: string;
-}
+};

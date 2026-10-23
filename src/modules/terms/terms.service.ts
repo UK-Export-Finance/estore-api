@@ -17,6 +17,7 @@ export class TermsService {
       if (error instanceof TermsFacilityExistsException) {
         return { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS };
       }
+
       throw error;
     }
   }

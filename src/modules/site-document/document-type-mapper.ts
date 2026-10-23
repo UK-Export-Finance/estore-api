@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 type RequiredConfigKeys = 'estoreDocumentTypeIdApplication' | 'estoreDocumentTypeIdFinancialStatement' | 'estoreDocumentTypeIdBusinessInformation';

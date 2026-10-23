@@ -13,6 +13,7 @@ export class FolderDependencyExceptionTransformInterceptor implements NestInterc
           if (err instanceof FolderDependencyNotFoundException || err instanceof FolderDependencyInvalidException) {
             return new BadRequestException(err.message, { cause: err });
           }
+
           return err;
         }),
       ),

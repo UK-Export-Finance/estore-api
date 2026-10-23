@@ -183,7 +183,7 @@ type TfisFacilityListParentFolderResponseFields = {
   ParentCode: string;
 };
 
-interface GenerateValues {
+type GenerateValues = {
   siteId: string;
   dealId: UkefId;
 
@@ -196,9 +196,9 @@ interface GenerateValues {
   parentFolderResponseFieldServerRelativeUrl: string;
   parentFolderResponseFieldCode: string;
   parentFolderResponseFieldParentCode: string;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   createFacilityFolderParamsDto: CreateFacilityFolderParamsDto;
   createFacilityFolderRequestItem: CreateFacilityFolderRequestItem;
 
@@ -219,9 +219,9 @@ interface GenerateResult {
   tfisFacilityFolderResponse: GraphGetListItemsResponseDto<Array<any>>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
-}
+};
 
-interface GenerateOptions {
+type GenerateOptions = {
   siteId?: string;
   dealId?: UkefId;
-}
+};

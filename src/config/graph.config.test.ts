@@ -1,9 +1,9 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import graphConfig, { GraphConfig } from './graph.config';
+import { GraphConfig, GraphConfigType } from './graph.config';
 
-describe('graphConfig', () => {
-  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof GraphConfig; environmentVariableName: string }[] = [
+describe('GraphConfig', () => {
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof GraphConfigType; environmentVariableName: string }[] = [
     {
       configPropertyName: 'clientId',
       environmentVariableName: 'GRAPH_AUTHENTICATION_CLIENT_ID',
@@ -19,7 +19,7 @@ describe('graphConfig', () => {
   ];
 
   const configModifiedFromEnvironmentVariables: {
-    configPropertyName: keyof GraphConfig;
+    configPropertyName: keyof GraphConfigType;
     environmentVariableNames: string[];
     getExpectedResult: (environmentVariableValues: string[]) => string;
   }[] = [
@@ -33,6 +33,6 @@ describe('graphConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configModifiedFromEnvironmentVariables,
-    getConfig: () => graphConfig(),
+    getConfig: () => GraphConfig(),
   });
 });

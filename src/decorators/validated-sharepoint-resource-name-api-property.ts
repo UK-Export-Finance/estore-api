@@ -2,10 +2,10 @@ import { SHAREPOINT } from '@ukef/constants';
 
 import { ValidatedStringApiProperty } from './validated-string-api-property.decorator';
 
-interface Options {
+type Options = {
   description: string;
   example: string;
-}
+};
 
 export const ValidatedSharepointResourceNameApiProperty = ({ description, example }: Options) =>
   ValidatedStringApiProperty({
