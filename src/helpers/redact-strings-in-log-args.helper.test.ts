@@ -7,6 +7,7 @@ describe('Redact errors helper', () => {
   const valueGenerator = new RandomValueGenerator();
 
   describe('redactStringsInLogArgs', () => {
+    // Arrange
     const domain = valueGenerator.httpsUrl();
     const otherSensitiveField = valueGenerator.word();
     const message = `ConnectionError: Failed to connect to ${domain}, ${otherSensitiveField}`;
@@ -61,23 +62,29 @@ describe('Redact errors helper', () => {
       },
     ];
 
-    it('replaces sensitive data in input object', () => {
+    it('should replace sensitive data in input object', () => {
+      // Act
       const redacted = redactStringsInLogArgs(true, REDACT_STRING_PATHS, redactStrings, args);
 
+      // Assert
       expect(redacted).toStrictEqual(expectedResult);
     });
 
-    it('returns original input if redactLogs is set to false', () => {
+    it('should return original input if redactLogs is set to false', () => {
+      // Act
       const redacted = redactStringsInLogArgs(false, REDACT_STRING_PATHS, redactStrings, args);
 
+      // Assert
       expect(redacted).toStrictEqual(args);
     });
 
-    it('replaces sensitive data in input object using regex', () => {
+    it('should replace sensitive data in input object using regex', () => {
+      // Arrange
       const redactStrings = [{ searchValue: /(Login failed for user ').*(')/g, replaceValue: '$1[Redacted]$2' }];
       const otherSensitiveValue = valueGenerator.word();
       const messageforRegex = `Connection error: Login failed for user '${otherSensitiveValue}'`;
       const redactedMessage = `Connection error: Login failed for user '[Redacted]'`;
+
       const args = [
         {
           message: messageforRegex,
@@ -87,6 +94,7 @@ describe('Redact errors helper', () => {
           },
         },
       ];
+
       const expectedResult = [
         {
           message: redactedMessage,
@@ -97,12 +105,15 @@ describe('Redact errors helper', () => {
         },
       ];
 
+      // Act
       const redacted = redactStringsInLogArgs(true, REDACT_STRING_PATHS, redactStrings, args);
 
+      // Assert
       expect(redacted).toStrictEqual(expectedResult);
     });
 
-    it('replaces sensitive data in different input object', () => {
+    it('should replace sensitive data in different input object', () => {
+      // Arrange
       const args = [
         {
           field1: message,
@@ -112,6 +123,7 @@ describe('Redact errors helper', () => {
           },
         },
       ];
+
       const expectedResult = [
         {
           field1: redactedMessage,
@@ -121,22 +133,29 @@ describe('Redact errors helper', () => {
           },
         },
       ];
+
       const redactPaths = ['field1', 'field2.field3'];
+
+      // Act
       const redacted = redactStringsInLogArgs(true, redactPaths, redactStrings, args);
 
+      // Assert
       expect(redacted).toStrictEqual(expectedResult);
     });
 
     it.each(['__proto__.message', 'constructor.prototype.message', 'err.__proto__.message', 'err.constructor.prototype.message', 'prototype.message'])(
-      'ignores unsafe path %s',
+      'should ignore unsafe path %s',
       (path) => {
+        // Arrange
         const prototype = { message };
         const arg = Object.create(prototype);
         arg.err = Object.create(prototype);
         arg.prototype = { message };
 
+        // Act
         redactStringsInLogArgs(true, [path], redactStrings, [arg]);
 
+        // Assert
         expect(prototype.message).toBe(message);
         expect(arg.prototype.message).toBe(message);
         expect(Object.hasOwn(arg, 'message')).toBe(false);
@@ -144,39 +163,51 @@ describe('Redact errors helper', () => {
       },
     );
 
-    it('does not traverse inherited objects at otherwise safe paths', () => {
+    it('should not traverse inherited objects at otherwise safe paths', () => {
+      // Arrange
       const inheritedError = { message };
       const arg = Object.create({ err: inheritedError });
 
+      // Act
       redactStringsInLogArgs(true, ['err.message'], redactStrings, [arg]);
 
+      // Assert
       expect(inheritedError.message).toBe(message);
       expect(Object.hasOwn(arg, 'err')).toBe(false);
     });
 
-    it('redacts Error properties without changing their descriptors', () => {
+    it('should redact Error properties without changing their descriptors', () => {
+      // Arrange
       const error = new Error(message);
       const descriptor = Object.getOwnPropertyDescriptor(error, 'message');
 
+      // Act
       redactStringsInLogArgs(true, ['message'], redactStrings, [error]);
 
+      // Assert
       expect(error.message).toBe(redactedMessage);
       expect(Object.getOwnPropertyDescriptor(error, 'message')).toStrictEqual({ ...descriptor, value: redactedMessage });
     });
 
-    it('leaves missing and non-string values unchanged', () => {
+    it('should leave missing and non-string values unchanged', () => {
+      // Arrange
       const args = [null, undefined, { err: null }, { message: 42 }, { message: '' }, {}];
 
+      // Act
       redactStringsInLogArgs(true, ['message', 'err.message'], redactStrings, args);
 
+      // Assert
       expect(args).toStrictEqual([null, undefined, { err: null }, { message: 42 }, { message: '' }, {}]);
     });
 
-    it('does not apply empty search strings to empty values', () => {
+    it('should not apply empty search strings to empty values', () => {
+      // Arrange
       const args = [{ message: '' }];
 
+      // Act
       redactStringsInLogArgs(true, ['message'], [{ searchValue: '', replaceValue: '[Redacted]' }], args);
 
+      // Assert
       expect(args).toStrictEqual([{ message: '' }]);
     });
   });
