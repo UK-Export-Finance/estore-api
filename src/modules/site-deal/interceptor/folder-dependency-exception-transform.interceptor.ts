@@ -1,8 +1,7 @@
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { FolderDependencyInvalidException } from '@ukef/modules/site-deal/exception/folder-dependency-invalid.exception';
+import { FolderDependencyNotFoundException } from '@ukef/modules/site-deal/exception/folder-dependency-not-found.exception';
 import { catchError, Observable, throwError } from 'rxjs';
-
-import { FolderDependencyInvalidException } from '../exception/folder-dependency-invalid.exception';
-import { FolderDependencyNotFoundException } from '../exception/folder-dependency-not-found.exception';
 
 @Injectable()
 export class FolderDependencyExceptionTransformInterceptor implements NestInterceptor {

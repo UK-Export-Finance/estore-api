@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
+import { SiteExporterInvalidException } from '@ukef/modules/site-buyer/exception/site-exporter-invalid.exception';
+import { SiteExporterNotFoundException } from '@ukef/modules/site-buyer/exception/site-exporter-not-found.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { lastValueFrom, throwError } from 'rxjs';
 
-import { SiteExporterInvalidException } from '../exception/site-exporter-invalid.exception';
-import { SiteExporterNotFoundException } from '../exception/site-exporter-not-found.exception';
 import { SiteExporterExceptionTransformInterceptor } from './site-exporter-exception-transform.interceptor';
 
 describe('SiteExporterExceptionTransformInterceptor', () => {
