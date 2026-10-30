@@ -5,6 +5,7 @@
   "description": "eStore API",
   "license": "MIT",
   "author": "UKEF",
+  "workspaces": ["eslint-local-rules"]
   "scripts": {
     "api-test": "jest --coverage --selectProjects=API --passWithNoTests",
     "audit:fix": "npm audit --fix",
@@ -125,6 +126,5 @@
   "engines": {
     "node": ">=24.17.0",
     "npm": ">=11.3.0"
-  },
-  "workspaces": ["eslint-local-rules"]
+  }
 }
