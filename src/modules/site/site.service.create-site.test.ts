@@ -5,7 +5,7 @@ import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generat
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks, when } from 'jest-when';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { SiteService } from './site.service';
 

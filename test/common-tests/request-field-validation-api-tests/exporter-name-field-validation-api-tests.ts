@@ -1,4 +1,4 @@
-import { EXPORTER_NAME } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import {
   allowedPrefixTestCases,
   allowedStringTestCases,
@@ -53,7 +53,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
     const fieldNameToUpdate = fieldName.toString();
 
     it.each([...allowedStringTestCases, ...allowedSubstringTestCases, ...allowedPrefixTestCases, ...allowedSuffixTestCases])(
-      `returns a ${successStatusCode} response if exporterName matches the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      `returns a ${successStatusCode} response if exporterName matches the regular expression ${REGEX.SHAREPOINT_SAFE_FOLDER_NAME} ($testTitle)`,
       async ({ value }) => {
         const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
         const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);
@@ -64,7 +64,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
     );
 
     it.each([...disallowedStringTestCases, ...disallowedSubstringTestCases, ...disallowedPrefixTestCases, ...disallowedSuffixTestCases])(
-      `returns a 400 response if exporterName does not match the regular expression ${EXPORTER_NAME.REGEX} ($testTitle)`,
+      `returns a 400 response if exporterName does not match the regular expression ${REGEX.SHAREPOINT_SAFE_FOLDER_NAME} ($testTitle)`,
       async ({ value }) => {
         const requestWithInvalidField = { ...requestBodyItem, [fieldNameToUpdate]: value };
         const preparedRequestWithInvalidField = prepareModifiedRequest(requestIsAnArray, requestWithInvalidField);
@@ -74,7 +74,7 @@ export const withExporterNameFieldValidationApiTests = <RequestBodyItem extends 
         expect(status).toBe(400);
         expect(body).toMatchObject({
           error: 'Bad Request',
-          message: expect.arrayContaining([`exporterName must match ${EXPORTER_NAME.REGEX} regular expression`]),
+          message: expect.arrayContaining([`exporterName must match ${REGEX.SHAREPOINT_SAFE_FOLDER_NAME} regular expression`]),
           statusCode: 400,
         });
       },

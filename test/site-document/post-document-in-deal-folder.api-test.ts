@@ -1,6 +1,6 @@
 import { RestError } from '@azure/storage-file-share';
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { BUYER_NAME, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
+import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS, REGEX } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-request.dto';
@@ -317,7 +317,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 1,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.buyerName({ length }),
-      pattern: BUYER_NAME.REGEX,
+      pattern: REGEX.SHAREPOINT_SAFE_FOLDER_NAME,
       generateFieldValueThatDoesNotMatchRegex: () => ' Example Buyer',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
@@ -341,7 +341,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 5,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.fileName({ length: length }),
-      pattern: SHAREPOINT.DOCUMENT_FILE_NAME.REGEX,
+      pattern: REGEX.SHAREPOINT_DOCUMENT_FILE_NAME,
       generateFieldValueThatDoesNotMatchRegex: () => 'file.exe',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
@@ -354,7 +354,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 24,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.fileLocationPath({ length }),
-      pattern: FILE_LOCATION_PATH.REGEX,
+      pattern: REGEX.FILE_LOCATION_PATH,
       generateFieldValueThatDoesNotMatchRegex: () => '?',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
