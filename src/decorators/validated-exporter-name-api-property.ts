@@ -1,4 +1,4 @@
-import { EXAMPLES, EXPORTER_NAME } from '@ukef/constants';
+import { EXAMPLES, REGEX } from '@ukef/constants';
 
 import { ValidatedStringApiProperty } from './validated-string-api-property.decorator';
 
@@ -8,5 +8,5 @@ export const ValidatedExporterNameApiProperty = () =>
     example: EXAMPLES.EXPORTER_NAME,
     minLength: 1,
     maxLength: 250,
-    pattern: EXPORTER_NAME.REGEX,
+    pattern: REGEX.SHAREPOINT_SAFE_FOLDER_NAME,
   });

@@ -6,6 +6,7 @@ const typescriptEslint = require('@typescript-eslint/eslint-plugin');
 const importX = require('eslint-plugin-import-x');
 const noRelativeImportPaths = require('eslint-plugin-no-relative-import-paths');
 const checkFile = require('eslint-plugin-check-file');
+const localRules = require('@ukef/eslint-local-rules');
 const prettierConfig = require('eslint-config-prettier');
 const prettierPlugin = require('eslint-plugin-prettier');
 
@@ -91,6 +92,7 @@ module.exports = defineConfig([
       'import-x': importX,
       'no-relative-import-paths': noRelativeImportPaths,
       'check-file': checkFile,
+      'local-rules': localRules,
     },
 
     rules: {
@@ -198,6 +200,8 @@ module.exports = defineConfig([
       '@typescript-eslint/no-import-type-side-effects': 'off',
       'import-x/no-useless-path-segments': 'off',
       'n/prefer-node-protocol': 'off',
+
+      'local-rules/require-regex-documentation': 'error',
     },
   },
 
@@ -217,6 +221,25 @@ module.exports = defineConfig([
 
     rules: {
       'import-x/no-default-export': 'off',
+    },
+  },
+
+  // Restrict usage of regular expressions outside of src/constants
+  {
+    files: ['**/src/**/*.ts'],
+    ignores: ['src/constants/regex/**/*.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[regex]',
+          message: 'Regular expressions must be defined in src/constants/regex.',
+        },
+        {
+          selector: 'NewExpression[callee.name="RegExp"]',
+          message: 'Regular expressions must be defined in src/constants/regex.',
+        },
+      ],
     },
   },
 ]);

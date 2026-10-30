@@ -2,8 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { lastValueFrom, throwError } from 'rxjs';
 
-import { UploadFileInDealFolderExistsException } from '../exception/upload-file-in-deal-folder-exists.exception';
-import { UploadFileInDealFolderSiteNotFoundException } from '../exception/upload-file-in-deal-folder-site-not-found.exception';
+import { UploadFileInDealFolderExistsException } from '@ukef/modules/site-document/exception/upload-file-in-deal-folder-exists.exception';
+import { UploadFileInDealFolderSiteNotFoundException } from '@ukef/modules/site-document/exception/upload-file-in-deal-folder-site-not-found.exception';
 import { SiteDocumentExceptionTransformInterceptor } from './site-document-exception-transform.interceptor';
 
 describe('SiteDocumentExceptionTransformInterceptor', () => {
