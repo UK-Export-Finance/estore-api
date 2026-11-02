@@ -15,6 +15,22 @@ module.exports = {
     const sourceCode = context.sourceCode;
 
     /**
+     * Check if a node is a RegExp constructor call (new or direct)
+     */
+    function isRegExpConstructor(node) {
+      if (!node) {
+        return false;
+      }
+
+      // new RegExp(...) or RegExp(...)
+      if (node.callee && node.callee.type === 'Identifier' && node.callee.name === 'RegExp') {
+        return node.type === 'NewExpression' || node.type === 'CallExpression';
+      }
+
+      return false;
+    }
+
+    /**
      * Check if a node is a regex pattern assignment
      */
     function isRegexAssignment(initNode) {
@@ -27,18 +43,39 @@ module.exports = {
         return true;
       }
 
-      // RegExp constructor: new RegExp(...)
-      if (initNode.type === 'NewExpression' && initNode.callee.type === 'Identifier' && initNode.callee.name === 'RegExp') {
+      // RegExp constructor: new RegExp(...) or RegExp(...)
+      if (isRegExpConstructor(initNode)) {
         return true;
       }
 
-      // Arrow function returning RegExp: () => new RegExp(...)
-      if (
-        initNode.type === 'ArrowFunctionExpression' &&
-        initNode.body &&
-        ((initNode.body.type === 'NewExpression' && initNode.body.callee.type === 'Identifier' && initNode.body.callee.name === 'RegExp') ||
-          (initNode.body.type === 'Literal' && initNode.body.regex))
-      ) {
+      // Arrow function returning RegExp: () => /pattern/ or () => new RegExp(...) or () => RegExp(...)
+      if (initNode.type === 'ArrowFunctionExpression' && initNode.body) {
+        if (initNode.body.type === 'Literal' && initNode.body.regex) {
+          return true;
+        }
+        if (isRegExpConstructor(initNode.body)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    /**
+     * Check if a value node is a regex pattern
+     */
+    function isRegexValue(valueNode) {
+      if (!valueNode) {
+        return false;
+      }
+
+      // Direct regex literal: /pattern/
+      if (valueNode.type === 'Literal' && valueNode.regex) {
+        return true;
+      }
+
+      // RegExp constructor: new RegExp(...) or RegExp(...)
+      if (isRegExpConstructor(valueNode)) {
         return true;
       }
 
@@ -72,15 +109,15 @@ module.exports = {
       return comments.some((comment) => comment.type === 'Block' && comment.value.startsWith('*'));
     }
 
+    /**
+     * Check if a property has JSDoc comment (checks comments before the property)
+     */
+    function hasPropertyJsDoc(propertyNode) {
+      const comments = sourceCode.getCommentsBefore(propertyNode);
+      return comments.some((comment) => comment.type === 'Block' && comment.value.startsWith('*'));
+    }
+
     return {
-      Property(node) {
-        if (isRegexAssignment(node.value) && !hasJsDoc(node)) {
-          context.report({
-            node,
-            messageId: 'missingRegexDoc',
-          });
-        }
-      },
       VariableDeclarator(node) {
         // Check if this is a regex assignment
         if (!isRegexAssignment(node.init)) {
@@ -100,13 +137,13 @@ module.exports = {
       },
 
       Property(node) {
-        // Check if the value is a regex pattern
-        if (!isRegexAssignment(node.value)) {
+        // Only check properties with regex values
+        if (!isRegexValue(node.value)) {
           return;
         }
 
-        // For object properties, check for JSDoc on the property itself
-        if (!hasJsDoc(node)) {
+        // Check if the property has JSDoc documentation
+        if (!hasPropertyJsDoc(node)) {
           context.report({
             node,
             messageId: 'missingRegexDoc',
