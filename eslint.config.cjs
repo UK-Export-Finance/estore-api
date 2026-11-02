@@ -239,6 +239,10 @@ module.exports = defineConfig([
           selector: 'NewExpression[callee.name="RegExp"]',
           message: 'Regular expressions must be defined in src/constants/regex.',
         },
+        {
+          selector: 'CallExpression[callee.name="RegExp"]',
+          message: 'Regular expressions must be defined in src/constants/regex.',
+        },
       ],
     },
   },

@@ -142,11 +142,11 @@ export const REGEX = {
 
   /**
    * Matches a file location path. The path must start with a 24 character hexadecimal MongoDB ID (the name
-   * of the first folder in the path), optionally followed by one or more `/`-separated folder or file names.
+   * of the first folder in the path), optionally followed by one or more `/`-separated folder names.
    *
    * Examples:
    * - `5f8d04b3ab35b61b94e0f1a2` (just the 24 character MongoDB ID)
-   * - `5f8d04b3ab35b61b94e0f1a2/My Folder/file.pdf` (the MongoDB ID followed by nested folders and a file name)
+   * - `5f8d04b3ab35b61b94e0f1a2/My Folder/Subfolder` (the MongoDB ID followed by nested folders)
    *
    * Does not match:
    * - `5f8d04b3ab35b61b94e0f1a` (fewer than 24 hexadecimal characters)

@@ -73,6 +73,14 @@ module.exports = {
     }
 
     return {
+      Property(node) {
+        if (isRegexAssignment(node.value) && !hasJsDoc(node)) {
+          context.report({
+            node,
+            messageId: 'missingRegexDoc',
+          });
+        }
+      },
       VariableDeclarator(node) {
         // Check if this is a regex assignment
         if (!isRegexAssignment(node.init)) {
@@ -84,6 +92,21 @@ module.exports = {
 
         // Report if no JSDoc found
         if (!hasJsDoc(commentParent)) {
+          context.report({
+            node,
+            messageId: 'missingRegexDoc',
+          });
+        }
+      },
+
+      Property(node) {
+        // Check if the value is a regex pattern
+        if (!isRegexAssignment(node.value)) {
+          return;
+        }
+
+        // For object properties, check for JSDoc on the property itself
+        if (!hasJsDoc(node)) {
           context.report({
             node,
             messageId: 'missingRegexDoc',
