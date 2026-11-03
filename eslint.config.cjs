@@ -226,7 +226,7 @@ module.exports = defineConfig([
 
   // Restrict usage of regular expressions outside of src/constants
   {
-    files: ['**/src/**/*.ts'],
+    files: ['**/src/**/*.ts', 'test/**/*.ts'],
     ignores: ['src/constants/regex/**/*.ts'],
     rules: {
       'no-restricted-syntax': [

@@ -1,5 +1,4 @@
-import { REGEX } from '@ukef/constants';
-import { regexFromString } from '@ukef-test/support/helpers/regex-from-string-helper';
+import { REGEX, regexFromString } from '@ukef/constants';
 
 import { regexToString } from './regex.helper';
 
