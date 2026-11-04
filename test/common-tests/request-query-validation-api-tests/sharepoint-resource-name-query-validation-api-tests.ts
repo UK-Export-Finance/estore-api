@@ -1,4 +1,4 @@
-import { SHAREPOINT } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import { StringQueryValidationApiTestOptions, withStringQueryValidationApiTests } from './string-query-validation-api-tests';
@@ -28,7 +28,7 @@ export const withSharepointResourceNameQueryValidationApiTests = <
     queryName,
     minLength: 1,
     maxLength: 250,
-    pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
+    pattern: REGEX.SHAREPOINT_RESOURCE_NAME,
     generateQueryValueOfLength: (length: number) => valueGenerator.word({ length }) as RequestQueryItems[SharepointResourceNameQueryName],
     generateQueryValueThatDoesNotMatchRegex: () => '£Word' as RequestQueryItems[SharepointResourceNameQueryName],
     validRequestQueries,
