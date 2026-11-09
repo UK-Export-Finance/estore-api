@@ -1,4 +1,4 @@
-import { SHAREPOINT } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 
 import { ValidatedStringApiProperty } from './validated-string-api-property.decorator';
 
@@ -12,6 +12,6 @@ export const ValidatedSharepointResourceNameApiProperty = ({ description, exampl
     description,
     minLength: 1,
     maxLength: 250,
-    pattern: SHAREPOINT.RESOURCE_NAME.REGEX,
+    pattern: REGEX.SHAREPOINT_RESOURCE_NAME,
     example,
   });

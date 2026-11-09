@@ -1,4 +1,4 @@
-import { EXAMPLES, SHAREPOINT } from '@ukef/constants';
+import { EXAMPLES, REGEX } from '@ukef/constants';
 
 import { ValidatedStringApiProperty } from './validated-string-api-property.decorator';
 
@@ -13,6 +13,6 @@ export const ValidatedSiteIdentifierApiProperty = ({ description }: Options) =>
   ValidatedStringApiProperty({
     description,
     minLength: 1,
-    pattern: SHAREPOINT.CASE_SITE_URL.REGEX,
+    pattern: REGEX.SHAREPOINT_CASE_SITE_URL,
     example: EXAMPLES.SITE_ID,
   });

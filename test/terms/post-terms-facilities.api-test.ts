@@ -1,5 +1,5 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { UKEFID } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import { CreateTermForFacilityResponseEnum } from '@ukef/constants/enums/create-term-for-facility-response';
 import { UkefId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
@@ -98,7 +98,7 @@ describe('postFacilityToTermStore', () => {
     withStringFieldValidationApiTests({
       fieldName: 'id',
       length: 10,
-      pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
+      pattern: REGEX.UKEF_ID_TEN_DIGIT,
       generateFieldValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
       generateFieldValueThatDoesNotMatchRegex: () => '1000000000' as UkefId,
       validRequestBody: createTermFacilityRequest[0],
