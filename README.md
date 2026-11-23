@@ -1,6 +1,7 @@
 # eStore API 🚀
 
-eStore API provides endpoints for internal eStore responsible for reading and writing to SharePoint/eStore
+
+This API provides endpoints for for reading and writing to an internal SharePoint/eStore.
 
 **Status** 🚦
 
@@ -18,6 +19,63 @@ eStore API provides endpoints for internal eStore responsible for reading and wr
 ![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=dev)
 ![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=staging)
 ![Release](https://github.com/UK-Export-Finance/estore-api/actions/workflows/deployment.yml/badge.svg?branch=production)
+
+## Integrations 🔗
+
+This API integrates with the following:
+
+### APIM MDM (Master Data Management)
+- **Module**: `mdm`
+- **Purpose**: Master data operations and management
+- **Config**: [`mdm.config.ts`](./src/config/mdm.config.ts)
+- **Details**:
+  - Hosted on Azure API Management
+  - Subscription key authentication
+
+### Azure Storage
+- **Module**: `dtfs-storage-client`, `dtfs-storage`
+- **Purpose**: File share storage for deal documents
+- **Config**: [`dtfs-storage.config.ts`](./src/config/dtfs-storage.config.ts)
+- **Details**:
+  - Portal storage integration
+  - Deal documents folder path: `files/portal_storage`
+
+### Custodian
+- **Module**: `custodian`
+- **Purpose**: Records and document management system
+- **Config**: [`custodian.config.ts`](./src/config/custodian.config.ts)
+- **Details**:
+  - **Template Support**:
+    - Deals
+    - Facilities
+    - Buyers
+  - API Key authentication
+
+
+### Microsoft Graph API
+- **Module**: `graph-client`
+- **Purpose**: Authentication and Microsoft 365 integration
+- **Config**: [`graph.config.ts`](./src/config/graph.config.ts)
+- **Details**:
+  - Azure AD (Entra ID) tenant authentication
+
+### Microsoft SharePoint
+- **Module**: `sharepoint`
+- **Purpose**: Document management and storage
+- **Config**: [`sharepoint.config.ts`](./src/config/sharepoint.config.ts)
+- **Details**:
+  - **Sites**:
+    - UKEF Dev (Main Site)
+    - TFIS (Trade Finance Information System)
+    - Short-Term Case Site
+  - **Key Lists**:
+    - Facilities List (TFIS)
+    - Deals List (TFIS)
+    - Case Sites List
+    - Document Type Management
+  - **Features**:
+    - Taxonomy and term store management
+    - Document type classification
 
 ## Install 💻
 
