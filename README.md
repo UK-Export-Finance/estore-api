@@ -1,6 +1,6 @@
 # eStore API 🚀
 
-This API provides endpoints for for reading and writing to an internal SharePoint/eStore.
+This API provides endpoints for reading and writing to an internal SharePoint/eStore.
 
 **Status** 🚦
 
