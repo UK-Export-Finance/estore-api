@@ -23,12 +23,8 @@ run-name: APIM deployment for ${{ github.repository }}
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: Branch to deploy
-        required: true
-        type: string
       environment:
-        description: Environment to deploy to
+        description: 'Target deployment environment'
         required: true
         type: environment
   push:
@@ -83,7 +79,7 @@ jobs:
       - name: Repository 🗃️
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/heads/{0}', inputs.branch) || github.sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
 
       - name: Source revision
         id: source
