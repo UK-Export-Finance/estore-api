@@ -14,14 +14,19 @@
 #
 # Execution
 # *********
-# GHA is only invoked when following conditions are satisfied:
-# 1. Push to the `dev`, `staging` and `production` branches only.
-# 2. Any modifications to atleast one of the `paths` targets.
+# GHA is invoked on a push to `dev`, `staging` or `production` when a
+# configured path changes, or manually for a selected branch and environment.
 
 name: Deployment 🚀
 run-name: APIM deployment for ${{ github.repository }}
 
 on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target deployment environment'
+        required: true
+        type: environment
   push:
     branches:
       - dev
@@ -39,7 +44,7 @@ on:
 
 env:
   PRODUCT: apim
-  ENVIRONMENT: ${{ github.ref_name }}
+  ENVIRONMENT: ${{ inputs.environment || github.ref_name }}
   timezone: ${{ vars.TIMEZONE }}
   # Base artifact
   FROM: latest
@@ -55,7 +60,7 @@ jobs:
       timezone: ${{ env.timezone }}
     steps:
       - name: Environment 🧪
-        run: echo "Environment set to ${{ env.ENVIRONMENT }}"
+        run: echo "Environment set to $ENVIRONMENT"
 
       - name: Timezone 🌐
         run: echo "Timezone set to ${{ env.TIMEZONE }}"
@@ -73,6 +78,12 @@ jobs:
     steps:
       - name: Repository 🗃️
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+
+      - name: Source revision
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Azure 🔐
         uses: azure/login@v1
@@ -81,11 +92,14 @@ jobs:
 
       - name: Defaults ✨
         uses: Azure/cli@v3.0.0
+        env:
+          REGION: ${{ vars.REGION }}
+          VERSION: ${{ vars.VERSION }}
         with:
           inlineScript: |
             # Basic
-            az configure --defaults location=${{ vars.REGION }}
-            az configure --defaults group=rg-${{ env.PRODUCT }}-${{ github.ref_name }}-${{ vars.VERSION }}
+            az configure --defaults location="$REGION"
+            az configure --defaults group="rg-${PRODUCT}-${ENVIRONMENT}-${VERSION}"
 
       - name: CLI 📝
         run: |
@@ -105,9 +119,9 @@ jobs:
       - name: Artifacts 🗃️
         run: |
           docker build . \
-          -t ${{ env.ACR }}/${{ env.NAME }}:${{ github.sha }} \
+          -t ${{ env.ACR }}/${{ env.NAME }}:${{ steps.source.outputs.sha }} \
           -t ${{ env.ACR }}/${{ env.NAME }}:${{ env.FROM }}
-          docker push ${{ env.ACR }}/${{ env.NAME }}:${{ github.sha }}
+          docker push ${{ env.ACR }}/${{ env.NAME }}:${{ steps.source.outputs.sha }}
           docker push ${{ env.ACR }}/${{ env.NAME }}:${{ env.FROM }}
 
       - name: Revisions 🔀
@@ -118,7 +132,7 @@ jobs:
             --name ${{ env.CA_NAME }} \
             --container-name ${{ env.CA_NAME }} \
             --image ${{ env.ACR }}/${{ env.NAME }}:${{ env.FROM }} \
-            --revision-suffix v${{ github.run_id }} \
+            --revision-suffix v${{ github.run_id }}-${{ github.run_attempt }} \
             --set-env-vars \
             "PORT=${{ secrets.PORT }}" \
             "NODE_ENV=${{ secrets.NODE_ENV }}" \

@@ -48,12 +48,15 @@ Based on the user's selection, the script performs the following actions:
 
 
 ### GHA
-This workflow is triggered on push events to the `dev`, `staging`, and `production` branches, and specific file modifications.
+This workflow is triggered on push events to the `dev`, `staging`, and `production` branches when specific files change. It can also be run manually from
+GitHub Actions by selecting a branch in the "Run workflow" branch selector and choosing the `environment` input. The selected branch determines both the
+workflow version that runs and the source branch checked out for deployment; there is no separate source-branch input. The target environment must have
+the required Azure credentials and variables configured, and its protection rules apply.
 
 #### Environment Variables
 
 - `PRODUCT` 📦: Represents the name of the product ("apim").
-- `ENVIRONMENT` 🌍: Represents the name of the environment, which is retrieved from the GitHub ref name.
+- `ENVIRONMENT` 🌍: Represents the selected environment for manual runs, or the GitHub ref name for push runs.
 - `TIMEZONE` 🕒: Specifies the timezone as "Europe/London."
 - `FROM` 📁: Represents a base artifact, with the value "latest."
 
@@ -81,7 +84,7 @@ This workflow is triggered on push events to the `dev`, `staging`, and `producti
   - `ENVIRONMENT` 🌍: Represents the environment name.
 - Runs on a self-hosted runner with the "APIM" and "deployment" labels.
 - Steps:
-  1. Repository 🗃️: Checks out the repository using the `actions/checkout` action.
+  1. Repository 🗃️: Checks out the selected branch for manual runs, or the pushed commit for push runs. The image is tagged with the checked-out commit SHA.
   2. Azure 🔐: Authenticates with Azure using the `azure/login` action.
   3. CLI 📝: Sets up CLI commands to retrieve various Azure resources and store them as environment variables.
   4. Defaults ✨: Uses the Azure CLI to configure default settings.
