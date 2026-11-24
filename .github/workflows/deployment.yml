@@ -180,6 +180,7 @@ jobs:
             "CUSTODIAN_FACILITY_TYPE_GUID=${{ secrets.CUSTODIAN_FACILITY_TYPE_GUID }}"
 
       - name: Import ⬇️
+        if: ${{ env.API_ID != '' }}
         uses: Azure/cli@v2.2.0
         with:
            inlineScript: |
@@ -187,6 +188,7 @@ jobs:
 
              az apim api import \
              --path '${{ env.NAME }}' \
+             --api-id "${{ env.API_ID }}" \
              --service-name ${{ env.APIM }} \
              --specification-format OpenApi \
              --api-type http \
