@@ -1,9 +1,9 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import custodianConfig, { CustodianConfig } from './custodian.config';
+import { CustodianConfig, CustodianConfigType } from './custodian.config';
 
-describe('custodianConfig', () => {
-  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof CustodianConfig; environmentVariableName: string }[] = [
+describe('CustodianConfig', () => {
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof CustodianConfigType; environmentVariableName: string }[] = [
     {
       configPropertyName: 'baseUrl',
       environmentVariableName: 'CUSTODIAN_BASE_URL',
@@ -43,7 +43,7 @@ describe('custodianConfig', () => {
   ];
 
   const configParsedAsIntFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof CustodianConfig;
+    configPropertyName: keyof CustodianConfigType;
     environmentVariableName: string;
     defaultConfigValue: number;
   }[] = [
@@ -62,6 +62,6 @@ describe('custodianConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configParsedAsIntFromEnvironmentVariablesWithDefault,
-    getConfig: () => custodianConfig(),
+    getConfig: () => CustodianConfig(),
   });
 });

@@ -1,7 +1,7 @@
 import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-and-max-length-helper';
 import request from 'supertest';
 
-export interface ParamValidationApiTestOptions {
+export type ParamValidationApiTestOptions = {
   paramName: string;
   length?: number;
   minLength?: number;
@@ -15,7 +15,7 @@ export interface ParamValidationApiTestOptions {
   successStatusCode: number;
   makeRequest: (paramValue: string) => request.Test;
   givenAnyRequestParamWouldSucceed: () => void;
-}
+};
 
 export const withParamValidationApiTests = ({
   paramName: paramNameSymbol,

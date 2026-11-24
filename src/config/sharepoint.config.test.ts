@@ -1,9 +1,9 @@
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import sharepointConfig, { SharepointConfig } from './sharepoint.config';
+import { SharepointConfig, SharepointConfigType } from './sharepoint.config';
 
-describe('sharepointConfig', () => {
-  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof SharepointConfig; environmentVariableName: string }[] = [
+describe('SharepointConfig', () => {
+  const configDirectlyFromEnvironmentVariables: { configPropertyName: keyof SharepointConfigType; environmentVariableName: string }[] = [
     {
       configPropertyName: 'baseUrl',
       environmentVariableName: 'SHAREPOINT_BASE_URL',
@@ -59,7 +59,7 @@ describe('sharepointConfig', () => {
   ];
 
   const configModifiedFromEnvironmentVariables: {
-    configPropertyName: keyof SharepointConfig;
+    configPropertyName: keyof SharepointConfigType;
     environmentVariableNames: string[];
     getExpectedResult: (environmentVariableValues: string[]) => string;
   }[] = [
@@ -91,6 +91,6 @@ describe('sharepointConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configDirectlyFromEnvironmentVariables,
     configModifiedFromEnvironmentVariables,
-    getConfig: () => sharepointConfig(),
+    getConfig: () => SharepointConfig(),
   });
 });

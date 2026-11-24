@@ -1,7 +1,7 @@
 import { ENUMS } from '@ukef/constants';
 import { MdmException } from '@ukef/modules/mdm/exception/mdm.exception';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
 import { Response } from 'express';
@@ -28,7 +28,7 @@ describe('SiteController', () => {
   });
 
   describe('createSite', () => {
-    const { siteStatusByExporterNameResponse } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
+    const { siteStatusByExporterNameResponse } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1 });
 
     const { createSiteRequest } = new CreateSiteGenerator(valueGenerator).generate({ numberToGenerate: 1 });
     const [{ exporterName }] = createSiteRequest;

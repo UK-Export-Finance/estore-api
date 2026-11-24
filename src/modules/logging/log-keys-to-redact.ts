@@ -1,6 +1,6 @@
 import { buildKeyToRedact } from './build-key-to-redact';
 
-export interface LogKeysToRedactOptions {
+export type LogKeysToRedactOptions = {
   redactLogs: boolean;
   clientRequest: {
     logKey: string;
@@ -23,7 +23,7 @@ export interface LogKeysToRedactOptions {
     logKey: string;
     excessideDataField: string;
   };
-}
+};
 
 export const logKeysToRedact = ({
   redactLogs,
@@ -36,6 +36,7 @@ export const logKeysToRedact = ({
   if (!redactLogs) {
     return [];
   }
+
   const keys = [
     ...getClientRequestLogKeysToRedact(clientRequest),
     ...getOutgoingRequestLogKeysToRedact(outgoingRequest),

@@ -4,9 +4,9 @@ import { UkefId } from '@ukef/helpers';
 import { DateString } from '@ukef/helpers/date-string.type';
 import { Chance } from 'chance';
 
-interface Enum {
+type Enum = {
   [key: number | string]: string | number;
-}
+};
 
 export class RandomValueGenerator {
   private static readonly seed = 0;
@@ -22,11 +22,13 @@ export class RandomValueGenerator {
 
   string(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = this.getStringLengthFromOptions(options);
+
     return this.chance.string({ length });
   }
 
   stringOfNumericCharacters(options?: { length?: number; minLength?: number; maxLength?: number }): string {
     const length = this.getStringLengthFromOptions(options);
+
     return this.chance.string({ length, pool: '0123456789' });
   }
 
@@ -39,6 +41,7 @@ export class RandomValueGenerator {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
     // cspell:disable-next-line
     const pool = 'abcdefghijklmnpqrstuwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789-._()áÁàÀâÂäÄãÃåÅæÆçÇéÉèÈêÊëËíÍìÌîÎïÏñÑóÓòÒôÔöÖõÕøØœŒßúÚùÙûÛüÜ';
+
     return this.chance.string({ length, pool });
   }
 
@@ -50,6 +53,7 @@ export class RandomValueGenerator {
     const minLength = options && (options.minLength || options.minLength === 0) ? options.minLength : 0;
     const maxLength = options && (options.maxLength || options.maxLength === 0) ? options.maxLength : Math.max(20, minLength * 2);
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: minLength, max: maxLength });
+
     return length;
   }
 
@@ -73,6 +77,7 @@ export class RandomValueGenerator {
     const min = 0;
     // Fixed is for number of decimal places.
     const fixed = options && options.fixed ? options.fixed : 2;
+
     return options && options.max ? this.chance.floating({ min, fixed: fixed, max: options.max }) : this.chance.floating({ min, fixed: fixed });
   }
 
@@ -113,6 +118,7 @@ export class RandomValueGenerator {
   buyerName(options?: { length?: number }) {
     const length = options && (options.length || options.length === 0) ? options.length : this.chance.integer({ min: 1, max: 250 });
     const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
+
     return this.chance.string({ length, pool });
   }
 
@@ -122,6 +128,7 @@ export class RandomValueGenerator {
     const possibleExtensions = Object.values(ALLOWED_DOCUMENT_FILE_TYPE).filter((extension) => extension.length === lengthOfExtension);
     const randomExtension = this.arrayElement(possibleExtensions);
     const pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_()';
+
     return `${this.chance.string({ length: totalLength - lengthOfExtension - 1, pool })}.${randomExtension}`;
   }
 
@@ -139,22 +146,26 @@ export class RandomValueGenerator {
       }
     } else {
       length = this.chance.integer({ min: 25, max: 250 });
-      // length cannot be 25 as this would mean the string would end in a '/',
-      // so we map this value to 24 instead.
+
+      // If the randomly generated length is 25, we adjust it to 24 to avoid ending the path with a '/'.
       if (length === 25) {
         length = 24;
       }
     }
+
     const poolForHex = `abcdefABCDEF0123456789`;
     const poolForMiddleOfPath = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():/\\ ';
     // The last character cannot be a '/'.
     const poolForLastCharacter = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_():\\ ';
+
     if (length < 25) {
       return this.chance.string({ length, pool: poolForHex });
     }
+
     const hex = this.chance.string({ length: 24, pool: poolForHex });
     const middleOfPath = this.chance.string({ length: length - 26, pool: poolForMiddleOfPath });
     const lastCharacter = this.chance.string({ length: 1, pool: poolForLastCharacter });
+
     return `${hex}/${middleOfPath}${lastCharacter}`;
   }
 }

@@ -1,11 +1,11 @@
-import { SHAREPOINT } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import { ParamValidationApiTestOptions, withParamValidationApiTests } from './string-param-validation-api-tests';
 
-interface Options extends Pick<ParamValidationApiTestOptions, 'validRequestParam' | 'makeRequest' | 'givenAnyRequestParamWouldSucceed' | 'successStatusCode'> {
+type Options = Pick<ParamValidationApiTestOptions, 'validRequestParam' | 'makeRequest' | 'givenAnyRequestParamWouldSucceed' | 'successStatusCode'> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withSiteIdParamValidationApiTests = ({
   valueGenerator,
@@ -17,7 +17,7 @@ export const withSiteIdParamValidationApiTests = ({
   withParamValidationApiTests({
     paramName: 'siteId',
     minLength: 1,
-    pattern: SHAREPOINT.CASE_SITE_URL.REGEX,
+    pattern: REGEX.SHAREPOINT_CASE_SITE_URL,
     generateParamValueOfLength: (length: number) => valueGenerator.word({ length }),
     validRequestParam,
     makeRequest,

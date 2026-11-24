@@ -1,13 +1,17 @@
 import { registerAs } from '@nestjs/config';
 
-export interface DtfsStorageConfig {
+const KEY = 'dtfsStorage';
+
+export { KEY as DTFS_STORAGE_CONFIG_KEY };
+
+export type DtfsStorageConfigType = {
   baseUrl: string;
   accountName: string;
   accountKey: string;
   dealDocumentsFolderPath: string;
-}
+};
 
-export default registerAs('dtfsStorage', (): DtfsStorageConfig => {
+export const DtfsStorageConfig = registerAs(KEY, (): DtfsStorageConfigType => {
   return {
     baseUrl: `https://${process.env.DTFS_STORAGE_ACCOUNT_NAME}.file.core.windows.net`,
     accountName: process.env.DTFS_STORAGE_ACCOUNT_NAME,

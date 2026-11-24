@@ -1,3 +1,3 @@
-export interface ListItem<Fields> {
+export type ListItem<Fields> = {
   fields: Fields;
-}
+};

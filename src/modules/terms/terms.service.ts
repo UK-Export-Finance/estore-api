@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ENUMS } from '@ukef/constants';
+import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
 
-import { SharepointService } from '../sharepoint/sharepoint.service';
 import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 import { TermsFacilityExistsException } from './exception/terms-facility-exists.exception';
 
@@ -17,6 +17,7 @@ export class TermsService {
       if (error instanceof TermsFacilityExistsException) {
         return { message: ENUMS.CREATE_TERM_FOR_FACILITY_RESPONSES.FACILITY_TERMS_EXISTS };
       }
+
       throw error;
     }
   }

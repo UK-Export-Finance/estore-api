@@ -2,7 +2,7 @@ import { getMinAndMaxLengthFromOptions } from '@ukef-test/support/helpers/min-an
 import { prepareModifiedRequest } from '@ukef-test/support/helpers/request-field-validation-helper';
 import request from 'supertest';
 
-export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem> {
+export type StringFieldValidationApiTestOptions<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem> = {
   fieldName: RequestBodyItemKey;
   length?: number;
   minLength?: number;
@@ -17,7 +17,7 @@ export interface StringFieldValidationApiTestOptions<RequestBodyItem, RequestBod
   successStatusCode: number;
   makeRequest: ((body: unknown[]) => request.Test) | ((body: unknown) => request.Test);
   givenAnyRequestBodyWouldSucceed: () => void;
-}
+};
 
 export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyItemKey extends keyof RequestBodyItem>({
   fieldName: fieldNameSymbol,
@@ -40,7 +40,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
   const requestIsAnArray = Array.isArray(validRequestBody);
   const requestBodyItem = requestIsAnArray ? validRequestBody[0] : validRequestBody;
 
-  required = required ?? true;
+  const isRequired = required ?? true;
 
   describe(`${fieldName} validation`, () => {
     beforeEach(() => {
@@ -61,10 +61,10 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       });
     });
 
-    if (required) {
+    if (isRequired) {
       if (theEnum && generateFieldValueThatDoesNotMatchEnum) {
         it(`returns a 400 response if ${fieldName} is not present`, async () => {
-          const { [fieldNameSymbol]: _removed, ...requestWithoutTheField } = requestBodyItem;
+          const { [fieldNameSymbol]: removed, ...requestWithoutTheField } = requestBodyItem;
           const preparedRequestWithoutTheField = prepareModifiedRequest(requestIsAnArray, requestWithoutTheField);
 
           const { status, body } = await makeRequest(preparedRequestWithoutTheField);
@@ -78,7 +78,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
         });
       } else {
         it(`returns a 400 response if ${fieldName} is not present`, async () => {
-          const { [fieldNameSymbol]: _removed, ...requestWithoutTheField } = requestBodyItem;
+          const { [fieldNameSymbol]: removed, ...requestWithoutTheField } = requestBodyItem;
 
           const { status, body } = await makeRequest(prepareModifiedRequest(requestIsAnArray, requestWithoutTheField));
 
@@ -92,7 +92,7 @@ export function withStringFieldValidationApiTests<RequestBodyItem, RequestBodyIt
       }
     } else {
       it(`returns a ${successStatusCode} response if ${fieldName} is not present`, async () => {
-        const { [fieldNameSymbol]: _removed, ...requestWithField } = requestBodyItem;
+        const { [fieldNameSymbol]: removed, ...requestWithField } = requestBodyItem;
         const preparedRequestWithField = prepareModifiedRequest(requestIsAnArray, requestWithField);
 
         const { status } = await makeRequest(preparedRequestWithField);

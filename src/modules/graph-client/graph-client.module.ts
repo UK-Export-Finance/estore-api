@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import GraphClientService from './graph-client.service';
+import { GraphClientService } from './graph-client.service';
 
 @Module({
   imports: [],

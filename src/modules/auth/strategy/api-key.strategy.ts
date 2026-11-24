@@ -9,9 +9,11 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy, AUTH.
   constructor(private readonly authService: AuthService) {
     super({ header: AUTH.STRATEGY, prefix: '' }, true, (apiKey: string, done: (arg0: UnauthorizedException, arg1: boolean) => void) => {
       const hasValidKey = this.authService.validateApiKey(apiKey);
+
       if (hasValidKey) {
         return done(null, true);
       }
+
       done(new UnauthorizedException(), null);
     });
   }

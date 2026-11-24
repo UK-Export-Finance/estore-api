@@ -1,6 +1,6 @@
 import { RestError } from '@azure/storage-file-share';
 import { GraphError } from '@microsoft/microsoft-graph-client';
-import { BUYER_NAME, DTFS_MAX_FILE_SIZE_BYTES, ENUMS, FILE_LOCATION_PATH, SHAREPOINT } from '@ukef/constants';
+import { DTFS_MAX_FILE_SIZE_BYTES, ENUMS, REGEX } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { UploadFileInDealFolderParamsDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-params.dto';
 import { UploadFileInDealFolderRequestDto } from '@ukef/modules/site-document/dto/upload-file-in-deal-folder-request.dto';
@@ -268,7 +268,7 @@ describe('postDocumentInDealFolder', () => {
           'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',
           'fileName must be a string',
           'fileName must be longer than or equal to 5 characters',
-          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
+          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+\\.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
           'fileLocationPath must be a string',
           'fileLocationPath must be longer than or equal to 24 characters',
           'fileLocationPath must match /^[a-fA-F\\d]{24}(\\/[\\w\\-:\\\\()\\s]+)*$/ regular expression',
@@ -292,7 +292,7 @@ describe('postDocumentInDealFolder', () => {
           'documentType must be one of the following values: Exporter_questionnaire, Audited_financial_statements, Year_to_date_management, Financial_forecasts, Financial_information_commentary, Corporate_structure',
           'fileName must be a string',
           'fileName must be longer than or equal to 5 characters',
-          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
+          'fileName must match /^(?!\\s)[\\w\\-.()\\s]+\\.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$/ regular expression',
           'fileLocationPath must be a string',
           'fileLocationPath must be longer than or equal to 24 characters',
           'fileLocationPath must match /^[a-fA-F\\d]{24}(\\/[\\w\\-:\\\\()\\s]+)*$/ regular expression',
@@ -317,7 +317,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 1,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.buyerName({ length }),
-      pattern: BUYER_NAME.REGEX,
+      pattern: REGEX.SHAREPOINT_SAFE_FOLDER_NAME,
       generateFieldValueThatDoesNotMatchRegex: () => ' Example Buyer',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
@@ -341,7 +341,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 5,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.fileName({ length: length }),
-      pattern: SHAREPOINT.DOCUMENT_FILE_NAME.REGEX,
+      pattern: REGEX.SHAREPOINT_DOCUMENT_FILE_NAME,
       generateFieldValueThatDoesNotMatchRegex: () => 'file.exe',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
@@ -354,7 +354,7 @@ describe('postDocumentInDealFolder', () => {
       minLength: 24,
       maxLength: 250,
       generateFieldValueOfLength: (length: number) => valueGenerator.fileLocationPath({ length }),
-      pattern: FILE_LOCATION_PATH.REGEX,
+      pattern: REGEX.FILE_LOCATION_PATH,
       generateFieldValueThatDoesNotMatchRegex: () => '?',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,

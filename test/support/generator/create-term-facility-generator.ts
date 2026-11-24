@@ -51,18 +51,18 @@ export class CreateTermFacilityGenerator extends AbstractGenerator<GenerateValue
   }
 }
 
-interface GenerateValues {
+type GenerateValues = {
   id: UkefId;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   createTermFacilityRequest: CreateFacilityTermRequest[];
   createTermFacilityResponse: CreateTermFacilityResponse[];
   graphServicePostParams;
-}
+};
 
-interface GenerateOptions {
+type GenerateOptions = {
   id?: UkefId;
   tfisFacilityHiddenListTermStoreId?: string;
   tfisSharepointUrl?: string;
-}
+};

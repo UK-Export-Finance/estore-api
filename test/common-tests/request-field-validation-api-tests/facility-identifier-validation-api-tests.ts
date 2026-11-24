@@ -1,16 +1,16 @@
-import { UKEFID } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
 import { StringFieldValidationApiTestOptions, withStringFieldValidationApiTests } from './string-field-validation-api-tests';
 
 type FacilityIdentifierFieldName = 'facilityIdentifier';
 
-interface FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }> extends Pick<
+type FacilityIdentifierFieldValidationApiTestOptions<RequestBodyItem extends { facilityIdentifier: string }> = Pick<
   StringFieldValidationApiTestOptions<RequestBodyItem, FacilityIdentifierFieldName>,
   'validRequestBody' | 'successStatusCode' | 'makeRequest' | 'givenAnyRequestBodyWouldSucceed'
-> {
+> & {
   valueGenerator: RandomValueGenerator;
-}
+};
 
 export const withFacilityIdentifierFieldValidationApiTests = <RequestBodyItem extends { facilityIdentifier: string }>({
   valueGenerator,
@@ -22,7 +22,7 @@ export const withFacilityIdentifierFieldValidationApiTests = <RequestBodyItem ex
   withStringFieldValidationApiTests<RequestBodyItem, FacilityIdentifierFieldName>({
     fieldName: 'facilityIdentifier',
     length: 10,
-    pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
+    pattern: REGEX.UKEF_ID_TEN_DIGIT,
     generateFieldValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
     generateFieldValueThatDoesNotMatchRegex: () => '1000000000',
     validRequestBody,

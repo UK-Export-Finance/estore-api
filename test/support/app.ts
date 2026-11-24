@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { App as AppUnderTest } from '@ukef/app';
 import { MainModule } from '@ukef/main.module';
-import DtfsStorageClientService from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
-import GraphClientService from '@ukef/modules/graph-client/graph-client.service';
+import { DtfsStorageClientService } from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
+import { GraphClientService } from '@ukef/modules/graph-client/graph-client.service';
 
 import { MockDtfsStorageClientService } from './mocks/dtfs-storage-client.service.mock';
 import { MockGraphClientService } from './mocks/graph-client.service.mock';
@@ -39,8 +39,8 @@ export class App extends AppUnderTest {
   }
 }
 
-export interface MockApp {
+export type MockApp = {
   app: App;
   mockGraphClientService: MockGraphClientService;
   mockDtfsStorageClientService: MockDtfsStorageClientService;
-}
+};

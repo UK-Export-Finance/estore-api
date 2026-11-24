@@ -1,7 +1,7 @@
 import { InvalidConfigException } from '@ukef/config/invalid-config.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
-interface Options<ConfigUnderTest> {
+type Options<ConfigUnderTest> = {
   configDirectlyFromEnvironmentVariables?: {
     configPropertyName: keyof ConfigUnderTest;
     environmentVariableName: string;
@@ -23,7 +23,7 @@ interface Options<ConfigUnderTest> {
     defaultConfigValue: boolean;
   }[];
   getConfig: () => ConfigUnderTest;
-}
+};
 
 export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
   configDirectlyFromEnvironmentVariables,
@@ -57,7 +57,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
         expect(configPropertyValue).toBe(environmentVariableValue);
       });
 
-      if (defaultConfigValue !== undefined)
+      if (defaultConfigValue !== undefined) {
         it(`is the default value '${defaultConfigValue}' if ${environmentVariableName} is not specified`, () => {
           process.env = {};
 
@@ -65,6 +65,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
 
           expect(configPropertyValue).toBe(defaultConfigValue);
         });
+      }
     });
   }
 
@@ -143,7 +144,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
     );
   }
 
-  if (configModifiedFromEnvironmentVariables)
+  if (configModifiedFromEnvironmentVariables) {
     describe.each(configModifiedFromEnvironmentVariables)('$configPropertyName', ({ configPropertyName, environmentVariableNames, getExpectedResult }) => {
       it(`transforms the env vars ${environmentVariableNames.join(', ')} to the expected config value for ${configPropertyName.toString()}`, () => {
         const environmentVariableValues = [];
@@ -161,6 +162,7 @@ export const withEnvironmentVariableParsingUnitTests = <ConfigUnderTest>({
         expect(configPropertyValue).toBe(expectedConfigValue);
       });
     });
+  }
 
   if (configParsedAsBooleanFromEnvironmentVariablesWithDefault) {
     describe.each(configParsedAsBooleanFromEnvironmentVariablesWithDefault)(

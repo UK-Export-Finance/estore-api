@@ -1,6 +1,6 @@
 import { FileGetPropertiesResponse, RestError } from '@azure/storage-file-share';
 import { Injectable } from '@nestjs/common';
-import DtfsStorageClientService from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
+import { DtfsStorageClientService } from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
 
 import { DtfsStorageException } from './exception/dtfs-storage.exception';
 import { DtfsStorageAuthenticationFailedException } from './exception/dtfs-storage-authentication-failed.exception';
@@ -29,9 +29,11 @@ export class DtfsStorageFileService {
     if (error.statusCode === 403) {
       throw new DtfsStorageAuthenticationFailedException('Failed to authenticate with the DTFS storage account.', error);
     }
+
     if (error.statusCode === 404) {
       throw new DtfsStorageFileNotFoundException(`File ${fileLocationPath}/${fileName} was not found in DTFS.`, error);
     }
+
     throw new DtfsStorageException(`Failed to get ${isGetFilePropertiesRequest ? 'properties for ' : ''}file ${fileLocationPath}/${fileName}.`, error);
   }
 }

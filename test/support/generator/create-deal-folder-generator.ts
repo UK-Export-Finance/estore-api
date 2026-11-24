@@ -226,7 +226,7 @@ type TfisDealListFields = { id: string };
 type TfisCaseSitesListFields = { TermGuid: string; URL: string };
 type TaxonomyHiddenListTermStoreFields = { TermGuid: string };
 
-interface GenerateValues {
+type GenerateValues = {
   siteId: string;
 
   dealIdentifier: UkefId;
@@ -240,9 +240,9 @@ interface GenerateValues {
   exporterUrl: string;
   destinationMarketTermGuid: string;
   riskMarketTermGuid: string;
-}
+};
 
-interface GenerateResult {
+type GenerateResult = {
   siteId: string;
   createDealFolderRequestItem: CreateDealFolderRequestItem;
   createDealFolderRequest: CreateDealFolderRequest;
@@ -270,4 +270,4 @@ interface GenerateResult {
   taxonomyHiddenListTermStoreRiskMarketResponse: GraphGetListItemsResponseDto<TaxonomyHiddenListTermStoreFields>;
 
   custodianCreateAndProvisionRequest: CustodianCreateAndProvisionRequest;
-}
+};

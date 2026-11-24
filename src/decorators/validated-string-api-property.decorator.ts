@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { regexToString } from '@ukef/helpers';
 import { IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
 
-interface Options {
+type Options = {
   description: string;
   length?: number;
   minLength?: number;
@@ -13,7 +13,7 @@ interface Options {
   enum?: any;
   example?: string;
   default?: string;
-}
+};
 
 export const ValidatedStringApiProperty = ({
   description,
@@ -26,14 +26,15 @@ export const ValidatedStringApiProperty = ({
   example,
   default: theDefault,
 }: Options) => {
-  minLength = length ?? minLength ?? 0;
-  maxLength = length ?? maxLength;
+  const resolvedMinLength = length ?? minLength ?? 0;
+  const resolvedMaxLength = length ?? maxLength;
+
   const decoratorsToApply = [
     ApiProperty({
       type: 'string',
       description,
-      minLength,
-      maxLength,
+      minLength: resolvedMinLength,
+      maxLength: resolvedMaxLength,
       required,
       pattern: pattern ? regexToString(pattern) : undefined,
       enum: theEnum,
@@ -41,18 +42,22 @@ export const ValidatedStringApiProperty = ({
       default: theDefault,
     }),
     IsString(),
-    Length(minLength, maxLength),
+    Length(resolvedMinLength, resolvedMaxLength),
   ];
 
   const isRequiredProperty = required ?? true;
+
   if (!isRequiredProperty) {
     decoratorsToApply.push(IsOptional());
   }
+
   if (pattern) {
     decoratorsToApply.push(Matches(pattern));
   }
+
   if (theEnum) {
     decoratorsToApply.push(IsEnum(theEnum));
   }
+
   return applyDecorators(...decoratorsToApply);
 };

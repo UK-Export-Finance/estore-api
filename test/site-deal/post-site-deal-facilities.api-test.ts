@@ -1,4 +1,4 @@
-import { UKEFID } from '@ukef/constants';
+import { REGEX } from '@ukef/constants';
 import { UkefId } from '@ukef/helpers';
 import { IncorrectAuthArg, withClientAuthenticationTests } from '@ukef-test/common-tests/client-authentication-api-tests';
 import { withCustodianCreateAndProvisionErrorCasesApiTests } from '@ukef-test/common-tests/custodian-create-and-provision-error-cases-api-tests';
@@ -285,7 +285,7 @@ describe('Create Site Deal Facility Folder', () => {
     withParamValidationApiTests({
       paramName: 'dealId',
       length: 10,
-      pattern: UKEFID.MAIN_ID.TEN_DIGIT_REGEX,
+      pattern: REGEX.UKEF_ID_TEN_DIGIT,
       generateParamValueOfLength: (length: number) => valueGenerator.ukefId(length - 4),
       generateParamValueThatDoesNotMatchRegex: () => '11000000' as UkefId,
       validRequestParam: createFacilityFolderParamsDto.dealId,

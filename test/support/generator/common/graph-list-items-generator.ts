@@ -2,9 +2,9 @@ import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-
 import { AbstractGenerator } from '@ukef-test/support/generator/abstract-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 
-import { graphContentTypeGenerator } from './graph-content-type-generator';
-import { graphParentReferenceGenerator } from './graph-parent-reference-generator';
-import { graphUserGenerator } from './graph-user-generator';
+import { GraphContentTypeGenerator } from './graph-content-type-generator';
+import { GraphParentReferenceGenerator } from './graph-parent-reference-generator';
+import { GraphUserGenerator } from './graph-user-generator';
 
 export class GraphListItemsGenerator<ListItemFields> extends AbstractGenerator<
   GenerateValues,
@@ -28,10 +28,10 @@ export class GraphListItemsGenerator<ListItemFields> extends AbstractGenerator<
   protected transformRawValuesToGeneratedValues(values: GenerateValues[], options: GenerateOptions<ListItemFields>): GenerateResult<ListItemFields> {
     const [createFacilityFolderValues] = values;
 
-    const facilityTermDateResponseCreatedByUser = new graphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
+    const facilityTermDateResponseCreatedByUser = new GraphUserGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
     const facilityTermDateResponseLastModifiedByUser = { ...facilityTermDateResponseCreatedByUser };
-    const facilityTermDateResponseParentReference = new graphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
-    const facilityTermDateContentType = new graphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
+    const facilityTermDateResponseParentReference = new GraphParentReferenceGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
+    const facilityTermDateContentType = new GraphContentTypeGenerator(this.valueGenerator).generate({ numberToGenerate: 1 });
 
     return {
       value: [
@@ -52,16 +52,16 @@ export class GraphListItemsGenerator<ListItemFields> extends AbstractGenerator<
   }
 }
 
-interface GenerateValues {
+type GenerateValues = {
   facilityTermDateResponseCreatedDateTime: Date;
   facilityTermDateResponseETag: string;
   facilityTermDateResponseId: string;
   facilityTermDateResponseLastModifiedDateTime: Date;
   facilityTermDateResponseWebUrl: string;
-}
+};
 
 type GenerateResult<ListItemFields> = GraphGetListItemsResponseDto<{ id: string } & ListItemFields>;
 
-interface GenerateOptions<ListItemFields> {
+type GenerateOptions<ListItemFields> = {
   graphListItemsFields: ListItemFields;
-}
+};

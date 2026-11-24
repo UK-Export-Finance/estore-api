@@ -3,7 +3,7 @@ import { Client, LargeFileUploadSession, LargeFileUploadTask, LargeFileUploadTas
 import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import GraphConfig from '@ukef/config/graph.config';
+import { GraphConfig } from '@ukef/config/graph.config';
 import { Readable } from 'stream';
 
 @Injectable()
@@ -40,5 +40,3 @@ export class GraphClientService {
     return new LargeFileUploadTask(this.client, streamUpload, uploadSession, options);
   }
 }
-
-export default GraphClientService;

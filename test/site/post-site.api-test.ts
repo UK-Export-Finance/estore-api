@@ -5,7 +5,7 @@ import { withExporterNameFieldValidationApiTests } from '@ukef-test/common-tests
 import { withSharedGraphExceptionHandlingTests } from '@ukef-test/common-tests/shared-graph-exception-handling-api-tests';
 import { Api } from '@ukef-test/support/api';
 import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-generator';
-import { getSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
+import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockGraphClientService } from '@ukef-test/support/mocks/graph-client.service.mock';
 import { MockMdmApi } from '@ukef-test/support/mocks/mdm-api.mock';
@@ -20,7 +20,7 @@ describe('createSite', () => {
   let mockGraphClientService: MockGraphClientService;
   const mdmApi = new MockMdmApi(nock);
 
-  const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+  const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
     numberToGenerate: 1,
   });
 
@@ -110,7 +110,7 @@ describe('createSite', () => {
       siteStatusByExporterNameResponse: createSiteResponse,
       graphServiceGetParams: { path: modifiedPath, expand: modifiedExpand, filter: modifiedFilter },
       graphServiceGetResponse: modifiedGraphServiceGetResponse,
-    } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
+    } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({ numberToGenerate: 1, status: siteStatus });
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(modifiedPath)
@@ -124,7 +124,7 @@ describe('createSite', () => {
   });
 
   it('returns 202 with status Provisioning if the site does not exist in Sharepoint and new site creation started', async () => {
-    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
 
@@ -156,7 +156,7 @@ describe('createSite', () => {
   });
 
   it('returns 500 with message Internal server error, if mdm call fails', async () => {
-    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
 
@@ -185,7 +185,7 @@ describe('createSite', () => {
   });
 
   it('returns 500 with message Internal server error, if mdm call is unauthorised', async () => {
-    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+    const { siteControllerGetSiteStatusByExporterNameQueryDto, graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
       numberToGenerate: 1,
     });
 
@@ -217,7 +217,7 @@ describe('createSite', () => {
     const makeRequest = (body: unknown[]) => api.post('/api/v1/sites', body);
 
     const givenAnyRequestBodyWouldSucceed = () => {
-      const { graphServiceGetParams } = new getSiteStatusByExporterNameGenerator(valueGenerator).generate({
+      const { graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
         numberToGenerate: 1,
       });
 

@@ -1,12 +1,12 @@
 import { APPLICATION } from '@ukef/constants';
 import { withEnvironmentVariableParsingUnitTests } from '@ukef-test/common-tests/environment-variable-parsing-unit-tests';
 
-import appConfig, { AppConfig } from './app.config';
+import { AppConfig, AppConfigType } from './app.config';
 import { InvalidConfigException } from './invalid-config.exception';
 
 const { VERSION_PREFIX } = APPLICATION;
 
-describe('appConfig', () => {
+describe('AppConfig', () => {
   let originalProcessEnv: NodeJS.ProcessEnv;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('appConfig', () => {
           LOG_LEVEL: 'not-a-real-log-level',
         });
 
-        const gettingTheAppConfig = () => appConfig();
+        const gettingTheAppConfig = () => AppConfig();
 
         expect(gettingTheAppConfig).toThrow(InvalidConfigException);
 
@@ -38,7 +38,7 @@ describe('appConfig', () => {
           LOG_LEVEL: undefined,
         });
 
-        const config = appConfig();
+        const config = AppConfig();
 
         expect(config.logLevel).toBe('info');
       });
@@ -50,7 +50,7 @@ describe('appConfig', () => {
           LOG_LEVEL: '',
         });
 
-        const config = appConfig();
+        const config = AppConfig();
 
         expect(config.logLevel).toBe('info');
       });
@@ -83,7 +83,7 @@ describe('appConfig', () => {
         LOG_LEVEL,
       });
 
-      const config = appConfig();
+      const config = AppConfig();
 
       expect(config.logLevel).toBe(LOG_LEVEL);
     });
@@ -98,7 +98,7 @@ describe('appConfig', () => {
         HTTP_VERSION: mockHttpVersion,
       });
 
-      const config = appConfig();
+      const config = AppConfig();
 
       const expected = {
         enable: false,
@@ -116,7 +116,7 @@ describe('appConfig', () => {
           HTTP_VERSIONING_ENABLE: 'true',
         });
 
-        const config = appConfig();
+        const config = AppConfig();
 
         expect(config.versioning.enable).toBe(true);
       });
@@ -130,7 +130,7 @@ describe('appConfig', () => {
           HTTP_VERSION: mockHttpVersion,
         });
 
-        const config = appConfig();
+        const config = AppConfig();
 
         expect(config.versioning.version).toBe(mockHttpVersion);
       });
@@ -140,7 +140,7 @@ describe('appConfig', () => {
           HTTP_VERSION: mockHttpVersion,
         });
 
-        const config = appConfig();
+        const config = AppConfig();
 
         const expected = `${VERSION_PREFIX}${mockHttpVersion}`;
 
@@ -154,7 +154,7 @@ describe('appConfig', () => {
   };
 
   const configParsedAsIntFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof AppConfig;
+    configPropertyName: keyof AppConfigType;
     environmentVariableName: string;
     defaultConfigValue: number;
   }[] = [
@@ -166,7 +166,7 @@ describe('appConfig', () => {
   ];
 
   const configParsedAsBooleanFromEnvironmentVariablesWithDefault: {
-    configPropertyName: keyof AppConfig;
+    configPropertyName: keyof AppConfigType;
     environmentVariableName: string;
     defaultConfigValue: boolean;
   }[] = [
@@ -177,6 +177,6 @@ describe('appConfig', () => {
   withEnvironmentVariableParsingUnitTests({
     configParsedAsIntFromEnvironmentVariablesWithDefault,
     configParsedAsBooleanFromEnvironmentVariablesWithDefault,
-    getConfig: () => appConfig(),
+    getConfig: () => AppConfig(),
   });
 });

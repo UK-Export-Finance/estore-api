@@ -1,9 +1,11 @@
 import { registerAs } from '@nestjs/config';
 import { getIntConfig } from '@ukef/helpers/get-int-config';
 
-export const KEY = 'custodian';
+const KEY = 'custodian';
 
-export interface CustodianConfig {
+export { KEY as CUSTODIAN_CONFIG_KEY };
+
+export type CustodianConfigType = {
   baseUrl: string;
   apiKeyHeaderName: string;
   apiKeyHeaderValue: string;
@@ -15,11 +17,11 @@ export interface CustodianConfig {
   dealTypeGuid: string;
   facilityTemplateId: string;
   facilityTypeGuid: string;
-}
+};
 
-export default registerAs(
+export const CustodianConfig = registerAs(
   KEY,
-  (): CustodianConfig => ({
+  (): CustodianConfigType => ({
     baseUrl: process.env.CUSTODIAN_BASE_URL,
     apiKeyHeaderName: process.env.CUSTODIAN_API_KEY_HEADER_NAME,
     apiKeyHeaderValue: process.env.CUSTODIAN_API_KEY_HEADER_VALUE,

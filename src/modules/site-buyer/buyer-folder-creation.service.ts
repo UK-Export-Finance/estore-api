@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import CustodianConfig from '@ukef/config/custodian.config';
-import SharepointConfig from '@ukef/config/sharepoint.config';
+import { CustodianConfig } from '@ukef/config/custodian.config';
+import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -60,14 +60,17 @@ export class BuyerFolderCreationService {
     }
 
     const caseSiteId = parseInt(idString, 10);
-    if (isNaN(caseSiteId)) {
+
+    if (Number.isNaN(caseSiteId)) {
       throw new SiteExporterInvalidException(`The ID for the site found for site ${siteId} is not a number (the value is ${idString}).`);
     }
+
     return { caseSiteId };
   }
 
   private async getBuyerTermFromList(siteId: string) {
     const searchResults = await this.sharepointService.getExporterSite(siteId);
+
     if (!searchResults.length) {
       throw new SiteExporterNotFoundException(`Did not find the site for siteId ${siteId} in the tfisCaseSitesList.`);
     }
@@ -81,9 +84,11 @@ export class BuyerFolderCreationService {
     if (!buyerTermGuid) {
       throw new SiteExporterInvalidException(`Missing TermGuid for the list item found for exporter site ${siteId}.`);
     }
+
     if (!buyerUrl) {
       throw new SiteExporterInvalidException(`Missing URL for the list item found for exporter site ${siteId}.`);
     }
+
     if (!siteUrl?.Url) {
       throw new SiteExporterInvalidException(`Missing site URL for the list item found for exporter site ${siteId}.`);
     }
@@ -116,6 +121,7 @@ export class BuyerFolderCreationService {
       TypeGuid: this.custodianConfig.buyerTypeGuid,
       SPHostUrl: this.sharepointConfig.scSiteFullUrl,
     };
+
     await this.custodianService.createAndProvision(createFolderRequest);
   }
 }

@@ -5,10 +5,10 @@ import supertest from 'supertest';
 
 export type IncorrectAuthArg = { headerName: string; headerValue: string };
 
-interface ClientAuthenticationTestsOptions {
+type ClientAuthenticationTestsOptions = {
   givenTheRequestWouldOtherwiseSucceed: () => void;
   makeRequestWithoutAuth: (incorrectAuth?: IncorrectAuthArg) => supertest.Test;
-}
+};
 
 export const withClientAuthenticationTests = ({ givenTheRequestWouldOtherwiseSucceed, makeRequestWithoutAuth }: ClientAuthenticationTestsOptions): void => {
   const valueGenerator = new RandomValueGenerator();

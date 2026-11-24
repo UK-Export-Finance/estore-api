@@ -71,14 +71,17 @@ export class SiteController {
       res.status(HttpStatusCode.FailedDependency).json(getSiteStatusByExporterNameResponse);
       return;
     }
+
     if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.CREATED) {
       res.status(HttpStatusCode.Ok).json(getSiteStatusByExporterNameResponse);
       return;
     }
+
     if (getSiteStatusByExporterNameResponse.status === ENUMS.SITE_STATUSES.PROVISIONING) {
       res.status(HttpStatusCode.Accepted).json(getSiteStatusByExporterNameResponse);
       return;
     }
+
     throw new InternalServerErrorException(`Received unexpected status "${getSiteStatusByExporterNameResponse.status}"`);
   }
 }

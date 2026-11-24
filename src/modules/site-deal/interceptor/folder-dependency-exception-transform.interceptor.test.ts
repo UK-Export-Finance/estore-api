@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
+import { FolderDependencyInvalidException } from '@ukef/modules/site-deal/exception/folder-dependency-invalid.exception';
+import { FolderDependencyNotFoundException } from '@ukef/modules/site-deal/exception/folder-dependency-not-found.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { lastValueFrom, throwError } from 'rxjs';
 
-import { FolderDependencyInvalidException } from '../exception/folder-dependency-invalid.exception';
-import { FolderDependencyNotFoundException } from '../exception/folder-dependency-not-found.exception';
 import { FolderDependencyExceptionTransformInterceptor } from './folder-dependency-exception-transform.interceptor';
 
 describe('FolderDependencyExceptionTransformInterceptor', () => {
