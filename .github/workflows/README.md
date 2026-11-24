@@ -48,7 +48,10 @@ Based on the user's selection, the script performs the following actions:
 
 
 ### GHA
-This workflow is triggered on push events to the `dev`, `staging`, and `production` branches when specific files change. It can also be run manually from GitHub Actions by entering a branch name and selecting a GitHub environment. The workflow checks out the selected branch and deploys it to the selected environment; the workflow version selected in GitHub's "Run workflow" branch selector is separate from the branch to deploy. The target environment must have the required Azure credentials and variables configured, and its protection rules apply.
+This workflow is triggered on push events to the `dev`, `staging`, and `production` branches when specific files change. It can also be run manually from
+GitHub Actions by entering a branch name and selecting a GitHub environment. The workflow checks out the selected branch and deploys it to the selected
+environment; the workflow version selected in GitHub's "Run workflow" branch selector is separate from the branch to deploy. The target environment must have
+the required Azure credentials and variables configured, and its protection rules apply.
 
 #### Environment Variables
 
