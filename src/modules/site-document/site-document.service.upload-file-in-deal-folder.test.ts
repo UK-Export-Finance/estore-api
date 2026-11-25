@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common/exceptions';
+import { BadRequestException } from '@nestjs/common';
 import { ENUMS } from '@ukef/constants';
 import { DocumentTypeEnum } from '@ukef/constants/enums/document-type';
 import { DtfsStorageFileService } from '@ukef/modules/dtfs-storage/dtfs-storage-file.service';

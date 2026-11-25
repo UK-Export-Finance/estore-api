@@ -1,9 +1,13 @@
 import { JestConfigWithTsJest } from 'ts-jest';
 
+const tsJestConfig = {
+  isolatedModules: true,
+  module: 'ESNext',
+  rootDir: '.',
+};
+
 const defaultSettings = {
   rootDir: 'test',
-  extensionsToTreatAsEsm: ['.ts'],
-  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
@@ -14,6 +18,7 @@ const defaultSettings = {
     '@ukef/(.*)': '<rootDir>/../src/$1',
     '@ukef/auth/(.*)': '<rootDir>/../src/modules/auth/$1',
     '@ukef-test/(.*)': '<rootDir>../test/$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };
 
@@ -23,7 +28,9 @@ const config: JestConfigWithTsJest = {
       displayName: 'Unit',
       setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
       testMatch: ['**/*.test.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
+      preset: 'ts-jest/presets/default-esm',
+      extensionsToTreatAsEsm: ['.ts'],
+      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true, tsconfig: tsJestConfig as any }] },
       ...defaultSettings,
       rootDir: 'src',
     },
@@ -31,7 +38,9 @@ const config: JestConfigWithTsJest = {
       displayName: 'API',
       setupFilesAfterEnv: ['./setup/override-environment-variables.ts'],
       testMatch: ['**/*.api-test.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
+      preset: 'ts-jest/presets/default-esm',
+      extensionsToTreatAsEsm: ['.ts'],
+      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true, tsconfig: tsJestConfig as any }] },
       ...defaultSettings,
     },
   ],
@@ -39,3 +48,5 @@ const config: JestConfigWithTsJest = {
 };
 
 export default config;
+
+

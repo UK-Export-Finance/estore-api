@@ -25,7 +25,7 @@ export const ValidatedStringApiProperty = ({
   enum: theEnum,
   example,
   default: theDefault,
-}: Options) => {
+}: Options): PropertyDecorator => {
   const resolvedMinLength = length ?? minLength ?? 0;
   const resolvedMaxLength = length ?? maxLength;
 
