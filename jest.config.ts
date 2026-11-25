@@ -1,11 +1,5 @@
 import { JestConfigWithTsJest } from 'ts-jest';
 
-const tsJestConfig = {
-  isolatedModules: true,
-  module: 'ESNext',
-  rootDir: '.',
-};
-
 const defaultSettings = {
   rootDir: 'test',
   testEnvironment: 'node',
@@ -30,7 +24,13 @@ const config: JestConfigWithTsJest = {
       testMatch: ['**/*.test.ts'],
       preset: 'ts-jest/presets/default-esm',
       extensionsToTreatAsEsm: ['.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true, tsconfig: tsJestConfig as any }] },
+      globals: {
+        'ts-jest': {
+          useESM: true,
+          tsconfig: 'tsconfig.jest.json',
+        },
+      },
+      transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
       ...defaultSettings,
       rootDir: 'src',
     },
@@ -40,7 +40,13 @@ const config: JestConfigWithTsJest = {
       testMatch: ['**/*.api-test.ts'],
       preset: 'ts-jest/presets/default-esm',
       extensionsToTreatAsEsm: ['.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true, tsconfig: tsJestConfig as any }] },
+      globals: {
+        'ts-jest': {
+          useESM: true,
+          tsconfig: 'tsconfig.jest.json',
+        },
+      },
+      transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
       ...defaultSettings,
     },
   ],

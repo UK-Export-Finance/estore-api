@@ -2,10 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "isolatedModules": true,
-    "module": "ESNext",
-    "rootDir": "."
+    "module": "ESNext"
   },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "dist", "*coverage", "logs", "scripts"]
+  "include": ["src", "test"]
 }
+
 
