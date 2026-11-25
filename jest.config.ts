@@ -16,37 +16,33 @@ const defaultSettings = {
   },
 };
 
+const esmAndTsJestSettings = {
+  preset: 'ts-jest/presets/default-esm',
+  extensionsToTreatAsEsm: ['.ts'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+      tsconfig: 'tsconfig.jest.json',
+    },
+  },
+  transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
+};
+
 const config: JestConfigWithTsJest = {
   projects: [
     {
       displayName: 'Unit',
       setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
       testMatch: ['**/*.test.ts'],
-      preset: 'ts-jest/presets/default-esm',
-      extensionsToTreatAsEsm: ['.ts'],
-      globals: {
-        'ts-jest': {
-          useESM: true,
-          tsconfig: 'tsconfig.jest.json',
-        },
-      },
-      transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
-      ...defaultSettings,
       rootDir: 'src',
+      ...esmAndTsJestSettings,
+      ...defaultSettings,
     },
     {
       displayName: 'API',
       setupFilesAfterEnv: ['./setup/override-environment-variables.ts'],
       testMatch: ['**/*.api-test.ts'],
-      preset: 'ts-jest/presets/default-esm',
-      extensionsToTreatAsEsm: ['.ts'],
-      globals: {
-        'ts-jest': {
-          useESM: true,
-          tsconfig: 'tsconfig.jest.json',
-        },
-      },
-      transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
+      ...esmAndTsJestSettings,
       ...defaultSettings,
     },
   ],
