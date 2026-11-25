@@ -16,7 +16,7 @@ COPY --chown=node:node eslint-local-rules ./eslint-local-rules
 # NPM
 COPY --chown=node:node package.json .
 COPY --chown=node:node package-lock.json .
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 RUN npm cache clean --force
 
 COPY --chown=node:node . .
@@ -27,7 +27,7 @@ RUN npm run build
 # Lean NPM - Only install `dependencies`
 # `devDependencies` will still be resolved inside `package-lock.json`,
 # however they will not be installed inside `node_modules` directory.
-RUN npm ci --legacy-peer-deps --omit=dev --ignore-scripts
+RUN npm ci --omit=dev --ignore-scripts
 
 # Non-root user
 USER node
