@@ -13,7 +13,7 @@ export class MockCustodianApi {
   }
 
   requestToCreateAndProvisionAnyItem(): CustodianApiRequestInterceptor {
-    const scope = this.nockCustodianRequest().filteringRequestBody();
+    const scope = this.nockCustodianRequest();
 
     return this.buildCreateAndProvisionRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }

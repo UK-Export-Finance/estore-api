@@ -13,7 +13,7 @@ export class MockMdmApi {
   }
 
   requestGenerateNewNumbersAnyItem(): MdmApiRequestInterceptor {
-    const scope = this.nockMdmRequest().filteringRequestBody();
+    const scope = this.nockMdmRequest();
 
     return this.buildNumbersRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }
