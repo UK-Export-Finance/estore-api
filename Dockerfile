@@ -2,7 +2,7 @@
 # 1. BUILD
 ###################
 
-FROM node:21.4.0-alpine3.17 AS build
+FROM node:24.22.1-alpine3.24 AS build
 
 # Alpine Linux install packages
 RUN apk add bash curl
@@ -36,7 +36,7 @@ USER node
 # 2. PRODUCTION
 ###################
 
-FROM node:21.4.0-alpine3.17 AS production
+FROM node:24.22.1-alpine3.24 AS production
 
 WORKDIR /app
 
