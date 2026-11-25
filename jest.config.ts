@@ -34,9 +34,9 @@ const config: JestConfigWithTsJest = {
       displayName: 'Unit',
       setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
       testMatch: ['**/*.test.ts'],
-      rootDir: 'src',
       ...esmAndTsJestSettings,
       ...defaultSettings,
+      rootDir: 'src',
     },
     {
       displayName: 'API',
