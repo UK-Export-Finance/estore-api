@@ -54,5 +54,3 @@ const config: JestConfigWithTsJest = {
 };
 
 export default config;
-
-
