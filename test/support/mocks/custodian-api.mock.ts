@@ -1,5 +1,6 @@
 import nock from 'nock';
 
+import { REGEX } from '@ukef/constants';
 import { ENVIRONMENT_VARIABLES, TIME_EXCEEDING_CUSTODIAN_TIMEOUT } from '../environment-variables';
 
 export class MockCustodianApi {
@@ -11,9 +12,8 @@ export class MockCustodianApi {
   }
 
   requestToCreateAndProvisionAnyItem(): CustodianApiRequestInterceptor {
-    const requestBodyPlaceholder = '*';
-    const scope = this.nockCustodianRequest().filteringRequestBody(() => requestBodyPlaceholder);
-    return this.buildCreateAndProvisionRequestInterceptor(scope, requestBodyPlaceholder);
+    const scope = this.nockCustodianRequest().filteringRequestBody();
+    return this.buildCreateAndProvisionRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }
 
   private nockCustodianRequest(): nock.Scope {

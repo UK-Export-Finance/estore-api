@@ -63,10 +63,21 @@ const WORD_CHARACTERS_WITH_SLASHES = /^[\w\-:/\\()\s]+$/;
  */
 const LOGIN_FAILED_FOR_USER = /(Login failed for user ').*(')/g;
 
+/**
+ * Matches any string. Used in HTTP request mocking to accept request bodies of any content.
+ *
+ * Examples:
+ * - `{}` (empty JSON object)
+ * - `{"key":"value"}` (JSON object with properties)
+ * - `anything` (any string content)
+ */
+const MATCH_ANY = /.*/;
+
 export const TEST = {
   SIMPLE_WORD,
   WORD_WITH_FORWARD_SLASH,
   WORD_CHARACTERS_WITHOUT_SURROUNDING_WHITESPACE,
   WORD_CHARACTERS_WITH_SLASHES,
   LOGIN_FAILED_FOR_USER,
+  MATCH_ANY,
 };

@@ -5,7 +5,9 @@
   "description": "eStore API",
   "license": "MIT",
   "author": "UKEF",
-  "workspaces": ["eslint-local-rules"],
+  "workspaces": [
+    "eslint-local-rules"
+  ],
   "scripts": {
     "api-test": "jest --coverage --selectProjects=API --passWithNoTests",
     "audit:fix": "npm audit --fix",
@@ -76,10 +78,9 @@
     "pino-pretty": "13.2.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
+    "ts-jest": "29.4.15",
     "tsconfig-paths": "4.2.0",
     "tslib": "2.9.1",
-    "ts-jest": "29.4.15",
-    "typescript": "6.0.2",
     "yaml-lint": "1.7.0"
   },
   "devDependencies": {
@@ -97,7 +98,7 @@
     "@types/jest-when": "3.5.5",
     "@types/lodash": "4.17.27",
     "@types/node": "26.6.10",
-    "@types/supertest": "2.0.16",
+    "@types/supertest": "^7.2.1",
     "@typescript-eslint/eslint-plugin": "8.74.0",
     "@typescript-eslint/parser": "8.74.0",
     "@ukef/eslint-local-rules": "1.0.0",
@@ -114,13 +115,14 @@
     "jest": "30.5.2",
     "lint-staged": "17.6.2",
     "markdownlint-cli": "0.50.1",
-    "nock": "14.0.12",
+    "nock": "^15.0.6",
     "prettier": "3.10.1",
     "sort-package-json": "4.1.0",
     "source-map-support": "0.5.21",
     "supertest": "7.3.2",
     "ts-loader": "9.6.2",
     "ts-node": "10.9.2",
+    "typescript": "^6.0.3",
     "typescript-eslint": "8.74.0"
   },
   "engines": {

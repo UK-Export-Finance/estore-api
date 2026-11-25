@@ -43,7 +43,9 @@ export class MockDtfsStorageClientService {
   }
 
   mockSuccessfulDownloadCall(file: { readableStreamBody: NodeJS.ReadableStream; _response: any }): MockDtfsStorageClientService {
-    when(this.fileShareClient.download).calledWith().mockResolvedValueOnce(file);
+    when(this.fileShareClient.download)
+      .calledWith()
+      .mockResolvedValueOnce(file as any);
     return this;
   }
 
