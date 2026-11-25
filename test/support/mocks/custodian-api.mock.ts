@@ -8,11 +8,13 @@ export class MockCustodianApi {
 
   requestToCreateAndProvisionItem(requestBodyMatcher: nock.RequestBodyMatcher): CustodianApiRequestInterceptor {
     const scope = this.nockCustodianRequest();
+
     return this.buildCreateAndProvisionRequestInterceptor(scope, requestBodyMatcher);
   }
 
   requestToCreateAndProvisionAnyItem(): CustodianApiRequestInterceptor {
     const scope = this.nockCustodianRequest().filteringRequestBody();
+
     return this.buildCreateAndProvisionRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }
 
@@ -26,6 +28,7 @@ export class MockCustodianApi {
       .matchHeader(ENVIRONMENT_VARIABLES.CUSTODIAN_API_KEY_HEADER_NAME, ENVIRONMENT_VARIABLES.CUSTODIAN_API_KEY_HEADER_VALUE)
       .matchHeader('Accept', 'application/json')
       .matchHeader('Content-Type', 'application/json');
+
     return new CustodianApiRequestInterceptor(interceptor);
   }
 }

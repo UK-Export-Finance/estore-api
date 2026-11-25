@@ -8,11 +8,13 @@ export class MockMdmApi {
 
   requestGenerateNewNumbers(requestBodyMatcher: nock.RequestBodyMatcher): MdmApiRequestInterceptor {
     const scope = this.nockMdmRequest();
+
     return this.buildNumbersRequestInterceptor(scope, requestBodyMatcher);
   }
 
   requestGenerateNewNumbersAnyItem(): MdmApiRequestInterceptor {
     const scope = this.nockMdmRequest().filteringRequestBody();
+
     return this.buildNumbersRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }
 
@@ -25,6 +27,7 @@ export class MockMdmApi {
       .post('/numbers', requestBodyMatcher)
       .matchHeader(ENVIRONMENT_VARIABLES.APIM_MDM_KEY, ENVIRONMENT_VARIABLES.APIM_MDM_VALUE)
       .matchHeader('Content-Type', 'application/json');
+
     return new MdmApiRequestInterceptor(interceptor);
   }
 }
