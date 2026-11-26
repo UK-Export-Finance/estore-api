@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { when } from 'jest-when';
@@ -8,7 +9,7 @@ import { INCOMING_RESPONSE_LOG_KEY } from './http.constants';
 import { logAxiosResponseSuccessWith } from './log-axios-response-success.axios-interceptor';
 import { AxiosResponseSuccessInterceptor } from './type/axios-response-success-interceptor.type';
 
-jest.mock('@ukef/modules/http/filter-axios-response-for-logging.helper');
+jest.mock('./filter-axios-response-for-logging.helper');
 
 describe('logAxiosResponseSuccess', () => {
   const valueGenerator = new RandomValueGenerator();

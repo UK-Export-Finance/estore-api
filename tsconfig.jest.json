@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
-    "isolatedModules": true,
+    "isolatedModules": false,
     "module": "ESNext",
     "types": ["@jest/globals", "node"]
   },
