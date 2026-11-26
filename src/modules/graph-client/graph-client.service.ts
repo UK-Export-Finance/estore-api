@@ -8,28 +8,21 @@ import { Readable } from 'stream';
 
 @Injectable()
 export class GraphClientService {
-  private _client: Client | null = null;
+  client: Client;
 
   constructor(
     @Inject(GraphConfig.KEY)
-    private readonly config: ConfigType<typeof GraphConfig>,
-  ) {}
+    { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
+  ) {
+    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+    const authProvider = new TokenCredentialAuthenticationProvider(credential, {
+      scopes: [scope],
+    });
 
-  get client(): Client {
-    if (!this._client) {
-      const { tenantId, clientId, clientSecret, scope } = this.config;
-      const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-      const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-        scopes: [scope],
-      });
-
-      this._client = Client.initWithMiddleware({
-        debugLogging: true,
-        authProvider,
-      });
-    }
-
-    return this._client;
+    this.client = Client.initWithMiddleware({
+      debugLogging: true,
+      authProvider,
+    });
   }
 
   public getFileUploadSession(url: string, headers?: unknown): Promise<LargeFileUploadSession> {
