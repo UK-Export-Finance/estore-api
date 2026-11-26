@@ -5,5 +5,4 @@ export class CreateBuyerFolderRequestItem {
   buyerName: string;
 }
 
-export const CreateBuyerFolderRequestDto = undefined as unknown as typeof CreateBuyerFolderRequestItem[];
 export type CreateBuyerFolderRequestDto = CreateBuyerFolderRequestItem[];

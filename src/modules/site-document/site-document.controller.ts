@@ -4,7 +4,8 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 import { DtfsStorageExceptionTransformInterceptor } from '@ukef/modules/dtfs-storage/interceptor/dtfs-storage-exception-transform.interceptor';
 
 import { UploadFileInDealFolderParamsDto } from './dto/upload-file-in-deal-folder-params.dto';
-import { UploadFileInDealFolderRequestDto, UploadFileInDealFolderRequestItem } from './dto/upload-file-in-deal-folder-request.dto';
+import type { UploadFileInDealFolderRequestDto } from './dto/upload-file-in-deal-folder-request.dto';
+import { UploadFileInDealFolderRequestItem } from './dto/upload-file-in-deal-folder-request.dto';
 import { UploadFileInDealFolderResponseDto } from './dto/upload-file-in-deal-folder-response.dto';
 import { SiteDocumentExceptionTransformInterceptor } from './interceptor/site-document-exception-transform.interceptor';
 import { SiteDocumentService } from './site-document.service';

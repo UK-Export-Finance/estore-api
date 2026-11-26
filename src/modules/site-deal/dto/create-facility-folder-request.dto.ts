@@ -9,5 +9,4 @@ export class CreateFacilityFolderRequestItem {
   facilityIdentifier: string;
 }
 
-export const CreateFacilityFolderRequestDto = undefined as unknown as typeof CreateFacilityFolderRequestItem[];
 export type CreateFacilityFolderRequestDto = CreateFacilityFolderRequestItem[];

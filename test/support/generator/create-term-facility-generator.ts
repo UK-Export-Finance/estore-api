@@ -1,6 +1,6 @@
 import { CreateTermForFacilityResponseEnum } from '@ukef/constants/enums/create-term-for-facility-response';
-import { UkefId } from '@ukef/helpers';
-import { CreateFacilityTermRequest } from '@ukef/modules/terms/dto/create-facility-term-request.dto';
+import type { UkefId } from '@ukef/helpers';
+import type { CreateFacilityTermRequest } from '@ukef/modules/terms/dto/create-facility-term-request.dto';
 import { CreateTermFacilityResponse } from '@ukef/modules/terms/dto/create-facility-term-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';

@@ -1,6 +1,6 @@
 import { UKEFID } from '@ukef/constants';
 import { ALLOWED_DOCUMENT_FILE_TYPE } from '@ukef/constants/allowed-document-file-type.constant';
-import { UkefId } from '@ukef/helpers';
+import type { UkefId } from '@ukef/helpers';
 import { DateString } from '@ukef/helpers/date-string.type';
 import { Chance } from 'chance';
 

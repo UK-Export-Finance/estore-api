@@ -1,5 +1,5 @@
 import { ValidatedFacilityIdentifierApiProperty } from '@ukef/decorators/validated-facility-identifier-api-property';
-import { UkefId } from '@ukef/helpers';
+import type { UkefId } from '@ukef/helpers';
 
 export class CreateFacilityTermRequestItem {
   @ValidatedFacilityIdentifierApiProperty({
@@ -8,5 +8,4 @@ export class CreateFacilityTermRequestItem {
   readonly id: UkefId;
 }
 
-export const CreateFacilityTermRequest = undefined as unknown as typeof CreateFacilityTermRequestItem[];
 export type CreateFacilityTermRequest = CreateFacilityTermRequestItem[];

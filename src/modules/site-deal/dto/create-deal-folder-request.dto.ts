@@ -23,5 +23,4 @@ export class CreateDealFolderRequestItem {
   riskMarket: string;
 }
 
-export const CreateDealFolderRequest = undefined as unknown as typeof CreateDealFolderRequestItem[];
 export type CreateDealFolderRequest = CreateDealFolderRequestItem[];

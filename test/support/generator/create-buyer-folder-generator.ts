@@ -2,7 +2,8 @@ import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/
 import { GraphGetListItemsResponseDto } from '@ukef/modules/graph/dto/graph-get-list-item-response.dto';
 import { GraphGetParams } from '@ukef/modules/graph/graph.service';
 import { SharepointGetBuyerFolderParams } from '@ukef/modules/sharepoint/sharepoint.service';
-import { CreateBuyerFolderRequestDto, CreateBuyerFolderRequestItem } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
+import type { CreateBuyerFolderRequestDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
+import { CreateBuyerFolderRequestItem } from '@ukef/modules/site-buyer/dto/create-buyer-folder-request.dto';
 import { CreateBuyerFolderResponseDto } from '@ukef/modules/site-buyer/dto/create-buyer-folder-response.dto';
 
 import { ENVIRONMENT_VARIABLES } from '../environment-variables';

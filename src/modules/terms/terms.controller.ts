@@ -13,7 +13,8 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 import { HttpStatusCode } from 'axios';
 import type { Response } from 'express';
 
-import { CreateFacilityTermRequest, CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
+import type { CreateFacilityTermRequest } from './dto/create-facility-term-request.dto';
+import { CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
 import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 import { TermsService } from './terms.service';
 

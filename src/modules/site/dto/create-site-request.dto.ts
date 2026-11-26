@@ -5,5 +5,4 @@ export class CreateSiteRequestItem {
   readonly exporterName: string;
 }
 
-export const CreateSiteRequest = undefined as unknown as typeof CreateSiteRequestItem[];
 export type CreateSiteRequest = CreateSiteRequestItem[];
