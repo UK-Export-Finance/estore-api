@@ -105,7 +105,7 @@ describe('getSiteStatusByExporterName', () => {
     const { status, body } = await makeRequest();
 
     expect(status).toBe(404);
-    expect(body).toStrictEqual({ message: 'Not found', statusCode: 404 });
+    expect(body).toStrictEqual({ error: 'Not Found', message: 'Not found', statusCode: 404 });
   });
 
   withExporterNameQueryValidationApiTests({

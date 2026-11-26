@@ -216,6 +216,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -257,6 +258,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -293,6 +295,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -358,6 +361,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });

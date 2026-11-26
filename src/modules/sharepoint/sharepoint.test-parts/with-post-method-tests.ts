@@ -23,7 +23,8 @@ export const withPostMethodTests = ({
 
   beforeEach(() => {
     graphServicePost = jest.fn() as jest.Mock;
-    const graphService = new GraphService(null);
+    const mockGraphClientService = { client: {} };
+    const graphService = new GraphService(mockGraphClientService as any);
     graphService.post = graphServicePost as unknown as (typeof graphService)['post'];
 
     sharepointService = new SharepointService(graphService, sharepointConfig);

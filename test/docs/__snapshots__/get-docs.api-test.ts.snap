@@ -16,8 +16,7 @@ paths:
           schema:
             minLength: 1
             maxLength: 250
-            pattern: >-
-              ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+            pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
             example: Example Exporter
             type: string
       responses:
@@ -331,8 +330,7 @@ components:
           description: The name of the exporter used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: >-
-            ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+          pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
           example: Example Exporter
       required:
         - exporterName
@@ -362,8 +360,7 @@ components:
           description: The name of the buyer used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: >-
-            ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+          pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
           example: Example Buyer
         facilityIdentifier:
           type: string
@@ -399,8 +396,7 @@ components:
           description: The name of the buyer used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: >-
-            ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+          pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
           example: Example Buyer
         destinationMarket:
           type: string
@@ -429,8 +425,7 @@ components:
           description: The name of the buyer used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: >-
-            ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+          pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
           example: Example Buyer
         documentType:
           type: string
@@ -449,8 +444,7 @@ components:
           description: The file name with the file extension.
           minLength: 5
           maxLength: 250
-          pattern: >-
-            ^(?!\\s)[\\w\\-.()\\s]+\\.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$
+          pattern: ^(?!\\s)[\\w\\-.()\\s]+\\.(bmp|doc|docx|gif|jpeg|jpg|msg|pdf|png|ppt|pptx|tif|txt|xls|xlsx|zip)(?<![\\s.])$
         fileLocationPath:
           type: string
           description: >-
@@ -506,8 +500,7 @@ components:
           description: The name of the buyer used in the deal.
           minLength: 1
           maxLength: 250
-          pattern: >-
-            ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
+          pattern: ^(?!(\\s)|(~\\$))(?!.*(\\s)$)(?!.*["*<>?/\\\\\\|:])(?!.*(_vti_))(?!(\\.lock|CON|PRN|AUX|NUL|COM\\d|LPT\\d|desktop\\.ini)$)(?!(forms)$).*$
           example: Example Buyer
       required:
         - buyerName
