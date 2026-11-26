@@ -1,15 +1,12 @@
 import { jest } from '@jest/globals';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { when } from 'jest-when';
 import { PinoLogger } from 'nestjs-pino';
 
 import { filterAxiosResponseForLogging } from './filter-axios-response-for-logging.helper';
 import { INCOMING_RESPONSE_LOG_KEY } from './http.constants';
 import { logAxiosResponseErrorWith } from './log-axios-response-error.axios-interceptor';
 import { AxiosResponseErrorInterceptor } from './type/axios-response-error-interceptor.type';
-
-jest.mock('./filter-axios-response-for-logging.helper');
 
 describe('logAxiosResponseError', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -30,13 +27,6 @@ describe('logAxiosResponseError', () => {
     request: {},
   };
 
-  const filteredResponse = {
-    data,
-    headers,
-    status,
-    statusText,
-  };
-
   const errorWithoutResponse = new AxiosError('error without response');
 
   const errorWithResponse = new AxiosError('error with response', undefined, undefined, undefined, response);
@@ -48,9 +38,6 @@ describe('logAxiosResponseError', () => {
     logger = new PinoLogger({});
     logger.warn = jest.fn();
     logAxiosResponseError = logAxiosResponseErrorWith(logger);
-
-    (filterAxiosResponseForLogging as jest.Mock).mockReset();
-    when(filterAxiosResponseForLogging).calledWith(response).mockReturnValueOnce(filteredResponse);
   });
 
   describe('when the error does not include a response', () => {
@@ -71,6 +58,7 @@ describe('logAxiosResponseError', () => {
     it('logs the filtered response at warn level using key INCOMING_RESPONSE_LOG_KEY', async () => {
       await logAxiosResponseError(errorWithResponse).catch(() => {});
 
+      const filteredResponse = filterAxiosResponseForLogging(response);
       expect(logger.warn).toHaveBeenCalledWith(
         { [INCOMING_RESPONSE_LOG_KEY]: filteredResponse },
         'A HTTP server responded to our request with an error response.',

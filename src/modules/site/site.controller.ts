@@ -13,7 +13,7 @@ import {
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 import { CreateSiteRequest, CreateSiteRequestItem } from './dto/create-site-request.dto';
 import { CreateSiteResponse } from './dto/create-site-response.dto';

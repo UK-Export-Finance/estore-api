@@ -4,8 +4,6 @@ import { EXAMPLES } from '@ukef/constants/examples.constant';
 import { ValidatedBuyerNameApiProperty } from '@ukef/decorators/validated-buyer-name-api-property';
 import { ValidatedStringApiProperty } from '@ukef/decorators/validated-string-api-property.decorator';
 
-export type UploadFileInDealFolderRequestDto = UploadFileInDealFolderRequestItem[];
-
 export class UploadFileInDealFolderRequestItem {
   @ValidatedBuyerNameApiProperty()
   buyerName: string;
@@ -35,3 +33,6 @@ export class UploadFileInDealFolderRequestItem {
   })
   fileLocationPath: string;
 }
+
+export const UploadFileInDealFolderRequestDto = undefined as unknown as typeof UploadFileInDealFolderRequestItem[];
+export type UploadFileInDealFolderRequestDto = UploadFileInDealFolderRequestItem[];

@@ -3,7 +3,7 @@ import { ENUMS } from '@ukef/constants';
 import { RESPONSE } from '@ukef-test/support/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { resetAllWhenMocks, when } from 'jest-when';
 
 import { TermsController } from './terms.controller';
