@@ -12,7 +12,7 @@ import { MdmService } from './mdm.service';
 describe('MdmService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  let httpServicePost: jest.Mock;
+  let httpServicePost: jest.Mock<any>;
   let service: MdmService;
 
   beforeEach(() => {

@@ -20,9 +20,9 @@ export const withUploadFileMethodTests = ({
   let sharepointService: SharepointService;
 
   beforeEach(() => {
-    graphServiceUploadFile = jest.fn();
+    graphServiceUploadFile = jest.fn() as jest.Mock;
     const graphService = new GraphService(null);
-    graphService.uploadFile = graphServiceUploadFile;
+    graphService.uploadFile = graphServiceUploadFile as unknown as (typeof graphService)['uploadFile'];
 
     sharepointService = new SharepointService(graphService, sharepointConfig);
     jest.resetAllMocks();

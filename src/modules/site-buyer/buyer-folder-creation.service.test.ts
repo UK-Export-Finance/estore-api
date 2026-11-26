@@ -55,10 +55,10 @@ describe('BuyerFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let getCaseSite: jest.Mock;
-  let getBuyerFolder: jest.Mock;
-  let getExporterSite: jest.Mock;
-  let custodianCreateAndProvision: jest.Mock;
+  let getCaseSite: jest.Mock<any>;
+  let getBuyerFolder: jest.Mock<any>;
+  let getExporterSite: jest.Mock<any>;
+  let custodianCreateAndProvision: jest.Mock<any>;
   let service: BuyerFolderCreationService;
 
   beforeEach(() => {
@@ -198,7 +198,9 @@ describe('BuyerFolderCreationService', () => {
       {
         description: 'throws a SiteExporterInvalidException if the found exporter list item does not have a SiteURL field',
         caseSiteListItemsMatchingSiteId: [siteIdListItem],
-        exporterSiteListItemsMatchingSiteId: [{ fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl } } }] as any,
+        exporterSiteListItemsMatchingSiteId: [
+          { fields: { TermGuid: termGuid, URL: termUrl, notSiteURL: { Url: siteUrl } } as unknown as (typeof exporterNameListItem)['fields'] },
+        ],
         expectedErrorClass: SiteExporterInvalidException,
         expectedErrorMessage: `Missing site URL for the list item found for exporter site ${siteId}.`,
       },

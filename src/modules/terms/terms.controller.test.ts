@@ -12,7 +12,7 @@ import { TermsService } from './terms.service';
 describe('TermsController', () => {
   let controller: TermsController;
   let service: TermsService;
-  let mockService: jest.Mock;
+  let mockService: jest.Mock<any>;
   const valueGenerator = new RandomValueGenerator();
   const facilityId = valueGenerator.facilityId();
   const term = { id: facilityId };

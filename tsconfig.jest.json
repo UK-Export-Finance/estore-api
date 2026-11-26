@@ -3,8 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "isolatedModules": true,
-    "module": "ESNext",
-    "importsNotUsedAsValues": "remove"
+    "module": "ESNext"
   },
   "include": ["src", "test"]
 }

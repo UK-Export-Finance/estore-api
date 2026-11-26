@@ -1,4 +1,5 @@
 import { RestError } from '@azure/storage-file-share';
+import { DtfsStorageClientService } from '@ukef/modules/dtfs-storage-client/dtfs-storage-client.service';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { MockDtfsStorageClientService } from '@ukef-test/support/mocks/dtfs-storage-client.service.mock';
 import { resetAllWhenMocks } from 'jest-when';
@@ -23,7 +24,7 @@ describe('DtfsStorageFileService', () => {
   const mockDtfsStorageClientService = new MockDtfsStorageClientService();
 
   beforeEach(() => {
-    dtfsStorageFileService = new DtfsStorageFileService(mockDtfsStorageClientService);
+    dtfsStorageFileService = new DtfsStorageFileService(mockDtfsStorageClientService as unknown as DtfsStorageClientService);
     jest.resetAllMocks();
     resetAllWhenMocks();
   });

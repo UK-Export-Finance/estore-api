@@ -39,7 +39,7 @@ const config: JestConfigWithTsJest = {
   projects: [
     {
       displayName: 'Unit',
-      setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
+      setupFilesAfterEnv: ['../test/setup/jest-globals.ts', '../test/setup/mock-nestjs-axios.ts'],
       testMatch: ['**/*.test.ts'],
       ...esmAndTsJestSettings,
       ...defaultSettings,
@@ -47,7 +47,7 @@ const config: JestConfigWithTsJest = {
     },
     {
       displayName: 'API',
-      setupFilesAfterEnv: ['./setup/override-environment-variables.ts'],
+      setupFilesAfterEnv: ['./setup/jest-globals.ts', './setup/override-environment-variables.ts'],
       testMatch: ['**/*.api-test.ts'],
       ...esmAndTsJestSettings,
       ...defaultSettings,

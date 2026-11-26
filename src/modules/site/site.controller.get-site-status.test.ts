@@ -16,7 +16,7 @@ describe('SiteController', () => {
   let siteController: SiteController;
 
   const siteGetSiteStatusByExporterName = jest.fn();
-  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName;
+  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName as unknown as (typeof siteService)['getSiteStatusByExporterName'];
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();

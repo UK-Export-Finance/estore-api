@@ -22,9 +22,9 @@ export const withPatchMethodTests = ({
   let sharepointService: SharepointService;
 
   beforeEach(() => {
-    graphServicePatch = jest.fn();
+    graphServicePatch = jest.fn() as jest.Mock;
     const graphService = new GraphService(null);
-    graphService.patch = graphServicePatch;
+    graphService.patch = graphServicePatch as unknown as (typeof graphService)['patch'];
 
     sharepointService = new SharepointService(graphService, sharepointConfig);
     jest.resetAllMocks();

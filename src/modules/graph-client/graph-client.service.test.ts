@@ -29,8 +29,8 @@ describe('GraphClientService', () => {
   const fileSizeInBytes = valueGenerator.nonnegativeInteger({ max: DTFS_MAX_FILE_SIZE_BYTES });
   const uploadTaskOptions: LargeFileUploadTaskOptions = { rangeSize: fileSizeInBytes };
 
-  let clientInitWithMiddleware: jest.Mock;
-  let createUploadSession: jest.Mock;
+  let clientInitWithMiddleware: jest.Mock<any>;
+  let createUploadSession: jest.Mock<any>;
 
   beforeEach(() => {
     clientInitWithMiddleware = jest.fn();

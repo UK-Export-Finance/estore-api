@@ -17,10 +17,10 @@ describe('SiteController', () => {
   let siteController: SiteController;
 
   const siteGetSiteStatusByExporterName = jest.fn();
-  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName;
+  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName as unknown as (typeof siteService)['getSiteStatusByExporterName'];
 
   const siteCreateSiteIfDoesNotExist = jest.fn();
-  siteService.createSiteIfDoesNotExist = siteCreateSiteIfDoesNotExist;
+  siteService.createSiteIfDoesNotExist = siteCreateSiteIfDoesNotExist as unknown as (typeof siteService)['createSiteIfDoesNotExist'];
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();

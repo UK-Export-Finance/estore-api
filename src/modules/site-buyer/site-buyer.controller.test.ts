@@ -15,7 +15,7 @@ describe('SiteBuyerController', () => {
   describe('createBuyerFolder', () => {
     const buyerName = valueGenerator.string();
 
-    let serviceCreateBuyerFolder: jest.Mock;
+    let serviceCreateBuyerFolder: jest.Mock<any>;
     let controller: SiteBuyerController;
 
     beforeEach(() => {

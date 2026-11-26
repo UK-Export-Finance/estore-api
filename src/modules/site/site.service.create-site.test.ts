@@ -18,9 +18,9 @@ describe('SiteService', () => {
   const tfisCaseSitesListId = valueGenerator.word();
 
   let siteService: SiteService;
-  let sharepointServiceCreateSiteRequest: jest.Mock;
-  let sharepointServiceGetExportSiteByNameRequest: jest.Mock;
-  let mdmServiceCreateNumbers: jest.Mock;
+  let sharepointServiceCreateSiteRequest: jest.Mock<any>;
+  let sharepointServiceGetExportSiteByNameRequest: jest.Mock<any>;
+  let mdmServiceCreateNumbers: jest.Mock<any>;
 
   beforeEach(() => {
     const sharepointService = new SharepointService(null, null);

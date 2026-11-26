@@ -15,7 +15,7 @@ describe('SiteService', () => {
   const tfisSharepointUrl = valueGenerator.word();
   const tfisCaseSitesListId = valueGenerator.word();
 
-  let getExporterSiteByName: jest.Mock;
+  let getExporterSiteByName: jest.Mock<any>;
 
   let siteService: SiteService;
 

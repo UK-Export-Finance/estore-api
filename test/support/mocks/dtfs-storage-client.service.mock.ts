@@ -1,12 +1,12 @@
-import { FileGetPropertiesResponse, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
+import { FileDownloadResponseModel, FileGetPropertiesResponse, RestError, ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { when } from 'jest-when';
 
 class MockFileShareClient {
   getProperties: jest.Mock;
   download: jest.Mock;
   constructor() {
-    this.getProperties = jest.fn();
-    this.download = jest.fn();
+    this.getProperties = jest.fn() as jest.Mock;
+    this.download = jest.fn() as jest.Mock;
   }
 }
 
@@ -22,7 +22,7 @@ export class MockDtfsStorageClientService {
     this.dealDocumentsFolderPath = null;
     this.storageSharedKeyCredential = null;
     this.fileShareClient = new MockFileShareClient() as unknown as ShareFileClient;
-    this.getShareFileClient = jest.fn();
+    this.getShareFileClient = jest.fn() as jest.Mock;
   }
 
   mockSuccessfulGetShareFileClientCall(fileName: string, fileLocationPath: string): MockDtfsStorageClientService {
@@ -42,10 +42,10 @@ export class MockDtfsStorageClientService {
     return this;
   }
 
-  mockSuccessfulDownloadCall(file: { readableStreamBody: NodeJS.ReadableStream; _response: any }): MockDtfsStorageClientService {
+  mockSuccessfulDownloadCall(file: { readableStreamBody: NodeJS.ReadableStream; _response: unknown }): MockDtfsStorageClientService {
     when(this.fileShareClient.download)
       .calledWith()
-      .mockResolvedValueOnce(file as any);
+      .mockResolvedValueOnce(file as FileDownloadResponseModel);
     return this;
   }
 

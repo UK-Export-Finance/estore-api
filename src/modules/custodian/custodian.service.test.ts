@@ -12,7 +12,7 @@ import { CustodianException } from './exception/custodian.exception';
 describe('CustodianService', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  let httpServicePost: jest.Mock;
+  let httpServicePost: jest.Mock<any>;
   let service: CustodianService;
 
   beforeEach(() => {

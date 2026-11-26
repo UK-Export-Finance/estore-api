@@ -69,12 +69,12 @@ describe('DealFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let getBuyerFolder: jest.Mock;
-  let getDealFolder: jest.Mock;
-  let getExporterSite: jest.Mock;
-  let getMarketTerm: jest.Mock;
+  let getBuyerFolder: jest.Mock<any>;
+  let getDealFolder: jest.Mock<any>;
+  let getExporterSite: jest.Mock<any>;
+  let getMarketTerm: jest.Mock<any>;
 
-  let custodianCreateAndProvision: jest.Mock;
+  let custodianCreateAndProvision: jest.Mock<any>;
   let service: DealFolderCreationService;
 
   beforeEach(() => {

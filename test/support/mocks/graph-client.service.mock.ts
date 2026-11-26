@@ -5,32 +5,32 @@ import { Readable } from 'stream';
 class MockClient {
   api: jest.Mock;
   constructor() {
-    this.api = jest.fn();
+    this.api = jest.fn() as jest.Mock;
   }
 }
 
 class MockFileUploadTask {
   upload: jest.Mock;
   constructor() {
-    this.upload = jest.fn();
+    this.upload = jest.fn() as jest.Mock;
   }
 }
 
 export class MockGraphRequest {
-  expand: GraphRequest['expand'];
-  filter: GraphRequest['filter'];
-  top: GraphRequest['top'];
-  get: GraphRequest['get'];
-  patch: GraphRequest['patch'];
-  post: GraphRequest['post'];
+  expand: jest.Mock;
+  filter: jest.Mock;
+  top: jest.Mock;
+  get: jest.Mock;
+  patch: jest.Mock;
+  post: jest.Mock;
 
   constructor() {
-    this.expand = jest.fn();
-    this.filter = jest.fn();
-    this.top = jest.fn();
-    this.get = jest.fn();
-    this.patch = jest.fn();
-    this.post = jest.fn();
+    this.expand = jest.fn().mockReturnValue(this);
+    this.filter = jest.fn().mockReturnValue(this);
+    this.top = jest.fn().mockReturnValue(this);
+    this.get = jest.fn() as jest.Mock;
+    this.patch = jest.fn() as jest.Mock;
+    this.post = jest.fn() as jest.Mock;
   }
 
   mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphRequest {
@@ -108,8 +108,8 @@ export class MockGraphClientService {
     this.client = new MockClient() as unknown as Client;
     this.request = new MockGraphRequest() as unknown as GraphRequest;
     this.mockFileUploadTask = new MockFileUploadTask();
-    this.getFileUploadSession = jest.fn();
-    this.getFileUploadTask = jest.fn();
+    this.getFileUploadSession = jest.fn() as jest.Mock;
+    this.getFileUploadTask = jest.fn() as jest.Mock;
   }
 
   mockSuccessfulGraphApiCallWithPath(path: string): MockGraphRequest {

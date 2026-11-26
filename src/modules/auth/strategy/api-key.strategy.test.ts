@@ -17,11 +17,11 @@ describe('ApiKeyStrategy', () => {
   const otherHeaderName = valueGenerator.word().toLowerCase();
   const invalidApiKey = valueGenerator.string();
 
-  let error: jest.Mock;
-  let fail: jest.Mock;
-  let pass: jest.Mock;
-  let redirect: jest.Mock;
-  let success: jest.Mock;
+  let error: jest.Mock<(error: Error) => void>;
+  let fail: jest.Mock<(challenge: string, status?: number) => void>;
+  let pass: jest.Mock<() => void>;
+  let redirect: jest.Mock<(url: string) => void>;
+  let success: jest.Mock<(user: any, info?: any) => void>;
 
   let authService: AuthService;
 

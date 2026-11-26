@@ -13,7 +13,7 @@ describe('SiteService', () => {
   const maskedId = valueGenerator.stringOfNumericCharacters();
 
   let siteService: SiteService;
-  let mdmServiceCreateNumbers: jest.Mock;
+  let mdmServiceCreateNumbers: jest.Mock<any>;
 
   beforeEach(() => {
     const sharepointService = new SharepointService(null, null);

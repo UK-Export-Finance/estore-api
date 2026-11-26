@@ -85,14 +85,14 @@ describe('UploadFileInDealFolderService', () => {
     },
   ];
 
-  let documentTypeMapperMapDocumentTypeToTitleAndTypeId: jest.Mock;
-  let dtfsStorageFileServiceGetFileProperties: jest.Mock;
-  let dtfsStorageFileServiceGetFile: jest.Mock;
-  let sharepointServiceGetSiteByUkefSiteId: jest.Mock;
-  let sharepointServiceGetResources: jest.Mock;
-  let sharepointServiceGetItems: jest.Mock;
-  let sharepointServiceUploadFile: jest.Mock;
-  let sharepointServiceUpdateFileInformation: jest.Mock;
+  let documentTypeMapperMapDocumentTypeToTitleAndTypeId: jest.Mock<any>;
+  let dtfsStorageFileServiceGetFileProperties: jest.Mock<any>;
+  let dtfsStorageFileServiceGetFile: jest.Mock<any>;
+  let sharepointServiceGetSiteByUkefSiteId: jest.Mock<any>;
+  let sharepointServiceGetResources: jest.Mock<any>;
+  let sharepointServiceGetItems: jest.Mock<any>;
+  let sharepointServiceUploadFile: jest.Mock<any>;
+  let sharepointServiceUpdateFileInformation: jest.Mock<any>;
   let service: SiteDocumentService;
 
   beforeEach(() => {

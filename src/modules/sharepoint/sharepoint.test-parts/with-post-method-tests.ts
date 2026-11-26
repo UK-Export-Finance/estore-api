@@ -22,9 +22,9 @@ export const withPostMethodTests = ({
   let sharepointService: SharepointService;
 
   beforeEach(() => {
-    graphServicePost = jest.fn();
+    graphServicePost = jest.fn() as jest.Mock;
     const graphService = new GraphService(null);
-    graphService.post = graphServicePost;
+    graphService.post = graphServicePost as unknown as (typeof graphService)['post'];
 
     sharepointService = new SharepointService(graphService, sharepointConfig);
     jest.resetAllMocks();

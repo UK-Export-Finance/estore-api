@@ -21,7 +21,7 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "types": ["jest", "node", "@types/jest"],
+    "types": ["jest", "node", "@types/jest", "./test/setup/jest-globals"],
     "sourceMap": true,
     "paths": {
       "@ukef/*": ["./src/*"],

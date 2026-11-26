@@ -56,10 +56,10 @@ describe('FacilityFolderCreationService', () => {
     SPHostUrl: scSiteFullUrl,
   };
 
-  let getDealFolder: jest.Mock;
-  let getFacilityTerm: jest.Mock;
-  let getFacilityFolder: jest.Mock;
-  let custodianCreateAndProvision: jest.Mock;
+  let getDealFolder: jest.Mock<any>;
+  let getFacilityTerm: jest.Mock<any>;
+  let getFacilityFolder: jest.Mock<any>;
+  let custodianCreateAndProvision: jest.Mock<any>;
   let service: FacilityFolderCreationService;
 
   beforeEach(() => {
