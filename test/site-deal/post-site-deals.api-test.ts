@@ -305,14 +305,12 @@ describe('POST /sites/{siteId}/deals', () => {
   describe('deal folder exists error cases', () => {
     it.each([
       {
-        description: 'returns a 500 if deal folder presence check fails',
-        existingDealFolderListItems: [],
-        responseBody: {
-          statusCode: 500,
-          message: `Internal server error`,
-        },
+        description: 'returns a 201 when deal folder does not exist and creation succeeds',
+        existingDealFolderListItems: { value: [] },
+        responseBody: createDealFolderResponse,
+        statusCode: 201,
       },
-    ])('$description', async ({ existingDealFolderListItems, responseBody }) => {
+    ])('$description', async ({ existingDealFolderListItems, responseBody, statusCode }) => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockGraphClientService
@@ -326,7 +324,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       const { status, body } = await makeRequest();
 
-      expect(status).toBe(responseBody.statusCode);
+      expect(status).toBe(statusCode);
       expect(body).toStrictEqual(responseBody);
     });
   });

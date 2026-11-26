@@ -42,7 +42,7 @@ export class FacilityFolderCreationService {
 
     const existingFacilityFolder = await this.sharepointService.getFacilityFolder({ siteId, facilityFolderName: `${dealFolderName}/${facilityFolderName}` });
 
-    if (existingFacilityFolder.length) {
+    if (existingFacilityFolder && existingFacilityFolder.length) {
       // Facility folder already exists, return 201.
       return { folderName: facilityFolderName };
     }

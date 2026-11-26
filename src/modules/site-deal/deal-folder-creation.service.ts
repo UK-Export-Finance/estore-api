@@ -44,7 +44,7 @@ export class DealFolderCreationService {
 
     const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
 
-    if (existingDealFolder.length) {
+    if (existingDealFolder && existingDealFolder.length) {
       // Deal folder already exists, return 201.
       return dealFolderName;
     }

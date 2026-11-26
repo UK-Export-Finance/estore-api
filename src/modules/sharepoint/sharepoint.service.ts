@@ -274,11 +274,12 @@ export class SharepointService {
 
   private async findListItems<Fields>({ siteUrl, listId, listTitle, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
-    const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
+    const response = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId || listTitle}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
-    return listItemsMatchingFilter;
+    const { value: listItemsMatchingFilter } = response || {};
+    return listItemsMatchingFilter || [];
   }
 }
