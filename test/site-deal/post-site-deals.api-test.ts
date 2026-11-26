@@ -45,7 +45,6 @@ describe('POST /sites/{siteId}/deals', () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
     resetAllWhenMocks();
   });
 

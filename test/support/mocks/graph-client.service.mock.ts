@@ -23,12 +23,23 @@ export class MockGraphRequest {
   get: jest.Mock;
   patch: jest.Mock;
   post: jest.Mock;
+  private getResponse: { response: any; isError: boolean } | null = null;
 
   constructor() {
     this.expand = jest.fn().mockReturnValue(this);
     this.filter = jest.fn().mockReturnValue(this);
     this.top = jest.fn().mockReturnValue(this);
-    this.get = jest.fn() as jest.Mock;
+
+    // Use a custom implementation that returns the mocked response every time
+    this.get = jest.fn(() => {
+      if (!this.getResponse) {
+        return Promise.reject(new Error('No mocked response available for .get()'));
+      }
+
+      const { response, isError } = this.getResponse;
+      return isError ? Promise.reject(response) : Promise.resolve(response);
+    }) as jest.Mock;
+
     this.patch = jest.fn() as jest.Mock;
     this.post = jest.fn() as jest.Mock;
   }
@@ -36,7 +47,7 @@ export class MockGraphRequest {
   mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphRequest {
     when(this.expand)
       .calledWith(expandString)
-      .mockReturnValueOnce(this as unknown as GraphRequest);
+      .mockReturnValue(this as unknown as GraphRequest);
     return this;
   }
 
@@ -47,7 +58,7 @@ export class MockGraphRequest {
   mockSuccessfulTopCallWithTopNumber(topNumber: number): MockGraphRequest {
     when(this.top)
       .calledWith(topNumber)
-      .mockReturnValueOnce(this as unknown as GraphRequest);
+      .mockReturnValue(this as unknown as GraphRequest);
     return this;
   }
 
@@ -58,7 +69,7 @@ export class MockGraphRequest {
   mockSuccessfulFilterCallWithFilterString(filterString: string): MockGraphRequest {
     when(this.filter)
       .calledWith(filterString)
-      .mockReturnValueOnce(this as unknown as GraphRequest);
+      .mockReturnValue(this as unknown as GraphRequest);
     return this;
   }
 
@@ -67,12 +78,12 @@ export class MockGraphRequest {
   }
 
   mockSuccessfulGraphGetCall<T>(response: T): MockGraphRequest {
-    when(this.get).calledWith().mockResolvedValueOnce(response);
+    this.getResponse = { response, isError: false };
     return this;
   }
 
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphRequest {
-    when(this.get).calledWith().mockRejectedValueOnce(error);
+    this.getResponse = { response: error, isError: true };
     return this;
   }
 
@@ -103,6 +114,8 @@ export class MockGraphClientService {
   mockFileUploadTask: MockFileUploadTask;
   getFileUploadSession: jest.Mock;
   getFileUploadTask: jest.Mock;
+  private pathToRequestMap: Map<string, MockGraphRequest>;
+  private defaultMockRequest: MockGraphRequest;
 
   constructor() {
     this.client = new MockClient() as unknown as Client;
@@ -110,18 +123,30 @@ export class MockGraphClientService {
     this.mockFileUploadTask = new MockFileUploadTask();
     this.getFileUploadSession = jest.fn() as jest.Mock;
     this.getFileUploadTask = jest.fn() as jest.Mock;
+    this.pathToRequestMap = new Map();
+    this.defaultMockRequest = new MockGraphRequest();
+
+    this.setupApiMock();
+  }
+
+  private setupApiMock(): void {
+    // Don't close over pathToRequestMap and defaultMockRequest - look them up each time!
+    (this.client.api as jest.Mock).mockImplementation((path: string) => {
+      const mockRequest = this.pathToRequestMap.get(path);
+      return mockRequest || this.defaultMockRequest;
+    });
   }
 
   mockSuccessfulGraphApiCallWithPath(path: string): MockGraphRequest {
     const mockRequest = new MockGraphRequest();
-    when(this.client.api)
-      .calledWith(path)
-      .mockReturnValueOnce(mockRequest as unknown as GraphRequest);
+    this.pathToRequestMap.set(path, mockRequest);
+    // Also re-establish the implementation in case mocks were reset
+    this.setupApiMock();
     return mockRequest;
   }
 
   mockSuccessfulGetFileUploadSessionCall(url: string, headers: unknown, uploadSessionToReturn: LargeFileUploadSession): MockGraphClientService {
-    when(this.getFileUploadSession).calledWith(url, headers).mockResolvedValueOnce(uploadSessionToReturn);
+    when(this.getFileUploadSession).calledWith(url, headers).mockResolvedValue(uploadSessionToReturn);
     return this;
   }
 
@@ -131,19 +156,17 @@ export class MockGraphClientService {
     uploadSession: LargeFileUploadSession,
     options?: LargeFileUploadTaskOptions,
   ): MockGraphClientService {
-    when(this.getFileUploadTask)
-      .calledWith(expect.any(Readable), fileName, fileSizeInBytes, uploadSession, options)
-      .mockReturnValueOnce(this.mockFileUploadTask);
+    when(this.getFileUploadTask).calledWith(expect.any(Readable), fileName, fileSizeInBytes, uploadSession, options).mockReturnValue(this.mockFileUploadTask);
     return this;
   }
 
   mockSuccessfulUploadCall(): MockGraphClientService {
-    when(this.mockFileUploadTask.upload).calledWith().mockResolvedValueOnce({});
+    when(this.mockFileUploadTask.upload).calledWith().mockResolvedValue({});
     return this;
   }
 
   mockUnsuccessfulUploadCall(error: unknown): MockGraphClientService {
-    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValueOnce(error);
+    when(this.mockFileUploadTask.upload).calledWith().mockRejectedValue(error);
     return this;
   }
 }
