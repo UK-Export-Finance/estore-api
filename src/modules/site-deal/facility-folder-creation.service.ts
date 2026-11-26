@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { CustodianConfig } from '@ukef/config/custodian.config';
 import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { UkefId } from '@ukef/helpers';

@@ -19,13 +19,20 @@ const defaultSettings = {
 const esmAndTsJestSettings = {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-      tsconfig: 'tsconfig.jest.json',
-    },
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  transform: { '^.+\\.(ts|tsx)?$': 'ts-jest' },
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+        tsconfig: 'tsconfig.jest.json',
+      },
+    ],
+  },
+  transformIgnorePatterns: ['node_modules/(?!(@nestjs|@angular-devkit)/)'],
+  testEnvironment: 'node',
 };
 
 const config: JestConfigWithTsJest = {

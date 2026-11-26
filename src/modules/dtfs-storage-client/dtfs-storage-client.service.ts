@@ -1,6 +1,6 @@
 import { ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { DtfsStorageConfig } from '@ukef/config/dtfs-storage.config';
 
 @Injectable()
