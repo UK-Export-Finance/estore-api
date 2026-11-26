@@ -49,8 +49,7 @@ describe('GraphClientService', () => {
         scope,
       });
 
-      // Verify that ClientSecretCredential was instantiated successfully by checking that
-      // the service has a client which requires successful credential creation
+      // Access the client getter to trigger lazy initialization
       expect(service.client).toBeDefined();
     });
 
@@ -62,18 +61,20 @@ describe('GraphClientService', () => {
         scope,
       });
 
-      // Verify that TokenCredentialAuthenticationProvider was instantiated by checking
-      // that the client initialization succeeded with an authProvider
+      // Access the client getter to trigger lazy initialization
       expect(service.client).toBeDefined();
     });
 
     it('initializes Client with debugLogging and authProvider', () => {
-      new GraphClientService({
+      const service = new GraphClientService({
         tenantId,
         clientId,
         clientSecret: mockClientSecret,
         scope,
       });
+
+      // Access the client getter to trigger lazy initialization
+      service.client;
 
       expect(clientInitWithMiddlewareSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -91,6 +92,7 @@ describe('GraphClientService', () => {
         scope,
       });
 
+      // Access the client getter to trigger lazy initialization
       expect(service.client).toBeDefined();
       expect(service.client).not.toBeNull();
     });
@@ -103,17 +105,20 @@ describe('GraphClientService', () => {
         scope,
       });
 
-      // Verify that a client was successfully created, indicating valid credentials were passed
+      // Access the client getter to trigger lazy initialization
       expect(service.client).toBeInstanceOf(Client);
     });
 
     it('passes correct scope to TokenCredentialAuthenticationProvider', () => {
-      new GraphClientService({
+      const service = new GraphClientService({
         tenantId,
         clientId,
         clientSecret: mockClientSecret,
         scope,
       });
+
+      // Access the client getter to trigger lazy initialization
+      service.client;
 
       // Verify that initialization completed successfully, which requires correct scope
       expect(clientInitWithMiddlewareSpy).toHaveBeenCalled();
