@@ -8,8 +8,8 @@ import { GraphClientService } from './graph-client.service';
 
 describe('GraphClientService', () => {
   const valueGenerator = new RandomValueGenerator();
-  const tenantId = '12345678-1234-1234-1234-123456789012'; // Valid UUID format for tenant ID
-  const clientId = '87654321-4321-4321-4321-210987654321'; // Valid UUID format for client ID
+  const tenantId = valueGenerator.guid();
+  const clientId = valueGenerator.guid();
   const mockClientSecret = valueGenerator.string();
   const scope = 'https://graph.microsoft.com/.default';
   const urlToCreateUploadSession = valueGenerator.httpsUrl();
