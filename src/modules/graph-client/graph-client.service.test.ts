@@ -32,7 +32,7 @@ describe('GraphClientService', () => {
 
     // Spy on static methods
     clientInitWithMiddlewareSpy = jest.spyOn(Client, 'initWithMiddleware');
-    largeFileUploadTaskCreateUploadSessionSpy = jest.spyOn(LargeFileUploadTask, 'createUploadSession' as any);
+    largeFileUploadTaskCreateUploadSessionSpy = jest.spyOn(LargeFileUploadTask, 'createUploadSession').mockResolvedValue(uploadSession);
   });
 
   afterEach(() => {
