@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "isolatedModules": true,
-    "module": "ESNext"
+    "module": "ESNext",
+    "types": ["@jest/globals", "node"]
   },
   "include": ["src", "test"]
 }

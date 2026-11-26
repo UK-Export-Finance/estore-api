@@ -9,7 +9,7 @@
     "eslint-local-rules"
   ],
   "scripts": {
-    "api-test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --selectProjects=API --passWithNoTests",
+    "api-test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --selectProjects=API --passWithNoTests",
     "audit:fix": "npm audit --fix",
     "build": "nest build -p tsconfig.build.json",
     "housekeeping": "npm update --save && npm i && npm run type-check && npm run prettier:fix && npm run lint:fix && npm run validate:yml && npm run audit:fix && npm run spellcheck",
@@ -24,8 +24,8 @@
     "start:dev": "nest start --tsc --watch",
     "start:prod": "node dist/src/main",
     "type-check": "tsc --noEmit --pretty",
-    "unit-test": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --selectProjects=Unit",
-    "unit-test-dev": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --verbose --config=jest.config.ts",
+    "unit-test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --selectProjects=Unit",
+    "unit-test-dev": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --verbose --config=jest.config.ts",
     "validate:all": "npm run lint:fix && npm run prettier:fix && npm run type-check && npm run validate:yml && npm run validate:md",
     "validate:md": "npx markdownlint-cli --config .markdownlint.json \"**/*.md\"",
     "validate:yml": "npx yaml-lint **/*.yml --ignore=**/node_modules"
@@ -104,6 +104,7 @@
     "@typescript-eslint/parser": "8.74.0",
     "@ukef/eslint-local-rules": "1.0.0",
     "chance": "1.1.13",
+    "cross-env": "10.1.0",
     "cspell": "10.5.2",
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",

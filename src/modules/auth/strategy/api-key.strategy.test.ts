@@ -29,11 +29,11 @@ describe('ApiKeyStrategy', () => {
 
   beforeEach(() => {
     authService = new AuthService(null);
-    const authServiceValidateApiKey = jest.fn();
-    authService.validateApiKey = authServiceValidateApiKey;
+    const authServiceValidateApiKeyMock = jest.fn();
+    authService.validateApiKey = authServiceValidateApiKeyMock as any;
 
-    when(authServiceValidateApiKey).mockReturnValue(false);
-    when(authServiceValidateApiKey).calledWith(validApiKey).mockReturnValue(true);
+    when(authServiceValidateApiKeyMock).mockReturnValue(false);
+    when(authServiceValidateApiKeyMock).calledWith(validApiKey).mockReturnValue(true);
 
     strategy = new ApiKeyStrategy(authService);
 

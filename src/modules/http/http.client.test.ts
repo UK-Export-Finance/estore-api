@@ -46,12 +46,12 @@ describe('HttpClient', () => {
       request: {},
     };
 
-    let onErrorMock: jest.Mock;
+    let onErrorMock: jest.Mock<ObservableInput<never>>;
     let onError: (error: Error) => ObservableInput<never>;
 
     beforeEach(() => {
-      onErrorMock = jest.fn();
-      onError = (error: Error) => onErrorMock(error);
+      onErrorMock = jest.fn<ObservableInput<never>, [Error]>();
+      onError = onErrorMock;
     });
 
     describe('when the HttpService succeeds', () => {

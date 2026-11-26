@@ -8,7 +8,7 @@ import { INCOMING_RESPONSE_LOG_KEY } from './http.constants';
 import { logAxiosResponseSuccessWith } from './log-axios-response-success.axios-interceptor';
 import { AxiosResponseSuccessInterceptor } from './type/axios-response-success-interceptor.type';
 
-jest.mock('./filter-axios-response-for-logging.helper');
+jest.mock('@ukef/modules/http/filter-axios-response-for-logging.helper');
 
 describe('logAxiosResponseSuccess', () => {
   const valueGenerator = new RandomValueGenerator();

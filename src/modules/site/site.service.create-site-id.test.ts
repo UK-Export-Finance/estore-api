@@ -5,7 +5,7 @@ import { when } from 'jest-when';
 
 import { SiteService } from './site.service';
 
-jest.mock('../graph/graph.service');
+jest.mock('@ukef/modules/graph/graph.service');
 
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
