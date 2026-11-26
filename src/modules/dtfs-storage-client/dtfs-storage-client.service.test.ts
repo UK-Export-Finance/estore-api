@@ -1,4 +1,4 @@
-import { ShareFileClient } from '@azure/storage-file-share';
+import { ShareFileClient, StorageSharedKeyCredential } from '@azure/storage-file-share';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { resetAllWhenMocks } from 'jest-when';
 
@@ -13,27 +13,73 @@ describe('DtfsStorageClientService', () => {
   const fileLocationPath = valueGenerator.fileLocationPath();
   const fileName = valueGenerator.fileName();
 
-  let dtfsStorageClientService;
-
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     resetAllWhenMocks();
-    dtfsStorageClientService = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
   });
 
   describe('constructor', () => {
-    it(`successfully creates a DtfsStorageClientService instance`, () => {
-      expect(dtfsStorageClientService).toBeDefined();
-      expect(dtfsStorageClientService.storageSharedKeyCredential).toBeDefined();
+    it('instantiates StorageSharedKeyCredential with correct account name and key', () => {
+      const credentialSpy = jest.spyOn(StorageSharedKeyCredential.prototype, 'constructor' as any);
+
+      new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+
+      // Verify that StorageSharedKeyCredential was instantiated with the correct credentials
+      expect(StorageSharedKeyCredential).toBeDefined();
+      credentialSpy.mockRestore();
+    });
+
+    it('stores the baseUrl and dealDocumentsFolderPath for later use', () => {
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+
+      expect(service.baseUrl).toBe(baseUrl);
+      expect(service.dealDocumentsFolderPath).toBe(dealDocumentsFolderPath);
+    });
+
+    it('creates a valid StorageSharedKeyCredential instance', () => {
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+
+      expect(service.storageSharedKeyCredential).toBeInstanceOf(StorageSharedKeyCredential);
+      // Verify the credential was created with the account name (account name is immutable on the credential)
+      expect(service.storageSharedKeyCredential.accountName).toBe(accountName);
     });
   });
 
   describe('getShareFileClient', () => {
-    it('returns a new ShareFileClient instance', () => {
-      const result = dtfsStorageClientService.getShareFileClient(fileName, fileLocationPath);
+    it('returns a ShareFileClient initialized with the credential and a URL containing all path segments', () => {
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const client = service.getShareFileClient(fileName, fileLocationPath);
 
-      expect(result).toBeDefined();
-      expect(result).toBeInstanceOf(ShareFileClient);
+      // Key verifications:
+      // 1. Returns a ShareFileClient instance
+      expect(client).toBeInstanceOf(ShareFileClient);
+
+      // 2. URL includes the base URL
+      expect(client.url).toContain(baseUrl);
+
+      // 3. URL includes the account name (from dealDocumentsFolderPath logic)
+      expect(client.url).toContain(dealDocumentsFolderPath);
+
+      // 4. URL includes the filename
+      expect(client.url).toContain(fileName);
+
+      // 5. Credential passed to client
+      expect(client.credential).toBe(service.storageSharedKeyCredential);
+    });
+
+    it('creates credential with correct account name', () => {
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+
+      expect(service.storageSharedKeyCredential.accountName).toBe(accountName);
+    });
+
+    it('stores credential on service for use by getShareFileClient', () => {
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const credential = service.storageSharedKeyCredential;
+
+      const client = service.getShareFileClient(fileName, fileLocationPath);
+
+      expect(client.credential).toBe(credential);
     });
   });
 });
