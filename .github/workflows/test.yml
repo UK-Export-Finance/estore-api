@@ -30,14 +30,6 @@ env:
   timezone: ${{ vars.TIMEZONE }}
 
 jobs:
-
-  debug-node-version:
-    name: Debug Node Version
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug Node Version
-        run: echo "NODE_VERSION resolved to ${{ vars.NODE_VERSION }}"
-
   # 1. Setup test infrastructure
   setup:
     name: Infrastructure setup 🔧

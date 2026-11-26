@@ -8,7 +8,7 @@ describe('DtfsStorageClientService', () => {
   const valueGenerator = new RandomValueGenerator();
   const baseUrl = valueGenerator.httpsUrl();
   const accountName = valueGenerator.word();
-  const accountKey = valueGenerator.string();
+  const mockAccountKey = valueGenerator.string();
   const dealDocumentsFolderPath = valueGenerator.string();
   const fileLocationPath = valueGenerator.fileLocationPath();
   const fileName = valueGenerator.fileName();
@@ -22,7 +22,7 @@ describe('DtfsStorageClientService', () => {
     it('instantiates StorageSharedKeyCredential with correct account name and key', () => {
       const credentialSpy = jest.spyOn(StorageSharedKeyCredential.prototype, 'constructor' as any);
 
-      new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
       // Verify that StorageSharedKeyCredential was instantiated with the correct credentials
       expect(StorageSharedKeyCredential).toBeDefined();
@@ -30,14 +30,14 @@ describe('DtfsStorageClientService', () => {
     });
 
     it('stores the baseUrl and dealDocumentsFolderPath for later use', () => {
-      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
       expect(service.baseUrl).toBe(baseUrl);
       expect(service.dealDocumentsFolderPath).toBe(dealDocumentsFolderPath);
     });
 
     it('creates a valid StorageSharedKeyCredential instance', () => {
-      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
       expect(service.storageSharedKeyCredential).toBeInstanceOf(StorageSharedKeyCredential);
       // Verify the credential was created with the account name (account name is immutable on the credential)
@@ -47,7 +47,7 @@ describe('DtfsStorageClientService', () => {
 
   describe('getShareFileClient', () => {
     it('returns a ShareFileClient initialized with the credential and a URL containing all path segments', () => {
-      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
       const client = service.getShareFileClient(fileName, fileLocationPath);
 
       // Key verifications:
@@ -65,13 +65,13 @@ describe('DtfsStorageClientService', () => {
     });
 
     it('creates credential with correct account name', () => {
-      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
       expect(service.storageSharedKeyCredential.accountName).toBe(accountName);
     });
 
     it('stores credential on service for use by getShareFileClient', () => {
-      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey, dealDocumentsFolderPath });
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
       const credential = service.storageSharedKeyCredential;
 
       const client = service.getShareFileClient(fileName, fileLocationPath);
