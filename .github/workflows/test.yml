@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Debug Node Version
-        run: echo "NODE_VERSION resolved to: ${{ vars.NODE_VERSION }}"
+        run: echo "NODE_VERSION resolved to ${{ vars.NODE_VERSION }}"
 
   # 1. Setup test infrastructure
   setup:
