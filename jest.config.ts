@@ -47,14 +47,14 @@ const config: JestConfigWithTsJest = {
     },
     {
       displayName: 'API',
-      setupFilesAfterEnv: ['./setup/jest-globals.ts', './setup/override-environment-variables.ts'],
+      setupFilesAfterEnv: ['./setup/jest-globals.ts', './setup/override-environment-variables.ts', './setup/assign-unique-test-port.ts'],
       testMatch: ['**/*.api-test.ts'],
       ...esmAndTsJestSettings,
       ...defaultSettings,
+      maxWorkers: 1,
     },
   ],
   reporters: [['default', { summaryThreshold: 1 }]],
-  forceExit: true,
 };
 
 export default config;
