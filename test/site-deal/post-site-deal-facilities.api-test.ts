@@ -46,6 +46,7 @@ describe('Create Site Deal Facility Folder', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {

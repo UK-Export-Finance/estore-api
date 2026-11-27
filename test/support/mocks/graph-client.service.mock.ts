@@ -72,12 +72,14 @@ export class MockGraphRequest {
         return Promise.reject(new Error('No mocked response available for .get()'));
       }
 
-      // Consume unfiltered responses in order, reuse the last one
+      // Read the current response before advancing the index
+      const { response, isError } = unfilteredResponses[unfilteredIndex];
+
+      // Consume unfiltered responses in order, reusing the final entry
       if (unfilteredIndex < unfilteredResponses.length - 1) {
         unfilteredIndex++;
       }
 
-      const { response, isError } = unfilteredResponses[unfilteredIndex];
       return isError ? Promise.reject(response) : Promise.resolve(response);
     }) as jest.Mock;
 

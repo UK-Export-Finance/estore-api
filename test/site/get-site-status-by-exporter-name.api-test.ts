@@ -31,6 +31,7 @@ describe('getSiteStatusByExporterName', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {

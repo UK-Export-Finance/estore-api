@@ -40,6 +40,7 @@ describe('POST /sites/{siteId}/buyers', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
