@@ -26,12 +26,19 @@ export class MockGraphRequest {
 
   constructor() {
     this.expand = jest.fn().mockReturnValue(this);
-    this.filter = jest.fn().mockReturnValue(this);
+
+    // Track filter values so get() can respond based on which filter was called
+    let currentFilter: string | null = null;
+    this.filter = jest.fn((arg: string) => {
+      currentFilter = arg;
+      return this;
+    });
+
     this.top = jest.fn().mockReturnValue(this);
 
     // Store responses as an array for FIFO consumption
     // Multiple calls to .get() consume responses in order, with reuse of the last one
-    const responses: Array<{ response: any; isError: boolean }> = [];
+    const responses: Array<{ response: any; isError: boolean; filterMatch?: string }> = [];
     let currentIndex = 0;
 
     this.get = jest.fn(() => {
@@ -39,9 +46,16 @@ export class MockGraphRequest {
         return Promise.reject(new Error('No mocked response available for .get()'));
       }
 
-      // Consume responses in FIFO order, but reuse the last one
-      if (currentIndex < responses.length - 1) {
-        currentIndex++;
+      // Check if any response has a filterMatch that matches the currentFilter
+      const matchingIndex = responses.findIndex((r) => !r.filterMatch || r.filterMatch === currentFilter);
+
+      if (matchingIndex !== -1 && matchingIndex < currentIndex) {
+        // We already consumed this response, so continue with FIFO
+        if (currentIndex < responses.length - 1) {
+          currentIndex++;
+        }
+      } else if (matchingIndex !== -1) {
+        currentIndex = matchingIndex;
       }
 
       const { response, isError } = responses[currentIndex];
@@ -93,13 +107,19 @@ export class MockGraphRequest {
   }
 
   mockSuccessfulGraphGetCall<T>(response: T): MockGraphRequest {
-    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean }>;
+    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
     responses.push({ response, isError: false });
     return this;
   }
 
+  mockSuccessfulGraphGetCallForFilterString<T>(filterString: string, response: T): MockGraphRequest {
+    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
+    responses.push({ response, isError: false, filterMatch: filterString });
+    return this;
+  }
+
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphRequest {
-    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean }>;
+    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
     responses.push({ response: error, isError: true });
     return this;
   }
@@ -168,6 +188,25 @@ export class MockGraphClientService {
     // Also re-establish the implementation in case mocks were reset
     this.setupApiMock();
     return mockRequest;
+  }
+
+  mockSuccessfulGraphGetCallForDefaultRequest<T>(response: T): MockGraphClientService {
+    return this.mockSuccessfulGraphGetCallForRequest(this.defaultMockRequest, response);
+  }
+
+  mockSuccessfulGraphPostCallForDefaultRequest<T>(response: T): MockGraphClientService {
+    return this.mockSuccessfulGraphPostCallForRequest(this.defaultMockRequest, response);
+  }
+
+  private mockSuccessfulGraphGetCallForRequest<T>(mockRequest: MockGraphRequest, response: T): MockGraphClientService {
+    const responses = (mockRequest.get as any).__responses as Array<{ response: any; isError: boolean }>;
+    responses.push({ response, isError: false });
+    return this;
+  }
+
+  private mockSuccessfulGraphPostCallForRequest<T>(mockRequest: MockGraphRequest, response: T): MockGraphClientService {
+    when(mockRequest.post).calledWith(expect.anything()).mockResolvedValue(response);
+    return this;
   }
 
   clearAllMocks(): void {

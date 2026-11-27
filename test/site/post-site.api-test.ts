@@ -41,6 +41,7 @@ describe('createSite', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterEach(() => {
@@ -138,17 +139,15 @@ describe('createSite', () => {
       exporterName,
     });
 
+    // Set up single path mock for both GET and POST since they use the same path
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
       .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
       .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
-      .mockSuccessfulGraphGetCall({ value: [] });
+      .mockSuccessfulGraphGetCall({ value: [] })
+      .mockSuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
 
     mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
-
-    mockGraphClientService
-      .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
-      .mockSuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, graphCreateSiteResponseDto[0]);
 
     const { status, body } = await api.post('/api/v1/sites', createSiteRequest);
     expect(status).toBe(202);
@@ -217,13 +216,29 @@ describe('createSite', () => {
     const makeRequest = (body: unknown[]) => api.post('/api/v1/sites', body);
 
     const givenAnyRequestBodyWouldSucceed = () => {
-      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path).mockSuccessfulGraphGetCall({ value: [] });
+      // Set up single path mock for both GET and POST since they use the same path
+      const pathMock = mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path);
+
+      // Queue multiple GET responses for validation tests that may call with different filter/expand values
+      for (let i = 0; i < 10; i++) {
+        pathMock.mockSuccessfulGraphGetCall({ value: [] });
+      }
+
+      // Queue multiple POST responses
+      for (let i = 0; i < 10; i++) {
+        pathMock.mockSuccessfulGraphPostCallWithRequestBody(expect.anything(), graphCreateSiteResponseDto[0]);
+      }
+
+      // Also set up default mock with responses for any other paths
+      for (let i = 0; i < 10; i++) {
+        mockGraphClientService.mockSuccessfulGraphGetCallForDefaultRequest({ value: [] });
+      }
+
+      for (let i = 0; i < 10; i++) {
+        mockGraphClientService.mockSuccessfulGraphPostCallForDefaultRequest(graphCreateSiteResponseDto[0]);
+      }
 
       mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
-
-      mockGraphClientService
-        .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
-        .mockSuccessfulGraphPostCallWithRequestBody(expect.anything(), graphCreateSiteResponseDto[0]);
     };
 
     withExporterNameFieldValidationApiTests({
