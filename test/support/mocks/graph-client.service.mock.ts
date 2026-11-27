@@ -148,6 +148,17 @@ export class MockGraphRequest {
     return this;
   }
 
+  mockUnsuccessfulGraphGetCallForFilterString(filterString: string, error: unknown): MockGraphRequest {
+    const responsesByFilter = (this.get as any).__responsesByFilter as Map<string, Array<{ response: any; isError: boolean }>>;
+
+    if (!responsesByFilter.has(filterString)) {
+      responsesByFilter.set(filterString, []);
+    }
+
+    responsesByFilter.get(filterString)!.push({ response: error, isError: true });
+    return this;
+  }
+
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphRequest {
     const unfilteredResponses = (this.get as any).__unfilteredResponses as Array<{ response: any; isError: boolean }>;
     unfilteredResponses.push({ response: error, isError: true });

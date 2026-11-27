@@ -128,7 +128,7 @@ describe('POST /sites/{siteId}/deals', () => {
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
           .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
-          .mockUnsuccessfulGraphGetCall(error);
+          .mockUnsuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter, error);
       },
     },
     {
@@ -144,7 +144,7 @@ describe('POST /sites/{siteId}/deals', () => {
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
           .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
-          .mockUnsuccessfulGraphGetCall(error);
+          .mockUnsuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
