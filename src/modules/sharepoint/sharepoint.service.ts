@@ -279,7 +279,11 @@ export class SharepointService {
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
-    const { value: listItemsMatchingFilter } = response || {};
-    return listItemsMatchingFilter || [];
+
+    if (!response || !Array.isArray(response.value)) {
+      throw new Error(`Graph API returned malformed response: expected { value: [] }, got ${JSON.stringify(response)}`);
+    }
+
+    return response.value;
   }
 }
