@@ -159,9 +159,18 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulGetDealFolderRequest();
-    mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-    mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-    custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
+
+    const marketMock = mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+    marketMock.mockSuccessfulGraphGetCallForFilterString(
+      taxonomyHiddenListTermStoreDestinationMarketRequest.filter,
+      taxonomyHiddenListTermStoreDestinationMarketResponse,
+    );
+    marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, taxonomyHiddenListTermStoreRiskMarketResponse);
+
+    custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
 
     const { status, body } = await makeRequest();
 
@@ -173,9 +182,18 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulGetDealFolderRequestWhereFolderExists();
-    mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-    mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-    custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
+
+    const marketMock = mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+    marketMock.mockSuccessfulGraphGetCallForFilterString(
+      taxonomyHiddenListTermStoreDestinationMarketRequest.filter,
+      taxonomyHiddenListTermStoreDestinationMarketResponse,
+    );
+    marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, taxonomyHiddenListTermStoreRiskMarketResponse);
+
+    custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
 
     const { status, body } = await makeRequest();
 
