@@ -39,6 +39,7 @@ describe('createSite', () => {
   });
 
   beforeEach(() => {
+    jest.resetAllMocks();
     resetAllWhenMocks();
   });
 
@@ -216,11 +217,7 @@ describe('createSite', () => {
     const makeRequest = (body: unknown[]) => api.post('/api/v1/sites', body);
 
     const givenAnyRequestBodyWouldSucceed = () => {
-      mockGraphClientService
-        .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-        .mockSuccessfulExpandCall()
-        .mockSuccessfulFilterCall()
-        .mockSuccessfulGraphGetCall({ value: [] });
+      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path).mockSuccessfulGraphGetCall({ value: [] });
 
       mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
 

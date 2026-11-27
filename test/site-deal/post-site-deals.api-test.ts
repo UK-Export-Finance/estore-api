@@ -45,8 +45,9 @@ describe('POST /sites/{siteId}/deals', () => {
   });
 
   beforeEach(() => {
-    mockGraphClientService.reset();
+    jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
@@ -160,7 +161,7 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulGetDealFolderRequest();
     mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
     mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-    mockSuccessfulCreateAndProvision();
+    custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
     const { status, body } = await makeRequest();
 
@@ -174,6 +175,7 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulGetDealFolderRequestWhereFolderExists();
     mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
     mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
+    custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
     const { status, body } = await makeRequest();
 
@@ -289,7 +291,7 @@ describe('POST /sites/{siteId}/deals', () => {
         .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
         .mockSuccessfulGraphGetCall({ value: destinationMarketListItems });
       mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
@@ -320,7 +322,7 @@ describe('POST /sites/{siteId}/deals', () => {
         .mockSuccessfulGraphGetCall(existingDealFolderListItems);
       mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
       mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
@@ -353,7 +355,7 @@ describe('POST /sites/{siteId}/deals', () => {
         .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
         .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
         .mockSuccessfulGraphGetCall({ value: riskMarketListItems });
-      mockSuccessfulCreateAndProvision();
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
@@ -441,7 +443,7 @@ describe('POST /sites/{siteId}/deals', () => {
       .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
       .mockSuccessfulExpandCall()
       .mockSuccessfulFilterCall()
-      .mockSuccessfulGraphGetCall(taxonomyHiddenListTermStoreDestinationMarketResponse);
+      .mockSuccessfulGraphGetCall(taxonomyHiddenListTermStoreRiskMarketResponse);
 
     custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
   };
