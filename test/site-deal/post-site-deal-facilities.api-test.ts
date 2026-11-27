@@ -46,6 +46,7 @@ describe('Create Site Deal Facility Folder', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
@@ -153,6 +154,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Site deal folder not found: ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId}. Once requested, in normal operation, it will take 5 seconds to create the deal folder.`,
       statusCode: 400,
     });
@@ -172,6 +174,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Missing id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId}.`,
       statusCode: 400,
     });
@@ -191,6 +194,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Missing id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId}.`,
       statusCode: 400,
     });
@@ -211,6 +215,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `The id for the deal folder ${createFacilityFolderRequestItem.buyerName}/D ${createFacilityFolderParamsDto.dealId} in site ${createFacilityFolderParamsDto.siteId} is not a number (the value is ${notANumber}).`,
       statusCode: 400,
     });
@@ -228,6 +233,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Facility term not found: ${createFacilityFolderRequestItem.facilityIdentifier}. To create this resource, call POST /terms/facilities.`,
       statusCode: 400,
     });
@@ -248,6 +254,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Missing FacilityGUID for facility term ${createFacilityFolderRequestItem.facilityIdentifier}.`,
       statusCode: 400,
     });
@@ -268,6 +275,7 @@ describe('Create Site Deal Facility Folder', () => {
 
     expect(status).toBe(400);
     expect(body).toStrictEqual({
+      error: 'Bad Request',
       message: `Missing FacilityGUID for facility term ${createFacilityFolderRequestItem.facilityIdentifier}.`,
       statusCode: 400,
     });

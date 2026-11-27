@@ -55,6 +55,8 @@ describe('postDocumentInDealFolder', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
+    mockDtfsStorageClientService.reset();
   });
 
   afterAll(async () => {
@@ -321,7 +323,11 @@ describe('postDocumentInDealFolder', () => {
       generateFieldValueThatDoesNotMatchRegex: () => ' Example Buyer',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
-      makeRequest: (requestBody: unknown[]) => makeRequestWithBodyAndMockReturningItemId(requestBody as UploadFileInDealFolderRequestDto),
+      makeRequest: (requestBody: unknown[]) => {
+        const [{ buyerName: actualBuyerName, fileName: actualFileName }] = requestBody as UploadFileInDealFolderRequestDto;
+        mockReturningItem(siteId, dealId, actualBuyerName, actualFileName);
+        return makeRequestWithBody(requestBody as UploadFileInDealFolderRequestDto);
+      },
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestWouldSucceedUpToReturningItem(),
     });
 
@@ -332,7 +338,11 @@ describe('postDocumentInDealFolder', () => {
       generateFieldValueThatDoesNotMatchEnum: () => 'invalidDocumentType' as DocumentTypeEnum,
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
-      makeRequest: (requestBody: unknown[]) => makeRequestWithBodyAndMockReturningItemId(requestBody as UploadFileInDealFolderRequestDto),
+      makeRequest: (requestBody: unknown[]) => {
+        const [{ buyerName: actualBuyerName, fileName: actualFileName }] = requestBody as UploadFileInDealFolderRequestDto;
+        mockReturningItem(siteId, dealId, actualBuyerName, actualFileName);
+        return makeRequestWithBody(requestBody as UploadFileInDealFolderRequestDto);
+      },
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestWouldSucceedUpToReturningItem(),
     });
 
@@ -345,7 +355,11 @@ describe('postDocumentInDealFolder', () => {
       generateFieldValueThatDoesNotMatchRegex: () => 'file.exe',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
-      makeRequest: (requestBody: unknown[]) => makeRequestWithBodyAndMockReturningItemId(requestBody as UploadFileInDealFolderRequestDto),
+      makeRequest: (requestBody: unknown[]) => {
+        const [{ buyerName: actualBuyerName, fileName: actualFileName }] = requestBody as UploadFileInDealFolderRequestDto;
+        mockReturningItem(siteId, dealId, actualBuyerName, actualFileName);
+        return makeRequestWithBody(requestBody as UploadFileInDealFolderRequestDto);
+      },
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestWouldSucceedUpToReturningItem(),
     });
 
@@ -358,7 +372,11 @@ describe('postDocumentInDealFolder', () => {
       generateFieldValueThatDoesNotMatchRegex: () => '?',
       validRequestBody: uploadFileInDealFolderRequest,
       successStatusCode,
-      makeRequest: (requestBody: unknown[]) => makeRequestWithBodyAndMockReturningItemId(requestBody as UploadFileInDealFolderRequestDto),
+      makeRequest: (requestBody: unknown[]) => {
+        const [{ buyerName: actualBuyerName, fileName: actualFileName }] = requestBody as UploadFileInDealFolderRequestDto;
+        mockReturningItem(siteId, dealId, actualBuyerName, actualFileName);
+        return makeRequestWithBody(requestBody as UploadFileInDealFolderRequestDto);
+      },
       givenAnyRequestBodyWouldSucceed: () => givenAnyRequestWouldSucceedUpToReturningItem(),
     });
   });
@@ -368,12 +386,6 @@ describe('postDocumentInDealFolder', () => {
   const makeRequestWithBody = (requestBody: UploadFileInDealFolderRequestDto) => api.post(getPostDocumentUrl(siteId, dealId), requestBody);
 
   const makeRequest = () => makeRequestWithBody(uploadFileInDealFolderRequest);
-
-  const makeRequestWithBodyAndMockReturningItemId = (requestBody: UploadFileInDealFolderRequestDto) => {
-    const [{ buyerName, fileName }] = requestBody;
-    mockReturningItem(siteId, dealId, buyerName, fileName);
-    return makeRequestWithBody(requestBody);
-  };
 
   const makeRequestWithParamsAndMockReturningItemId = (requestParams: UploadFileInDealFolderParamsDto) => {
     const { siteId, dealId } = requestParams;
@@ -425,14 +437,34 @@ describe('postDocumentInDealFolder', () => {
       // request to download file
       .mockSuccessfulGetShareFileClientCall(expect.any(String), expect.any(String))
       .mockSuccessfulDownloadCall(dtfsStorageFileClientDownloadFileResponse);
+
+    // For validation tests, use the same path-specific mocking as happy paths
+    // This ensures each path has its own FIFO queue of responses
+    // We queue multiple responses per path to handle multiple test iterations
     mockGraphClientService
-      // request to get sharepoint site id
-      .mockSuccessfulGraphApiCallWithPath(expect.any(String))
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetSitePath)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse)
       .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse);
+
     mockGraphClientService
-      // request to get drive id
-      .mockSuccessfulGraphApiCallWithPath(expect.any(String))
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetDriveIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse)
       .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse);
+
+    mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(graphClientGetListIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse);
+
     mockGraphClientService
       // request to upload file
       .mockSuccessfulGetFileUploadSessionCall(expect.any(String), expect.any(Object), graphClientUploadSession)
@@ -441,24 +473,38 @@ describe('postDocumentInDealFolder', () => {
         graphClientGetUploadTaskArgs[1],
         graphClientGetUploadTaskArgs[2],
         graphClientGetUploadTaskArgs[3],
-      )
-      // request to get list id
-      .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse);
+      );
   };
 
   const mockReturningItem = (siteId: string, dealId: string, buyerName: string, fileName: string): void => {
     const itemWebUrl = uploadFileInDealFolderGenerator.constructWebUrlForItem(siteId, dealId, buyerName, fileName);
-
     const itemId = graphClientGetItemIdResponse.value[0].id;
 
+    // Build paths for the new siteId
+    const ukefSharepointName = `${ENVIRONMENT_VARIABLES.SHAREPOINT_MAIN_SITE_NAME}.sharepoint.com`;
+    const newGraphClientGetSitePath = `sites/${ukefSharepointName}:/sites/${siteId}`;
+    const newGraphClientGetDriveIdPath = `${newGraphClientGetSitePath}:/drives`;
+    const newGraphClientGetListIdPath = `${newGraphClientGetSitePath}:/lists`;
+    const newGraphClientGetItemIdPath = `${newGraphClientGetSitePath}:/lists/${graphClientGetListIdResponse.value[0].id}/items`;
+
     mockGraphClientService
-      // first part of request to get item id (does not return item)
-      .mockSuccessfulGraphApiCallWithPath(expect.any(String))
-      // returning item
+      // request to get site
+      .mockSuccessfulGraphApiCallWithPath(newGraphClientGetSitePath)
+      .mockSuccessfulGraphGetCall(graphClientGetSiteByUkefSiteIdResponse);
+
+    mockGraphClientService
+      // request to get drive
+      .mockSuccessfulGraphApiCallWithPath(newGraphClientGetDriveIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetResourcesDriveResponse);
+
+    mockGraphClientService
+      // request to get list
+      .mockSuccessfulGraphApiCallWithPath(newGraphClientGetListIdPath)
+      .mockSuccessfulGraphGetCall(graphClientGetListIdResponse);
+
+    mockGraphClientService
+      // request to get item id - returns item with correct webUrl for this iteration
+      .mockSuccessfulGraphApiCallWithPath(newGraphClientGetItemIdPath)
       .mockSuccessfulGraphGetCall({ value: [{ webUrl: itemWebUrl, id: itemId }] });
-    mockGraphClientService
-      // request to update file information
-      .mockSuccessfulGraphApiCallWithPath(expect.anything());
   };
 });

@@ -3,8 +3,6 @@ import { ValidatedBuyerNameApiProperty } from '@ukef/decorators/validated-buyer-
 import { ValidatedDealIdentifierApiProperty } from '@ukef/decorators/validated-deal-identifier-api-property';
 import { ValidatedSharepointResourceNameApiProperty } from '@ukef/decorators/validated-sharepoint-resource-name-api-property';
 
-export type CreateDealFolderRequest = CreateDealFolderRequestItem[];
-
 export class CreateDealFolderRequestItem {
   @ValidatedDealIdentifierApiProperty({ description: 'The identifier of the deal.' })
   dealIdentifier: string;
@@ -24,3 +22,5 @@ export class CreateDealFolderRequestItem {
   })
   riskMarket: string;
 }
+
+export type CreateDealFolderRequest = CreateDealFolderRequestItem[];

@@ -2,8 +2,6 @@ import { JestConfigWithTsJest } from 'ts-jest';
 
 const defaultSettings = {
   rootDir: 'test',
-  extensionsToTreatAsEsm: ['.ts'],
-  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   moduleNameMapper: {
@@ -14,24 +12,44 @@ const defaultSettings = {
     '@ukef/(.*)': '<rootDir>/../src/$1',
     '@ukef/auth/(.*)': '<rootDir>/../src/modules/auth/$1',
     '@ukef-test/(.*)': '<rootDir>../test/$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+};
+
+const esmAndTsJestSettings = {
+  preset: 'ts-jest/presets/default-esm',
+  extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+        tsconfig: 'tsconfig.jest.json',
+      },
+    ],
+  },
+  transformIgnorePatterns: ['node_modules/(?!(@nestjs|@angular-devkit)/)'],
+  testEnvironment: 'node',
 };
 
 const config: JestConfigWithTsJest = {
   projects: [
     {
       displayName: 'Unit',
-      setupFilesAfterEnv: ['../test/setup/mock-nestjs-axios.ts'],
+      setupFilesAfterEnv: ['../test/setup/jest-globals.ts', '../test/setup/mock-nestjs-axios.ts'],
       testMatch: ['**/*.test.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
+      ...esmAndTsJestSettings,
       ...defaultSettings,
       rootDir: 'src',
     },
     {
       displayName: 'API',
-      setupFilesAfterEnv: ['./setup/override-environment-variables.ts'],
+      setupFilesAfterEnv: ['./setup/jest-globals.ts', './setup/override-environment-variables.ts', './setup/assign-unique-test-port.ts'],
       testMatch: ['**/*.api-test.ts'],
-      transform: { '^.+\\.(ts|tsx)?$': ['ts-jest', { useESM: true }] },
+      ...esmAndTsJestSettings,
       ...defaultSettings,
     },
   ],

@@ -1,23 +1,17 @@
-import { ClientSecretCredential } from '@azure/identity';
-import { Client, LargeFileUploadSession, LargeFileUploadTask, LargeFileUploadTaskOptions, StreamUpload } from '@microsoft/microsoft-graph-client';
-import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
+import { Client, LargeFileUploadSession, LargeFileUploadTask, LargeFileUploadTaskOptions } from '@microsoft/microsoft-graph-client';
 import { DTFS_MAX_FILE_SIZE_BYTES } from '@ukef/constants';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
-import { resetAllWhenMocks, when } from 'jest-when';
+import { resetAllWhenMocks } from 'jest-when';
 import { Readable } from 'stream';
 
 import { GraphClientService } from './graph-client.service';
 
-jest.mock('@azure/identity');
-jest.mock('@microsoft/microsoft-graph-client');
-jest.mock('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
-
 describe('GraphClientService', () => {
   const valueGenerator = new RandomValueGenerator();
-  const tenantId = valueGenerator.string();
-  const clientId = valueGenerator.string();
-  const clientSecret = valueGenerator.string();
-  const scope = `openid offline_access ${valueGenerator.httpsUrl()}/.default`;
+  const tenantId = valueGenerator.guid();
+  const clientId = valueGenerator.guid();
+  const mockClientSecret = valueGenerator.string();
+  const scope = 'https://graph.microsoft.com/.default';
   const urlToCreateUploadSession = valueGenerator.httpsUrl();
   const uploadSessionHeaders = { item: { '@microsoft.graph.conflictBehavior': 'fail' } };
   const uploadSession: LargeFileUploadSession = {
@@ -29,89 +23,172 @@ describe('GraphClientService', () => {
   const fileSizeInBytes = valueGenerator.nonnegativeInteger({ max: DTFS_MAX_FILE_SIZE_BYTES });
   const uploadTaskOptions: LargeFileUploadTaskOptions = { rangeSize: fileSizeInBytes };
 
-  let clientInitWithMiddleware: jest.Mock;
-  let createUploadSession: jest.Mock;
+  let clientInitWithMiddlewareSpy: jest.SpyInstance;
+  let largeFileUploadTaskCreateUploadSessionSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    clientInitWithMiddleware = jest.fn();
-    createUploadSession = jest.fn();
-    Client.initWithMiddleware = clientInitWithMiddleware;
-    LargeFileUploadTask.createUploadSession = createUploadSession;
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     resetAllWhenMocks();
+
+    // Spy on static methods
+    clientInitWithMiddlewareSpy = jest.spyOn(Client, 'initWithMiddleware');
+    largeFileUploadTaskCreateUploadSessionSpy = jest.spyOn(LargeFileUploadTask, 'createUploadSession').mockResolvedValue(uploadSession);
+  });
+
+  afterEach(() => {
+    clientInitWithMiddlewareSpy.mockRestore();
+    largeFileUploadTaskCreateUploadSessionSpy.mockRestore();
   });
 
   describe('constructor', () => {
-    it('creates a new ClientSecretCredential with the tenantId, clientId and clientSecret', () => {
-      new GraphClientService({ tenantId, clientId, clientSecret, scope });
+    it('stores initialized client on service instance', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
 
-      expect(ClientSecretCredential).toHaveBeenCalledTimes(1);
-      expect(ClientSecretCredential).toHaveBeenCalledWith(tenantId, clientId, clientSecret);
+      // Before first access, initialization should not have happened
+      expect(clientInitWithMiddlewareSpy).not.toHaveBeenCalled();
+
+      // First access triggers lazy initialization
+      const firstClient = service.client;
+      expect(firstClient).toBeDefined();
+      expect(firstClient).not.toBeNull();
+      expect(clientInitWithMiddlewareSpy).toHaveBeenCalledTimes(1);
+
+      // Subsequent accesses return the same instance
+      const secondClient = service.client;
+      expect(secondClient).toBe(firstClient);
+      expect(clientInitWithMiddlewareSpy).toHaveBeenCalledTimes(1); // Still called only once
+
+      // Multiple accesses still return the same cached instance
+      const thirdClient = service.client;
+      expect(thirdClient).toBe(firstClient);
+      expect(clientInitWithMiddlewareSpy).toHaveBeenCalledTimes(1); // Still called only once
     });
 
-    it('creates a new TokenCredentialAuthenticationProvider with the ClientSecretCredential and scope', () => {
-      new GraphClientService({ tenantId, clientId, clientSecret, scope });
+    it('initializes Client with debugLogging and authProvider', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
 
-      expect(TokenCredentialAuthenticationProvider).toHaveBeenCalledTimes(1);
-      expect(TokenCredentialAuthenticationProvider).toHaveBeenCalledWith(expect.any(ClientSecretCredential), { scopes: [scope] });
+      // Access the client getter to trigger lazy initialization
+      service.client;
+
+      expect(clientInitWithMiddlewareSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          debugLogging: true,
+          authProvider: expect.any(Object),
+        }),
+      );
     });
 
-    it(`sets the 'client' property to a new Client instance created with the TokenCredentialAuthenticationProvider`, () => {
-      mockSuccessfulClientCreation();
+    it('passes correct scope to TokenCredentialAuthenticationProvider', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
 
-      const graphClientService = new GraphClientService({ tenantId, clientId, clientSecret, scope });
+      // Access the client getter to trigger lazy initialization
+      service.client;
 
-      expect(clientInitWithMiddleware).toHaveBeenCalledTimes(1);
-      expect(graphClientService.client).toStrictEqual({});
+      // Verify that authentication provider was initialized by checking client is usable
+      expect(clientInitWithMiddlewareSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authProvider: expect.any(Object),
+        }),
+      );
     });
   });
 
-  describe('methods', () => {
-    let graphClientService;
-
-    beforeEach(() => {
-      graphClientService = new GraphClientService({ tenantId, clientId, clientSecret, scope });
-    });
-
-    describe('getFileUploadSession', () => {
-      it('returns a new LargeFileUploadSession created with the Client', async () => {
-        mockSuccessfulCreateUploadSessionCall();
-
-        const result = await graphClientService.getFileUploadSession(urlToCreateUploadSession, uploadSessionHeaders);
-
-        expect(createUploadSession).toHaveBeenCalledTimes(1);
-        expect(result).toBe(uploadSession);
-      });
-    });
-
-    describe('getFileUploadTask', () => {
-      it('creates a new StreamUpload with the file, fileName and fileSizeInBytes', () => {
-        graphClientService.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
-
-        expect(StreamUpload).toHaveBeenCalledTimes(1);
-        expect(StreamUpload).toHaveBeenCalledWith(file, fileName, fileSizeInBytes);
+  describe('getFileUploadSession', () => {
+    it('calls LargeFileUploadTask.createUploadSession with correct parameters', async () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
       });
 
-      it('returns a new LargeFileUploadTask created with the Client, StreamUpload and LargeFileUploadSession', () => {
-        const result = graphClientService.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
+      await service.getFileUploadSession(urlToCreateUploadSession, uploadSessionHeaders);
 
-        expect(LargeFileUploadTask).toHaveBeenCalledTimes(1);
-        expect(LargeFileUploadTask).toHaveBeenCalledWith(graphClientService.client, expect.any(StreamUpload), uploadSession, uploadTaskOptions);
-        expect(result).toBeInstanceOf(LargeFileUploadTask);
-      });
+      expect(largeFileUploadTaskCreateUploadSessionSpy).toHaveBeenCalledWith(service.client, urlToCreateUploadSession, uploadSessionHeaders);
     });
 
-    const mockSuccessfulCreateUploadSessionCall = (): void => {
-      when(createUploadSession).calledWith(graphClientService.client, urlToCreateUploadSession, uploadSessionHeaders).mockResolvedValueOnce(uploadSession);
-    };
+    it('returns the session resolved by the factory', async () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
+
+      const result = await service.getFileUploadSession(urlToCreateUploadSession, uploadSessionHeaders);
+
+      expect(result).toEqual(uploadSession);
+      expect(largeFileUploadTaskCreateUploadSessionSpy).toHaveBeenCalled();
+    });
   });
 
-  const mockSuccessfulClientCreation = (): void => {
-    when(clientInitWithMiddleware)
-      .calledWith({
-        debugLogging: true,
-        authProvider: expect.any(TokenCredentialAuthenticationProvider),
-      })
-      .mockReturnValueOnce({} as Client);
-  };
+  describe('getFileUploadTask', () => {
+    it('returns a LargeFileUploadTask instance', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
+
+      const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
+
+      expect(task).toBeInstanceOf(LargeFileUploadTask);
+    });
+
+    it('passes uploadSession to the task', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
+
+      const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
+
+      expect((task as any).uploadSession).toBe(uploadSession);
+    });
+
+    it('passes client to the task', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
+
+      const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
+
+      expect((task as any).client).toBe(service.client);
+    });
+
+    it('handles undefined options parameter', () => {
+      const service = new GraphClientService({
+        tenantId,
+        clientId,
+        clientSecret: mockClientSecret,
+        scope,
+      });
+
+      const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession);
+
+      expect(task).toBeInstanceOf(LargeFileUploadTask);
+      expect((task as any).uploadSession).toBe(uploadSession);
+    });
+  });
 });

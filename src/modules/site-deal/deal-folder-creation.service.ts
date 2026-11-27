@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { CustodianConfig } from '@ukef/config/custodian.config';
 import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
@@ -44,7 +44,7 @@ export class DealFolderCreationService {
 
     const existingDealFolder = await this.sharepointService.getDealFolder({ siteId, dealFolderName: `${buyerName}/${dealFolderName}` });
 
-    if (existingDealFolder.length) {
+    if (existingDealFolder && existingDealFolder.length) {
       // Deal folder already exists, return 201.
       return dealFolderName;
     }

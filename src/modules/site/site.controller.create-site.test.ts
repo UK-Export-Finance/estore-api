@@ -4,7 +4,7 @@ import { CreateSiteGenerator } from '@ukef-test/support/generator/create-site-ge
 import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { when } from 'jest-when';
 
 import { SiteController } from './site.controller';
@@ -17,10 +17,10 @@ describe('SiteController', () => {
   let siteController: SiteController;
 
   const siteGetSiteStatusByExporterName = jest.fn();
-  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName;
+  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName as unknown as (typeof siteService)['getSiteStatusByExporterName'];
 
   const siteCreateSiteIfDoesNotExist = jest.fn();
-  siteService.createSiteIfDoesNotExist = siteCreateSiteIfDoesNotExist;
+  siteService.createSiteIfDoesNotExist = siteCreateSiteIfDoesNotExist as unknown as (typeof siteService)['createSiteIfDoesNotExist'];
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();

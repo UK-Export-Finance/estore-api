@@ -1,5 +1,6 @@
 import nock from 'nock';
 
+import { REGEX } from '@ukef/constants';
 import { ENVIRONMENT_VARIABLES, TIME_EXCEEDING_APIM_MDM_TIMEOUT } from '../environment-variables';
 
 export class MockMdmApi {
@@ -7,13 +8,14 @@ export class MockMdmApi {
 
   requestGenerateNewNumbers(requestBodyMatcher: nock.RequestBodyMatcher): MdmApiRequestInterceptor {
     const scope = this.nockMdmRequest();
+
     return this.buildNumbersRequestInterceptor(scope, requestBodyMatcher);
   }
 
   requestGenerateNewNumbersAnyItem(): MdmApiRequestInterceptor {
-    const requestBodyPlaceholder = '*';
-    const scope = this.nockMdmRequest().filteringRequestBody(() => requestBodyPlaceholder);
-    return this.buildNumbersRequestInterceptor(scope, requestBodyPlaceholder);
+    const scope = this.nockMdmRequest();
+
+    return this.buildNumbersRequestInterceptor(scope, REGEX.TEST.MATCH_ANY);
   }
 
   private nockMdmRequest(): nock.Scope {
@@ -25,6 +27,7 @@ export class MockMdmApi {
       .post('/numbers', requestBodyMatcher)
       .matchHeader(ENVIRONMENT_VARIABLES.APIM_MDM_KEY, ENVIRONMENT_VARIABLES.APIM_MDM_VALUE)
       .matchHeader('Content-Type', 'application/json');
+
     return new MdmApiRequestInterceptor(interceptor);
   }
 }

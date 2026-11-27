@@ -31,6 +31,7 @@ describe('postFacilityToTermStore', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
@@ -50,7 +51,9 @@ describe('postFacilityToTermStore', () => {
   withSharedGraphExceptionHandlingTests({
     givenRequestWouldOtherwiseSucceed: () => {},
     givenGraphServiceCallWillThrowError: (error: Error) => {
-      mockGraphClientService.mockSuccessfulGraphApiCallWithPath(graphServicePostParams.path).mockUnsuccessfulGraphGetCall(error);
+      mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(graphServicePostParams[0].path)
+        .mockUnsuccessfulGraphPostCallWithRequestBody(graphServicePostParams[0].requestBody, error);
     },
     makeRequest: () => api.post(postTermsFacilitiesUrl, createTermFacilityRequest[0]),
   });

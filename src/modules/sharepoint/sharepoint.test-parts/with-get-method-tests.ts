@@ -26,9 +26,10 @@ export const withGetMethodTests = ({
   let sharepointService: SharepointService;
 
   beforeEach(() => {
-    graphServiceGet = jest.fn();
-    const graphService = new GraphService(null);
-    graphService.get = graphServiceGet;
+    graphServiceGet = jest.fn() as jest.Mock;
+    const mockGraphClientService = { client: {} };
+    const graphService = new GraphService(mockGraphClientService as any);
+    graphService.get = graphServiceGet as unknown as (typeof graphService)['get'];
 
     sharepointService = new SharepointService(graphService, sharepointConfig);
     jest.resetAllMocks();

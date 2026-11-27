@@ -2,27 +2,34 @@ import { ClientSecretCredential } from '@azure/identity';
 import { Client, LargeFileUploadSession, LargeFileUploadTask, LargeFileUploadTaskOptions, StreamUpload } from '@microsoft/microsoft-graph-client';
 import { TokenCredentialAuthenticationProvider } from '@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { GraphConfig } from '@ukef/config/graph.config';
 import { Readable } from 'stream';
 
 @Injectable()
 export class GraphClientService {
-  client: Client;
+  private _client: Client | null = null;
 
   constructor(
     @Inject(GraphConfig.KEY)
-    { tenantId, clientId, clientSecret, scope }: ConfigType<typeof GraphConfig>,
-  ) {
-    const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-    const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-      scopes: [scope],
-    });
+    private readonly config: ConfigType<typeof GraphConfig>,
+  ) {}
 
-    this.client = Client.initWithMiddleware({
-      debugLogging: true,
-      authProvider,
-    });
+  get client(): Client {
+    if (!this._client) {
+      const { tenantId, clientId, clientSecret, scope } = this.config;
+      const credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+      const authProvider = new TokenCredentialAuthenticationProvider(credential, {
+        scopes: [scope],
+      });
+
+      this._client = Client.initWithMiddleware({
+        debugLogging: true,
+        authProvider,
+      });
+    }
+
+    return this._client;
   }
 
   public getFileUploadSession(url: string, headers?: unknown): Promise<LargeFileUploadSession> {

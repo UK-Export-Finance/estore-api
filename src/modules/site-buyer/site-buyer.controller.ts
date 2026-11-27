@@ -4,7 +4,8 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 
 import { BuyerFolderCreationService } from './buyer-folder-creation.service';
 import { CreateBuyerFolderParamsDto } from './dto/create-buyer-folder-params.dto';
-import { CreateBuyerFolderRequestDto, CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
+import type { CreateBuyerFolderRequestDto } from './dto/create-buyer-folder-request.dto';
+import { CreateBuyerFolderRequestItem } from './dto/create-buyer-folder-request.dto';
 import { CreateBuyerFolderResponseDto } from './dto/create-buyer-folder-response.dto';
 import { SiteExporterExceptionTransformInterceptor } from './interceptor/site-exporter-exception-transform.interceptor';
 

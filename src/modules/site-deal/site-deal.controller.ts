@@ -4,9 +4,11 @@ import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decora
 
 import { DealFolderCreationService } from './deal-folder-creation.service';
 import { CreateDealFolderParams } from './dto/create-deal-folder-params.dto';
-import { CreateDealFolderRequest, CreateDealFolderRequestItem } from './dto/create-deal-folder-request.dto';
+import type { CreateDealFolderRequest } from './dto/create-deal-folder-request.dto';
+import { CreateDealFolderRequestItem } from './dto/create-deal-folder-request.dto';
 import { CreateFacilityFolderParamsDto } from './dto/create-facility-folder-params.dto';
-import { CreateFacilityFolderRequestDto, CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
+import type { CreateFacilityFolderRequestDto } from './dto/create-facility-folder-request.dto';
+import { CreateFacilityFolderRequestItem } from './dto/create-facility-folder-request.dto';
 import { CreateFolderResponseDto } from './dto/create-facility-folder-response.dto';
 import { FacilityFolderCreationService } from './facility-folder-creation.service';
 import { FolderDependencyExceptionTransformInterceptor } from './interceptor/folder-dependency-exception-transform.interceptor';

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { CustodianConfig } from '@ukef/config/custodian.config';
 import { SharepointConfig } from '@ukef/config/sharepoint.config';
-import { UkefId } from '@ukef/helpers';
+import type { UkefId } from '@ukef/helpers';
 import { CustodianService } from '@ukef/modules/custodian/custodian.service';
 import { CustodianCreateAndProvisionRequest } from '@ukef/modules/custodian/dto/custodian-create-and-provision-request.dto';
 import { SharepointService } from '@ukef/modules/sharepoint/sharepoint.service';
@@ -42,7 +42,7 @@ export class FacilityFolderCreationService {
 
     const existingFacilityFolder = await this.sharepointService.getFacilityFolder({ siteId, facilityFolderName: `${dealFolderName}/${facilityFolderName}` });
 
-    if (existingFacilityFolder.length) {
+    if (existingFacilityFolder && existingFacilityFolder.length) {
       // Facility folder already exists, return 201.
       return { folderName: facilityFolderName };
     }

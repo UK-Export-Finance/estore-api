@@ -1,4 +1,5 @@
 import { GraphError } from '@microsoft/microsoft-graph-client';
+import { GraphClientService } from '@ukef/modules/graph-client/graph-client.service';
 import { UploadFileInDealFolderExistsException } from '@ukef/modules/site-document/exception/upload-file-in-deal-folder-exists.exception';
 import { TermsFacilityExistsException } from '@ukef/modules/terms/exception/terms-facility-exists.exception';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
@@ -39,7 +40,8 @@ describe('GraphService', () => {
   const expectedUploadTaskOptions = { rangeSize: fileSizeInBytes };
 
   beforeEach(() => {
-    graphService = new GraphService(mockGraphClientService);
+    graphService = new GraphService(mockGraphClientService as unknown as GraphClientService);
+    mockGraphClientService.reset();
     jest.resetAllMocks();
     resetAllWhenMocks();
   });

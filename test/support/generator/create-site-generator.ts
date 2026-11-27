@@ -5,7 +5,7 @@ import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create
 import { MdmCreateNumbersRequest } from '@ukef/modules/mdm/dto/mdm-create-numbers-request.dto';
 import { MdmCreateNumbersResponse } from '@ukef/modules/mdm/dto/mdm-create-numbers-response.dto';
 import { SharepointCreateSiteParams } from '@ukef/modules/sharepoint/sharepoint.service';
-import { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
+import type { CreateSiteRequest } from '@ukef/modules/site/dto/create-site-request.dto';
 import { CreateSiteResponse } from '@ukef/modules/site/dto/create-site-response.dto';
 import { ENVIRONMENT_VARIABLES } from '@ukef-test/support/environment-variables';
 

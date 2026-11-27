@@ -17,11 +17,11 @@ describe('ApiKeyStrategy', () => {
   const otherHeaderName = valueGenerator.word().toLowerCase();
   const invalidApiKey = valueGenerator.string();
 
-  let error: jest.Mock;
-  let fail: jest.Mock;
-  let pass: jest.Mock;
-  let redirect: jest.Mock;
-  let success: jest.Mock;
+  let error: jest.Mock<(error: Error) => void>;
+  let fail: jest.Mock<(challenge: string, status?: number) => void>;
+  let pass: jest.Mock<() => void>;
+  let redirect: jest.Mock<(url: string) => void>;
+  let success: jest.Mock<(user: any, info?: any) => void>;
 
   let authService: AuthService;
 
@@ -29,11 +29,11 @@ describe('ApiKeyStrategy', () => {
 
   beforeEach(() => {
     authService = new AuthService(null);
-    const authServiceValidateApiKey = jest.fn();
-    authService.validateApiKey = authServiceValidateApiKey;
+    const authServiceValidateApiKeyMock = jest.fn();
+    authService.validateApiKey = authServiceValidateApiKeyMock as any;
 
-    when(authServiceValidateApiKey).mockReturnValue(false);
-    when(authServiceValidateApiKey).calledWith(validApiKey).mockReturnValue(true);
+    when(authServiceValidateApiKeyMock).mockReturnValue(false);
+    when(authServiceValidateApiKeyMock).calledWith(validApiKey).mockReturnValue(true);
 
     strategy = new ApiKeyStrategy(authService);
 

@@ -2,7 +2,7 @@ import { ENUMS } from '@ukef/constants';
 import { GetSiteStatusByExporterNameGenerator } from '@ukef-test/support/generator/get-site-status-by-exporter-name-generator';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { when } from 'jest-when';
 
 import { SiteNotFoundException } from './exception/site-not-found.exception';
@@ -16,7 +16,7 @@ describe('SiteController', () => {
   let siteController: SiteController;
 
   const siteGetSiteStatusByExporterName = jest.fn();
-  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName;
+  siteService.getSiteStatusByExporterName = siteGetSiteStatusByExporterName as unknown as (typeof siteService)['getSiteStatusByExporterName'];
 
   beforeEach(() => {
     siteGetSiteStatusByExporterName.mockReset();

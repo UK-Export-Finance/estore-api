@@ -55,6 +55,15 @@ jobs:
     name: Build and Start Check 🔨
     needs: setup
     env:
+      APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
+      APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
+      APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}
+      CUSTODIAN_BASE_URL: ${{ secrets.CUSTODIAN_BASE_URL }}
+      CUSTODIAN_API_KEY_HEADER_NAME: ${{ secrets.CUSTODIAN_API_KEY_HEADER_NAME }}
+      CUSTODIAN_API_KEY_HEADER_VALUE: ${{ secrets.CUSTODIAN_API_KEY_HEADER_VALUE }}
+      DTFS_STORAGE_ACCOUNT_NAME: ${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}
+      DTFS_STORAGE_ACCOUNT_KEY: ${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}
+      DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH: ${{ secrets.DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH }}
       GRAPH_BASE_URL: ${{ secrets.GRAPH_BASE_URL }}
       GRAPH_AUTHENTICATION_TENANT_ID: ${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}
       GRAPH_AUTHENTICATION_CLIENT_ID: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}
@@ -77,15 +86,6 @@ jobs:
       SHAREPOINT_TFIS_CASE_SITES_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_CASE_SITES_LIST_ID }}
       SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID: ${{ secrets.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID }}
       SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID: ${{ secrets.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID }}
-      APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
-      APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
-      APIM_MDM_VALUE: ${{ secrets.APIM_MDM_VALUE }}
-      DTFS_STORAGE_ACCOUNT_NAME: ${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}
-      DTFS_STORAGE_ACCOUNT_KEY: ${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}
-      DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH: ${{ secrets.DTFS_STORAGE_DEAL_DOCUMENTS_FOLDER_PATH }}
-      CUSTODIAN_BASE_URL: ${{ secrets.CUSTODIAN_BASE_URL }}
-      CUSTODIAN_API_KEY_HEADER_NAME: ${{ secrets.CUSTODIAN_API_KEY_HEADER_NAME }}
-      CUSTODIAN_API_KEY_HEADER_VALUE: ${{ secrets.CUSTODIAN_API_KEY_HEADER_VALUE }}
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
@@ -96,7 +96,7 @@ jobs:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
       - name: Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Node
         uses: actions/setup-node@v6
@@ -105,7 +105,7 @@ jobs:
 
       - name: Dependencies
         working-directory: ./
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Build
         working-directory: ./
@@ -149,7 +149,7 @@ jobs:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
       - name: Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Node
         uses: actions/setup-node@v6
@@ -158,7 +158,7 @@ jobs:
 
       - name: Dependencies
         working-directory: ./
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Execute
         working-directory: ./
@@ -166,11 +166,53 @@ jobs:
 
   # 5. API tests
   api-tests:
-    name: API 👷
+    name: API Tests - ${{ matrix.test-suite }} 👷
     needs: [setup, build-and-start-check]
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-suite:
+          - test/docs/get-docs.api-test.ts
+          - test/site-buyer/post-site-buyers.api-test.ts
+          - test/site-deal/post-site-deal-facilities.api-test.ts
+          - test/site-deal/post-site-deals.api-test.ts
+          - test/site-document/post-document-in-deal-folder.api-test.ts
+          - test/site/get-site-status-by-exporter-name.api-test.ts
+          - test/site/post-site.api-test.ts
+          - test/terms/post-terms-facilities.api-test.ts
+    env:
+      APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
+      APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
+      DTFS_STORAGE_ACCOUNT_NAME: ${{ secrets.DTFS_STORAGE_ACCOUNT_NAME }}
+      DTFS_STORAGE_ACCOUNT_KEY: ${{ secrets.DTFS_STORAGE_ACCOUNT_KEY }}
+      DTFS_STORAGE_SHARE_NAME: ${{ secrets.DTFS_STORAGE_SHARE_NAME }}
+      DTFS_DOCUMENT_DOWNLOAD_PATH: ${{ secrets.DTFS_DOCUMENT_DOWNLOAD_PATH }}
+      DTFS_STORAGE_QUEUE_NAME: ${{ secrets.DTFS_STORAGE_QUEUE_NAME }}
+      DTFS_STORAGE_CONTAINER_NAME: ${{ secrets.DTFS_STORAGE_CONTAINER_NAME }}
+      GRAPH_BASE_URL: ${{ secrets.GRAPH_BASE_URL }}
+      GRAPH_AUTHENTICATION_TENANT_ID: ${{ secrets.GRAPH_AUTHENTICATION_TENANT_ID }}
+      GRAPH_AUTHENTICATION_CLIENT_ID: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_ID }}
+      GRAPH_AUTHENTICATION_CLIENT_SECRET: ${{ secrets.GRAPH_AUTHENTICATION_CLIENT_SECRET }}
+      SHAREPOINT_BASE_URL: ${{ secrets.SHAREPOINT_BASE_URL }}
+      SHAREPOINT_MAIN_SITE_NAME: ${{ secrets.SHAREPOINT_MAIN_SITE_NAME }}
+      SHAREPOINT_TFIS_SITE_NAME: ${{ secrets.SHAREPOINT_TFIS_SITE_NAME }}
+      SHAREPOINT_SC_SITE_NAME: ${{ secrets.SHAREPOINT_SC_SITE_NAME }}
+      SHAREPOINT_SC_CASE_SITES_LIST_ID: ${{ secrets.SHAREPOINT_SC_CASE_SITES_LIST_ID }}
+      SHAREPOINT_TFIS_FACILITY_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_FACILITY_LIST_ID }}
+      SHAREPOINT_TFIS_FACILITY_LIST_TITLE: ${{ secrets.SHAREPOINT_TFIS_FACILITY_LIST_TITLE }}
+      SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID: ${{ secrets.SHAREPOINT_TFIS_FACILITY_HIDDEN_LIST_TERM_STORE_ID }}
+      SHAREPOINT_TFIS_SITE_ID: ${{ secrets.SHAREPOINT_TFIS_SITE_ID }}
+      SHAREPOINT_TFIS_DEAL_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_DEAL_LIST_ID }}
+      SHAREPOINT_TFIS_TERM_STORE: ${{ secrets.SHAREPOINT_TFIS_TERM_STORE }}
+      SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FIELD_NAME }}
+      SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_APPLICATION }}
+      SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_FINANCIAL_STATEMENT }}
+      SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION: ${{ secrets.SHAREPOINT_ESTORE_DOCUMENT_TYPE_ID_BUSINESS_INFORMATION }}
+      SHAREPOINT_TFIS_CASE_SITES_LIST_ID: ${{ secrets.SHAREPOINT_TFIS_CASE_SITES_LIST_ID }}
+      SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID: ${{ secrets.SHAREPOINT_TAXONOMY_HIDDEN_LIST_TERM_STORE_LIST_ID }}
+      SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID: ${{ secrets.SHAREPOINT_ECMS_DOCUMENT_CONTENT_TYPE_ID }}
     steps:
       - name: Timezone
         uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
@@ -178,7 +220,7 @@ jobs:
           timezoneLinux: ${{ needs.setup.outputs.timezone }}
 
       - name: Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Node
         uses: actions/setup-node@v6
@@ -187,8 +229,8 @@ jobs:
 
       - name: Dependencies
         working-directory: ./
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Execute
         working-directory: ./
-        run: npm run api-test
+        run: npm run api-test -- --testPathPatterns="${{ matrix.test-suite }}"

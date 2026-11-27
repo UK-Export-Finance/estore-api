@@ -13,9 +13,10 @@ import {
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 
-import { CreateSiteRequest, CreateSiteRequestItem } from './dto/create-site-request.dto';
+import type { CreateSiteRequest } from './dto/create-site-request.dto';
+import { CreateSiteRequestItem } from './dto/create-site-request.dto';
 import { CreateSiteResponse } from './dto/create-site-response.dto';
 import { GetSiteStatusByExporterNameQueryDto } from './dto/get-site-status-by-exporter-name-query.dto';
 import { GetSiteStatusByExporterNameResponse } from './dto/get-site-status-by-exporter-name-response.dto';

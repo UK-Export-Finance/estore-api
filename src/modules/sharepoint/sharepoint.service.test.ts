@@ -4,6 +4,7 @@ import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-
 import { SharepointService, SharepointUploadFileParams } from './sharepoint.service';
 import { getMockSharepointConfig } from './sharepoint.test-parts/mock-sharepoint-config.helper';
 import { withGetMethodTests } from './sharepoint.test-parts/with-get-method-tests';
+import { withMalformedResponseRejectionTests } from './sharepoint.test-parts/with-malformed-response-rejection-tests';
 import { withPatchMethodTests } from './sharepoint.test-parts/with-patch-method-tests';
 import { withPostMethodTests } from './sharepoint.test-parts/with-post-method-tests';
 import { withUploadFileMethodTests } from './sharepoint.test-parts/with-upload-file-method-tests';
@@ -39,9 +40,10 @@ describe('SharepointService', () => {
 
   const sharepointConfig = getMockSharepointConfig();
 
-  const methodResponseFromListItem = valueGenerator.string();
+  const methodResponseFromListItem = [{ fields: { someField: valueGenerator.string() } }];
   const graphServiceResponse = { value: methodResponseFromListItem };
   const methodResponse = graphServiceResponse;
+  const methodResponseArray = methodResponseFromListItem;
 
   describe('sharepoint service methods calling graphService.get', () => {
     const graphServiceGetTestCases = [
@@ -80,7 +82,7 @@ describe('SharepointService', () => {
         expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
         filterString: `fields/URL eq '${siteId}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(siteId),
       },
       {
@@ -89,7 +91,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=id)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getBuyerFolder({ siteId, buyerName }),
       },
       {
@@ -98,7 +100,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=TermGuid)',
         filterString: `fields/Title eq '${marketName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getMarketTerm(marketName),
       },
       {
@@ -107,7 +109,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getDealFolder({ siteId, dealFolderName }),
       },
       {
@@ -116,7 +118,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${facilityFolderName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityFolder({ siteId, facilityFolderName }),
       },
       {
@@ -125,7 +127,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=FacilityGUID,Title)',
         filterString: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityTerm(facilityIdentifier),
       },
       {
@@ -134,7 +136,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=id,CustodianSiteURL)',
         filterString: `fields/CustodianSiteURL eq '${siteId}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getCaseSite(siteId),
       },
     ];
@@ -148,6 +150,77 @@ describe('SharepointService', () => {
         filterString,
         graphServiceResponse,
         methodResponse,
+        makeRequest,
+      });
+    });
+  });
+
+  describe('malformed Graph response rejection', () => {
+    const malformedResponseTestCases = [
+      {
+        method: 'getExporterSite',
+        path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
+        expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
+        filterString: `fields/URL eq '${siteId}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(siteId),
+      },
+      {
+        method: 'getExporterSiteByName',
+        path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisCaseSitesListId}/items`,
+        expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
+        filterString: `fields/Title eq '${exporterName}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSiteByName(exporterName),
+      },
+      {
+        method: 'getBuyerFolder',
+        path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.tfisDealListId}/items`,
+        expandString: 'fields($select=id)',
+        filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getBuyerFolder({ siteId, buyerName }),
+      },
+      {
+        method: 'getMarketTerm',
+        path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.taxonomyHiddenListTermStoreListId}/items`,
+        expandString: 'fields($select=TermGuid)',
+        filterString: `fields/Title eq '${marketName}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getMarketTerm(marketName),
+      },
+      {
+        method: 'getDealFolder',
+        path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.tfisFacilityListId}/items`,
+        expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
+        filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getDealFolder({ siteId, dealFolderName }),
+      },
+      {
+        method: 'getFacilityFolder',
+        path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.tfisFacilityListTitle}/items`,
+        expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
+        filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${facilityFolderName}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityFolder({ siteId, facilityFolderName }),
+      },
+      {
+        method: 'getFacilityTerm',
+        path: `${sharepointConfig.tfisSharepointUrl}/lists/${sharepointConfig.tfisFacilityHiddenListTermStoreId}/items`,
+        expandString: 'fields($select=FacilityGUID,Title)',
+        filterString: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityTerm(facilityIdentifier),
+      },
+      {
+        method: 'getCaseSite',
+        path: `${sharepointConfig.scSharepointUrl}/lists/${sharepointConfig.scCaseSitesListId}/items`,
+        expandString: 'fields($select=id,CustodianSiteURL)',
+        filterString: `fields/CustodianSiteURL eq '${siteId}'`,
+        makeRequest: (sharepointService: SharepointService) => sharepointService.getCaseSite(siteId),
+      },
+    ];
+
+    describe.each(malformedResponseTestCases)('$method', ({ path, expandString, filterString, makeRequest }) => {
+      withMalformedResponseRejectionTests({
+        sharepointConfig,
+        path,
+        expandString,
+        filterString,
         makeRequest,
       });
     });

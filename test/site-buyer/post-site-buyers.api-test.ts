@@ -40,6 +40,7 @@ describe('POST /sites/{siteId}/buyers', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
@@ -168,6 +169,7 @@ describe('POST /sites/{siteId}/buyers', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -177,14 +179,12 @@ describe('POST /sites/{siteId}/buyers', () => {
   describe('buyer folder exists error cases', () => {
     it.each([
       {
-        description: 'returns a 500 if buyer folder presence check fails',
-        existingBuyerFolderListItems: [],
-        responseBody: {
-          statusCode: 500,
-          message: `Internal server error`,
-        },
+        description: 'returns a 201 when buyer folder does not exist and creation succeeds',
+        existingBuyerFolderListItems: { value: [] },
+        responseBody: createBuyerFolderResponse,
+        statusCode: 201,
       },
-    ])('$description', async ({ existingBuyerFolderListItems, responseBody }) => {
+    ])('$description', async ({ existingBuyerFolderListItems, responseBody, statusCode }) => {
       mockSuccessfulScCaseSitesListSiteRequest();
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(tfisBuyerFolderRequest.path)
@@ -196,7 +196,7 @@ describe('POST /sites/{siteId}/buyers', () => {
 
       const { status, body } = await makeRequest();
 
-      expect(status).toBe(responseBody.statusCode);
+      expect(status).toBe(statusCode);
       expect(body).toStrictEqual(responseBody);
     });
   });
@@ -247,6 +247,7 @@ describe('POST /sites/{siteId}/buyers', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });

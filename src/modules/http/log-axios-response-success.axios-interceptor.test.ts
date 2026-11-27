@@ -1,14 +1,12 @@
+import { jest } from '@jest/globals';
 import { RandomValueGenerator } from '@ukef-test/support/generator/random-value-generator';
 import { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { when } from 'jest-when';
 import { PinoLogger } from 'nestjs-pino';
 
 import { filterAxiosResponseForLogging } from './filter-axios-response-for-logging.helper';
 import { INCOMING_RESPONSE_LOG_KEY } from './http.constants';
 import { logAxiosResponseSuccessWith } from './log-axios-response-success.axios-interceptor';
 import { AxiosResponseSuccessInterceptor } from './type/axios-response-success-interceptor.type';
-
-jest.mock('./filter-axios-response-for-logging.helper');
 
 describe('logAxiosResponseSuccess', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -29,13 +27,6 @@ describe('logAxiosResponseSuccess', () => {
     request: {},
   };
 
-  const filteredResponse = {
-    data,
-    headers,
-    status,
-    statusText,
-  };
-
   let logger: PinoLogger;
   let logAxiosResponseSuccess: AxiosResponseSuccessInterceptor;
 
@@ -43,14 +34,12 @@ describe('logAxiosResponseSuccess', () => {
     logger = new PinoLogger({});
     logger.debug = jest.fn();
     logAxiosResponseSuccess = logAxiosResponseSuccessWith(logger);
-
-    (filterAxiosResponseForLogging as jest.Mock).mockReset();
-    when(filterAxiosResponseForLogging).calledWith(response).mockReturnValueOnce(filteredResponse);
   });
 
   it('logs the filtered response at debug level using key INCOMING_RESPONSE_LOG_KEY', () => {
     logAxiosResponseSuccess(response);
 
+    const filteredResponse = filterAxiosResponseForLogging(response);
     expect(logger.debug).toHaveBeenCalledWith({ [INCOMING_RESPONSE_LOG_KEY]: filteredResponse }, 'Received successful HTTP response.');
   });
 

@@ -1,6 +1,6 @@
 import { UploadResult } from '@microsoft/microsoft-graph-client';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import type { ConfigType } from '@nestjs/config';
 import { SharepointConfig } from '@ukef/config/sharepoint.config';
 import { SharepointResourceTypeEnum } from '@ukef/constants/enums/sharepoint-resource-type';
 import { GraphCreateSiteResponseDto } from '@ukef/modules/graph/dto/graph-create-site-response.dto';
@@ -274,11 +274,16 @@ export class SharepointService {
 
   private async findListItems<Fields>({ siteUrl, listId, listTitle, fieldsToReturn, filter }: SharepointFindListItems<Fields>): Promise<ListItem<Fields>[]> {
     const commaSeparatedListOfFieldsToReturn = fieldsToReturn.join(',');
-    const { value: listItemsMatchingFilter } = await this.graphService.get<{ value: ListItem<Fields>[] }>({
+    const response = await this.graphService.get<{ value: ListItem<Fields>[] }>({
       path: `${siteUrl}/lists/${listId || listTitle}/items`,
       filter: filter.getFilterString(),
       expand: `fields($select=${commaSeparatedListOfFieldsToReturn})`,
     });
-    return listItemsMatchingFilter;
+
+    if (!response || !Array.isArray(response.value)) {
+      throw new Error(`Graph API returned malformed response: expected { value: [] }, got ${JSON.stringify(response)}`);
+    }
+
+    return response.value;
   }
 }

@@ -47,6 +47,7 @@ describe('POST /sites/{siteId}/deals', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
   });
 
   afterAll(async () => {
@@ -127,7 +128,7 @@ describe('POST /sites/{siteId}/deals', () => {
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
           .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
-          .mockUnsuccessfulGraphGetCall(error);
+          .mockUnsuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter, error);
       },
     },
     {
@@ -143,7 +144,7 @@ describe('POST /sites/{siteId}/deals', () => {
           .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
           .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
           .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
-          .mockUnsuccessfulGraphGetCall(error);
+          .mockUnsuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, error);
       },
     },
   ])('$testName', ({ givenRequestWouldOtherwiseSucceed, givenGraphServiceCallWillThrowError }) => {
@@ -158,9 +159,18 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulGetDealFolderRequest();
-    mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-    mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-    mockSuccessfulCreateAndProvision();
+
+    const marketMock = mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+    marketMock.mockSuccessfulGraphGetCallForFilterString(
+      taxonomyHiddenListTermStoreDestinationMarketRequest.filter,
+      taxonomyHiddenListTermStoreDestinationMarketResponse,
+    );
+    marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, taxonomyHiddenListTermStoreRiskMarketResponse);
+
+    custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
 
     const { status, body } = await makeRequest();
 
@@ -172,8 +182,18 @@ describe('POST /sites/{siteId}/deals', () => {
     mockSuccessfulTfisDealListBuyerRequest();
     mockSuccessfulTfisCaseSitesListExporterRequest();
     mockSuccessfulGetDealFolderRequestWhereFolderExists();
-    mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-    mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
+
+    const marketMock = mockGraphClientService
+      .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+    marketMock.mockSuccessfulGraphGetCallForFilterString(
+      taxonomyHiddenListTermStoreDestinationMarketRequest.filter,
+      taxonomyHiddenListTermStoreDestinationMarketResponse,
+    );
+    marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, taxonomyHiddenListTermStoreRiskMarketResponse);
+
+    custodianApi.requestToCreateAndProvisionItem(JSON.stringify(custodianCreateAndProvisionRequest)).respondsWith(201);
 
     const { status, body } = await makeRequest();
 
@@ -216,6 +236,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -257,6 +278,7 @@ describe('POST /sites/{siteId}/deals', () => {
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -281,18 +303,23 @@ describe('POST /sites/{siteId}/deals', () => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockSuccessfulGetDealFolderRequest();
-      mockGraphClientService
+
+      // Set up mocks using filter-specific responses
+      const marketMock = mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
-        .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
-        .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
-        .mockSuccessfulGraphGetCall({ value: destinationMarketListItems });
-      mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
+        .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+      // Use filter-specific mock setup for each response
+      marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter, { value: destinationMarketListItems });
+      marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, taxonomyHiddenListTermStoreRiskMarketResponse);
+
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -302,14 +329,12 @@ describe('POST /sites/{siteId}/deals', () => {
   describe('deal folder exists error cases', () => {
     it.each([
       {
-        description: 'returns a 500 if deal folder presence check fails',
-        existingDealFolderListItems: [],
-        responseBody: {
-          statusCode: 500,
-          message: `Internal server error`,
-        },
+        description: 'returns a 201 when deal folder does not exist and creation succeeds',
+        existingDealFolderListItems: { value: [] },
+        responseBody: createDealFolderResponse,
+        statusCode: 201,
       },
-    ])('$description', async ({ existingDealFolderListItems, responseBody }) => {
+    ])('$description', async ({ existingDealFolderListItems, responseBody, statusCode }) => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockGraphClientService
@@ -319,11 +344,11 @@ describe('POST /sites/{siteId}/deals', () => {
         .mockSuccessfulGraphGetCall(existingDealFolderListItems);
       mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
       mockSuccessfulTaxonomyTermStoreListRiskMarketRequest();
-      mockSuccessfulCreateAndProvision();
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
-      expect(status).toBe(responseBody.statusCode);
+      expect(status).toBe(statusCode);
       expect(body).toStrictEqual(responseBody);
     });
   });
@@ -346,18 +371,25 @@ describe('POST /sites/{siteId}/deals', () => {
       mockSuccessfulTfisDealListBuyerRequest();
       mockSuccessfulTfisCaseSitesListExporterRequest();
       mockSuccessfulGetDealFolderRequest();
-      mockSuccessfulTaxonomyTermStoreListDestinationMarketRequest();
-      mockGraphClientService
-        .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
-        .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
-        .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
-        .mockSuccessfulGraphGetCall({ value: riskMarketListItems });
-      mockSuccessfulCreateAndProvision();
+
+      // Set up mocks using filter-specific responses
+      const marketMock = mockGraphClientService
+        .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
+        .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand);
+
+      // Use filter-specific mock setup for each response
+      marketMock.mockSuccessfulGraphGetCallForFilterString(
+        taxonomyHiddenListTermStoreDestinationMarketRequest.filter,
+        taxonomyHiddenListTermStoreDestinationMarketResponse,
+      );
+      marketMock.mockSuccessfulGraphGetCallForFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter, { value: riskMarketListItems });
+      custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
 
       const { status, body } = await makeRequest();
 
       expect(status).toBe(statusCode);
       expect(body).toStrictEqual({
+        error: 'Bad Request',
         message,
         statusCode,
       });
@@ -413,33 +445,33 @@ describe('POST /sites/{siteId}/deals', () => {
   const givenAnyRequestBodyWouldSucceed = () => {
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisDealListBuyerRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
+      .mockSuccessfulExpandCallWithExpandString(tfisDealListBuyerRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisDealListBuyerRequest.filter)
       .mockSuccessfulGraphGetCall(tfisDealListBuyerResponse);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisCaseSitesListExporterRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
+      .mockSuccessfulExpandCallWithExpandString(tfisCaseSitesListExporterRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisCaseSitesListExporterRequest.filter)
       .mockSuccessfulGraphGetCall(tfisCaseSitesListExporterResponse);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(tfisGetDealFolderRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
+      .mockSuccessfulExpandCallWithExpandString(tfisGetDealFolderRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(tfisGetDealFolderRequest.filter)
       .mockSuccessfulGraphGetCall(tfisGetDealFolderResponse);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreDestinationMarketRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreDestinationMarketRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreDestinationMarketRequest.filter)
       .mockSuccessfulGraphGetCall(taxonomyHiddenListTermStoreDestinationMarketResponse);
 
     mockGraphClientService
       .mockSuccessfulGraphApiCallWithPath(taxonomyHiddenListTermStoreRiskMarketRequest.path)
-      .mockSuccessfulExpandCall()
-      .mockSuccessfulFilterCall()
-      .mockSuccessfulGraphGetCall(taxonomyHiddenListTermStoreDestinationMarketResponse);
+      .mockSuccessfulExpandCallWithExpandString(taxonomyHiddenListTermStoreRiskMarketRequest.expand)
+      .mockSuccessfulFilterCallWithFilterString(taxonomyHiddenListTermStoreRiskMarketRequest.filter)
+      .mockSuccessfulGraphGetCall(taxonomyHiddenListTermStoreRiskMarketResponse);
 
     custodianApi.requestToCreateAndProvisionAnyItem().respondsWith(201);
   };

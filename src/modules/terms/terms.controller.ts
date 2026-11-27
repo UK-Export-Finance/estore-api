@@ -11,9 +11,10 @@ import {
 import { ENUMS } from '@ukef/constants';
 import { ValidatedArrayBody } from '@ukef/decorators/validated-array-body.decorator';
 import { HttpStatusCode } from 'axios';
-import { Response } from 'express';
+import type { Response } from 'express';
 
-import { CreateFacilityTermRequest, CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
+import type { CreateFacilityTermRequest } from './dto/create-facility-term-request.dto';
+import { CreateFacilityTermRequestItem } from './dto/create-facility-term-request.dto';
 import { CreateTermFacilityResponse } from './dto/create-facility-term-response.dto';
 import { TermsService } from './terms.service';
 

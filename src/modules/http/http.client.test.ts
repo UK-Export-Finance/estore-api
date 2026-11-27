@@ -9,7 +9,7 @@ import { HttpClient } from './http.client';
 describe('HttpClient', () => {
   const valueGenerator = new RandomValueGenerator();
 
-  let httpServicePost: jest.Mock;
+  let httpServicePost: jest.Mock<any>;
   let client: HttpClient;
 
   beforeEach(() => {
@@ -46,10 +46,12 @@ describe('HttpClient', () => {
       request: {},
     };
 
+    let onErrorMock: jest.Mock<ObservableInput<never>>;
     let onError: (error: Error) => ObservableInput<never>;
 
     beforeEach(() => {
-      onError = jest.fn();
+      onErrorMock = jest.fn<ObservableInput<never>, [Error]>();
+      onError = onErrorMock;
     });
 
     describe('when the HttpService succeeds', () => {
@@ -78,7 +80,7 @@ describe('HttpClient', () => {
           onError,
         });
 
-        expect(onError).not.toHaveBeenCalled();
+        expect(onErrorMock).not.toHaveBeenCalled();
       });
     });
 
@@ -90,9 +92,9 @@ describe('HttpClient', () => {
         when(httpServicePost)
           .calledWith(...expectedHttpServicePostArgs)
           .mockReturnValueOnce(throwError(() => errorFromHttpService));
-        when(onError)
+        when(onErrorMock)
           .calledWith(errorFromHttpService)
-          .mockImplementationOnce(() => throwError(() => errorThatOnErrorThrows));
+          .mockReturnValueOnce(throwError(() => errorThatOnErrorThrows));
       });
 
       it('calls onError with the error that HttpService errored with', async () => {
@@ -107,8 +109,8 @@ describe('HttpClient', () => {
             /* error ignored for test */
           });
 
-        expect(onError).toHaveBeenCalledWith(errorFromHttpService);
-        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onErrorMock).toHaveBeenCalledWith(errorFromHttpService);
+        expect(onErrorMock).toHaveBeenCalledTimes(1);
       });
 
       it('rejects with the error that onError throws', async () => {

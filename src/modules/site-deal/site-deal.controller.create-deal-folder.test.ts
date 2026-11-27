@@ -20,7 +20,7 @@ describe('SiteDealController', () => {
   describe('createDealFolder', () => {
     const createdFolderName = valueGenerator.string();
 
-    let serviceCreateDealFolder: jest.Mock;
+    let serviceCreateDealFolder: jest.Mock<any>;
     let controller: SiteDealController;
 
     beforeEach(() => {

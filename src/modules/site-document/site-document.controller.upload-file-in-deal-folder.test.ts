@@ -22,7 +22,7 @@ describe('SiteDocumentController', () => {
   const siteDocumentService = new SiteDocumentService(null, null, null, null);
 
   const serviceUploadFileInDealFolder = jest.fn();
-  siteDocumentService.uploadFileInDealFolder = serviceUploadFileInDealFolder;
+  siteDocumentService.uploadFileInDealFolder = serviceUploadFileInDealFolder as unknown as (typeof siteDocumentService)['uploadFileInDealFolder'];
 
   let controller: SiteDocumentController;
 

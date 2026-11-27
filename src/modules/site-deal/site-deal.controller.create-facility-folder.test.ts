@@ -13,7 +13,7 @@ describe('SiteDealController', () => {
   let siteDealController: SiteDealController;
 
   const serviceCreateFacilityFolder = jest.fn();
-  facilityFolderCreationService.createFacilityFolder = serviceCreateFacilityFolder;
+  facilityFolderCreationService.createFacilityFolder = serviceCreateFacilityFolder as unknown as (typeof facilityFolderCreationService)['createFacilityFolder'];
 
   beforeEach(() => {
     serviceCreateFacilityFolder.mockReset();

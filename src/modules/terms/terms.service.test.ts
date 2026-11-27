@@ -11,7 +11,7 @@ import { TermsService } from './terms.service';
 describe('TermsService', () => {
   let service: TermsService;
   let sharepointService: jest.Mocked<SharepointService>;
-  let mockSharepointPostFacilityToTermStore: jest.Mock;
+  let mockSharepointPostFacilityToTermStore: jest.Mock<any>;
   const valueGenerator = new RandomValueGenerator();
   const facilityId = valueGenerator.facilityId();
 

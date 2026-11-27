@@ -5,7 +5,7 @@ import { when } from 'jest-when';
 
 import { SiteService } from './site.service';
 
-jest.mock('../graph/graph.service');
+jest.mock('@ukef/modules/graph/graph.service');
 
 describe('SiteService', () => {
   const valueGenerator = new RandomValueGenerator();
@@ -13,7 +13,7 @@ describe('SiteService', () => {
   const maskedId = valueGenerator.stringOfNumericCharacters();
 
   let siteService: SiteService;
-  let mdmServiceCreateNumbers: jest.Mock;
+  let mdmServiceCreateNumbers: jest.Mock<any>;
 
   beforeEach(() => {
     const sharepointService = new SharepointService(null, null);
