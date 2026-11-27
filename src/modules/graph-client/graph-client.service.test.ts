@@ -161,7 +161,7 @@ describe('GraphClientService', () => {
 
       const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
 
-      expect(task.uploadSession).toBe(uploadSession);
+      expect((task as any).uploadSession).toBe(uploadSession);
     });
 
     it('passes client to the task', () => {
@@ -174,7 +174,7 @@ describe('GraphClientService', () => {
 
       const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession, uploadTaskOptions);
 
-      expect(task.client).toBe(service.client);
+      expect((task as any).client).toBe(service.client);
     });
 
     it('handles undefined options parameter', () => {
@@ -188,7 +188,7 @@ describe('GraphClientService', () => {
       const task = service.getFileUploadTask(file, fileName, fileSizeInBytes, uploadSession);
 
       expect(task).toBeInstanceOf(LargeFileUploadTask);
-      expect(task.uploadSession).toBe(uploadSession);
+      expect((task as any).uploadSession).toBe(uploadSession);
     });
   });
 });
