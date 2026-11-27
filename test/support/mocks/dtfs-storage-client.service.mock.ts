@@ -25,6 +25,10 @@ export class MockDtfsStorageClientService {
     this.getShareFileClient = jest.fn() as jest.Mock;
   }
 
+  reset(): void {
+    this.fileShareClient = new MockFileShareClient() as unknown as ShareFileClient;
+  }
+
   mockSuccessfulGetShareFileClientCall(fileName: string, fileLocationPath: string): MockDtfsStorageClientService {
     when(this.getShareFileClient).calledWith(fileName, fileLocationPath).mockReturnValueOnce(this.fileShareClient);
     return this;

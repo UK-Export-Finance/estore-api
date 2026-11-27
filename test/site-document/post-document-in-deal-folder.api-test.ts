@@ -55,6 +55,8 @@ describe('postDocumentInDealFolder', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     resetAllWhenMocks();
+    mockGraphClientService.reset();
+    mockDtfsStorageClientService.reset();
   });
 
   afterAll(async () => {

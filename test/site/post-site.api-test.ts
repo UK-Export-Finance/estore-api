@@ -39,7 +39,6 @@ describe('createSite', () => {
   });
 
   beforeEach(() => {
-    jest.resetAllMocks();
     resetAllWhenMocks();
   });
 
@@ -217,20 +216,10 @@ describe('createSite', () => {
     const makeRequest = (body: unknown[]) => api.post('/api/v1/sites', body);
 
     const givenAnyRequestBodyWouldSucceed = () => {
-      const { graphServiceGetParams } = new GetSiteStatusByExporterNameGenerator(valueGenerator).generate({
-        numberToGenerate: 1,
-      });
-
-      const { graphServicePostParams, graphCreateSiteResponseDto } = new CreateSiteGenerator(valueGenerator).generate({
-        numberToGenerate: 1,
-        status: ENUMS.SITE_STATUSES.PROVISIONING,
-        exporterName,
-      });
-
       mockGraphClientService
         .mockSuccessfulGraphApiCallWithPath(graphServiceGetParams.path)
-        .mockSuccessfulExpandCallWithExpandString(graphServiceGetParams.expand)
-        .mockSuccessfulFilterCallWithFilterString(graphServiceGetParams.filter)
+        .mockSuccessfulExpandCall()
+        .mockSuccessfulFilterCall()
         .mockSuccessfulGraphGetCall({ value: [] });
 
       mdmApi.requestGenerateNewNumbers(JSON.stringify(mdmCreateNumbersRequest)).respondsWith(201, mdmCreateNumbersResponse[0]);
