@@ -23,25 +23,40 @@ export class MockGraphRequest {
   get: jest.Mock;
   patch: jest.Mock;
   post: jest.Mock;
-  private getResponse: { response: any; isError: boolean } | null = null;
 
   constructor() {
     this.expand = jest.fn().mockReturnValue(this);
     this.filter = jest.fn().mockReturnValue(this);
     this.top = jest.fn().mockReturnValue(this);
 
-    // Use a custom implementation that returns the mocked response every time
+    // Store responses as an array for FIFO consumption
+    // Multiple calls to .get() consume responses in order, with reuse of the last one
+    const responses: Array<{ response: any; isError: boolean }> = [];
+    let currentIndex = 0;
+
     this.get = jest.fn(() => {
-      if (!this.getResponse) {
+      if (responses.length === 0) {
         return Promise.reject(new Error('No mocked response available for .get()'));
       }
 
-      const { response, isError } = this.getResponse;
+      // Consume responses in FIFO order, but reuse the last one
+      if (currentIndex < responses.length - 1) {
+        currentIndex++;
+      }
+
+      const { response, isError } = responses[currentIndex];
       return isError ? Promise.reject(response) : Promise.resolve(response);
     }) as jest.Mock;
 
     this.patch = jest.fn() as jest.Mock;
     this.post = jest.fn() as jest.Mock;
+
+    // Store responses array and state on the mock for access by test setup methods
+    (this.get as any).__responses = responses;
+    (this.get as any).__currentIndex = (() => currentIndex) as () => number;
+    (this.get as any).__resetIndex = () => {
+      currentIndex = 0;
+    };
   }
 
   mockSuccessfulExpandCallWithExpandString(expandString: string): MockGraphRequest {
@@ -78,12 +93,14 @@ export class MockGraphRequest {
   }
 
   mockSuccessfulGraphGetCall<T>(response: T): MockGraphRequest {
-    this.getResponse = { response, isError: false };
+    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean }>;
+    responses.push({ response, isError: false });
     return this;
   }
 
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphRequest {
-    this.getResponse = { response: error, isError: true };
+    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean }>;
+    responses.push({ response: error, isError: true });
     return this;
   }
 
@@ -137,12 +154,35 @@ export class MockGraphClientService {
     });
   }
 
+  reset(): void {
+    // Clear all mocks and reset indices for next test
+    this.pathToRequestMap.clear();
+    this.defaultMockRequest = new MockGraphRequest();
+    this.clearAllMocks();
+    this.setupApiMock();
+  }
+
   mockSuccessfulGraphApiCallWithPath(path: string): MockGraphRequest {
     const mockRequest = new MockGraphRequest();
     this.pathToRequestMap.set(path, mockRequest);
     // Also re-establish the implementation in case mocks were reset
     this.setupApiMock();
     return mockRequest;
+  }
+
+  clearAllMocks(): void {
+    // Clear responses in all mocked requests when jest.resetAllMocks is called
+    this.pathToRequestMap.forEach((mockRequest) => {
+      const responses = (mockRequest.get as any).__responses as Array<any>;
+      responses.length = 0;
+      const resetIndex = (mockRequest.get as any).__resetIndex as () => void;
+      resetIndex();
+    });
+    // Also clear default mock
+    const defaultResponses = (this.defaultMockRequest.get as any).__responses as Array<any>;
+    defaultResponses.length = 0;
+    const defaultResetIndex = (this.defaultMockRequest.get as any).__resetIndex as () => void;
+    defaultResetIndex();
   }
 
   mockSuccessfulGetFileUploadSessionCall(url: string, headers: unknown, uploadSessionToReturn: LargeFileUploadSession): MockGraphClientService {

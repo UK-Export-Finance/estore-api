@@ -45,6 +45,7 @@ describe('POST /sites/{siteId}/deals', () => {
   });
 
   beforeEach(() => {
+    mockGraphClientService.reset();
     resetAllWhenMocks();
   });
 
