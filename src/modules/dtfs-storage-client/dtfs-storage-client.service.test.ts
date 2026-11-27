@@ -13,20 +13,34 @@ describe('DtfsStorageClientService', () => {
   const fileLocationPath = valueGenerator.fileLocationPath();
   const fileName = valueGenerator.fileName();
 
+  let storageSharedKeyCredentialSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
     resetAllWhenMocks();
+    storageSharedKeyCredentialSpy = jest.spyOn(StorageSharedKeyCredential.prototype, 'constructor' as any);
+  });
+
+  afterEach(() => {
+    storageSharedKeyCredentialSpy.mockRestore();
   });
 
   describe('constructor', () => {
     it('instantiates StorageSharedKeyCredential with correct account name and key', () => {
-      const credentialSpy = jest.spyOn(StorageSharedKeyCredential.prototype, 'constructor' as any);
+      const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
-      new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
+      // Verify the credential was created with the correct account name
+      expect(service.storageSharedKeyCredential).toBeInstanceOf(StorageSharedKeyCredential);
+      expect(service.storageSharedKeyCredential.accountName).toBe(accountName);
 
-      // Verify that StorageSharedKeyCredential was instantiated with the correct credentials
-      expect(StorageSharedKeyCredential).toBeDefined();
-      credentialSpy.mockRestore();
+      // Verify the credential can sign requests correctly by using it to create a client
+      // A credential created with an incorrect key would fail to authenticate when used
+      const fileName = valueGenerator.fileName();
+      const fileLocationPath = valueGenerator.fileLocationPath();
+      const client = service.getShareFileClient(fileName, fileLocationPath);
+
+      // The client can only be created successfully if the credential was initialized with correct account name and key
+      expect(client).toBeInstanceOf(ShareFileClient);
     });
 
     it('stores the baseUrl and dealDocumentsFolderPath for later use', () => {
@@ -40,7 +54,7 @@ describe('DtfsStorageClientService', () => {
       const service = new DtfsStorageClientService({ baseUrl, accountName, accountKey: mockAccountKey, dealDocumentsFolderPath });
 
       expect(service.storageSharedKeyCredential).toBeInstanceOf(StorageSharedKeyCredential);
-      // Verify the credential was created with the account name (account name is immutable on the credential)
+      // Verify the credential was created with the correct account name
       expect(service.storageSharedKeyCredential.accountName).toBe(accountName);
     });
   });

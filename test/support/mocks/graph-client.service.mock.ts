@@ -36,40 +36,63 @@ export class MockGraphRequest {
 
     this.top = jest.fn().mockReturnValue(this);
 
-    // Store responses as an array for FIFO consumption
-    // Multiple calls to .get() consume responses in order, with reuse of the last one
-    const responses: Array<{ response: any; isError: boolean; filterMatch?: string }> = [];
-    let currentIndex = 0;
+    // Store responses as separate queues:
+    // - unfiltered: consumed in FIFO order, last one is reused
+    // - byFilter: responses matched by specific filter, consumed per filter
+    const unfilteredResponses: Array<{ response: any; isError: boolean }> = [];
+    const responsesByFilter: Map<string, Array<{ response: any; isError: boolean }>> = new Map();
+    let unfilteredIndex = 0;
 
     this.get = jest.fn(() => {
-      if (responses.length === 0) {
+      if (currentFilter && responsesByFilter.has(currentFilter)) {
+        // Filter-specific responses: consume in order
+        const filterResponses = responsesByFilter.get(currentFilter)!;
+        let index = (this.get as any).__filterIndices?.get(currentFilter) ?? 0;
+
+        if (index < filterResponses.length) {
+          const { response, isError } = filterResponses[index];
+
+          // Advance index for next call with this filter
+          if (index < filterResponses.length - 1) {
+            index++;
+
+            if (!(this.get as any).__filterIndices) {
+              (this.get as any).__filterIndices = new Map();
+            }
+
+            (this.get as any).__filterIndices.set(currentFilter, index);
+          }
+
+          return isError ? Promise.reject(response) : Promise.resolve(response);
+        }
+      }
+
+      // Fall back to unfiltered responses
+      if (unfilteredResponses.length === 0) {
         return Promise.reject(new Error('No mocked response available for .get()'));
       }
 
-      // Check if any response has a filterMatch that matches the currentFilter
-      const matchingIndex = responses.findIndex((r) => !r.filterMatch || r.filterMatch === currentFilter);
-
-      if (matchingIndex !== -1 && matchingIndex < currentIndex) {
-        // We already consumed this response, so continue with FIFO
-        if (currentIndex < responses.length - 1) {
-          currentIndex++;
-        }
-      } else if (matchingIndex !== -1) {
-        currentIndex = matchingIndex;
+      // Consume unfiltered responses in order, reuse the last one
+      if (unfilteredIndex < unfilteredResponses.length - 1) {
+        unfilteredIndex++;
       }
 
-      const { response, isError } = responses[currentIndex];
+      const { response, isError } = unfilteredResponses[unfilteredIndex];
       return isError ? Promise.reject(response) : Promise.resolve(response);
     }) as jest.Mock;
 
     this.patch = jest.fn() as jest.Mock;
     this.post = jest.fn() as jest.Mock;
 
-    // Store responses array and state on the mock for access by test setup methods
-    (this.get as any).__responses = responses;
-    (this.get as any).__currentIndex = (() => currentIndex) as () => number;
-    (this.get as any).__resetIndex = () => {
-      currentIndex = 0;
+    // Store response arrays on the mock for access by test setup methods
+    (this.get as any).__unfilteredResponses = unfilteredResponses;
+    (this.get as any).__responsesByFilter = responsesByFilter;
+    (this.get as any).__filterIndices = new Map();
+    (this.get as any).__resetAll = () => {
+      unfilteredResponses.length = 0;
+      responsesByFilter.clear();
+      unfilteredIndex = 0;
+      (this.get as any).__filterIndices.clear();
     };
   }
 
@@ -107,20 +130,25 @@ export class MockGraphRequest {
   }
 
   mockSuccessfulGraphGetCall<T>(response: T): MockGraphRequest {
-    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
-    responses.push({ response, isError: false });
+    const unfilteredResponses = (this.get as any).__unfilteredResponses as Array<{ response: any; isError: boolean }>;
+    unfilteredResponses.push({ response, isError: false });
     return this;
   }
 
   mockSuccessfulGraphGetCallForFilterString<T>(filterString: string, response: T): MockGraphRequest {
-    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
-    responses.push({ response, isError: false, filterMatch: filterString });
+    const responsesByFilter = (this.get as any).__responsesByFilter as Map<string, Array<{ response: any; isError: boolean }>>;
+
+    if (!responsesByFilter.has(filterString)) {
+      responsesByFilter.set(filterString, []);
+    }
+
+    responsesByFilter.get(filterString)!.push({ response, isError: false });
     return this;
   }
 
   mockUnsuccessfulGraphGetCall(error: unknown): MockGraphRequest {
-    const responses = (this.get as any).__responses as Array<{ response: any; isError: boolean; filterMatch?: string }>;
-    responses.push({ response: error, isError: true });
+    const unfilteredResponses = (this.get as any).__unfilteredResponses as Array<{ response: any; isError: boolean }>;
+    unfilteredResponses.push({ response: error, isError: true });
     return this;
   }
 
@@ -183,8 +211,19 @@ export class MockGraphClientService {
   }
 
   mockSuccessfulGraphApiCallWithPath(path: string): MockGraphRequest {
-    const mockRequest = new MockGraphRequest();
-    this.pathToRequestMap.set(path, mockRequest);
+    // Preserve distinct registrations: if a request already exists for this path,
+    // return it instead of overwriting it. This allows multiple filters or response
+    // sequences to register different data for the same path within a single test.
+    // Note: Tests must call mockGraphClientService.reset() in beforeEach to clear
+    // path registrations between tests, otherwise responses from previous tests
+    // will accumulate.
+    let mockRequest = this.pathToRequestMap.get(path);
+
+    if (!mockRequest) {
+      mockRequest = new MockGraphRequest();
+      this.pathToRequestMap.set(path, mockRequest);
+    }
+
     // Also re-establish the implementation in case mocks were reset
     this.setupApiMock();
     return mockRequest;
@@ -199,8 +238,8 @@ export class MockGraphClientService {
   }
 
   private mockSuccessfulGraphGetCallForRequest<T>(mockRequest: MockGraphRequest, response: T): MockGraphClientService {
-    const responses = (mockRequest.get as any).__responses as Array<{ response: any; isError: boolean }>;
-    responses.push({ response, isError: false });
+    const unfilteredResponses = (mockRequest.get as any).__unfilteredResponses as Array<{ response: any; isError: boolean }>;
+    unfilteredResponses.push({ response, isError: false });
     return this;
   }
 
@@ -212,16 +251,12 @@ export class MockGraphClientService {
   clearAllMocks(): void {
     // Clear responses in all mocked requests when jest.resetAllMocks is called
     this.pathToRequestMap.forEach((mockRequest) => {
-      const responses = (mockRequest.get as any).__responses as Array<any>;
-      responses.length = 0;
-      const resetIndex = (mockRequest.get as any).__resetIndex as () => void;
-      resetIndex();
+      const resetAll = (mockRequest.get as any).__resetAll as () => void;
+      resetAll();
     });
     // Also clear default mock
-    const defaultResponses = (this.defaultMockRequest.get as any).__responses as Array<any>;
-    defaultResponses.length = 0;
-    const defaultResetIndex = (this.defaultMockRequest.get as any).__resetIndex as () => void;
-    defaultResetIndex();
+    const defaultResetAll = (this.defaultMockRequest.get as any).__resetAll as () => void;
+    defaultResetAll();
   }
 
   mockSuccessfulGetFileUploadSessionCall(url: string, headers: unknown, uploadSessionToReturn: LargeFileUploadSession): MockGraphClientService {

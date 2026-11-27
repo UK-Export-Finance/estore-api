@@ -40,10 +40,10 @@ describe('SharepointService', () => {
 
   const sharepointConfig = getMockSharepointConfig();
 
-  const methodResponseFromListItem = valueGenerator.string();
-  const graphServiceResponse = { value: [methodResponseFromListItem] };
-  const methodResponse = graphServiceResponse; // For methods that return the whole object
-  const methodResponseArray = [methodResponseFromListItem]; // For methods that return just the array
+  const methodResponseFromListItem = [{ fields: { someField: valueGenerator.string() } }];
+  const graphServiceResponse = { value: methodResponseFromListItem };
+  const methodResponse = graphServiceResponse;
+  const methodResponseArray = methodResponseFromListItem;
 
   describe('sharepoint service methods calling graphService.get', () => {
     const graphServiceGetTestCases = [

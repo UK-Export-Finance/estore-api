@@ -41,6 +41,7 @@ describe('GraphService', () => {
 
   beforeEach(() => {
     graphService = new GraphService(mockGraphClientService as unknown as GraphClientService);
+    mockGraphClientService.reset();
     jest.resetAllMocks();
     resetAllWhenMocks();
   });
