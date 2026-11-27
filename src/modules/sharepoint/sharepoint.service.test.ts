@@ -40,8 +40,9 @@ describe('SharepointService', () => {
   const sharepointConfig = getMockSharepointConfig();
 
   const methodResponseFromListItem = valueGenerator.string();
-  const graphServiceResponse = { value: methodResponseFromListItem };
-  const methodResponse = graphServiceResponse;
+  const graphServiceResponse = { value: [methodResponseFromListItem] };
+  const methodResponse = graphServiceResponse; // For methods that return the whole object
+  const methodResponseArray = [methodResponseFromListItem]; // For methods that return just the array
 
   describe('sharepoint service methods calling graphService.get', () => {
     const graphServiceGetTestCases = [
@@ -80,7 +81,7 @@ describe('SharepointService', () => {
         expandString: `fields($select=Title,URL,Sitestatus,TermGuid,SiteURL)`,
         filterString: `fields/URL eq '${siteId}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getExporterSite(siteId),
       },
       {
@@ -89,7 +90,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=id)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${buyerName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getBuyerFolder({ siteId, buyerName }),
       },
       {
@@ -98,7 +99,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=TermGuid)',
         filterString: `fields/Title eq '${marketName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getMarketTerm(marketName),
       },
       {
@@ -107,7 +108,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${dealFolderName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getDealFolder({ siteId, dealFolderName }),
       },
       {
@@ -116,7 +117,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=Title,ServerRelativeUrl,Code,id,ParentCode)',
         filterString: `fields/ServerRelativeUrl eq '/sites/${siteId}/CaseLibrary/${facilityFolderName}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityFolder({ siteId, facilityFolderName }),
       },
       {
@@ -125,7 +126,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=FacilityGUID,Title)',
         filterString: `fields/Title eq '${facilityIdentifier}' and fields/FacilityGUID ne null`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getFacilityTerm(facilityIdentifier),
       },
       {
@@ -134,7 +135,7 @@ describe('SharepointService', () => {
         expandString: 'fields($select=id,CustodianSiteURL)',
         filterString: `fields/CustodianSiteURL eq '${siteId}'`,
         graphServiceResponse,
-        methodResponse: methodResponseFromListItem,
+        methodResponse: methodResponseArray,
         makeRequest: (sharepointService: SharepointService) => sharepointService.getCaseSite(siteId),
       },
     ];
