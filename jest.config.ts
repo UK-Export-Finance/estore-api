@@ -51,7 +51,6 @@ const config: JestConfigWithTsJest = {
       testMatch: ['**/*.api-test.ts'],
       ...esmAndTsJestSettings,
       ...defaultSettings,
-      maxWorkers: 1,
     },
   ],
   reporters: [['default', { summaryThreshold: 1 }]],

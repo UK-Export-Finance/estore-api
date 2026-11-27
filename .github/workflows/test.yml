@@ -166,11 +166,22 @@ jobs:
 
   # 5. API tests
   api-tests:
-    name: API 👷
+    name: API Tests - ${{ matrix.test-suite }} 👷
     needs: [setup, build-and-start-check]
     environment:
       name: ${{ needs.setup.outputs.environment }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-suite:
+          - test/docs/get-docs.api-test.ts
+          - test/site-buyer/post-site-buyers.api-test.ts
+          - test/site-deal/post-site-deal-facilities.api-test.ts
+          - test/site-deal/post-site-deals.api-test.ts
+          - test/site-document/post-document-in-deal-folder.api-test.ts
+          - test/site/get-site-status-by-exporter-name.api-test.ts
+          - test/site/post-site.api-test.ts
+          - test/terms/post-terms-facilities.api-test.ts
     env:
       APIM_MDM_URL: ${{ secrets.APIM_MDM_URL }}
       APIM_MDM_KEY: ${{ secrets.APIM_MDM_KEY }}
@@ -222,4 +233,4 @@ jobs:
 
       - name: Execute
         working-directory: ./
-        run: npm run api-test
+        run: npm run api-test -- --testPathPatterns="${{ matrix.test-suite }}"
