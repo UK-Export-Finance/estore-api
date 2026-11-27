@@ -49,12 +49,12 @@ const config: JestConfigWithTsJest = {
       displayName: 'API',
       setupFilesAfterEnv: ['./setup/jest-globals.ts', './setup/override-environment-variables.ts'],
       testMatch: ['**/*.api-test.ts'],
+      forceExit: true,
       ...esmAndTsJestSettings,
       ...defaultSettings,
     },
   ],
   reporters: [['default', { summaryThreshold: 1 }]],
-  forceExit: true,
 };
 
 export default config;
